@@ -69,14 +69,12 @@ public class AuthorizationAction extends GenericWebAction<AccountNumber> {
 			}
 		}
 	}
-	
+
 	public boolean validateIp(String ip, ArrayList<IpRange> ipList) {
-		String[] ipNum = ip.replace(".", "dot").split("dot");
+		String[] ipNum = ip.split("\\.");
 		for (int i = 0; i < ipList.size(); i++) {
-			String[] start = ipList.get(i).getIpRangeStart()
-					.replace(".", "dot").split("dot");
-			String[] end = ipList.get(i).getIpRangeEnd().replace(".", "dot")
-					.split("dot");
+			String[] start = ipList.get(i).getIpRangeStart().split("\\.");
+			String[] end = ipList.get(i).getIpRangeEnd().split("\\.");
 
 			if (ipNum[0].equals(start[0]) && ipNum[1].equals(start[1])
 					&& ipNum[2].equals(start[2])) {
@@ -91,12 +89,10 @@ public class AuthorizationAction extends GenericWebAction<AccountNumber> {
 	}
 
 	public long getMatchCusSerNo(String ip, ArrayList<IpRange> ipList) {
-		String[] ipNum = ip.replace(".", "dot").split("dot");
+		String[] ipNum = ip.split("\\.");
 		for (int i = 0; i < ipList.size(); i++) {
-			String[] start = ipList.get(i).getIpRangeStart()
-					.replace(".", "dot").split("dot");
-			String[] end = ipList.get(i).getIpRangeEnd().replace(".", "dot")
-					.split("dot");
+			String[] start = ipList.get(i).getIpRangeStart().split("\\.");
+			String[] end = ipList.get(i).getIpRangeEnd().split("\\.");
 
 			if (ipNum[0].equals(start[0]) && ipNum[1].equals(start[1])
 					&& ipNum[2].equals(start[2])) {

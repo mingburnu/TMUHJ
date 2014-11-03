@@ -1,5 +1,7 @@
 package j.index.test;
 
+import j.index.core.util.EncryptorUtil;
+
 import java.io.UnsupportedEncodingException;
 
 public class Test {
@@ -37,5 +39,11 @@ public class Test {
 			sql[i] = sql[i].replace("	'	,", "'	,");
 			System.out.println(sql[i]);
 		}
+		
+		String a=EncryptorUtil.encrypt("(OL>!QAZ");
+		String b=EncryptorUtil.encrypt("(OL>!QAZ");
+		boolean c=EncryptorUtil.checkPassword("a", "a");
+		
+		System.out.println(c);
 	}
 }
