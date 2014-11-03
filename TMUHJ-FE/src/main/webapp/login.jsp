@@ -119,12 +119,10 @@ input:-webkit-autofill {
 </head>
 <c:if
 	test="${(login.role =='系統管理員') || (login.role =='維護人員') || (login.role =='管理員') || (login.role =='使用者')}">
-	<c:if test="${ login.customer.contactUserName!='未登入用戶' }">
-		<%
-			response.sendRedirect(request.getContextPath()
-							+ "/page/home.action");
-		%>
-	</c:if>
+	<%
+		response.sendRedirect(request.getContextPath()
+					+ "/page/home.action");
+	%>
 </c:if>
 <body>
 	<div id="wrapper" align="center">
