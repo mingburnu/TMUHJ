@@ -6,6 +6,7 @@ import j.index.core.model.DataSet;
 import j.index.core.security.accountNumber.entity.AccountNumber;
 import j.index.core.security.accountNumber.service.AccountNumberService;
 import j.index.core.web.GenericWebAction;
+import j.index.module.apply.customer.entity.Customer;
 import j.index.module.apply.customer.service.CustomerService;
 import j.index.module.apply.ipRange.entity.IpRange;
 import j.index.module.apply.ipRange.service.IpRangeService;
@@ -36,6 +37,9 @@ public class AuthorizationAction extends GenericWebAction<AccountNumber> {
 
 	@Autowired
 	private CustomerService customerService;
+
+	@Autowired
+	private Customer customer;
 
 	@Autowired
 	private IpRangeService ipRangeService;
@@ -140,17 +144,24 @@ public class AuthorizationAction extends GenericWebAction<AccountNumber> {
 	public String userEntry() throws Exception {
 		String ip = getRequest().getRemoteAddr();
 		ArrayList<IpRange> ipList = ipRangeService.getIpList();
+
 		if (validateIp(ip, ipList) && getLoginUser() == null) {
 			try {
-				user = userService.getBySerNo(getMatchCusSerNo(ip, ipList));
+				user = new AccountNumber();
+				user.setUserId("guest");
+				user.setCusSerNo(getMatchCusSerNo(ip, ipList));
 				ds.setEntity(user);
 				ds = userService.getByRestrictions(ds);
 			} catch (Exception e) {
 				log.error(ExceptionUtils.getStackTrace(e));
 				throw new Exception(e);
 			}
-			user.setCustomer(customerService.getBySerNo(user.getCusSerNo()));
+			customer = customerService.getBySerNo(user.getCusSerNo());
+			customer.setContactUserName("訪客");
+			user.setCustomer(customer);
 			getSession().put(LOGIN, user);
+			return INDEX;
+		} else if (getLoginUser() != null) {
 			return INDEX;
 		} else {
 			return LOGIN;
@@ -172,14 +183,18 @@ public class AuthorizationAction extends GenericWebAction<AccountNumber> {
 		ArrayList<IpRange> ipList = ipRangeService.getIpList();
 		if (validateIp(ip, ipList) && getLoginUser() == null) {
 			try {
-				user = userService.getBySerNo(getMatchCusSerNo(ip, ipList));
+				user = new AccountNumber();
+				user.setUserId("guest");
+				user.setCusSerNo(getMatchCusSerNo(ip, ipList));
 				ds.setEntity(user);
 				ds = userService.getByRestrictions(ds);
 			} catch (Exception e) {
 				log.error(ExceptionUtils.getStackTrace(e));
 				throw new Exception(e);
 			}
-			user.setCustomer(customerService.getBySerNo(user.getCusSerNo()));
+			customer = customerService.getBySerNo(user.getCusSerNo());
+			customer.setContactUserName("訪客");
+			user.setCustomer(customer);
 			getSession().put(LOGIN, user);
 			return INDEX;
 		} else {
