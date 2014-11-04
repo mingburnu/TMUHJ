@@ -10,7 +10,7 @@
 				href="<c:url value = '/'/>page/home.action">&nbsp;</a> <a
 				class="menu_02" href="<c:url value = '/'/>page/query.action">&nbsp;</a>
 				<c:choose>
-					<c:when test="${(login.role =='訪客')}">
+					<c:when test="${(login.userId =='guest')}">
 						<a class="menu_03" href="<c:url value = '/'/>login.jsp">&nbsp;</a>
 					</c:when>
 					<c:otherwise>
