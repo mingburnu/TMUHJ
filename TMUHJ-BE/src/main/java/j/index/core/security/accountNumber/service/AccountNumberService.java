@@ -2,6 +2,7 @@ package j.index.core.security.accountNumber.service;
 
 import j.index.core.dao.GenericDao;
 import j.index.core.dao.IiiRestrictions;
+import j.index.core.enums.Role;
 import j.index.core.model.DataSet;
 import j.index.core.security.accountNumber.entity.AccountNumber;
 import j.index.core.security.accountNumber.entity.AccountNumberDao;
@@ -14,6 +15,7 @@ import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.criterion.MatchMode;
+import org.hibernate.mapping.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
@@ -58,7 +60,8 @@ public class AccountNumberService extends GenericService<AccountNumber> {
 	}
 
 	@Override
-	public AccountNumber save(AccountNumber entity, AccountNumber user) throws Exception {
+	public AccountNumber save(AccountNumber entity, AccountNumber user)
+			throws Exception {
 		Assert.notNull(entity);
 		// entity.setTimeToSystime();
 		entity.initInsert(user);
@@ -86,7 +89,7 @@ public class AccountNumberService extends GenericService<AccountNumber> {
 
 		IiiRestrictions restrictions = IiiBeanFactory.getIiiRestrictions();
 		restrictions.eq("userId", entity.getUserId());
-
+		restrictions.ne("role", Role.使用者);
 		List<AccountNumber> secUsers = dao.findByRestrictions(restrictions);
 		if (secUsers == null || secUsers.isEmpty()) {
 			return false;

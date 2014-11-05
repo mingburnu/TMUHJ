@@ -1,16 +1,11 @@
 package j.index.module.security.web;
 
-import java.util.ArrayList;
-
 import j.index.core.model.DataSet;
 import j.index.core.security.accountNumber.entity.AccountNumber;
 import j.index.core.security.accountNumber.service.AccountNumberService;
 import j.index.core.web.GenericWebAction;
 import j.index.module.apply.customer.entity.Customer;
 import j.index.module.apply.customer.service.CustomerService;
-import j.index.module.apply.ipRange.entity.IpRange;
-import j.index.module.apply.ipRange.service.IpRangeService;
-
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,9 +37,6 @@ public class AuthorizationAction extends GenericWebAction<AccountNumber> {
 	private Customer customer;
 
 	@Autowired
-	private IpRangeService ipRangeService;
-
-	@Autowired
 	private DataSet<AccountNumber> ds;
 
 	public void validateLogin() throws Exception {
@@ -74,42 +66,6 @@ public class AuthorizationAction extends GenericWebAction<AccountNumber> {
 		}
 	}
 
-	public boolean validateIp(String ip, ArrayList<IpRange> ipList) {
-		String[] ipNum = ip.split("\\.");
-		for (int i = 0; i < ipList.size(); i++) {
-			String[] start = ipList.get(i).getIpRangeStart().split("\\.");
-			String[] end = ipList.get(i).getIpRangeEnd().split("\\.");
-
-			if (ipNum[0].equals(start[0]) && ipNum[1].equals(start[1])
-					&& ipNum[2].equals(start[2])) {
-				if (Integer.parseInt(ipNum[3]) >= Integer.parseInt(start[3])
-						&& Integer.parseInt(ipNum[3]) <= Integer
-								.parseInt(end[3])) {
-					return true;
-				}
-			}
-		}
-		return false;
-	}
-
-	public long getMatchCusSerNo(String ip, ArrayList<IpRange> ipList) {
-		String[] ipNum = ip.split("\\.");
-		for (int i = 0; i < ipList.size(); i++) {
-			String[] start = ipList.get(i).getIpRangeStart().split("\\.");
-			String[] end = ipList.get(i).getIpRangeEnd().split("\\.");
-
-			if (ipNum[0].equals(start[0]) && ipNum[1].equals(start[1])
-					&& ipNum[2].equals(start[2])) {
-				if (Integer.parseInt(ipNum[3]) >= Integer.parseInt(start[3])
-						&& Integer.parseInt(ipNum[3]) <= Integer
-								.parseInt(end[3])) {
-					return ipList.get(i).getCusSerNo();
-				}
-			}
-		}
-		return 0L;
-	}
-
 	/**
 	 * 登入
 	 * 
@@ -136,40 +92,6 @@ public class AuthorizationAction extends GenericWebAction<AccountNumber> {
 	}
 
 	/**
-	 * 訪客進入
-	 * 
-	 * @return
-	 * @throws Exception
-	 */
-	public String userEntry() throws Exception {
-		String ip = getRequest().getRemoteAddr();
-		ArrayList<IpRange> ipList = ipRangeService.getIpList();
-
-		if (validateIp(ip, ipList) && getLoginUser() == null) {
-			try {
-				user = new AccountNumber();
-				user.setUserId("guest");
-				user.setCusSerNo(getMatchCusSerNo(ip, ipList));
-				ds.setEntity(user);
-				ds = userService.getByRestrictions(ds);
-			} catch (Exception e) {
-				log.error(ExceptionUtils.getStackTrace(e));
-				throw new Exception(e);
-			}
-			customer = customerService.getBySerNo(user.getCusSerNo());
-			customer.setContactUserName("訪客");
-			user.setCustomer(customer);
-			getSession().put(LOGIN, user);
-			return INDEX;
-		} else if (getLoginUser() != null) {
-			return INDEX;
-		} else {
-			return LOGIN;
-		}
-
-	}
-
-	/**
 	 * 登出
 	 * 
 	 * @return
@@ -179,27 +101,8 @@ public class AuthorizationAction extends GenericWebAction<AccountNumber> {
 		if (getSession().get(LOGIN) != null) {
 			getSession().put(LOGIN, null);
 		}
-		String ip = getRequest().getRemoteAddr();
-		ArrayList<IpRange> ipList = ipRangeService.getIpList();
-		if (validateIp(ip, ipList) && getLoginUser() == null) {
-			try {
-				user = new AccountNumber();
-				user.setUserId("guest");
-				user.setCusSerNo(getMatchCusSerNo(ip, ipList));
-				ds.setEntity(user);
-				ds = userService.getByRestrictions(ds);
-			} catch (Exception e) {
-				log.error(ExceptionUtils.getStackTrace(e));
-				throw new Exception(e);
-			}
-			customer = customerService.getBySerNo(user.getCusSerNo());
-			customer.setContactUserName("訪客");
-			user.setCustomer(customer);
-			getSession().put(LOGIN, user);
-			return INDEX;
-		} else {
-			return LOGIN;
-		}
+
+		return LOGIN;
 	}
 
 	public AccountNumber getUser() {
