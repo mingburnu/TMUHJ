@@ -3,7 +3,6 @@
 <%@ taglib prefix="s" uri="/struts-tags"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <jsp:include page="/WEB-INF/jsp/layout/css.jsp" />
-<jsp:include page="/WEB-INF/jsp/layout/art.jsp" />
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
