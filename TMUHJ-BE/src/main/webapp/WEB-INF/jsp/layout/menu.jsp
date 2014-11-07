@@ -2,30 +2,60 @@
 	pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="s" uri="/struts-tags"%>
-<div id="header">&nbsp;</div>
-<div id="menu_box">
-	<table width="100%" border="0" cellpadding="0" cellspacing="0">
-		<tr>
-			<td align="left"><a class="menu_01"
-				href="<c:url value = '/'/>page/home.action">&nbsp;</a> <a
-				class="menu_02" href="<c:url value = '/'/>page/query.action">&nbsp;</a>
-				<c:choose>
-					<c:when test="${(login.userId =='guest')}">
-						<a class="menu_03" href="<c:url value = '/'/>login.jsp">&nbsp;</a>
-					</c:when>
-					<c:otherwise>
-						<a class="menu_03" href="#">&nbsp;</a>
-					</c:otherwise>
-				</c:choose></td>
-			<td align="right">
-				<table border="0" cellpadding="0" cellspacing="0" class="table_01">
-					<tr>
-						<td class="t_01">${login.customer.name}，${login.customer.contactUserName}</td>
-						<td class="t_02"><a
-							href='<s:url namespace="/authorization" action="logout" />'>&nbsp;</a></td>
-					</tr>
-				</table>
-			</td>
-		</tr>
-	</table>
+<div id="menu">
+    <div id="menu_box">
+        <ul>
+            <li><a href="javascript:void(0);" id="Menu_A"><span>用戶管理</span></a>
+                
+            </li>
+            <li><a href="article_queryForm.action"><span>文章維護</span></a></li>
+            <li><a href="import_form.action"><span>資料匯入</span></a></li>
+            <li><a href="onsell_form.action"><span>資料上架</span></a></li>
+           
+            
+        </ul>
+    </div>
 </div>
+
+<script type="text/javascript">
+var _menus = [];
+
+function init( id)
+{
+    var obj = new Object();
+
+    obj.id = id;
+    $(id).mouseover(function(e){
+          obj.mouseIn = true;
+    });
+    $(id).mouseout(function(e){
+          obj.mouseIn = false;
+    });
+
+    $(id+"_2").mouseover(function(e){
+          obj.mouseIn = true;
+    });
+    $(id+"_2").mouseout(function(e){
+          obj.mouseIn = false;
+    });
+
+    obj.menu = $(id+"_2");
+    _menus.push( obj);
+}
+
+function Menu_timer()
+{
+    for( var c = 0; c < _menus.length; c++)
+    {
+        if( _menus[c].mouseIn)
+            _menus[c].menu.css("visibility","visible");
+        else
+            _menus[c].menu.css("visibility","hidden");
+    }
+}
+
+init('#Menu_A');
+init('#Menu_G');
+init('#Menu_H');
+setInterval(Menu_timer,500);
+</script>

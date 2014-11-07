@@ -9,17 +9,11 @@
 <link href="<c:url value = '/'/>resources/css/air-ui-cms.css"
 	rel="stylesheet" type="text/css">
 <script language="javascript" type="text/javascript"
-	src="<c:url value = '/'/>resources/js/jquery-1.3.2.js">
-	
-</script>
+	src="<c:url value = '/'/>resources/js/jquery-1.4.2.js"></script>
 <script language="javascript" type="text/javascript"
-	src="<c:url value = '/'/>resources/js/jquery-ui-1.7.2.custom.min.js">
-	
-</script>
+	src="<c:url value = '/'/>resources/js/jquery-ui-1.7.2.custom.min.js"></script>
 <script language="javascript" type="text/javascript"
-	src="<c:url value = '/'/>resources/js/jquery.bgiframe.pack.js">
-	
-</script>
+	src="<c:url value = '/'/>resources/js/jquery.bgiframe.pack.js"></script>
 <script language="javascript" type="text/javascript">
 	$(document).ready(function() {
 		formSetCSS();
@@ -36,7 +30,7 @@
 			$(this).addClass("state-hover");
 		}, function() {
 			$(this).removeClass("state-hover");
-		})
+		});
 	}
 	//
 	//打開Alert畫面之函式
@@ -84,6 +78,13 @@
 		window.location.href = "/BE/BE/";
 	}
 </script>
+
+<style>
+div.no_message {
+	border: 1px solid #ffffff;
+	padding: 5px 0;
+}
+</style>
 <title>跨司署電子資料庫索引查詢平台</title>
 </head>
 <c:if
@@ -106,6 +107,17 @@
 								<table align="center" width="100%" border="0" cellspacing="6"
 									cellpadding="0">
 									<tbody>
+										<tr>
+											<td align="center" colspan="2"><c:choose>
+													<c:when
+														test="${(not empty error)||(not empty idPwNull)}">
+														<div class="message">${idPwNull }${error }</div>
+													</c:when>
+													<c:otherwise>
+														<div class="no_message">&nbsp;</div>
+													</c:otherwise>
+												</c:choose></td>
+										</tr>
 										<tr>
 											<td align="right">用戶：</td>
 											<td align="left"><input type="text" name="user.userId"
@@ -132,9 +144,6 @@
                                         </td>
                                     </tr>
                                     -->
-										<tr>
-											<td align="center" colspan="2"></td>
-										</tr>
 									</tbody>
 								</table>
 								<div style="margin-top: 10px;"></div>
@@ -174,4 +183,21 @@
 
 
 </body>
+<!--<script type="text/javascript">
+$(document).ready(
+		function() {
+			var errorsLength = $("ul.errorMessage li").length;
+			var eMessenges = "";
+			for (var i = 0; i < errorsLength; i++) {
+				eMessenges = eMessenges
+						+ $("ul.errorMessage li:eq(" + i + ") span").html() + " ";
+			}
+			alert(errorsLenght);
+			if (errorsLength > 0) {
+				
+				$("div.alert.alert-error").html(eMessenges);
+			}
+			$("ul.errorMessage").remove();
+		});
+</script>-->
 </html>

@@ -12,7 +12,6 @@ import java.util.List;
 import java.util.Map.Entry;
 
 import org.apache.commons.beanutils.BeanUtils;
-import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -26,8 +25,8 @@ import org.springframework.util.Assert;
 /**
  * GenericHibernateDao
  * 
- * @author David Hsu
- * @version 2014/3/7
+ * @author Roderick
+ * @version 2014/11/7
  */
 public abstract class GenericHibernateDao<T extends GenericEntity> extends
 		GenericDao<T> {
@@ -100,7 +99,7 @@ public abstract class GenericHibernateDao<T extends GenericEntity> extends
 			dataCri.setFirstResult(pager.getOffset());
 			dataCri.setMaxResults(pager.getRecordPerPage());
 		} else {
-			ds = new DataSet<>();
+			ds = new DataSet<T>();
 		}
 
 		ds.setResults(dataCri.list());
@@ -109,14 +108,11 @@ public abstract class GenericHibernateDao<T extends GenericEntity> extends
 	}
 
 	@Override
-	public T save(T entity) throws Exception {
+	public T save(T entity) throws IllegalAccessException,
+			InvocationTargetException {
 		Assert.notNull(entity);
 		Serializable serNo = getSession().save(entity);
-		try {
-			BeanUtils.setProperty(entity, "serNo", serNo);
-		} catch (IllegalAccessException | InvocationTargetException e) {
-			log.error(ExceptionUtils.getStackTrace(e));
-		}
+		BeanUtils.setProperty(entity, "serNo", serNo);
 		return entity;
 	}
 

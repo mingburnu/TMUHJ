@@ -53,7 +53,7 @@
 	</package>
 
 	<package name="pageAction" namespace="/page" extends="global">
-		<action name="home" class="commonHomePageAction">
+		<action name="home" class="commonHomePageAction" method="entry">
 			<result name="success">/WEB-INF/jsp/index.jsp</result>
 		</action>
 		<action name="query" class="commonQueryPageAction">

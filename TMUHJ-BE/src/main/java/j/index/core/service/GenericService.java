@@ -29,6 +29,7 @@ public abstract class GenericService<T extends GenericEntity> implements
 	@Autowired
 	private AccountNumberDao userDao;
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public T save(T entity, AccountNumber user) throws Exception {
 		Assert.notNull(entity);
@@ -41,6 +42,7 @@ public abstract class GenericService<T extends GenericEntity> implements
 		return dbEntity;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public T getBySerNo(Long serNo) throws Exception {
 		Assert.notNull(serNo);
@@ -51,6 +53,7 @@ public abstract class GenericService<T extends GenericEntity> implements
 		return entity;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public T update(T entity, AccountNumber user) throws Exception {
 		Assert.notNull(entity);
@@ -63,6 +66,7 @@ public abstract class GenericService<T extends GenericEntity> implements
 		return dbEntity;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public T update(T entity, AccountNumber user, String... ignoreProperties)
 			throws Exception {
