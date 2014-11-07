@@ -1,11 +1,13 @@
 package j.index.module.security.web;
 
+import java.util.HashSet;
 import j.index.core.model.DataSet;
 import j.index.core.security.accountNumber.entity.AccountNumber;
 import j.index.core.security.accountNumber.service.AccountNumberService;
 import j.index.core.web.GenericWebAction;
 import j.index.module.apply.customer.entity.Customer;
 import j.index.module.apply.customer.service.CustomerService;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,13 +43,10 @@ public class AuthorizationAction extends GenericWebAction<AccountNumber> {
 
 	public void validateLogin() throws Exception {
 		boolean checkLogin = true;
-		if (StringUtils.isEmpty(user.getUserId())) {
-			addActionError("請輸入帳號");
-			checkLogin = false;
-		}
-
-		if (StringUtils.isEmpty(user.getUserPw())) {
-			addActionError("請輸入密碼");
+		if (StringUtils.isEmpty(user.getUserId())
+				|| StringUtils.isEmpty(user.getUserPw())) {
+			getRequest().setAttribute("idPwNull", "請輸入帳號和密碼");
+			addActionError("請輸入帳號和密碼");
 			checkLogin = false;
 		}
 
@@ -61,6 +60,7 @@ public class AuthorizationAction extends GenericWebAction<AccountNumber> {
 			}
 
 			if (!isValidUser) {
+				getRequest().setAttribute("error", "帳號或密碼不正確");
 				addActionError("帳號密碼錯誤，請重新輸入");
 			}
 		}
@@ -76,6 +76,7 @@ public class AuthorizationAction extends GenericWebAction<AccountNumber> {
 		try {
 			ds.setEntity(user);
 			ds = userService.getByRestrictions(ds);
+
 		} catch (Exception e) {
 			log.error(ExceptionUtils.getStackTrace(e));
 			throw new Exception(e);
@@ -87,7 +88,11 @@ public class AuthorizationAction extends GenericWebAction<AccountNumber> {
 						customerService.getBySerNo(ds.getResults().get(0)
 								.getCusSerNo()));
 
+		HashSet<String> allcUid=userService.getAllcUid();
+		
 		getSession().put(LOGIN, ds.getResults().get(0));
+		getRequest().setAttribute("allcUid", allcUid);
+
 		return INDEX;
 	}
 

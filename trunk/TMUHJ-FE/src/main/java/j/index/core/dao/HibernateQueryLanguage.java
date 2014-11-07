@@ -5,8 +5,8 @@ import java.util.Map;
 
 /**
  * HQL
- * @author David Hsu
- * @version 2014/3/12
+ * @author Roderick
+ * @version 2014/11/6
  */
 public class HibernateQueryLanguage implements IiiQueryLanguage {
 
@@ -17,7 +17,7 @@ public class HibernateQueryLanguage implements IiiQueryLanguage {
 
 	private String sql;
 	
-	private Map<String, Object> parameters = new HashMap<>();
+	private Map<String, Object> parameters = new HashMap<String, Object>();
 	
 	@Override
 	public String getSql() {

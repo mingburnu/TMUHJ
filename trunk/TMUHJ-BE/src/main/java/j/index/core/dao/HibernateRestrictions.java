@@ -32,8 +32,8 @@ public class HibernateRestrictions implements IiiRestrictions {
 	private SessionFactory sessionFactory;
 
 	public HibernateRestrictions() {
-		criterions = new ArrayList<>();
-		orders = new ArrayList<>();
+		criterions = new ArrayList<Criterion>();
+		orders = new ArrayList<Order>();
 	}
 
 	@Override
