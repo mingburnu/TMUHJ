@@ -45,12 +45,13 @@
 			return;
 
 		showLoading();
-		$(".content_group #content_" + currentPanel + " form").submit();
+		$("form#apply_accountNumber_list").submit();
 	}
 </script>
 </head>
 <body>
 	<%@include file="/WEB-INF/jsp/layout/header.jsp"%>
+	<%@include file="/WEB-INF/jsp/layout/menu.jsp"%>
 	<div id="contaner">
 		<div id="contaner_box" align="center">
 			<div style="width: 465px;">
@@ -63,7 +64,7 @@
 					</div>
 					<div class="content_group">
 						<div id="content_1">
-							<form method="GET" action="journal_query.action">
+							<s:form action="apply.accountNumber.list" namespace="/crud" method="get">
 								<table>
 
 									<tr>
@@ -79,24 +80,27 @@
 									<tr>
 										<td align="right">建立者</td>
 										<td><select name="entity.cUid">
-												<option value="">全部</option>
+												<option>全部</option>
 												<c:forEach var="item" items="${allcUid}" varStatus="status">
 													<option value="${item}">${item}</option>
 												</c:forEach>
 										</select></td>
 									</tr>
-
 								</table>
-
-							</form>
-
-							<!-- ${cUid}-->
+							</s:form>
+						</div>
+						<div class="content">
+							<div class="content" id="conditions"></div>
+							<div class="button_box" align="center">
+								<a class="button_02" href="javascript:reset();"><span>重設</span></a>&nbsp;
+								<a class="button_01" href="javascript:send();"><span>查詢</span></a>
+							</div>
 						</div>
 					</div>
 				</div>
 			</div>
 		</div>
 	</div>
-	<%@include file="/WEB-INF/jsp/layout/menu.jsp"%>
+
 </body>
 </html>

@@ -86,7 +86,6 @@
 			</result>
 			<result name="j-detail">/WEB-INF/jsp/module/apply/search/detail_c.jsp
 			</result>
-			<result name="impor">/create.jsp</result>
 		</action>
 	</package>
 
