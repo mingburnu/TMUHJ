@@ -1,8 +1,15 @@
 package j.index.core.security.accountNumber.service;
 
+import java.io.PrintWriter;
+import java.net.URI;
+import java.util.Enumeration;
+import java.util.List;
+
 import j.index.core.model.DataSet;
 import j.index.core.security.accountNumber.entity.AccountNumber;
 import j.index.core.web.GenericCRUDAction;
+import j.index.module.apply.customer.entity.Customer;
+import j.index.module.apply.customer.service.CustomerService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
@@ -25,6 +32,9 @@ public class AccountNumberAction extends GenericCRUDAction<AccountNumber> {
 	@Autowired
 	AccountNumberService userService;
 
+	@Autowired
+	CustomerService customerService;
+
 	@Override
 	public void validateSave() throws Exception {
 		// TODO Auto-generated method stub
@@ -45,32 +55,55 @@ public class AccountNumberAction extends GenericCRUDAction<AccountNumber> {
 
 	@Override
 	public String query() throws Exception {
-		// TODO Auto-generated method stub
-		return null;
+		if (getEntity().getSerNo() != null) {
+			AccountNumber user = userService.getBySerNo(getEntity().getSerNo());
+			setEntity(user);
+		}
+		return EDIT;
 	}
 
 	@Override
 	public String list() throws Exception {
-		DataSet<AccountNumber> ds = userService.getByRestrictions(initDataSet());
+		DataSet<AccountNumber> ds = userService
+				.getByRestrictions(initDataSet());
+		List<AccountNumber> results = ds.getResults();
+
+		for (int i = 0; i < results.size(); i++) {
+			results.get(i).setCustomer(
+					customerService.getBySerNo(results.get(i).getCusSerNo()));
+		}
+
+		ds.setResults(results);
+
 		setDs(ds);
 		return LIST;
 	}
 
 	@Override
 	public String save() throws Exception {
-		// TODO Auto-generated method stub
-		return null;
+		userService.save(getEntity(), getLoginUser());
+		return LIST;
 	}
 
 	@Override
 	public String update() throws Exception {
-		// TODO Auto-generated method stub
-		return null;
+
+		String uriReferer = new URI(getRequest().getHeader("referer"))
+				.getPath();
+
+		getRequest().setAttribute("uriReferer", uriReferer);
+		accountNumber = userService.update(getEntity(), getLoginUser(),
+				"userId","userPw");
+		setEntity(accountNumber);
+		getResponse().sendRedirect(uriReferer);
+		return LIST;
 	}
 
 	@Override
 	public String delete() throws Exception {
-		// TODO Auto-generated method stub
-		return null;
+		userService.deleteBySerNo(getEntity().getSerNo());
+		disableAllInput();
+		addActionMessage("檔案已刪除");
+		return DELETE;
 	}
 }

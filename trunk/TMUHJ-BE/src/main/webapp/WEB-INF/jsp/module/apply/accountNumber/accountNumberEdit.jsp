@@ -1,0 +1,145 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
+<%@ taglib prefix="s" uri="/struts-tags"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>修改使用者</title>
+<link id="style_main" rel="stylesheet" type="text/css"
+	href="<%=request.getContextPath()%>/resources/css/default.css" />
+<script type="text/javascript"
+	src="<%=request.getContextPath()%>/resources/js/jquery-1.4.2.js"></script>
+<script type="text/javascript"
+	src="<%=request.getContextPath()%>/resources/js/common.js"></script>
+<script type="text/javascript">
+	$(document).ready(function() {
+	});
+<%--function check() {
+		// 密碼檢核
+		var inputPasswdObj = $("#updateForm input[name='userinfo_passwd']");
+		if (trim(inputPasswdObj.val()).length == 0) {
+			myAlert("密碼不可空白！");
+			inputPasswdObj.focus();
+			return false;
+		}
+
+		return true;
+	}
+	function send() {
+		if (!check())
+			return;
+
+		// do update...
+		var argData = $('#updateForm').serialize();
+		ajaxPost({
+			url : "crud/apply.accountNumber.update.action",
+			data : argData,
+			success : function(msg) {
+				// myAlert(msg);
+				location.href = $("input[name='lastURL']").val();
+			},
+			failure : function(msg) {
+				myAlert(msg);
+			}
+		});
+	}
+	function showLeader(value) {
+		var jQueryObj = $("select[name='userinfo_parentId']");
+		if (value == '4') {
+			jQueryObj.show();
+			jQueryObj.removeAttr("disabled");
+		} else {
+			jQueryObj.hide();
+			jQueryObj.attr("disabled", "disabled");
+		}
+
+	}--%>
+	$(document).ready(
+			function() {
+				$("a.button_01").click(
+						function() {
+							$.post($("form#apply_accountNumber_update").attr(
+									"action"), $(
+									"form#apply_accountNumber_update")
+									.serialize(), function() {
+								$("form#apply_accountNumber_update").submit();
+							});
+						});
+			});
+</script>
+</head>
+
+<body>
+	<%@include file="/WEB-INF/jsp/layout/header.jsp"%>
+	<%@include file="/WEB-INF/jsp/layout/menu.jsp"%>
+	<s:hidden name="lastURL" />
+	<div id="contaner">
+		<div id="contaner_box">
+			<div class="pageTitle">修改使用者</div>
+			<div class="content_box">
+				<table cellspacing="0" cellpadding="0" class="input_form"
+					width="400">
+					<tr>
+						<td><s:form namespace="/crud"
+								action="apply.accountNumber.update">
+								<s:hidden name="entity.serNo" />
+								<table cellspacing="1" width="100%">
+									<tr>
+										<td align="right" width="40">用戶代碼</td>
+										<td align="left"><c:choose>
+												<c:when test="${empty entity.serNo}">
+													<input type="text" class="input_text" name="entity.userId" />
+												</c:when>
+												<c:otherwise>
+													<s:property value="entity.userId" />
+												</c:otherwise>
+											</c:choose></td>
+									</tr>
+									<c:choose>
+									<c:when test="${empty entity.serNo}">
+									<tr>
+										<td align="right">用戶密碼</td>
+										<td align="left"><input type="password"
+											class="input_text" name="entity.userPw"
+											value="<s:property value="entity.userPw"/>" /></td>
+									</tr>
+									</c:when>
+									</c:choose>
+									<tr>
+										<td align="right">用戶名稱</td>
+										<td align="left"><input type="text" class="input_text"
+											name="entity.userName"
+											value="<s:property value="entity.userName"/>" /></td>
+									</tr>
+									<tr>
+										<td align="right">用戶名稱</td>
+										<td align="left"><input type="text" class="input_text"
+											name="entity.cusSerNo"
+											value="<s:property value="entity.cusSerNo"/>" /></td>
+									</tr>
+								</table>
+							</s:form></td>
+					</tr>
+				</table>
+
+				<div class="button_box">
+
+
+
+					<c:choose>
+						<c:when test="${empty entity.serNo}">
+							<s:submit cssClass="button_02" action="apply.accountNumber.save"
+								value="新增" />
+						</c:when>
+					</c:choose>
+					<a class="button_02" href="<s:property value="lastURL"/>"><span>取消</span></a>
+					&nbsp; <a class="button_01"><span>送出</span></a>
+					<!-- <a class="button_01" href="javascript:send();"><span>送出</span></a> -->
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+</html>

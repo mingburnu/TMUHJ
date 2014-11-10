@@ -52,8 +52,7 @@
 	<%-- List區塊 --%>
 	<div id="contaner">
 		<div id="contaner_box">
-			<div>${uriReferer}</div>
-			<!--<s:form action="apply.accountNumber.delete" method="GET">-->
+			<!--<s:form action="apply.customer.delete" method="GET">-->
 			<!--<s:hidden name="p" />
 				<s:hidden name="sortBy" />
 				<s:hidden name="asc" />-->
@@ -62,13 +61,14 @@
 				<div class="content_box">
 					<!--列表上方區塊 start -->
 					<div class="table_browse_top">
-						<a class="button_02" href="crud/apply.accountNumber.query.action"><span>新增</span></a>
+						<a class="button_02" href="crud/apply.customer.query.action"><span>新增</span></a>
 					</div>
 					<!--列表上方區塊 end -->
 
 					<!--表格內容 start -->
 					<table width="100%" border="0" cellspacing="0" cellpadding="0"
 						class="table_browse">
+						<thead>
 						<tr>
 							<th class="th_first"><a name="sortable" id="id"><span>用戶代碼</span></a></th>
 							<th><a name="sortable" id="name"><span>用戶名稱</span></a></th>
@@ -77,24 +77,25 @@
 							<th width="80"><a name="sortable" id="role"><span>最後修改者</span></a></th>
 							<th width="100"><span>&nbsp;</span></th>
 						</tr>
+						</thead>
+						<tbody>
 						<c:forEach var="item" items="${ds.results}" varStatus="status">
 							<c:set var="editPage">
-								<s:url namespace="/crud" action="apply.accountNumber.query">
+								<s:url namespace="/crud" action="apply.customer.query">
 									<s:param name="entity.serNo">${item.serNo}</s:param>
 								</s:url>
 							</c:set>
 							<tr>
-								<td align="left" class="td_first" nowrap>${item.userId }</td>
-								<td align="left" nowrap>${item.customer.name }&nbsp;</td>
-								<td align="left" nowrap>${item.customer.contactUserName }&nbsp;</td>
+								<td align="left" class="td_first" nowrap>${item.engName }</td>
+								<td align="left" nowrap>${item.name }&nbsp;</td>
+								<td align="left" nowrap>${item.contactUserName }&nbsp;</td>
 								<td align="left" nowrap>${item.cUid }&nbsp;</td>
 								<td align="left" nowrap>${item.uUid }&nbsp;</td>
 								<td align="center" nowrap><a class="button_02"
-									href="${editPage}"><span>修改</span></a> <a class="button_01"
-									href="javascript:confirmDel('<s:property value="id"/>');"><span>刪除</span></a>
-								</td>
+									href="${editPage}"><span>修改</span></a></td>
 							</tr>
 						</c:forEach>
+						</tbody>
 					</table>
 					<!--表格內容 end -->
 
@@ -130,7 +131,7 @@
 		<tbody>
 			<c:forEach var="item" items="${ds.results}" varStatus="status">
 				<tr>
-					<td>${item.userId}</td>
+					
 				</tr>
 			</c:forEach>
 		</tbody>
