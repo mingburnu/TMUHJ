@@ -45,7 +45,7 @@
 			return;
 
 		showLoading();
-		$("form#apply_customer_list").submit();
+		$("form#apply_accountNumber_list").submit();
 	}
 </script>
 </head>
@@ -64,18 +64,18 @@
 					</div>
 					<div class="content_group">
 						<div id="content_1">
-							<s:form action="apply.customer.list" namespace="/crud" method="get">
+							<s:form action="apply.accountNumber.list" namespace="/crud" method="get">
 								<table>
 
 									<tr>
 										<td align="right">用戶代碼</td>
 										<td><input class="input_text" type="text"
-											name="entity.engName" /></td>
+											name="entity.userId" /></td>
 									</tr>
 									<tr>
 										<td align="right">用戶名稱</td>
 										<td><input class="input_text" type="text"
-											name="entity.name" /></td>
+											name="entity.userName" /></td>
 									</tr>
 									<tr>
 										<td align="right">建立者</td>
