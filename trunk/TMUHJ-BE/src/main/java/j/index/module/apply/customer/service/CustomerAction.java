@@ -5,6 +5,7 @@ import j.index.core.web.GenericCRUDAction;
 import j.index.module.apply.customer.entity.Customer;
 import j.index.module.apply.resourcesUnion.service.ResourcesUnionService;
 
+import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
@@ -14,6 +15,8 @@ import org.springframework.stereotype.Controller;
 @SuppressWarnings("serial")
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class CustomerAction extends GenericCRUDAction<Customer> {
+
+	private Long[] checkItem;
 
 	@Autowired
 	private Customer customer;
@@ -73,8 +76,32 @@ public class CustomerAction extends GenericCRUDAction<Customer> {
 
 	@Override
 	public String delete() throws Exception {
-		// TODO Auto-generated method stub
-		return null;
+		int i = 0;
+		while (i < checkItem.length) {
+			if (!checkItem[i].equals(null)) {
+				customerService.deleteBySerNo(customerService.getBySerNo(
+						checkItem[i]).getSerNo());
+			
+
+			System.out.println("sserNo= " + checkItem[i]);}
+			i++;
+		}
+
+		return LIST;
 	}
 
+	/**
+	 * @return the checkItem
+	 */
+	public Long[] getCheckItem() {
+		return checkItem;
+	}
+
+	/**
+	 * @param checkItem
+	 *            the checkItem to set
+	 */
+	public void setCheckItem(Long[] checkItem) {
+		this.checkItem = checkItem;
+	}
 }
