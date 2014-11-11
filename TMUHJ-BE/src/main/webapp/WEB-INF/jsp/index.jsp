@@ -96,6 +96,7 @@
 								<a class="button_01" href="javascript:send();"><span>查詢</span></a>
 							</div>
 						</div>
+						<div>${uriReferer }</div>
 					</div>
 				</div>
 			</div>
