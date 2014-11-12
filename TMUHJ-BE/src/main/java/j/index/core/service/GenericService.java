@@ -103,20 +103,19 @@ public abstract class GenericService<T extends GenericEntity> implements
 	 * @throws Exception
 	 */
 	public void makeUserInfo(List<T> entitys) throws Exception {
-		for (T entity : entitys) {
-			if (entity.getCreatedBy() != null
-					&& entity.getLastModifiedBy() != null) {
-				AccountNumber user = getUserInfo(entity.getCreatedBy());
-				entity.setCreatedUser(user);
-
-				if (entity.getCreatedBy().equals(entity.getLastModifiedBy())) {
-					entity.setLastModifiedUser(user);
-				} else {
-					entity.setLastModifiedUser(getUserInfo(entity
-							.getLastModifiedBy()));
-				}
-			}
-		}
+		// for (T entity : entitys) {
+		// if (entity != null) {
+		// AccountNumber user = getUserInfo(entity.getCreatedBy());
+		// entity.setCreatedUser(user);
+		//
+		// if (entity.getCreatedBy().equals(entity.getLastModifiedBy())) {
+		// entity.setLastModifiedUser(user);
+		// } else {
+		// entity.setLastModifiedUser(getUserInfo(entity
+		// .getLastModifiedBy()));
+		// }
+		// }
+		// }
 	}
 
 	/**
