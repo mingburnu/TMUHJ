@@ -5,7 +5,6 @@ import j.index.core.web.GenericCRUDAction;
 import j.index.module.apply.customer.entity.Customer;
 import j.index.module.apply.resourcesUnion.service.ResourcesUnionService;
 
-import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
@@ -63,14 +62,23 @@ public class CustomerAction extends GenericCRUDAction<Customer> {
 
 	@Override
 	public String save() throws Exception {
-		// TODO Auto-generated method stub
-		return null;
+		customer=getEntity();
+		customer=customerService.save(getEntity(), getLoginUser());
+		setEntity(customer);
+		System.out.println("ssserNo:"+ customer.getSerNo());
+		DataSet<Customer> ds = customerService.getEditedData(initDataSet(),
+				customer.getSerNo());
+		setDs(ds);
+		return LIST;
 	}
 
 	@Override
 	public String update() throws Exception {
 		customer = customerService.update(getEntity(), getLoginUser());
 		setEntity(customer);
+		DataSet<Customer> ds = customerService.getEditedData(initDataSet(),
+				customer.getSerNo());
+		setDs(ds);
 		return LIST;
 	}
 
@@ -78,16 +86,15 @@ public class CustomerAction extends GenericCRUDAction<Customer> {
 	public String delete() throws Exception {
 		int i = 0;
 		while (i < checkItem.length) {
-			if (!checkItem[i].equals(null)) {
-				customerService.deleteBySerNo(customerService.getBySerNo(
-						checkItem[i]).getSerNo());
-			
-
-			System.out.println("sserNo= " + checkItem[i]);}
+			if (checkItem[i] > 0) {
+				if (customerService.getBySerNo(checkItem[i]) != null) {
+					customerService.deleteBySerNo(checkItem[i]);
+				}
+				System.out.println("serNos= " + checkItem[i]);
+			}
 			i++;
 		}
-
-		return LIST;
+		return INPUT;
 	}
 
 	/**

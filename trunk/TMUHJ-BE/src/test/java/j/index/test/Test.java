@@ -85,5 +85,7 @@ public class Test {
 			sql[i] = sql[i].replace(",   '		", ",   '");
 			// System.out.println(sql[i]);
 		}
+		
+		System.out.println(System.getProperty("java.version"));
 	}
 }

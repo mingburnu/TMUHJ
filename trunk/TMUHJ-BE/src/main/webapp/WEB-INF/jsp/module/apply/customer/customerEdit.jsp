@@ -60,11 +60,23 @@
 			function() {
 				$("a.button_01").click(
 						function() {
-							$.post($("form#apply_customer_update").attr(
-									"action"), $("form#apply_customer_update")
-									.serialize(), function() {
-								$("form#apply_customer_update").submit();
-							});
+							var formId = $("form").attr("id");
+							if (formId == "apply_customer_update") {
+								$.post($("form#apply_customer_update").attr(
+										"action"), $(
+										"form#apply_customer_update")
+										.serialize(), function() {
+									$("form#apply_customer_update").submit();
+								});
+							} else {
+								$.post($("form#apply_customer_save").attr(
+										"action"),
+										$("form#apply_customer_save")
+												.serialize(), function() {
+											$("form#apply_customer_save")
+													.submit();
+										});
+							}
 						});
 			});
 </script>
@@ -76,42 +88,86 @@
 	<s:hidden name="lastURL" />
 	<div id="contaner">
 		<div id="contaner_box">
-			<div class="pageTitle">修改使用者</div>
+			<c:choose>
+				<c:when test="${empty entity.serNo}">
+					<div class="pageTitle">新增用戶</div>
+				</c:when>
+				<c:otherwise>
+					<div class="pageTitle">修改用戶</div>
+				</c:otherwise>
+			</c:choose>
 			<div class="content_box">
 				<table cellspacing="0" cellpadding="0" class="input_form"
 					width="400">
 					<tr>
-						<td><s:form namespace="/crud" action="apply.customer.update">
-								<s:hidden name="entity.serNo" />
-								<table cellspacing="1" width="100%">
-									<tr>
-										<td align="right" width="40">用戶代碼</td>
-										<td align="left"><s:textfield name="entity.engName"
-												cssClass="input_text" /></td>
-									</tr>
+						<td><c:choose>
+								<c:when test="${empty entity.serNo}">
+									<s:form namespace="/crud" action="apply.customer.save">
+										<s:hidden name="entity.serNo" />
+										<table cellspacing="1" width="100%">
+											<tr>
+												<td align="right" width="40">用戶代碼</td>
+												<td align="left"><s:textfield name="entity.engName"
+														cssClass="input_text" /></td>
+											</tr>
 
-									<tr>
-										<td align="right">用戶名稱</td>
-										<td align="left"><s:textfield name="entity.name"
-												cssClass="input_text" /></td>
-									</tr>
-									<tr>
-										<td align="right">聯絡人</td>
-										<td align="left"><s:textfield
-												name="entity.contactUserName" cssClass="input_text" /></td>
-									</tr>
-									<tr>
-										<td align="right">電話</td>
-										<td align="left"><s:textfield name="entity.tel"
-												cssClass="input_text" /></td>
-									</tr>
-									<tr>
-										<td align="right">Email</td>
-										<td align="left"><s:textfield name="entity.tel"
-												cssClass="input_text" /></td>
-									</tr>
-								</table>
-							</s:form></td>
+											<tr>
+												<td align="right">用戶名稱</td>
+												<td align="left"><s:textfield name="entity.name"
+														cssClass="input_text" /></td>
+											</tr>
+											<tr>
+												<td align="right">聯絡人</td>
+												<td align="left"><s:textfield
+														name="entity.contactUserName" cssClass="input_text" /></td>
+											</tr>
+											<tr>
+												<td align="right">電話</td>
+												<td align="left"><s:textfield name="entity.tel"
+														cssClass="input_text" /></td>
+											</tr>
+											<tr>
+												<td align="right">Email</td>
+												<td align="left"><s:textfield name="entity.tel"
+														cssClass="input_text" /></td>
+											</tr>
+										</table>
+									</s:form>
+								</c:when>
+								<c:otherwise>
+									<s:form namespace="/crud" action="apply.customer.update">
+										<s:hidden name="entity.serNo" />
+										<table cellspacing="1" width="100%">
+											<tr>
+												<td align="right" width="40">用戶代碼</td>
+												<td align="left"><s:textfield name="entity.engName"
+														cssClass="input_text" /></td>
+											</tr>
+
+											<tr>
+												<td align="right">用戶名稱</td>
+												<td align="left"><s:textfield name="entity.name"
+														cssClass="input_text" /></td>
+											</tr>
+											<tr>
+												<td align="right">聯絡人</td>
+												<td align="left"><s:textfield
+														name="entity.contactUserName" cssClass="input_text" /></td>
+											</tr>
+											<tr>
+												<td align="right">電話</td>
+												<td align="left"><s:textfield name="entity.tel"
+														cssClass="input_text" /></td>
+											</tr>
+											<tr>
+												<td align="right">Email</td>
+												<td align="left"><s:textfield name="entity.tel"
+														cssClass="input_text" /></td>
+											</tr>
+										</table>
+									</s:form>
+								</c:otherwise>
+							</c:choose></td>
 					</tr>
 				</table>
 
@@ -119,12 +175,12 @@
 
 
 
-					<c:choose>
+					<%--<c:choose>
 						<c:when test="${empty entity.serNo}">
 							<s:submit cssClass="button_02" action="apply.customer.save"
 								value="新增" />
 						</c:when>
-					</c:choose>
+					</c:choose>--%>
 					<a class="button_02" href="<s:property value="lastURL"/>"><span>取消</span></a>
 					&nbsp; <a class="button_01"><span>送出</span></a>
 					<!-- <a class="button_01" href="javascript:send();"><span>送出</span></a> -->

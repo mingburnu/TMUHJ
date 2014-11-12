@@ -57,4 +57,14 @@ public class CustomerService extends GenericService<Customer> {
 		// TODO Auto-generated method stub
 		return dao;
 	}
+
+	public DataSet<Customer> getEditedData(DataSet<Customer> ds, long serNo)
+			throws Exception {
+		Assert.notNull(ds);
+		Assert.notNull(ds.getEntity());
+
+		IiiRestrictions restrictions = IiiBeanFactory.getIiiRestrictions();
+		restrictions.eq("serNo", serNo);
+		return dao.findByRestrictions(restrictions, ds);
+	}
 }

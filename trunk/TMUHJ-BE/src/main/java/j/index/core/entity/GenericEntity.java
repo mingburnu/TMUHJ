@@ -46,6 +46,7 @@ public abstract class GenericEntity implements Entity {
 	private Long serNo;
 
 	/** The created by. */
+	
 	@Transient
 	private Long createdBy;
 
