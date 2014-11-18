@@ -1,14 +1,10 @@
 package j.index.core.security.accountNumber.service;
 
-import java.io.PrintWriter;
-import java.net.URI;
-import java.util.Enumeration;
 import java.util.List;
 
 import j.index.core.model.DataSet;
 import j.index.core.security.accountNumber.entity.AccountNumber;
 import j.index.core.web.GenericCRUDAction;
-import j.index.module.apply.customer.entity.Customer;
 import j.index.module.apply.customer.service.CustomerService;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -88,14 +84,15 @@ public class AccountNumberAction extends GenericCRUDAction<AccountNumber> {
 	@Override
 	public String update() throws Exception {
 
-		String uriReferer = new URI(getRequest().getHeader("referer"))
-				.getPath();
+//		String uriReferer = new URI(getRequest().getHeader("referer"))
+//				.getPath();
 
-		getRequest().setAttribute("uriReferer", uriReferer);
+		
 		accountNumber = userService.update(getEntity(), getLoginUser(),
 				"userId","userPw");
 		setEntity(accountNumber);
-		getResponse().sendRedirect(uriReferer);
+		
+		getResponse().sendRedirect(getRequest().getHeader("referer"));
 		return LIST;
 	}
 

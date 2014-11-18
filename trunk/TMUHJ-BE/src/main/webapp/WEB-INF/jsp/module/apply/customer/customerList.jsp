@@ -26,6 +26,7 @@
 <script type="text/javascript">
 	$(document).ready(function() {
 		//registerListForm("listForm", true); // 含排序的樣式調整
+		var lasturl=location.href;
 	});
 
 	function jumpPage() {
@@ -62,6 +63,7 @@
 	<div id="contaner">
 		<div id="contaner_box">
 			<div class="pageTitle">查詢資料列表</div>
+			<div>${last }</div>
 			<div style="width: 700px;">
 				<div class="content_box">
 					<!--列表上方區塊 start -->
@@ -92,6 +94,7 @@
 									<c:set var="editPage">
 										<s:url namespace="/crud" action="apply.customer.query">
 											<s:param name="entity.serNo">${item.serNo}</s:param>
+											<s:param name="lastUrl"></s:param>
 										</s:url>
 									</c:set>
 									<tr>
