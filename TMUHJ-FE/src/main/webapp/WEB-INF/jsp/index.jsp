@@ -6,6 +6,7 @@
 <!DOCTYPE HTML>
 <html>
 <head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>跨司署電子資料庫索引查詢平台</title>
 <script type="text/javascript"
 	src="<c:url value = '/'/>resources/js/jquery-1.7.2.min.js"></script>

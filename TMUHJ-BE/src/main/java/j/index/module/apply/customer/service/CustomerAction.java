@@ -17,6 +17,8 @@ public class CustomerAction extends GenericCRUDAction<Customer> {
 
 	private Long[] checkItem;
 
+	private String lastUrl;
+	
 	@Autowired
 	private Customer customer;
 
@@ -50,6 +52,7 @@ public class CustomerAction extends GenericCRUDAction<Customer> {
 			customer = customerService.getBySerNo(getEntity().getSerNo());
 			setEntity(customer);
 		}
+		System.out.println("lastUrl: "+lastUrl);
 		return EDIT;
 	}
 
@@ -76,9 +79,14 @@ public class CustomerAction extends GenericCRUDAction<Customer> {
 	public String update() throws Exception {
 		customer = customerService.update(getEntity(), getLoginUser());
 		setEntity(customer);
-		DataSet<Customer> ds = customerService.getEditedData(initDataSet(),
-				customer.getSerNo());
-		setDs(ds);
+		
+		System.out.println("java version"+System.getProperty("java.version"));
+		System.out.println("lasturl: "+getRequest().getAttribute("javax.servlet.forward.request_uri")  );
+		getRequest().setAttribute("last", getRequest().getAttribute("javax.servlet.forward.request_uri"));
+		
+		//		DataSet<Customer> ds = customerService.getEditedData(initDataSet(),
+//				customer.getSerNo());
+//		setDs(ds);
 		return LIST;
 	}
 
@@ -111,4 +119,19 @@ public class CustomerAction extends GenericCRUDAction<Customer> {
 	public void setCheckItem(Long[] checkItem) {
 		this.checkItem = checkItem;
 	}
+
+	/**
+	 * @return the lastUrl
+	 */
+	public String getLastUrl() {
+		return lastUrl;
+	}
+
+	/**
+	 * @param lastUrl the lastUrl to set
+	 */
+	public void setLastUrl(String lastUrl) {
+		this.lastUrl = lastUrl;
+	}
+	
 }

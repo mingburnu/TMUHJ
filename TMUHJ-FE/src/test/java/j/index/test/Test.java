@@ -85,5 +85,8 @@ public class Test {
 			sql[i] = sql[i].replace(",   '		", ",   '");
 			// System.out.println(sql[i]);
 		}
+		String str="醫院";
+		str=new String(str.getBytes("BIG5"),"UTF-8");
+		System.out.println(str);
 	}
 }
