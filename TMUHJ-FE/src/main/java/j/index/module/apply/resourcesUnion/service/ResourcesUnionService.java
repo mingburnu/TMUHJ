@@ -2,6 +2,7 @@ package j.index.module.apply.resourcesUnion.service;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 import j.index.core.dao.GenericDaoSerNo;
 import j.index.core.dao.IiiRestrictions;
@@ -63,6 +64,20 @@ public class ResourcesUnionService extends GenericServiceSerNo<ResourcesUnion> {
 		return totalList;
 	}
 
+	public Integer countTotalDb(long cusSerNo) {
+		Session session = sessionFactory.getCurrentSession();
+
+		Criteria criteria = session.createCriteria(ResourcesUnion.class);
+		LogicalExpression andOperator = Restrictions.and(
+				Restrictions.eq("cusSerNo", cusSerNo),
+				Restrictions.gt("datSerNo", 0L));
+		criteria.add(andOperator);
+		List<?> list = criteria.list();
+		int count=list.size();
+		System.out.println("total Db: " + count);
+		return count;
+	}
+
 	public ArrayList<ResourcesUnion> totalJournal(long cusSerNo) {
 		Session session = sessionFactory.getCurrentSession();
 		ArrayList<ResourcesUnion> totalList = new ArrayList<ResourcesUnion>();
@@ -82,6 +97,20 @@ public class ResourcesUnionService extends GenericServiceSerNo<ResourcesUnion> {
 		return totalList;
 	}
 
+	public Integer countTotalJournal(long cusSerNo) {
+		Session session = sessionFactory.getCurrentSession();
+
+		Criteria criteria = session.createCriteria(ResourcesUnion.class);
+		LogicalExpression andOperator = Restrictions.and(
+				Restrictions.eq("cusSerNo", cusSerNo),
+				Restrictions.gt("jouSerNo", 0L));
+		criteria.add(andOperator);
+		List<?> list = criteria.list();
+		int count=list.size();
+		System.out.println("total Journal: " + count);
+		return count;
+	}
+
 	public ArrayList<ResourcesUnion> totalEbook(long cusSerNo) {
 		Session session = sessionFactory.getCurrentSession();
 		ArrayList<ResourcesUnion> totalList = new ArrayList<ResourcesUnion>();
@@ -99,5 +128,19 @@ public class ResourcesUnionService extends GenericServiceSerNo<ResourcesUnion> {
 		}
 
 		return totalList;
+	}
+
+	public Integer countTotalEbook(long cusSerNo) {
+		Session session = sessionFactory.getCurrentSession();
+
+		Criteria criteria = session.createCriteria(ResourcesUnion.class);
+		LogicalExpression andOperator = Restrictions.and(
+				Restrictions.eq("cusSerNo", cusSerNo),
+				Restrictions.gt("ebkSerNo", 0L));
+		criteria.add(andOperator);
+		List<?> list = criteria.list();
+		int count=list.size();
+		System.out.println("total Ebook: " + count);
+		return count;
 	}
 }

@@ -52,12 +52,12 @@ public class CustomerAction extends GenericCRUDAction<Customer> {
 		List<Customer> results = ds.getResults();
 		for (int i = 0; i < results.size(); i++) {
 			customer = results.get(i);
-			customer.setDbAmount(resourcesUnionService.totalDb(
-					customer.getSerNo()).size());
-			customer.setEbookAmount(resourcesUnionService.totalEbook(
-					customer.getSerNo()).size());
-			customer.setJournalAount(resourcesUnionService.totalJournal(
-					customer.getSerNo()).size());
+			customer.setDbAmount(resourcesUnionService.countTotalDb(customer
+					.getSerNo()));
+			customer.setEbookAmount(resourcesUnionService
+					.countTotalEbook(customer.getSerNo()));
+			customer.setJournalAount(resourcesUnionService
+					.countTotalJournal(customer.getSerNo()));
 			results.remove(i);
 			results.add(i, customer);
 		}
@@ -91,5 +91,5 @@ public class CustomerAction extends GenericCRUDAction<Customer> {
 		// TODO Auto-generated method stub
 		return null;
 	}
-	
+
 }
