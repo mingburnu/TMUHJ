@@ -1,7 +1,7 @@
 package j.index.module.apply.database.service;
 
 import j.index.core.model.DataSet;
-import j.index.core.web.GenericCRUDAction;
+import j.index.core.web.GenericCRUDActionFull;
 import j.index.module.apply.database.entity.Database;
 import j.index.module.apply.resourcesUnion.service.ResourcesUnionService;
 
@@ -13,7 +13,7 @@ import org.springframework.stereotype.Controller;
 @Controller
 @SuppressWarnings("serial")
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-public class DatabaseAction extends GenericCRUDAction<Database> {
+public class DatabaseAction extends GenericCRUDActionFull<Database> {
 
 	@Autowired
 	private Database database;

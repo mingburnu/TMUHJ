@@ -3,7 +3,7 @@ package j.index.module.apply.customer.service;
 import java.util.List;
 
 import j.index.core.model.DataSet;
-import j.index.core.web.GenericCRUDAction;
+import j.index.core.web.GenericCRUDActionFull;
 import j.index.module.apply.customer.entity.Customer;
 import j.index.module.apply.resourcesUnion.service.ResourcesUnionService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +14,7 @@ import org.springframework.stereotype.Controller;
 @Controller
 @SuppressWarnings("serial")
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-public class CustomerAction extends GenericCRUDAction<Customer> {
+public class CustomerAction extends GenericCRUDActionFull<Customer> {
 
 	@Autowired
 	private Customer customer;

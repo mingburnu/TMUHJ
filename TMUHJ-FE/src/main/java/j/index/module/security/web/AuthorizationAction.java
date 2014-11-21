@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import j.index.core.model.DataSet;
 import j.index.core.security.accountNumber.entity.AccountNumber;
 import j.index.core.security.accountNumber.service.AccountNumberService;
-import j.index.core.web.GenericWebAction;
+import j.index.core.web.GenericWebActionFull;
 import j.index.module.apply.customer.entity.Customer;
 import j.index.module.apply.customer.service.CustomerService;
 import j.index.module.apply.ipRange.entity.IpRange;
@@ -27,7 +27,7 @@ import org.springframework.stereotype.Controller;
 @Controller
 @SuppressWarnings("serial")
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-public class AuthorizationAction extends GenericWebAction<AccountNumber> {
+public class AuthorizationAction extends GenericWebActionFull<AccountNumber> {
 
 	@Autowired
 	private AccountNumberService userService;

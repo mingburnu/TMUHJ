@@ -1,6 +1,6 @@
 package j.index.module.apply.ipRange.service;
 
-import j.index.core.web.GenericCRUDAction;
+import j.index.core.web.GenericCRUDActionFull;
 import j.index.module.apply.ipRange.entity.IpRange;
 
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
@@ -10,7 +10,7 @@ import org.springframework.stereotype.Controller;
 @Controller
 @SuppressWarnings("serial")
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-public class IpRangeAction extends GenericCRUDAction<IpRange>{
+public class IpRangeAction extends GenericCRUDActionFull<IpRange>{
 
 	@Override
 	public void validateSave() throws Exception {

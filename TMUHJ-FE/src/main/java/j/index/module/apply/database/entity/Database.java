@@ -1,6 +1,6 @@
 package j.index.module.apply.database.entity;
 
-import j.index.core.entity.GenericEntity;
+import j.index.core.entity.GenericEntityFull;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -13,7 +13,7 @@ import org.springframework.context.annotation.Scope;
 @Entity
 @Table(name = "db")
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-public class Database extends GenericEntity {
+public class Database extends GenericEntityFull {
 
 	/**
 	 * 

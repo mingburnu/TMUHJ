@@ -4,7 +4,7 @@ import j.index.core.dao.GenericHibernateDaoSerNo;
 import j.index.core.entity.GenericEntitySerNo;
 
 /**
- * CECJ03Dao
+ * ModuleDao
  * 
  * @author Roderick
  * @version 2014/10/15

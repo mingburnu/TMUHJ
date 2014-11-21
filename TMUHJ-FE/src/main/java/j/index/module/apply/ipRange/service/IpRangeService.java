@@ -3,10 +3,10 @@ package j.index.module.apply.ipRange.service;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-import j.index.core.dao.GenericDao;
+import j.index.core.dao.GenericDaoFull;
 import j.index.core.dao.IiiRestrictions;
 import j.index.core.model.DataSet;
-import j.index.core.service.GenericService;
+import j.index.core.service.GenericServiceFull;
 import j.index.core.util.IiiBeanFactory;
 import j.index.module.apply.ipRange.entity.IpRange;
 import j.index.module.apply.ipRange.entity.IpRangeDao;
@@ -19,7 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
 @Service
-public class IpRangeService extends GenericService<IpRange> {
+public class IpRangeService extends GenericServiceFull<IpRange> {
 
 	@Autowired
 	private SessionFactory sessionFactory;
@@ -38,7 +38,7 @@ public class IpRangeService extends GenericService<IpRange> {
 	}
 
 	@Override
-	protected GenericDao<IpRange> getDao() {
+	protected GenericDaoFull<IpRange> getDao() {
 		// TODO Auto-generated method stub
 		return dao;
 	}

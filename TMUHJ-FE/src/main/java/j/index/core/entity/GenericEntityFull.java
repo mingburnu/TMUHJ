@@ -28,7 +28,7 @@ import org.slf4j.LoggerFactory;
  * 
  */
 @MappedSuperclass
-public abstract class GenericEntity implements Entity {
+public abstract class GenericEntityFull implements Entity {
 
 	/**
 	 * 
@@ -46,7 +46,6 @@ public abstract class GenericEntity implements Entity {
 	private Long serNo;
 
 	/** The created by. */
-	
 	@Transient
 	private Long createdBy;
 
@@ -290,7 +289,7 @@ public abstract class GenericEntity implements Entity {
 	 * @param sysStatus
 	 *            the sys status
 	 */
-	public <T extends GenericEntity> void initUpdate(T entity) {
+	public <T extends GenericEntityFull> void initUpdate(T entity) {
 		this.setLastModifiedBy(entity.getLastModifiedBy());
 		this.setuDTime(new LocalDateTime());
 	}

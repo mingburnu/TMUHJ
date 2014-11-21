@@ -3,11 +3,11 @@ package j.index.module.apply.ebook.service;
 import java.util.ArrayList;
 import javax.servlet.http.HttpServletRequest;
 
-import j.index.core.dao.GenericDao;
+import j.index.core.dao.GenericDaoFull;
 import j.index.core.dao.IiiRestrictions;
 import j.index.core.model.DataSet;
 import j.index.core.model.Pager;
-import j.index.core.service.GenericService;
+import j.index.core.service.GenericServiceFull;
 import j.index.core.util.IiiBeanFactory;
 import j.index.module.apply.ebook.entity.Ebook;
 import j.index.module.apply.ebook.entity.EbookDao;
@@ -23,7 +23,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
 @Service
-public class EbookService extends GenericService<Ebook> {
+public class EbookService extends GenericServiceFull<Ebook> {
 	@Autowired
 	private SessionFactory sessionFactory;
 
@@ -96,7 +96,7 @@ public class EbookService extends GenericService<Ebook> {
 	}
 
 	@Override
-	protected GenericDao<Ebook> getDao() {
+	protected GenericDaoFull<Ebook> getDao() {
 		// TODO Auto-generated method stub
 		return dao;
 	}

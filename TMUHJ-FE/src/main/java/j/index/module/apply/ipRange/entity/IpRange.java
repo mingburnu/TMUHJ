@@ -1,6 +1,6 @@
 package j.index.module.apply.ipRange.entity;
 
-import j.index.core.entity.GenericEntity;
+import j.index.core.entity.GenericEntityFull;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
@@ -10,7 +10,7 @@ import org.springframework.context.annotation.Scope;
 @Entity
 @Table(name = "ip_range")
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-public class IpRange extends GenericEntity {
+public class IpRange extends GenericEntityFull {
 
 	/**
 	 * 

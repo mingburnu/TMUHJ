@@ -1,6 +1,6 @@
 package j.index.module.apply.resourcesBuyers.entity;
 
-import j.index.core.entity.GenericEntity;
+import j.index.core.entity.GenericEntityFull;
 import j.index.core.enums.RCategory;
 import j.index.core.enums.RType;
 
@@ -16,7 +16,7 @@ import org.springframework.context.annotation.Scope;
 @Entity
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 @Table(name = "resourcesBuyers")
-public class ResourcesBuyers extends GenericEntity {
+public class ResourcesBuyers extends GenericEntityFull {
 
 	/**
 	 * 

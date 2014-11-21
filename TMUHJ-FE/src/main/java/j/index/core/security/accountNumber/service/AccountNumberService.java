@@ -1,11 +1,11 @@
 package j.index.core.security.accountNumber.service;
 
-import j.index.core.dao.GenericDao;
+import j.index.core.dao.GenericDaoFull;
 import j.index.core.dao.IiiRestrictions;
 import j.index.core.model.DataSet;
 import j.index.core.security.accountNumber.entity.AccountNumber;
 import j.index.core.security.accountNumber.entity.AccountNumberDao;
-import j.index.core.service.GenericService;
+import j.index.core.service.GenericServiceFull;
 import j.index.core.util.EncryptorUtil;
 import j.index.core.util.IiiBeanFactory;
 
@@ -25,13 +25,13 @@ import org.springframework.util.Assert;
  * @version 2014/9/30
  */
 @Service
-public class AccountNumberService extends GenericService<AccountNumber> {
+public class AccountNumberService extends GenericServiceFull<AccountNumber> {
 
 	@Autowired
 	private AccountNumberDao dao;
 
 	@Override
-	protected GenericDao<AccountNumber> getDao() {
+	protected GenericDaoFull<AccountNumber> getDao() {
 		return dao;
 	}
 

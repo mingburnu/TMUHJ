@@ -1,6 +1,6 @@
 package j.index.module.apply.ebook.entity;
 
-import j.index.core.entity.GenericEntity;
+import j.index.core.entity.GenericEntityFull;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -12,7 +12,7 @@ import org.springframework.context.annotation.Scope;
 @Entity
 @Table(name = "ebook")
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-public class Ebook extends GenericEntity {
+public class Ebook extends GenericEntityFull {
 	/**
 	 * 
 	 */

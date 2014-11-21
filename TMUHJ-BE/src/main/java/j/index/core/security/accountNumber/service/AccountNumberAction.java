@@ -4,7 +4,7 @@ import java.util.List;
 
 import j.index.core.model.DataSet;
 import j.index.core.security.accountNumber.entity.AccountNumber;
-import j.index.core.web.GenericCRUDAction;
+import j.index.core.web.GenericCRUDActionFull;
 import j.index.module.apply.customer.service.CustomerService;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +21,7 @@ import org.springframework.stereotype.Controller;
 @Controller
 @SuppressWarnings("serial")
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-public class AccountNumberAction extends GenericCRUDAction<AccountNumber> {
+public class AccountNumberAction extends GenericCRUDActionFull<AccountNumber> {
 	@Autowired
 	AccountNumber accountNumber;
 

@@ -9,17 +9,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
-import j.index.core.dao.GenericDao;
+import j.index.core.dao.GenericDaoFull;
 import j.index.core.dao.IiiRestrictions;
 import j.index.core.model.DataSet;
 import j.index.core.model.Pager;
-import j.index.core.service.GenericService;
+import j.index.core.service.GenericServiceFull;
 import j.index.core.util.IiiBeanFactory;
 import j.index.module.apply.customer.entity.Customer;
 import j.index.module.apply.customer.entity.CustomerDao;
 
 @Service
-public class CustomerService extends GenericService<Customer> {
+public class CustomerService extends GenericServiceFull<Customer> {
 	@Autowired
 	private SessionFactory sessionFactory;
 
@@ -87,7 +87,7 @@ public class CustomerService extends GenericService<Customer> {
 	}
 
 	@Override
-	protected GenericDao<Customer> getDao() {
+	protected GenericDaoFull<Customer> getDao() {
 		// TODO Auto-generated method stub
 		return dao;
 	}

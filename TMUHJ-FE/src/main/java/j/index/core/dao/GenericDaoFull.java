@@ -1,6 +1,6 @@
 package j.index.core.dao;
 
-import j.index.core.entity.GenericEntity;
+import j.index.core.entity.GenericEntityFull;
 
 import org.apache.log4j.Logger;
 
@@ -9,7 +9,7 @@ import org.apache.log4j.Logger;
  * @author Roderick
  * @version 2014/9/29
  */
-public abstract class GenericDao<T extends GenericEntity> implements Dao<T> {
+public abstract class GenericDaoFull<T extends GenericEntityFull> implements Dao<T> {
 	
 	protected final transient Logger log = Logger.getLogger(getClass());
 

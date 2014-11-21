@@ -2,9 +2,9 @@ package j.index.module.apply.ebook.entity;
 
 import org.springframework.stereotype.Repository;
 
-import j.index.module.commons.dao.ModuleDao;
+import j.index.module.commons.dao.ModuleDaoFull;
 
 @Repository
-public class EbookDao extends ModuleDao<Ebook> {
+public class EbookDao extends ModuleDaoFull<Ebook> {
 
 }

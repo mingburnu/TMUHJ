@@ -1,9 +1,9 @@
 package j.index.module.apply.resourcesBuyers.service;
 
-import j.index.core.dao.GenericDao;
+import j.index.core.dao.GenericDaoFull;
 import j.index.core.dao.IiiRestrictions;
 import j.index.core.model.DataSet;
-import j.index.core.service.GenericService;
+import j.index.core.service.GenericServiceFull;
 import j.index.core.util.IiiBeanFactory;
 import j.index.module.apply.resourcesBuyers.entity.ResourcesBuyers;
 import j.index.module.apply.resourcesBuyers.entity.ResourcesBuyersDao;
@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
 @Service
-public class ResourcesBuyersService extends GenericService<ResourcesBuyers> {
+public class ResourcesBuyersService extends GenericServiceFull<ResourcesBuyers> {
 	@Autowired
 	private ResourcesBuyersDao dao;
 
@@ -28,7 +28,7 @@ public class ResourcesBuyersService extends GenericService<ResourcesBuyers> {
 	}
 
 	@Override
-	protected GenericDao<ResourcesBuyers> getDao() {
+	protected GenericDaoFull<ResourcesBuyers> getDao() {
 		// TODO Auto-generated method stub
 		return dao;
 	}

@@ -1,10 +1,10 @@
 package j.index.module.apply.journal.entity;
 
-import j.index.module.commons.dao.ModuleDao;
+import j.index.module.commons.dao.ModuleDaoFull;
 
 import org.springframework.stereotype.Repository;
 
 @Repository
-public class JournalDao extends ModuleDao<Journal>{
+public class JournalDao extends ModuleDaoFull<Journal>{
 
 }

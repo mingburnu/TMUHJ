@@ -1,14 +1,14 @@
 package j.index.core.web;
 
-import j.index.core.entity.GenericEntity;
+import j.index.core.entity.GenericEntityFull;
 
 /**
  * GenericCRUDAction
- * @author David Hsu
- * @version 2014/3/14
+ * @author Roderick
+ * @version 2014/11/21
  */
 @SuppressWarnings("serial")
-public abstract class GenericCRUDAction<T extends GenericEntity> extends GenericAction<T> {
+public abstract class GenericCRUDActionFull<T extends GenericEntityFull> extends GenericActionFull<T> {
 
 	/**
 	 * 儲存檢核

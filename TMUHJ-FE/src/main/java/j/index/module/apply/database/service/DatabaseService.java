@@ -3,11 +3,11 @@ package j.index.module.apply.database.service;
 import java.util.ArrayList;
 import javax.servlet.http.HttpServletRequest;
 
-import j.index.core.dao.GenericDao;
+import j.index.core.dao.GenericDaoFull;
 import j.index.core.dao.IiiRestrictions;
 import j.index.core.model.DataSet;
 import j.index.core.model.Pager;
-import j.index.core.service.GenericService;
+import j.index.core.service.GenericServiceFull;
 import j.index.core.util.IiiBeanFactory;
 import j.index.module.apply.database.entity.Database;
 import j.index.module.apply.database.entity.DatabaseDao;
@@ -23,7 +23,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
 @Service
-public class DatabaseService extends GenericService<Database> {
+public class DatabaseService extends GenericServiceFull<Database> {
 	@Autowired
 	private SessionFactory sessionFactory;
 
@@ -91,7 +91,7 @@ public class DatabaseService extends GenericService<Database> {
 	}
 
 	@Override
-	protected GenericDao<Database> getDao() {
+	protected GenericDaoFull<Database> getDao() {
 		// TODO Auto-generated method stub
 		return dao;
 	}
