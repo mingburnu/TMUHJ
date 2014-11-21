@@ -1,6 +1,6 @@
 package j.index.core.security.accountNumber.entity;
 
-import j.index.core.entity.GenericEntity;
+import j.index.core.entity.GenericEntityFull;
 import j.index.core.enums.Role;
 import j.index.core.enums.Status;
 import j.index.module.apply.customer.entity.Customer;
@@ -25,7 +25,7 @@ import org.springframework.context.annotation.Scope;
 @Entity
 @Table(name = "accountNumber")
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-public class AccountNumber extends GenericEntity {
+public class AccountNumber extends GenericEntityFull {
 
 	/**
 	 * 

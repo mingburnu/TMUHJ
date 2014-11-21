@@ -1,6 +1,6 @@
 package j.index.core.dao;
 
-import j.index.core.entity.GenericEntity;
+import j.index.core.entity.GenericEntityFull;
 import j.index.core.model.DataSet;
 import j.index.core.model.Pager;
 
@@ -28,8 +28,8 @@ import org.springframework.util.Assert;
  * @author Roderick
  * @version 2014/11/7
  */
-public abstract class GenericHibernateDao<T extends GenericEntity> extends
-		GenericDao<T> {
+public abstract class GenericHibernateDaoFull<T extends GenericEntityFull> extends
+		GenericDaoFull<T> {
 
 	@Autowired
 	private SessionFactory sessionFactory;
@@ -37,7 +37,7 @@ public abstract class GenericHibernateDao<T extends GenericEntity> extends
 	private Class<T> entityClass;
 
 	@SuppressWarnings("unchecked")
-	public GenericHibernateDao() {
+	public GenericHibernateDaoFull() {
 		this.entityClass = null;
 		Class<?> c = getClass();
 		Type t = c.getGenericSuperclass();

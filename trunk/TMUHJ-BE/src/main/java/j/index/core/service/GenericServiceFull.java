@@ -1,7 +1,7 @@
 package j.index.core.service;
 
-import j.index.core.dao.GenericDao;
-import j.index.core.entity.GenericEntity;
+import j.index.core.dao.GenericDaoFull;
+import j.index.core.entity.GenericEntityFull;
 import j.index.core.security.accountNumber.entity.AccountNumber;
 import j.index.core.security.accountNumber.entity.AccountNumberDao;
 
@@ -19,12 +19,12 @@ import org.springframework.util.Assert;
  * @author Roderick
  * @version 2014/9/29
  */
-public abstract class GenericService<T extends GenericEntity> implements
+public abstract class GenericServiceFull<T extends GenericEntityFull> implements
 		Service<T> {
 
 	protected final transient Logger log = Logger.getLogger(getClass());
 
-	protected abstract GenericDao<T> getDao();
+	protected abstract GenericDaoFull<T> getDao();
 
 	@Autowired
 	private AccountNumberDao userDao;

@@ -1,7 +1,7 @@
 package j.index.module.apply.journal.service;
 
 import j.index.core.model.DataSet;
-import j.index.core.web.GenericCRUDAction;
+import j.index.core.web.GenericCRUDActionFull;
 import j.index.module.apply.journal.entity.Journal;
 import j.index.module.apply.resourcesUnion.service.ResourcesUnionService;
 
@@ -13,7 +13,7 @@ import org.springframework.stereotype.Controller;
 @Controller
 @SuppressWarnings("serial")
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-public class JournalAction extends GenericCRUDAction<Journal> {
+public class JournalAction extends GenericCRUDActionFull<Journal> {
 
 	@Autowired
 	private Journal journal;

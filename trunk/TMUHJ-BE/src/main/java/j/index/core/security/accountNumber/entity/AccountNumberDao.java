@@ -1,6 +1,6 @@
 package j.index.core.security.accountNumber.entity;
 
-import j.index.core.dao.GenericHibernateDao;
+import j.index.core.dao.GenericHibernateDaoFull;
 
 import org.springframework.stereotype.Repository;
 
@@ -11,6 +11,6 @@ import org.springframework.stereotype.Repository;
  * @version 2014/9/29
  */
 @Repository
-public class AccountNumberDao extends GenericHibernateDao<AccountNumber> {
+public class AccountNumberDao extends GenericHibernateDaoFull<AccountNumber> {
 
 }

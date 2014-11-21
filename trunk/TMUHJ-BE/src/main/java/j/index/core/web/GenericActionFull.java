@@ -1,6 +1,6 @@
 package j.index.core.web;
 
-import j.index.core.entity.GenericEntity;
+import j.index.core.entity.GenericEntityFull;
 import j.index.core.model.DataSet;
 import j.index.core.model.FormModel;
 import j.index.core.model.Pager;
@@ -19,11 +19,11 @@ import com.opensymphony.xwork2.ActionSupport;
 
 /**
  * GenericAction
- * @author David Hsu
- * @version 2014/3/14
+ * @author Roderick
+ * @version 2014/11/21
  */
 @SuppressWarnings("serial")
-public abstract class GenericAction<T extends GenericEntity> extends ActionSupport implements Action<T> {
+public abstract class GenericActionFull<T extends GenericEntityFull> extends ActionSupport implements Action<T> {
 
 	protected final transient Logger log = Logger.getLogger(getClass());
 	
