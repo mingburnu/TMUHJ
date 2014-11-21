@@ -24,10 +24,10 @@
 	<!-- <bean id="dataSource" class="com.jolbox.bonecp.BoneCPDataSource destroy-method="close" -->
 	<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource"
 		destroy-method="close">
-		<property name="driverClassName" value="${dataSource.driverClassName}" />
-		<property name="url" value="${dataSource.url}" />
-		<property name="username" value="${dataSource.username}" />
-		<property name="password" value="${dataSource.password}" />
+		<property name="driverClassName" value="com.mysql.jdbc.Driver" />
+		<property name="url" value="jdbc:mysql://192.168.20.71:3306/tmuhjdb" />
+		<property name="username" value="java_dev_admin" />
+		<property name="password" value="7UJM9OL." />
 	</bean>
 
 	<!-- Hibernate -->
@@ -56,16 +56,16 @@
 				<prop key="hibernate.query.factory_class">org.hibernate.hql.internal.ast.ASTQueryTranslatorFactory
 				</prop>
 				<prop key="hibernate.cache.use_second_level_cache">false</prop>
-				<!--<prop key="hibernate.current_session_context_class">org.springframework.orm.hibernate4.SpringSessionContext</prop> -->
 				<prop key="hibernate.connection.release_mode">auto</prop>
 				<prop key="hibernate.autoReconnect">true</prop>
 				<prop key="hibernate.cglib.use_reflection_optimizer">true</prop>
-				<prop key="hibernate.dialect">${hibernate.dialect}</prop>
+				<prop key="hibernate.dialect">org.hibernate.dialect.MySQLDialect</prop>
 				<prop key="hibernate.show_sql">true</prop>
 				<prop key="hibernate.format_sql">true</prop>
 				<prop key="hibernate.use_sql_comments">false</prop>
 				<prop key="hibernate.jdbc.use_scrollable_resultset">true</prop>
-				<prop key="hibernate.hbm2ddl.auto">${hibernate.hbm2ddl.auto}</prop>
+				<prop key="hibernate.hbm2ddl.auto">update</prop>
+				<!--<prop key="hibernate.current_session_context_class">org.springframework.orm.hibernate4.SpringSessionContext</prop> -->
 			</props>
 		</property>
 	</bean>
