@@ -18,11 +18,11 @@
         http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd
         http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc.xsd">
 
-	<context:component-scan base-package="j.index" use-default-filters="false">
+	<context:component-scan base-package="com.asiaworld.tmuhj" use-default-filters="false">
 		<context:include-filter type="annotation" expression="org.springframework.stereotype.Controller" />
 	</context:component-scan>
 
-<!-- 	<bean id="loginAction" class="j.index.core.web.LoginAction" scope="prototype"> -->
+<!-- 	<bean id="loginAction" class="com.asiaworld.tmuhj.core.web.LoginAction" scope="prototype"> -->
 <!-- 		<property name="user"> -->
 <!-- 			<ref bean="secUser" /> -->
 <!-- 		</property> -->

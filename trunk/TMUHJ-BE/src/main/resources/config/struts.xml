@@ -19,7 +19,7 @@
 	<package name="global" extends="struts-default">
 		<interceptors>
 			<interceptor name="loginSessionInterceptor"
-				class="j.index.core.interceptor.LoginSessionInterceptor" />
+				class="com.asiaworld.tmuhj.core.interceptor.LoginSessionInterceptor" />
 
 			<interceptor-stack name="defaultInterceptor">
 				<interceptor-ref name="loginSessionInterceptor" />
@@ -90,9 +90,9 @@
 	</package>
 
 	<!--<package name="search" namespace="/search" extends="struts-default"> 
-		<action name="apply.search.list" class="j.index.module.apply.search.service.SearchAction" 
+		<action name="apply.search.list" class="com.asiaworld.tmuhj.module.apply.search.service.SearchAction" 
 		method="list"> <result name="search">/WEB-INF/jsp/module/apply/search/search.jsp 
-		</result> </action> <action name="apply.search.query" class="j.index.module.apply.search.service.SearchAction" 
+		</result> </action> <action name="apply.search.query" class="com.asiaworld.tmuhj.module.apply.search.service.SearchAction" 
 		method="query"> <result name="search">/WEB-INF/jsp/module/apply/search/search.jsp 
 		</result> </action> </package> -->
 </struts>

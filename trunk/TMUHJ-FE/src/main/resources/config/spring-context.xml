@@ -15,7 +15,7 @@
         http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc.xsd">
 
 	<context:annotation-config />
-	<context:component-scan base-package="j.index"
+	<context:component-scan base-package="com.asiaworld.tmuhj"
 		use-default-filters="false">
 		<context:include-filter type="annotation"
 			expression="org.springframework.stereotype.Component" />

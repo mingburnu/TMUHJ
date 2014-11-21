@@ -5,8 +5,8 @@
 
 <hibernate-mapping>
 
-	<union-subclass name="j.index.module.security.entity.SecUser"
-		table="accountNumber" extends="j.index.core.entity.GenericEntity">
+	<union-subclass name="com.asiaworld.tmuhj.module.security.entity.SecUser"
+		table="accountNumber" extends="com.asiaworld.tmuhj.core.entity.GenericEntity">
 
 		<property name="userId" column="userID" length="20" type="string"
 			not-null="true" unique="true" />

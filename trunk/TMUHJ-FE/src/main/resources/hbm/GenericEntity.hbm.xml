@@ -5,7 +5,7 @@
 
 <hibernate-mapping>
 
-	<class name="j.index.core.entity.GenericEntity" abstract="true">
+	<class name="com.asiaworld.tmuhj.core.entity.GenericEntity" abstract="true">
 
 		<id name="serNo" column="serNo" type="long">
 			<generator class="increment" />
