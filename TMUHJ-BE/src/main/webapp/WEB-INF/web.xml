@@ -3,7 +3,7 @@
 	xmlns="http://java.sun.com/xml/ns/javaee" xmlns:web="http://java.sun.com/xml/ns/javaee"
 	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
 	version="2.5">
-	<display-name>Journal</display-name>
+	<display-name>tmuhj-be</display-name>
 	<context-param>
 		<param-name>spring.profiles.active</param-name>
 		<param-value>dev</param-value>
@@ -41,6 +41,29 @@
 		<url-pattern>*.action</url-pattern>
 	</filter-mapping>
 
+	<filter>
+		<filter-name>characterEncodingFilter</filter-name>
+		<filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
+		<init-param>
+			<param-name>forceEncoding</param-name>
+			<param-value>true</param-value>
+		</init-param>
+		<init-param>
+			<param-name>encoding</param-name>
+			<param-value>UTF-8</param-value>
+		</init-param>
+	</filter>
+	<filter-mapping>
+		<filter-name>characterEncodingFilter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+
+	<!--<filter> <filter-name>CharacterEncodingFilter</filter-name> <filter-class>org.apache.catalina.filters.SetCharacterEncodingFilter</filter-class> 
+		<init-param> <param-name>encoding</param-name> <param-value>UTF-8</param-value> 
+		</init-param> <init-param> <param-name>ignore</param-name> <param-value>true</param-value> 
+		</init-param> </filter> <filter-mapping> <filter-name>CharacterEncodingFilter</filter-name> 
+		<url-pattern>/*</url-pattern> </filter-mapping> -->
+
 	<servlet>
 		<servlet-name>H2Console</servlet-name>
 		<servlet-class>org.h2.server.web.WebServlet</servlet-class>
@@ -53,11 +76,9 @@
 		<servlet-name>H2Console</servlet-name>
 		<url-pattern>/admin/h2/*</url-pattern>
 	</servlet-mapping>
-
 	<session-config>
 		<session-timeout>10080</session-timeout>
 	</session-config>
-
 	<welcome-file-list>
 		<welcome-file>index.jsp</welcome-file>
 		<welcome-file>login.jsp</welcome-file>

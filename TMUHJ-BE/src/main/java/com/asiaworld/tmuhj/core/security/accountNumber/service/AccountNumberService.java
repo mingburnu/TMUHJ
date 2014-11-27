@@ -36,7 +36,7 @@ public class AccountNumberService extends GenericServiceFull<AccountNumber> {
 
 	@Autowired
 	private AccountNumberDao dao;
-	
+
 	@Autowired
 	private SessionFactory sessionFactory;
 
@@ -92,7 +92,22 @@ public class AccountNumberService extends GenericServiceFull<AccountNumber> {
 	 * @return
 	 * @throws Exception
 	 */
-	public Boolean checkUser(AccountNumber entity) throws Exception {
+	public Boolean checkUserId(AccountNumber entity) throws Exception {
+		Assert.notNull(entity);
+
+		IiiRestrictions restrictions = IiiBeanFactory.getIiiRestrictions();
+		restrictions.eq("userId", entity.getUserId());
+		restrictions.ne("role", Role.使用者);
+		List<AccountNumber> secUsers = dao.findByRestrictions(restrictions);
+		if (secUsers == null || secUsers.isEmpty()) {
+			return false;
+		} else {
+			return true;
+		}
+
+	}
+
+	public Boolean checkUserPw(AccountNumber entity) throws Exception {
 		Assert.notNull(entity);
 
 		IiiRestrictions restrictions = IiiBeanFactory.getIiiRestrictions();
@@ -107,14 +122,14 @@ public class AccountNumberService extends GenericServiceFull<AccountNumber> {
 		return EncryptorUtil.checkPassword(entity.getUserPw(),
 				secUser.getUserPw());
 	}
-	
+
 	public HashSet<String> getAllcUid() {
 		Session session = sessionFactory.getCurrentSession();
-		HashSet<String> allcUid=new LinkedHashSet<String>();
+		HashSet<String> allcUid = new LinkedHashSet<String>();
 		Criteria criteria = session.createCriteria(AccountNumber.class);
 		Iterator<?> iterator = criteria.list().iterator();
 		while (iterator.hasNext()) {
-			AccountNumber accountNumber=(AccountNumber) iterator.next();
+			AccountNumber accountNumber = (AccountNumber) iterator.next();
 			allcUid.add(accountNumber.getcUid());
 		}
 		return allcUid;

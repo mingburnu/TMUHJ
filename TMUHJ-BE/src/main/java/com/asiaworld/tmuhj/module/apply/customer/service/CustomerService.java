@@ -1,7 +1,10 @@
 package com.asiaworld.tmuhj.module.apply.customer.service;
 
+import java.util.List;
+
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.MatchMode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
@@ -28,22 +31,18 @@ public class CustomerService extends GenericServiceFull<Customer> {
 		Assert.notNull(ds);
 		Assert.notNull(ds.getEntity());
 		Customer entity = ds.getEntity();
-
 		IiiRestrictions restrictions = IiiBeanFactory.getIiiRestrictions();
 
 		if (StringUtils.isNotEmpty(entity.getEngName())
-				|| StringUtils.isNotBlank(entity.getEngName())) {
-			restrictions.likeIgnoreCase("engName", entity.getEngName());
-		}
-
-		if (StringUtils.isNotEmpty(entity.getName())
-				|| StringUtils.isNotBlank(entity.getName())) {
-			restrictions.likeIgnoreCase("name", entity.getName());
-		}
-
-		if (StringUtils.isNotEmpty(entity.getcUid())
-				|| StringUtils.isNotBlank(entity.getcUid())) {
-			restrictions.likeIgnoreCase("cUid", entity.getcUid());
+				&& StringUtils.isNotBlank(entity.getEngName())) {
+			restrictions.likeIgnoreCase("engName", entity.getEngName(),
+					MatchMode.ANYWHERE);
+		} else if (StringUtils.isNotEmpty(entity.getName())
+				&& StringUtils.isNotBlank(entity.getName())) {
+			restrictions.likeIgnoreCase("name", entity.getName(),
+					MatchMode.ANYWHERE);
+			// } else {
+			// return null;
 		}
 
 		restrictions.addOrderAsc("serNo");
@@ -56,6 +55,21 @@ public class CustomerService extends GenericServiceFull<Customer> {
 	protected GenericDaoFull<Customer> getDao() {
 		// TODO Auto-generated method stub
 		return dao;
+	}
+
+	public boolean nameIsExist(Customer entity)
+			throws Exception {
+		Assert.notNull(entity);
+
+		IiiRestrictions restrictions = IiiBeanFactory.getIiiRestrictions();
+		restrictions.eq("name", entity.getName().trim());
+
+		List<Customer> customers = dao.findByRestrictions(restrictions);
+		if (customers == null || customers.isEmpty()) {
+			return false;
+		} else {
+			return true;
+		}
 	}
 
 	public DataSet<Customer> getEditedData(DataSet<Customer> ds, long serNo)

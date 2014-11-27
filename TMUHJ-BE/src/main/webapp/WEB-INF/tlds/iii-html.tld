@@ -12,7 +12,7 @@
     
     <tag>
         <name>body</name>
-        <tag-class>j.index.core.tag.BodyTag</tag-class>
+        <tag-class>com.asiaworld.tmuhj.core.tag.BodyTag</tag-class>
         <body-content>scriptless</body-content>
         <attribute>
             <name>height</name>

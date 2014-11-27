@@ -53,11 +53,11 @@
 	</package>
 
 	<package name="pageAction" namespace="/page" extends="global">
-		<action name="home" class="commonHomePageAction" method="entry">
+		<action name="home" class="commonHomePageAction">
 			<result name="success">/WEB-INF/jsp/index.jsp</result>
 		</action>
-		<action name="query" class="commonQueryPageAction">
-			<result name="success">/WEB-INF/jsp/adv_query.jsp</result>
+		<action name="basic" class="commonHomePageAction">
+			<result name="success">/WEB-INF/jsp/module/apply/customer/customerList.jsp</result>
 		</action>
 	</package>
 
