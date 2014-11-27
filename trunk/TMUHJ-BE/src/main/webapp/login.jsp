@@ -9,82 +9,80 @@
 <link href="<c:url value = '/'/>resources/css/air-ui-cms.css"
 	rel="stylesheet" type="text/css">
 <script language="javascript" type="text/javascript"
-	src="<c:url value = '/'/>resources/js/jquery-1.4.2.js"></script>
+	src="<c:url value = '/'/>resources/js/jquery-1.3.2.js"></script>
 <script language="javascript" type="text/javascript"
 	src="<c:url value = '/'/>resources/js/jquery-ui-1.7.2.custom.min.js"></script>
 <script language="javascript" type="text/javascript"
 	src="<c:url value = '/'/>resources/js/jquery.bgiframe.pack.js"></script>
 <script language="javascript" type="text/javascript">
-	$(document).ready(function() {
-		formSetCSS();
-		state_hover();
-	});
-	//css
-	function formSetCSS() {
-		$('input[type="text"]').addClass("input_text");
-		$('input[type="password"]').addClass("input_text");
-	}
-	//state
-	function state_hover() {
-		$(".state-default").hover(function() {
-			$(this).addClass("state-hover");
-		}, function() {
-			$(this).removeClass("state-hover");
-		});
-	}
-	//
-	//打開Alert畫面之函式
-	function goAlert(argTitle, argMsg) {
-		$("#div_Alert").show();
-		UI_Resize();
-		//
-		$("#div_Alert .content > .header > .title").html(argTitle);
-		$("#div_Alert .content > .contain").html(argMsg);
-	}
-	//關閉Alert畫面之函式
-	function closeAlert() {
-		$("#div_Alert").hide();
-		UI_Resize();
-	}
-	//UI_Resize
-	function UI_Resize() {
-		$("#div_Detail > .overlay").css("width", $(window).width());
-		$("#div_Detail > .overlay").css("height", $(window).height());
-		$("#div_Detail_2 > .overlay").css("width", $(window).width());
-		$("#div_Detail_2 > .overlay").css("height", $(window).height());
-		//
-		$("#div_Alert > .overlay").css("width", $(window).width());
-		$("#div_Alert > .overlay").css("height", $(window).height());
-	}
-	$(window).resize(function() {
-		UI_Resize();
-	});
-	//UI_Scroll
-	function UI_Scroll() {
-		$("#div_Detail > .overlay").css("top", $(window).scrollTop());
-		$("#div_Detail > .overlay").css("left", $(window).scrollLeft());
-		$("#div_Detail_2 > .overlay").css("top", $(window).scrollTop());
-		$("#div_Detail_2 > .overlay").css("left", $(window).scrollLeft());
-		//
-		$("#div_Alert > .overlay").css("top", $(window).scrollTop());
-		$("#div_Alert > .overlay").css("left", $(window).scrollLeft());
-	}
-	$(window).scroll(function() {
-		UI_Scroll();
-	});
+$(document).ready(function(){
+    formSetCSS();
+    state_hover();
+});
+//css
+function formSetCSS(){
+    $('input[type="text"]').addClass("input_text");
+    $('input[type="password"]').addClass("input_text");
+}
+//state
+function state_hover(){
+    $(".state-default").hover(
+        function(){
+            $(this).addClass("state-hover");
+        },
+        function(){
+            $(this).removeClass("state-hover");
+        }
+    );
+}
+//打開Alert畫面之函式
+function goAlert(argTitle,argMsg){
+    $("#div_Alert").show();
+    UI_Resize();
+    //
+    $("#div_Alert .content > .header > .title").html(argTitle);
+    $("#div_Alert .content > .contain").html(argMsg);
+}
+//關閉Alert畫面之函式
+function closeAlert(){
+    $("#div_Alert").hide();
+    UI_Resize();
+}
+//UI_Resize
+function UI_Resize(){
+    $("#div_Detail > .overlay").css("width",$(window).width());
+    $("#div_Detail > .overlay").css("height",$(window).height());
+    $("#div_Detail_2 > .overlay").css("width",$(window).width());
+    $("#div_Detail_2 > .overlay").css("height",$(window).height());
+    $("#div_Alert > .overlay").css("width",$(window).width());
+    $("#div_Alert > .overlay").css("height",$(window).height());
+}
+$(window).resize(function(){
+    UI_Resize();
+});
+//UI_Scroll
+function UI_Scroll(){
+    $("#div_Detail > .overlay").css("top",$(window).scrollTop());
+    $("#div_Detail > .overlay").css("left",$(window).scrollLeft());
+    $("#div_Detail_2 > .overlay").css("top",$(window).scrollTop());
+    $("#div_Detail_2 > .overlay").css("left",$(window).scrollLeft());
+    $("#div_Alert > .overlay").css("top",$(window).scrollTop());
+    $("#div_Alert > .overlay").css("left",$(window).scrollLeft());
+}
+$(window).scroll(function(){
+    UI_Scroll();
+});
 
-	var contain_size = $("#div-contain").length;
-	if (contain_size > 0) {
-		window.location.href = "/BE/BE/";
+var contain_size = $("#div-contain").length;
+if(contain_size > 0){
+    window.location.href="<%=request.getContextPath()%>"+"/TWBE/";
 	}
 </script>
-
-<style>
-div.no_message {
-	border: 1px solid #ffffff;
-	padding: 5px 0;
+<!--<style type="text/css">
+input:-webkit-autofill {
+	-webkit-box-shadow: 0 0 0px 1000px #ffffff inset;
 }
-</style>
+</style>-->
 <title>跨司署電子資料庫索引查詢平台</title>
 </head>
 <c:if
@@ -108,18 +106,7 @@ div.no_message {
 									cellpadding="0">
 									<tbody>
 										<tr>
-											<td align="center" colspan="2"><c:choose>
-													<c:when
-														test="${(not empty error)||(not empty idPwNull)}">
-														<div class="message">${idPwNull }${error }</div>
-													</c:when>
-													<c:otherwise>
-														<div class="no_message">&nbsp;</div>
-													</c:otherwise>
-												</c:choose></td>
-										</tr>
-										<tr>
-											<td align="right">用戶：</td>
+											<td align="right">用戶帳號：</td>
 											<td align="left"><input type="text" name="user.userId"
 												value="" id="Login_UserName" style="width: 160;"
 												class="input_text"></td>
@@ -130,20 +117,12 @@ div.no_message {
 												name="user.userPw" id="Login_Password" style="width: 160;"
 												class="input_text"></td>
 										</tr>
-										<!-- 刪除多國語系, 固定 language 值為 "zh_TW" (LBAuthenticationProcessingFilter.java)
-
-                                    <tr>
-                                        <td align="right">預設語系：</td>
-                                        <td align="left">
-                                            <select name="radio">
-                                                <option value="zh_TW">繁體中文</option>
-                                                <option value="zh_CN">简体中文</option>
-                                                <option value="en">English</option>
-                                                <option value="ja_JP">日文</option>
-                                            </select>                                        
-                                        </td>
-                                    </tr>
-                                    -->
+										<tr>
+											<td align="center" colspan="2"><c:if
+													test="${(not empty error)||(not empty idPwNull)}">
+													<font color="red">${idPwNull }${error }</font>
+												</c:if></td>
+										</tr>
 									</tbody>
 								</table>
 								<div style="margin-top: 10px;"></div>
@@ -157,47 +136,6 @@ div.no_message {
 				</tr>
 			</tbody>
 		</table>
-
-
-
-		<div id="div_Alert">
-			<div class="overlay" style="width: 1423px; height: 449px;"></div>
-			<div class="content">
-				<div class="header">
-					<div class="title"></div>
-					<div class="close">
-						<a href="#" onclick="closeAlert();">&nbsp;</a>
-					</div>
-				</div>
-				<div class="contain"></div>
-				<div class="func-button">
-					<a class="state-default corner-all button" onclick="closeAlert();">關閉</a>
-				</div>
-			</div>
-		</div>
 	</s:form>
-
-
-
-
-
-
 </body>
-<!--<script type="text/javascript">
-$(document).ready(
-		function() {
-			var errorsLength = $("ul.errorMessage li").length;
-			var eMessenges = "";
-			for (var i = 0; i < errorsLength; i++) {
-				eMessenges = eMessenges
-						+ $("ul.errorMessage li:eq(" + i + ") span").html() + " ";
-			}
-			alert(errorsLenght);
-			if (errorsLength > 0) {
-				
-				$("div.alert.alert-error").html(eMessenges);
-			}
-			$("ul.errorMessage").remove();
-		});
-</script>-->
 </html>

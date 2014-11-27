@@ -1,7 +1,5 @@
 package com.asiaworld.tmuhj.module.security.web;
 
-import java.util.HashSet;
-
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,23 +44,33 @@ public class AuthorizationAction extends GenericWebActionFull<AccountNumber> {
 		boolean checkLogin = true;
 		if (StringUtils.isEmpty(user.getUserId())
 				|| StringUtils.isEmpty(user.getUserPw())) {
-			getRequest().setAttribute("idPwNull", "請輸入帳號和密碼");
-			addActionError("請輸入帳號和密碼");
+			getRequest().setAttribute("idPwNull", "請輸入帳號和密碼。");
+			addActionError("請輸入帳號和密碼。");
 			checkLogin = false;
 		}
 
 		if (checkLogin) { // 帳號密碼皆有輸入時才進行檢核
-			boolean isValidUser = false;
+			boolean isTrueUserId = false;
+			boolean isTrueUserPw = false;
 			try {
-				isValidUser = userService.checkUser(user);
+				isTrueUserId = userService.checkUserId(user);
+				isTrueUserPw = userService.checkUserPw(user);
+
 			} catch (Exception e) {
 				log.error(ExceptionUtils.getStackTrace(e));
 				throw new Exception(e);
 			}
 
-			if (!isValidUser) {
-				getRequest().setAttribute("error", "帳號或密碼不正確");
-				addActionError("帳號密碼錯誤，請重新輸入");
+			if (!isTrueUserId) {
+				getRequest().setAttribute("error", "您輸入的帳號名稱不正確，請重新輸入。");
+				addActionError("您輸入的帳號名稱不正確，請重新輸入。");
+			}
+
+			if (isTrueUserId) {
+				if (!isTrueUserPw) {// 使用者存在才進行密碼檢核
+					getRequest().setAttribute("error", "您輸入的密碼不正確，請重新輸入。");
+					addActionError("您輸入的密碼不正確，請重新輸入。");
+				}
 			}
 		}
 	}
@@ -89,10 +97,7 @@ public class AuthorizationAction extends GenericWebActionFull<AccountNumber> {
 						customerService.getBySerNo(ds.getResults().get(0)
 								.getCusSerNo()));
 
-		HashSet<String> allcUid=userService.getAllcUid();
-		
 		getSession().put(LOGIN, ds.getResults().get(0));
-		getRequest().setAttribute("allcUid", allcUid);
 
 		return INDEX;
 	}

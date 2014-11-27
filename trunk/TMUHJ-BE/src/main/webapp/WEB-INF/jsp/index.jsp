@@ -5,103 +5,171 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
+<title>跨司署電子資料庫索引查詢平台</title>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>首頁 - 用戶資料查詢</title>
-<link id="style_main" rel="stylesheet" type="text/css"
-	href="<%=request.getContextPath()%>/resources/css/jquery.autocomplete.css" />
-<link id="style_main" rel="stylesheet" type="text/css"
-	href="<%=request.getContextPath()%>/resources/css/default.css" />
-<script type="text/javascript"
-	src="<%=request.getContextPath()%>/resources/js/jquery-1.4.2.js"></script>
-<script type="text/javascript"
-	src="<%=request.getContextPath()%>/resources/js/jquery.autocomplete.js"></script>
-<script type="text/javascript"
-	src="<%=request.getContextPath()%>/resources/js/common.js"></script>
+<meta http-equiv="Pragma" content="no-cache" />
+<meta http-equiv="Cache-Control" content="no-cache" />
+<meta http-equiv="Expires" content="0" />
+<link href="<c:url value = '/'/>resources/css/air-ui-cms.css"
+	rel="stylesheet" type="text/css" />
+<link href="<c:url value = '/'/>resources/css/jquery.autocomplete.css"
+	rel="stylesheet" type="text/css" />
+<link
+	href="<c:url value = '/'/>resources/css/smoothness/jquery-ui-1.7.2.custom.css"
+	rel="stylesheet" type="text/css" />
+<link href="<c:url value = '/'/>resources/css/jquery.datepick.css"
+	rel="stylesheet" type="text/css" />
+<script language="javascript" type="text/javascript"
+	src="<c:url value = '/'/>resources/js/jquery-1.3.2.js">
+	
+</script>
+<script language="javascript" type="text/javascript"
+	src="<c:url value = '/'/>resources/js/jquery-ui-1.7.2.custom.min.js">
+	
+</script>
+<script language="javascript" type="text/javascript"
+	src="<c:url value = '/'/>resources/js/jquery.bgiframe.pack.js">
+	
+</script>
+<script language="javascript" type="text/javascript"
+	src="<c:url value = '/'/>resources/js/common.js">
+	
+</script>
+<script language="javascript" type="text/javascript"
+	src="<c:url value = '/'/>resources/js/jquery.form.js">
+	
+</script>
+<script language="javascript" type="text/javascript"
+	src="<c:url value = '/'/>resources/js/jquery.autocomplete.js">
+	
+</script>
+<script language="javascript" type="text/javascript"
+	src="<c:url value = '/'/>resources/js/jquery.datepick.js">
+	
+</script>
 <script type="text/javascript">
 	$(document).ready(function() {
-		// 設定Panel初始化
-		setPanel([ "1" ]);
-		changePanel("1");
+		showMenuItems('1');
+	});
+</script>
+<%--<script language="javascript" type="text/javascript">
+	$(document).ready(function() {
+		showTabsContain("A");
 	});
 
-	// 表單驗證
-	function check() {
-		/*
-		// Journal ID 檢核
-		var regExpWord =/[^0-9]/;
-		var jIdObj = $("#conditions input[name='query_journalId']");
-		if ( regExpWord.test( jIdObj.val()))
-		{
-		    myAlert("Journal ID 不可輸入非數字字元！");
-		    jIdObj.focus();
-		    return false;
+	function showTabsContain(argTarget) {
+		var arr = new Array();
+		arr[arr.length] = "A";
+		arr[arr.length] = "B";
+		arr[arr.length] = "C";
+		for (var i = 0; i < arr.length; i++) {
+			if (argTarget == arr[i]) {
+				currentTab = argTarget;
+				$("#TabsContain_" + arr[i]).show();
+				$("#tabs-items_" + arr[i]).removeClass("tabs-items");
+				$("#tabs-items_" + arr[i] + " span").removeClass(
+						"tabs-items-span");
+				$("#tabs-items_" + arr[i]).addClass("tabs-items-hover");
+				$("#tabs-items_" + arr[i] + " span").addClass(
+						"tabs-items-hover-span");
+			} else {
+				$("#TabsContain_" + arr[i]).hide();
+				$("#tabs-items_" + arr[i]).removeClass("tabs-items-hover");
+				$("#tabs-items_" + arr[i] + " span").removeClass(
+						"tabs-items-hover-span");
+				$("#tabs-items_" + arr[i]).addClass("tabs-items");
+				$("#tabs-items_" + arr[i] + " span")
+						.addClass("tabs-items-span");
+			}
 		}
-		 */
-		return true;
 	}
-
-	function send() {
-		if (!check())
-			return;
-
-		showLoading();
-		$("form#apply_customer_list").submit();
+	//打開Alert畫面之函式
+	function goAlert(argTitle, argMsg, argBtnFunc) {
+		$("#div_Alert").show();
+		UI_Resize();
+		$(window).scrollTop(0);
+		$("#div_Alert .content > .header > .title").html(argTitle);
+		$("#div_Alert .content > .contain").html(argMsg);
+		$("#div_Alert .content > .func-button").empty();
+		if (argBtnFunc) {
+			if (argBtnFunc.trueText && argBtnFunc.trueFunc) {
+				$("#div_Alert .content > .func-button").append(
+						'<a id="true_btn" class="state-default" onclick="closeAlert();">'
+								+ argBtnFunc.trueText + '</a>&nbsp;&nbsp;');
+				$("#div_Alert .content > .func-button > #true_btn").bind(
+						'click', argBtnFunc.trueFunc);
+			}
+			if (argBtnFunc.falseText && argBtnFunc.falseFunc) {
+				$("#div_Alert .content > .func-button").append(
+						'<a id="false_btn" class="state-default" onclick="closeAlert();">'
+								+ argBtnFunc.falseText + '</a>&nbsp;&nbsp;');
+				$("#div_Alert .content > .func-button > #false_btn").bind(
+						'click', argBtnFunc.falseFunc);
+			}
+		} else {
+			$("#div_Alert .content > .func-button")
+					.append(
+							'<a class="state-default" onclick="closeAlert();"><s:text name="button.close"/></a>');
+		}
 	}
-</script>
+</script>--%>
 </head>
 <body>
-	<%@include file="/WEB-INF/jsp/layout/header.jsp"%>
-	<%@include file="/WEB-INF/jsp/layout/menu.jsp"%>
-	<div id="contaner">
-		<div id="contaner_box" align="center">
-			<div style="width: 465px;">
-				<!--Panel start -->
-				<div class="panel_box">
-					<div class="title_group">
-						<ul>
-							<li id="title_1"><a href="javascript:changePanel('1')"><span>用戶資料查詢</span></a></li>
-						</ul>
-					</div>
-					<div class="content_group">
-						<div id="content_1">
-							<s:form action="apply.customer.list" namespace="/crud" method="get">
-								<table>
-
-									<tr>
-										<td align="right">用戶代碼</td>
-										<td><input class="input_text" type="text"
-											name="entity.engName" /></td>
-									</tr>
-									<tr>
-										<td align="right">用戶名稱</td>
-										<td><input class="input_text" type="text"
-											name="entity.name" /></td>
-									</tr>
-									<tr>
-										<td align="right">建立者</td>
-										<td><select name="entity.cUid">
-												<option>全部</option>
-												<c:forEach var="item" items="${allcUid}" varStatus="status">
-													<option value="${item}">${item}</option>
-												</c:forEach>
-										</select></td>
-									</tr>
-								</table>
-							</s:form>
-						</div>
-						<div class="content">
-							<div class="content" id="conditions"></div>
-							<div class="button_box" align="center">
-								<a class="button_02" href="javascript:reset();"><span>重設</span></a>&nbsp;
-								<a class="button_01" href="javascript:send();"><span>查詢</span></a>
+	<div id="div-wrapper">
+		<jsp:include page="/WEB-INF/jsp/layout/header.jsp" />
+		<div id="div-middle">
+			<table width="100%" border="0" cellspacing="0" cellpadding="0">
+				<tbody>
+					<tr>
+						<td align="left" valign="top" width="175"><jsp:include
+								page="/WEB-INF/jsp/layout/menu.jsp" /></td>
+						<td align="left" valign="top">
+							<div id="div-contain">
+								<div class="tabs-box">
+									<div>
+										<a id="tabs-items_A" class="tabs-items-hover"
+											onclick="showTabsContain('A')"><span
+											class="tabs-items-hover-span">系統公告</span></a>
+									</div>
+								</div>
+								<div id="div_nav">
+									目前位置：<span>系統公告</span>
+								</div>
+								<div class="list-box">
+									<table cellspacing="1" class="list-table">
+										<tbody>
+											<tr>
+												<td>
+													<table width="100%" border="0" cellspacing="2"
+														cellpadding="0">
+														<tbody>
+															<tr>
+																<td align="center" valign="top" width="40">
+																	<div class="cal_cal">
+																		<div class="cal_month">03月</div>
+																		<div class="cal_day">24</div>
+																	</div>
+																</td>
+																<td align="left" valign="top">
+																	<div class="cal_title">系統上線</div>
+																	<div class="cal_content">歡迎蒞臨!</div>
+																	<div class="cal_time">發佈時間:2010年03月24日 PM 12:00</div>
+																</td>
+															</tr>
+														</tbody>
+													</table>
+												</td>
+											</tr>
+										</tbody>
+									</table>
+								</div>
 							</div>
-						</div>
-						<div>${uriReferer }</div>
-					</div>
-				</div>
-			</div>
+						</td>
+					</tr>
+				</tbody>
+			</table>
 		</div>
+		<jsp:include page="/WEB-INF/jsp/layout/footer.jsp" />
 	</div>
-
 </body>
 </html>

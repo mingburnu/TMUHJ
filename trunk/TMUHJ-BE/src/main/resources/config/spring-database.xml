@@ -56,7 +56,7 @@
 				<prop key="hibernate.query.factory_class">org.hibernate.hql.internal.ast.ASTQueryTranslatorFactory
 				</prop>
 				<prop key="hibernate.cache.use_second_level_cache">false</prop>
-				<!--<prop key="hibernate.current_session_context_class">org.springframework.orm.hibernate4.SpringSessionContext</prop> -->
+				<prop key="hibernate.current_session_context_class">org.springframework.orm.hibernate4.SpringSessionContext</prop>
 				<prop key="hibernate.connection.release_mode">auto</prop>
 				<prop key="hibernate.autoReconnect">true</prop>
 				<prop key="hibernate.cglib.use_reflection_optimizer">true</prop>
