@@ -10,11 +10,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
 import com.asiaworld.tmuhj.core.dao.GenericDaoFull;
-import com.asiaworld.tmuhj.core.dao.IiiRestrictions;
+import com.asiaworld.tmuhj.core.dao.DsRestrictions;
 import com.asiaworld.tmuhj.core.model.DataSet;
 import com.asiaworld.tmuhj.core.model.Pager;
 import com.asiaworld.tmuhj.core.service.GenericServiceFull;
-import com.asiaworld.tmuhj.core.util.IiiBeanFactory;
+import com.asiaworld.tmuhj.core.util.DsBeanFactory;
 import com.asiaworld.tmuhj.module.apply.customer.entity.Customer;
 import com.asiaworld.tmuhj.module.apply.customer.entity.CustomerDao;
 
@@ -32,7 +32,7 @@ public class CustomerService extends GenericServiceFull<Customer> {
 		Assert.notNull(ds);
 		Assert.notNull(ds.getEntity());
 
-		IiiRestrictions restrictions = IiiBeanFactory.getIiiRestrictions();
+		DsRestrictions restrictions = DsBeanFactory.getDsRestrictions();
 		return dao.findByRestrictions(restrictions, ds);
 	}
 
@@ -40,7 +40,7 @@ public class CustomerService extends GenericServiceFull<Customer> {
 		Assert.notNull(ds);
 		Assert.notNull(ds.getEntity());
 
-		IiiRestrictions restrictions = IiiBeanFactory.getIiiRestrictions();
+		DsRestrictions restrictions = DsBeanFactory.getDsRestrictions();
 
 		HttpServletRequest request = ServletActionContext.getRequest();
 

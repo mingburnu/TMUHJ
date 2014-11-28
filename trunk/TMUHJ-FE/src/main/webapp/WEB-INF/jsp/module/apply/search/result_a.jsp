@@ -134,9 +134,9 @@
 						<table width="100%" border="0" cellpadding="0" cellspacing="0">
 							<tr valign="top">
 								<th width="40">序號</th>
-								<th>題名</th>
-								<th>出版社</th>
-								<th>收錄年代</th>
+								<th width="545">題名</th>
+								<th width="203">出版社</th>
+								<th width="92">收錄年代</th>
 							</tr>
 							<c:forEach var="item" items="${ds.results}" varStatus="status">
 								<c:set var="num" scope="session" value="${(status.index+1)%2}" />
@@ -160,7 +160,11 @@
 												</c:otherwise>
 											</c:choose>
 											<td>${item.publishName}</td>
-											<td>${item.indexedYears}</td>
+											<td><c:choose>
+													<c:when test="${not empty item.indexedYears }">
+											${item.indexedYears}</c:when>
+													<c:otherwise>N/A</c:otherwise>
+												</c:choose></td>
 										</tr>
 									</c:when>
 									<c:otherwise>
@@ -175,7 +179,11 @@
 												</c:otherwise>
 											</c:choose>
 											<td>${item.publishName}</td>
-											<td>${item.indexedYears}</td>
+											<td><c:choose>
+													<c:when test="${not empty item.indexedYears }">
+											${item.indexedYears}</c:when>
+													<c:otherwise>N/A</c:otherwise>
+												</c:choose></td>
 										</tr>
 									</c:otherwise>
 								</c:choose>

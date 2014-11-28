@@ -13,11 +13,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
 import com.asiaworld.tmuhj.core.dao.GenericDaoFull;
-import com.asiaworld.tmuhj.core.dao.IiiRestrictions;
+import com.asiaworld.tmuhj.core.dao.DsRestrictions;
 import com.asiaworld.tmuhj.core.model.DataSet;
 import com.asiaworld.tmuhj.core.model.Pager;
 import com.asiaworld.tmuhj.core.service.GenericServiceFull;
-import com.asiaworld.tmuhj.core.util.IiiBeanFactory;
+import com.asiaworld.tmuhj.core.util.DsBeanFactory;
 import com.asiaworld.tmuhj.module.apply.database.entity.Database;
 import com.asiaworld.tmuhj.module.apply.database.entity.DatabaseDao;
 import com.asiaworld.tmuhj.module.apply.resourcesUnion.entity.ResourcesUnion;
@@ -39,23 +39,23 @@ public class DatabaseService extends GenericServiceFull<Database> {
 			throws Exception {
 		Assert.notNull(ds);
 		Assert.notNull(ds.getEntity());
-		IiiRestrictions restrictions = IiiBeanFactory.getIiiRestrictions();
+		DsRestrictions restrictions = DsBeanFactory.getDsRestrictions();
 
 		HttpServletRequest request = ServletActionContext.getRequest();
 		String keywords = request.getParameter("keywords");
 
 		String option = request.getParameter("option");
-		
-		if(option.equals("中文題名")){
-			option="DBchttitle";
-		}else if(option.equals("英文題名")){
-			option="DBengtitle";
-		}else if(option.equals("出版社")){
-			option="publishname";
-		}else if(option.equals("內容描述")){
-			option="Content";
+
+		if (option.equals("中文題名")) {
+			option = "DBchttitle";
+		} else if (option.equals("英文題名")) {
+			option = "DBengtitle";
+		} else if (option.equals("出版社")) {
+			option = "publishname";
+		} else if (option.equals("內容描述")) {
+			option = "Content";
 		}
-		
+
 		String recordPerPage = request.getParameter("recordPerPage");
 		if (recordPerPage != null) {
 			Pager pager = ds.getPager();
@@ -101,7 +101,7 @@ public class DatabaseService extends GenericServiceFull<Database> {
 		Assert.notNull(ds);
 		Assert.notNull(ds.getEntity());
 
-		IiiRestrictions restrictions = IiiBeanFactory.getIiiRestrictions();
+		DsRestrictions restrictions = DsBeanFactory.getDsRestrictions();
 
 		HttpServletRequest request = ServletActionContext.getRequest();
 
@@ -151,7 +151,7 @@ public class DatabaseService extends GenericServiceFull<Database> {
 		Assert.notNull(ds);
 		Assert.notNull(ds.getEntity());
 
-		IiiRestrictions restrictions = IiiBeanFactory.getIiiRestrictions();
+		DsRestrictions restrictions = DsBeanFactory.getDsRestrictions();
 		HttpServletRequest request = ServletActionContext.getRequest();
 		String cusSerNo = request.getParameter("cusSerNo");
 
@@ -169,12 +169,17 @@ public class DatabaseService extends GenericServiceFull<Database> {
 		}
 
 		String sql = "";
-		for (int i = 0; i < resourcesUnionList.size(); i++) {
-			sql = sql + "serNo=" + resourcesUnionList.get(i).getDatSerNo()
-					+ " or ";
-		}
+		if (resourcesUnionList.size() > 0) {
+			for (int i = 0; i < resourcesUnionList.size(); i++) {
+				sql = sql + "serNo=" + resourcesUnionList.get(i).getDatSerNo()
+						+ " or ";
+			}
 
-		restrictions.sqlQuery(sql.substring(0, sql.length() - 4));
+			restrictions.sqlQuery(sql.substring(0, sql.length() - 4));
+		} else {
+			restrictions.eq("serNo", -1L);
+			return dao.findByRestrictions(restrictions, ds);
+		}
 		return dao.findByRestrictions(restrictions, ds);
 	}
 }

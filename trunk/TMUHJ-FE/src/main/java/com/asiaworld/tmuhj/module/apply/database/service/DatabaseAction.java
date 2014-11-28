@@ -8,6 +8,9 @@ import org.springframework.stereotype.Controller;
 import com.asiaworld.tmuhj.core.model.DataSet;
 import com.asiaworld.tmuhj.core.web.GenericCRUDActionFull;
 import com.asiaworld.tmuhj.module.apply.database.entity.Database;
+import com.asiaworld.tmuhj.module.apply.resourcesBuyers.entity.ResourcesBuyers;
+import com.asiaworld.tmuhj.module.apply.resourcesBuyers.service.ResourcesBuyersService;
+import com.asiaworld.tmuhj.module.apply.resourcesUnion.entity.ResourcesUnion;
 import com.asiaworld.tmuhj.module.apply.resourcesUnion.service.ResourcesUnionService;
 
 @Controller
@@ -22,7 +25,17 @@ public class DatabaseAction extends GenericCRUDActionFull<Database> {
 	private DatabaseService databaseService;
 
 	@Autowired
+	private ResourcesUnion resourcesUnion;
+	
+	@Autowired
 	private ResourcesUnionService resourcesUnionService;
+	
+	@Autowired
+	private ResourcesBuyers resourcesBuyers;
+	
+	@Autowired
+	private ResourcesBuyersService resourcesBuyersService;
+
 
 	@Override
 	public void validateSave() throws Exception {
@@ -56,7 +69,15 @@ public class DatabaseAction extends GenericCRUDActionFull<Database> {
 	public String list() throws Exception {
 		database = databaseService.getBySerNo(Long.parseLong(getRequest()
 				.getParameter("serNo")));
+		
+		resourcesUnion=resourcesUnionService.getByObjSerNo(Long.parseLong(getRequest()
+				.getParameter("serNo")), database.getClass());
+		
+//		resourcesBuyers=resourcesBuyersService.getBySerNo(resourcesUnion.getResSerNo());
+		resourcesBuyers=resourcesBuyersService.getBySerNo(3212L);
+		
 		getRequest().setAttribute("database", database);
+		getRequest().setAttribute("resourcesBuyers", resourcesBuyers);
 		return "d-detail";
 	}
 

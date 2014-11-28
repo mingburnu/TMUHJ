@@ -57,7 +57,7 @@ public class CustomerAction extends GenericCRUDActionFull<Customer> {
 					.getSerNo()));
 			customer.setEbookAmount(resourcesUnionService
 					.countTotalEbook(customer.getSerNo()));
-			customer.setJournalAount(resourcesUnionService
+			customer.setJournalAmount(resourcesUnionService
 					.countTotalJournal(customer.getSerNo()));
 			results.remove(i);
 			results.add(i, customer);

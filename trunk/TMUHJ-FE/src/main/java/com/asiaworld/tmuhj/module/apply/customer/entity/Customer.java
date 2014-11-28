@@ -57,7 +57,7 @@ public class Customer extends GenericEntityFull {
 	private int ebookAmount;
 
 	@Transient
-	private int journalAount;
+	private int journalAmount;
 	
 	/**
 	 * @return the name
@@ -197,16 +197,16 @@ public class Customer extends GenericEntityFull {
 	/**
 	 * @return the journalAount
 	 */
-	public int getJournalAount() {
-		return journalAount;
+	public int getJournalAmount() {
+		return journalAmount;
 	}
 
 	/**
 	 * @param journalAount
 	 *            the journalAount to set
 	 */
-	public void setJournalAount(int journalAount) {
-		this.journalAount = journalAount;
+	public void setJournalAmount(int journalAmount) {
+		this.journalAmount = journalAmount;
 	}
 
 	/* (non-Javadoc)
@@ -218,7 +218,7 @@ public class Customer extends GenericEntityFull {
 				+ address + ", email=" + email + ", tel=" + tel
 				+ ", contactUserName=" + contactUserName + ", memo=" + memo
 				+ ", dbAmount=" + dbAmount + ", ebookAmount=" + ebookAmount
-				+ ", journalAount=" + journalAount + "]";
+				+ ", journalAmount=" + journalAmount + "]";
 	}
 
 }

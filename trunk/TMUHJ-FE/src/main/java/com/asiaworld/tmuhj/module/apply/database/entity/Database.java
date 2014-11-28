@@ -3,7 +3,6 @@ package com.asiaworld.tmuhj.module.apply.database.entity;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
-
 import org.hibernate.annotations.Type;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
@@ -211,24 +210,7 @@ public class Database extends GenericEntityFull {
 		this.indexedYears = indexedYears;
 	}
 
-	// public Database(String dbChtTitle, String dbEngTitle, String languages,
-	// String includedSpecies, String publishName, String content,
-	// String url, String topic, String classification, String indexedYears) {
-	// this.dbChtTitle = dbChtTitle;
-	// this.dbEngTitle = dbEngTitle;
-	// this.languages = languages;
-	// this.includedSpecies = includedSpecies;
-	// this.publishName = publishName;
-	// this.content = content;
-	// this.url = url;
-	// this.topic = topic;
-	// this.classification = classification;
-	// this.indexedYears = indexedYears;
-	// }
-
-	/*
-	 * (non-Javadoc)
-	 * 
+	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */
 	@Override

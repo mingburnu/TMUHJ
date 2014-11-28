@@ -13,11 +13,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
 import com.asiaworld.tmuhj.core.dao.GenericDaoFull;
-import com.asiaworld.tmuhj.core.dao.IiiRestrictions;
+import com.asiaworld.tmuhj.core.dao.DsRestrictions;
 import com.asiaworld.tmuhj.core.model.DataSet;
 import com.asiaworld.tmuhj.core.model.Pager;
 import com.asiaworld.tmuhj.core.service.GenericServiceFull;
-import com.asiaworld.tmuhj.core.util.IiiBeanFactory;
+import com.asiaworld.tmuhj.core.util.DsBeanFactory;
 import com.asiaworld.tmuhj.module.apply.journal.entity.Journal;
 import com.asiaworld.tmuhj.module.apply.journal.entity.JournalDao;
 import com.asiaworld.tmuhj.module.apply.resourcesUnion.entity.ResourcesUnion;
@@ -40,7 +40,7 @@ public class JournalService extends GenericServiceFull<Journal> {
 			throws Exception {
 		Assert.notNull(ds);
 		Assert.notNull(ds.getEntity());
-		IiiRestrictions restrictions = IiiBeanFactory.getIiiRestrictions();
+		DsRestrictions restrictions = DsBeanFactory.getDsRestrictions();
 
 		HttpServletRequest request = ServletActionContext.getRequest();
 		String keywords = request.getParameter("keywords");
@@ -77,8 +77,10 @@ public class JournalService extends GenericServiceFull<Journal> {
 				keywords += cArray[i];
 			}
 
-			keywords = keywords.replaceAll(
-					"[^0-9a-zA-Z\u4e00-\u9fa5\u0391-\u03a9\u03b1-\u03c9\u002d]", " ");
+			keywords = keywords
+					.replaceAll(
+							"[^0-9a-zA-Z\u4e00-\u9fa5\u0391-\u03a9\u03b1-\u03c9\u002d]",
+							" ");
 			String[] wordArray = keywords.split(" ");
 			String sql = "";
 
@@ -110,7 +112,7 @@ public class JournalService extends GenericServiceFull<Journal> {
 		Assert.notNull(ds);
 		Assert.notNull(ds.getEntity());
 
-		IiiRestrictions restrictions = IiiBeanFactory.getIiiRestrictions();
+		DsRestrictions restrictions = DsBeanFactory.getDsRestrictions();
 
 		HttpServletRequest request = ServletActionContext.getRequest();
 
@@ -134,8 +136,10 @@ public class JournalService extends GenericServiceFull<Journal> {
 				keywords += cArray[i];
 			}
 
-			keywords = keywords.replaceAll(
-					"[^a-zA-Z0-9\u4e00-\u9fa5\u0391-\u03a9\u03b1-\u03c9\u002d]", " ");
+			keywords = keywords
+					.replaceAll(
+							"[^a-zA-Z0-9\u4e00-\u9fa5\u0391-\u03a9\u03b1-\u03c9\u002d]",
+							" ");
 			String[] wordArray = keywords.split(" ");
 			String sql = "";
 
@@ -164,7 +168,7 @@ public class JournalService extends GenericServiceFull<Journal> {
 		Assert.notNull(ds);
 		Assert.notNull(ds.getEntity());
 
-		IiiRestrictions restrictions = IiiBeanFactory.getIiiRestrictions();
+		DsRestrictions restrictions = DsBeanFactory.getDsRestrictions();
 		HttpServletRequest request = ServletActionContext.getRequest();
 		String cusSerNo = request.getParameter("cusSerNo");
 
@@ -182,12 +186,17 @@ public class JournalService extends GenericServiceFull<Journal> {
 		}
 
 		String sql = "";
-		for (int i = 0; i < resourcesUnionList.size(); i++) {
-			sql = sql + "serNo=" + resourcesUnionList.get(i).getJouSerNo()
-					+ " or ";
-		}
+		if (resourcesUnionList.size() > 0) {
+			for (int i = 0; i < resourcesUnionList.size(); i++) {
+				sql = sql + "serNo=" + resourcesUnionList.get(i).getJouSerNo()
+						+ " or ";
+			}
 
-		restrictions.sqlQuery(sql.substring(0, sql.length() - 4));
+			restrictions.sqlQuery(sql.substring(0, sql.length() - 4));
+		} else {
+			restrictions.eq("serNo", -1L);
+			return dao.findByRestrictions(restrictions, ds);
+		}
 		return dao.findByRestrictions(restrictions, ds);
 	}
 }

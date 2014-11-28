@@ -29,7 +29,7 @@ public interface Dao<T extends Entity> {
 	 * @return
 	 * @throws Exception
 	 */
-	public List<T> findByRestrictions(IiiRestrictions restrictions)
+	public List<T> findByRestrictions(DsRestrictions restrictions)
 			throws Exception;
 
 	/**
@@ -39,7 +39,7 @@ public interface Dao<T extends Entity> {
 	 * @return
 	 * @throws Exception
 	 */
-	public DataSet<T> findByRestrictions(IiiRestrictions restrictions,
+	public DataSet<T> findByRestrictions(DsRestrictions restrictions,
 			DataSet<T> ds) throws Exception;
 
 	/**
@@ -81,6 +81,6 @@ public interface Dao<T extends Entity> {
 	 * @param iQL
 	 * @return
 	 */
-	public List<?> findByQL(IiiQueryLanguage iQL);
+	public List<?> findByQL(DsQueryLanguage iQL);
 
 }

@@ -3,7 +3,6 @@ package com.asiaworld.tmuhj.module.apply.journal.entity;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
-
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 
@@ -74,14 +73,6 @@ public class Journal extends GenericEntityFull {
 	// 版本
 	@Column(name = "version")
 	private int version;
-
-	// 資料庫中文題名
-	@Column(name = "DBchttitle")
-	private String dbChtTitle;
-
-	// 資料庫英文題名
-	@Column(name = "DBengtitle")
-	private String dbEngTitle;
 
 	/**
 	 * @return the chineseTitle
@@ -293,39 +284,7 @@ public class Journal extends GenericEntityFull {
 		this.version = version;
 	}
 
-	/**
-	 * @return the dbChtTitle
-	 */
-	public String getDbChtTitle() {
-		return dbChtTitle;
-	}
-
-	/**
-	 * @param dbChtTitle
-	 *            the dbChtTitle to set
-	 */
-	public void setDbChtTitle(String dbChtTitle) {
-		this.dbChtTitle = dbChtTitle;
-	}
-
-	/**
-	 * @return the dbEngTitle
-	 */
-	public String getDbEngTitle() {
-		return dbEngTitle;
-	}
-
-	/**
-	 * @param dbEngTitle
-	 *            the dbEngTitle to set
-	 */
-	public void setDbEngTitle(String dbEngTitle) {
-		this.dbEngTitle = dbEngTitle;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
+	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */
 	@Override
@@ -337,8 +296,6 @@ public class Journal extends GenericEntityFull {
 				+ ", publishYear=" + publishYear + ", caption=" + caption
 				+ ", url=" + url + ", numB=" + numB + ", publication="
 				+ publication + ", congressClassification="
-				+ congressClassification + ", version=" + version
-				+ ", dbChtTitle=" + dbChtTitle + ", dbEngTitle=" + dbEngTitle
-				+ "]";
+				+ congressClassification + ", version=" + version + "]";
 	}
 }

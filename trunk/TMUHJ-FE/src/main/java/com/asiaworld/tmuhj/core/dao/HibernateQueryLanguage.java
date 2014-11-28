@@ -8,7 +8,7 @@ import java.util.Map;
  * @author Roderick
  * @version 2014/11/6
  */
-public class HibernateQueryLanguage implements IiiQueryLanguage {
+public class HibernateQueryLanguage implements DsQueryLanguage {
 
 	/**
 	 * 
@@ -35,7 +35,7 @@ public class HibernateQueryLanguage implements IiiQueryLanguage {
 	}
 
 	@Override
-	public IiiQueryLanguage addParameter(String name, Object value) {
+	public DsQueryLanguage addParameter(String name, Object value) {
 		parameters.put(name, value);
 		return this;
 	}

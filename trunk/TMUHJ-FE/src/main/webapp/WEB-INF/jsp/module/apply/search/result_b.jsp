@@ -134,9 +134,9 @@
 						<table width="100%" border="0" cellpadding="0" cellspacing="0">
 							<tr valign="top">
 								<th width="40">序號</th>
-								<th>題名</th>
-								<th>作者</th>
-								<th>出版社</th>
+								<th width="517 px">題名</th>
+								<th width="171 px">作者</th>
+								<th width="152 px">出版社</th>
 							</tr>
 							<c:forEach var="item" items="${ds.results}" varStatus="status">
 								<c:set var="num" scope="session" value="${(status.index+1)%2}" />
