@@ -59,7 +59,7 @@ public abstract class GenericHibernateDaoFull<T extends GenericEntityFull> exten
 	}
 
 	@Override
-	public List<T> findByRestrictions(IiiRestrictions restrictions)
+	public List<T> findByRestrictions(DsRestrictions restrictions)
 			throws Exception {
 		DataSet<T> results = findByRestrictions(restrictions, null);
 		return results.getResults();
@@ -67,7 +67,7 @@ public abstract class GenericHibernateDaoFull<T extends GenericEntityFull> exten
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public DataSet<T> findByRestrictions(IiiRestrictions restrictions,
+	public DataSet<T> findByRestrictions(DsRestrictions restrictions,
 			DataSet<T> ds) throws Exception {
 		Assert.notNull(restrictions);
 		Criteria dataCri = getSession().createCriteria(entityClass);
@@ -136,7 +136,7 @@ public abstract class GenericHibernateDaoFull<T extends GenericEntityFull> exten
 	}
 
 	@Override
-	public List<?> findByQL(IiiQueryLanguage iQL) {
+	public List<?> findByQL(DsQueryLanguage iQL) {
 		Assert.notNull(iQL);
 		Assert.notNull(iQL.getSql());
 

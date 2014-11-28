@@ -1,6 +1,10 @@
 package com.asiaworld.tmuhj.test;
 
 import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
+import java.util.List;
+
+import com.asiaworld.tmuhj.core.security.accountNumber.entity.AccountNumber;
 
 public class Test {
 
@@ -85,8 +89,17 @@ public class Test {
 			sql[i] = sql[i].replace(",   '		", ",   '");
 			// System.out.println(sql[i]);
 		}
-		String str="醫院";
-		str=new String(str.getBytes("BIG5"),"UTF-8");
-		System.out.println(str);
+		String str = "醫院";
+		str = new String(str.getBytes("BIG5"), "UTF-8");
+		AccountNumber a = new AccountNumber();
+		Class<?> objClass = a.getClass();
+		System.out.println(objClass.equals(AccountNumber.class));
+
+		List<String> list = new ArrayList<String>();
+		list.add("a");
+		list.add("b");
+		list.add("c");
+
+		System.out.println(list.toString().replace("[", ""));
 	}
 }

@@ -126,9 +126,9 @@
 						<table width="100%" border="0" cellpadding="0" cellspacing="0">
 							<tr valign="top">
 								<th width="40">序號</th>
-								<th>刊名</th>
-								<th>出版項</th>
-								<th>出版年</th>
+								<th width="563">刊名</th>
+								<th width="212">出版項</th>
+								<th width="65">出版年</th>
 							</tr>
 							<c:forEach var="item" items="${ds.results}" varStatus="status">
 								<c:set var="num" scope="session" value="${(status.index+1)%2}" />
@@ -151,8 +151,14 @@
 													<td><a href="${jDetail}">${item.chineseTitle}</a></td>
 												</c:otherwise>
 											</c:choose>
-											<td>${item.publishName}</td>
-											<td>${item.publishYear}</td>
+											<td><c:choose>
+													<c:when test="${not empty item.publishName}">${item.publishName}</c:when>
+													<c:otherwise>N/A</c:otherwise>
+												</c:choose></td>
+											<td><c:choose>
+													<c:when test="${not empty item.publishYear}">${item.publishYear}</c:when>
+													<c:otherwise>N/A</c:otherwise>
+												</c:choose></td>
 										</tr>
 									</c:when>
 									<c:otherwise>
@@ -166,8 +172,14 @@
 													<td><a href="${jDetail}">${item.chineseTitle}</a></td>
 												</c:otherwise>
 											</c:choose>
-											<td>${item.publishName}</td>
-											<td>${item.publishYear}</td>
+											<td><c:choose>
+													<c:when test="${not empty item.publishName}">${item.publishName}</c:when>
+													<c:otherwise>N/A</c:otherwise>
+												</c:choose></td>
+											<td><c:choose>
+													<c:when test="${not empty item.publishYear}">${item.publishYear}</c:when>
+													<c:otherwise>N/A</c:otherwise>
+												</c:choose></td>
 										</tr>
 									</c:otherwise>
 								</c:choose>

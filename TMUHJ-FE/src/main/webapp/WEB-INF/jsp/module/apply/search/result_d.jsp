@@ -55,11 +55,11 @@
 						<table width="100%" border="0" cellpadding="0" cellspacing="0">
 							<tr valign="top">
 								<th width="40">序號</th>
-								<th>單位名稱 / 聯絡人</th>
-								<th>電話 / E-Mail</th>
-								<th>資料庫</th>
-								<th>電子書</th>
-								<th>期刊</th>
+								<th width="327">單位名稱 / 聯絡人</th>
+								<th width="292">電話 / E-Mail</th>
+								<th width="67">資料庫</th>
+								<th width="67">電子書</th>
+								<th width="47">期刊</th>
 							</tr>
 							<c:forEach var="item" items="${ds.results}" varStatus="status">
 								<c:set var="num" scope="session" value="${(status.index+1)%2}" />
@@ -88,9 +88,24 @@
 												<div>${item.contactUserName}</div></td>
 											<td><div>${item.tel}</div>
 												<div>${item.email}</div></td>
-											<td><a href="${ownDb}">${item.dbAmount}</a></td>
-											<td><a href="${ownEbook}">${item.ebookAmount}</a></td>
-											<td><a href="${ownJorunal}">${item.journalAount}</a></td>
+											<td><c:choose>
+													<c:when test="${item.dbAmount > 0 }">
+														<a href="${ownDb}">${item.dbAmount}</a>
+													</c:when>
+													<c:otherwise>${item.dbAmount}</c:otherwise>
+												</c:choose></td>
+											<td><c:choose>
+													<c:when test="${item.ebookAmount > 0 }">
+														<a href="${ownEbook}">${item.ebookAmount}</a>
+													</c:when>
+													<c:otherwise>${item.ebookAmount}</c:otherwise>
+												</c:choose></td>
+											<td><c:choose>
+													<c:when test="${item.journalAmount > 0 }">
+														<a href="${ownJorunal}">${item.journalAmount}</a>
+													</c:when>
+													<c:otherwise>${item.journalAmount}</c:otherwise>
+												</c:choose></td>
 										</tr>
 									</c:when>
 									<c:otherwise>
@@ -100,9 +115,24 @@
 												<div>${item.contactUserName}</div></td>
 											<td><div>${item.tel}</div>
 												<div>${item.email}</div></td>
-											<td><a href="${ownDb}">${item.dbAmount}</a></td>
-											<td><a href="${ownEbook}">${item.ebookAmount}</a></td>
-											<td><a href="${ownJorunal}">${item.journalAount}</a></td>
+											<td><c:choose>
+													<c:when test="${item.dbAmount > 0 }">
+														<a href="${ownDb}">${item.dbAmount}</a>
+													</c:when>
+													<c:otherwise>${item.dbAmount}</c:otherwise>
+												</c:choose></td>
+											<td><c:choose>
+													<c:when test="${item.ebookAmount > 0 }">
+														<a href="${ownEbook}">${item.ebookAmount}</a>
+													</c:when>
+													<c:otherwise>${item.ebookAmount}</c:otherwise>
+												</c:choose></td>
+											<td><c:choose>
+													<c:when test="${item.journalAmount > 0 }">
+														<a href="${ownJorunal}">${item.journalAmount}</a>
+													</c:when>
+													<c:otherwise>${item.journalAmount}</c:otherwise>
+												</c:choose></td>
 										</tr>
 									</c:otherwise>
 								</c:choose>

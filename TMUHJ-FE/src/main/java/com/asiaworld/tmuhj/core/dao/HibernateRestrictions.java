@@ -17,7 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
  * @author Roderick
  * @version 2014/10/22
  */
-public class HibernateRestrictions implements IiiRestrictions {
+public class HibernateRestrictions implements DsRestrictions {
 
 	/**
 	 * 

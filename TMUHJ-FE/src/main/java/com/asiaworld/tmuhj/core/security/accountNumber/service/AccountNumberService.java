@@ -10,13 +10,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
 import com.asiaworld.tmuhj.core.dao.GenericDaoFull;
-import com.asiaworld.tmuhj.core.dao.IiiRestrictions;
+import com.asiaworld.tmuhj.core.dao.DsRestrictions;
 import com.asiaworld.tmuhj.core.model.DataSet;
 import com.asiaworld.tmuhj.core.security.accountNumber.entity.AccountNumber;
 import com.asiaworld.tmuhj.core.security.accountNumber.entity.AccountNumberDao;
 import com.asiaworld.tmuhj.core.service.GenericServiceFull;
 import com.asiaworld.tmuhj.core.util.EncryptorUtil;
-import com.asiaworld.tmuhj.core.util.IiiBeanFactory;
+import com.asiaworld.tmuhj.core.util.DsBeanFactory;
 
 /**
  * 使用者 Service
@@ -42,7 +42,7 @@ public class AccountNumberService extends GenericServiceFull<AccountNumber> {
 		Assert.notNull(ds.getEntity());
 
 		AccountNumber entity = ds.getEntity();
-		IiiRestrictions restrictions = IiiBeanFactory.getIiiRestrictions();
+		DsRestrictions restrictions = DsBeanFactory.getDsRestrictions();
 		if (StringUtils.isNotEmpty(entity.getUserId())) {
 			restrictions.eq("userId", entity.getUserId());
 		}
@@ -84,7 +84,7 @@ public class AccountNumberService extends GenericServiceFull<AccountNumber> {
 	public Boolean checkUser(AccountNumber entity) throws Exception {
 		Assert.notNull(entity);
 
-		IiiRestrictions restrictions = IiiBeanFactory.getIiiRestrictions();
+		DsRestrictions restrictions = DsBeanFactory.getDsRestrictions();
 		restrictions.eq("userId", entity.getUserId());
 
 		List<AccountNumber> secUsers = dao.findByRestrictions(restrictions);

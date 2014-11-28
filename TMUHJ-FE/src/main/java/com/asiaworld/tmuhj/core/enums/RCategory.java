@@ -11,7 +11,10 @@ public enum RCategory {
 	買斷("買斷"),
 
 	/** 租貸. */
-	租貸("租貸");
+	租貸("租貸"),
+	
+	/** 未註明. */
+	未註明("未註明");
 
 	private String rCategory;
 

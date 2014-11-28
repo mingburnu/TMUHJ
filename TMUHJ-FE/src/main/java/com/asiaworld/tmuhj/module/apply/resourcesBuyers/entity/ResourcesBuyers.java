@@ -14,8 +14,8 @@ import com.asiaworld.tmuhj.core.enums.RCategory;
 import com.asiaworld.tmuhj.core.enums.RType;
 
 @Entity
-@Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 @Table(name = "resourcesBuyers")
+@Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class ResourcesBuyers extends GenericEntityFull {
 
 	/**

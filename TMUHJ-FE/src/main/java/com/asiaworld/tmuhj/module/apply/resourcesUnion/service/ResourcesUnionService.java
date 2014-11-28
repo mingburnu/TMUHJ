@@ -14,10 +14,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
 import com.asiaworld.tmuhj.core.dao.GenericDaoSerNo;
-import com.asiaworld.tmuhj.core.dao.IiiRestrictions;
+import com.asiaworld.tmuhj.core.dao.DsRestrictions;
 import com.asiaworld.tmuhj.core.model.DataSet;
 import com.asiaworld.tmuhj.core.service.GenericServiceSerNo;
-import com.asiaworld.tmuhj.core.util.IiiBeanFactory;
+import com.asiaworld.tmuhj.core.util.DsBeanFactory;
+import com.asiaworld.tmuhj.module.apply.ebook.entity.Ebook;
+import com.asiaworld.tmuhj.module.apply.journal.entity.Journal;
 import com.asiaworld.tmuhj.module.apply.resourcesUnion.entity.ResourcesUnion;
 import com.asiaworld.tmuhj.module.apply.resourcesUnion.entity.ResourcesUnionDao;
 
@@ -35,7 +37,7 @@ public class ResourcesUnionService extends GenericServiceSerNo<ResourcesUnion> {
 		Assert.notNull(ds);
 		Assert.notNull(ds.getEntity());
 
-		IiiRestrictions restrictions = IiiBeanFactory.getIiiRestrictions();
+		DsRestrictions restrictions = DsBeanFactory.getDsRestrictions();
 		return dao.findByRestrictions(restrictions, ds);
 	}
 
@@ -73,7 +75,7 @@ public class ResourcesUnionService extends GenericServiceSerNo<ResourcesUnion> {
 				Restrictions.gt("datSerNo", 0L));
 		criteria.add(andOperator);
 		List<?> list = criteria.list();
-		int count=list.size();
+		int count = list.size();
 		System.out.println("total Db: " + count);
 		return count;
 	}
@@ -106,7 +108,7 @@ public class ResourcesUnionService extends GenericServiceSerNo<ResourcesUnion> {
 				Restrictions.gt("jouSerNo", 0L));
 		criteria.add(andOperator);
 		List<?> list = criteria.list();
-		int count=list.size();
+		int count = list.size();
 		System.out.println("total Journal: " + count);
 		return count;
 	}
@@ -139,8 +141,39 @@ public class ResourcesUnionService extends GenericServiceSerNo<ResourcesUnion> {
 				Restrictions.gt("ebkSerNo", 0L));
 		criteria.add(andOperator);
 		List<?> list = criteria.list();
-		int count=list.size();
+		int count = list.size();
 		System.out.println("total Ebook: " + count);
 		return count;
+	}
+
+	public ResourcesUnion getByObjSerNo(long objSerNo,
+			Class<?> objClass) {
+		Session session = sessionFactory.getCurrentSession();
+		Criteria criteria = session.createCriteria(ResourcesUnion.class);
+		criteria.setFirstResult(0);
+		criteria.setMaxResults(1);
+
+		if (objClass.equals(Journal.class)) {
+			criteria.add(Restrictions.eq("jouSerNo", objSerNo));
+		} else if (objClass.equals(Ebook.class)) {
+			criteria.add(Restrictions.eq("ebkSerNo", objSerNo));
+		} else {
+			criteria.add(Restrictions.eq("datSerNo", objSerNo));
+		}
+
+		ResourcesUnion resourcesUnion = (ResourcesUnion) criteria.list().get(0);
+
+		return resourcesUnion;
+	}
+
+	public List<?> getByJouSerNo(long jouSerNo) {
+		Session session = sessionFactory.getCurrentSession();
+		Criteria criteria = session.createCriteria(ResourcesUnion.class);
+		
+		criteria.add(Restrictions.eq("jouSerNo", jouSerNo));
+		
+		List<?> journalResourcesUnionList=criteria.list();
+
+		return journalResourcesUnionList;
 	}
 }
