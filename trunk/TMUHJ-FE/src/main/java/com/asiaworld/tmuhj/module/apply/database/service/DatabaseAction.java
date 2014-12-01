@@ -73,8 +73,7 @@ public class DatabaseAction extends GenericCRUDActionFull<Database> {
 		resourcesUnion=resourcesUnionService.getByObjSerNo(Long.parseLong(getRequest()
 				.getParameter("serNo")), database.getClass());
 		
-//		resourcesBuyers=resourcesBuyersService.getBySerNo(resourcesUnion.getResSerNo());
-		resourcesBuyers=resourcesBuyersService.getBySerNo(3212L);
+		resourcesBuyers=resourcesBuyersService.getBySerNo(resourcesUnion.getResSerNo());
 		
 		getRequest().setAttribute("database", database);
 		getRequest().setAttribute("resourcesBuyers", resourcesBuyers);
