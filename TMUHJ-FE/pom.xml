@@ -265,6 +265,7 @@
 		<!--<dependency> <groupId>org.jumpmind.symmetric.jdbc</groupId> <artifactId>mariadb-java-client</artifactId> 
 			<version>1.1.1</version> </dependency> -->
 
+		<!-- MySql Driver -->
 		<dependency>
 			<groupId>mysql</groupId>
 			<artifactId>mysql-connector-java</artifactId>
@@ -400,6 +401,6 @@
 		<struts-version>2.3.16</struts-version>
 		<spring-version>4.0.2.RELEASE</spring-version>
 		<hibernate-version>4.2.16.Final</hibernate-version>
-		<!--<hibernate-version>4.3.1.Final</hibernate-version>-->
+		<!--<hibernate-version>4.3.1.Final</hibernate-version> -->
 	</properties>
 </project>
