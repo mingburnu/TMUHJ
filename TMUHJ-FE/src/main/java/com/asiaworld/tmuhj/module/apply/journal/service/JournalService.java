@@ -44,10 +44,18 @@ public class JournalService extends GenericServiceFull<Journal> {
 
 		HttpServletRequest request = ServletActionContext.getRequest();
 		String keywords = request.getParameter("keywords");
+		if (keywords == null || keywords.trim().equals("")) {
+			Pager pager = ds.getPager();
+			pager.setTotalRecord(0L);
+			ds.setPager(pager);
+			return ds;
+		}
 
 		String option = request.getParameter("option");
 
-		if (option.equals("中文刊名")) {
+		if (option == null) {
+			option = "";
+		} else if (option.equals("中文刊名")) {
 			option = "chinesetitle";
 		} else if (option.equals("英文刊名")) {
 			option = "englishtitle";
@@ -57,10 +65,13 @@ public class JournalService extends GenericServiceFull<Journal> {
 			option = "publishname";
 		} else if (option.equals("ISSN")) {
 			option = "ISSN";
+		} else {
+			option = "";
 		}
 
 		String recordPerPage = request.getParameter("recordPerPage");
-		if (recordPerPage != null) {
+		if (recordPerPage != null && NumberUtils.isDigits(recordPerPage)
+				&& Integer.parseInt(recordPerPage) > 0) {
 			Pager pager = ds.getPager();
 			pager.setRecordPerPage(Integer.parseInt(recordPerPage));
 			ds.setPager(pager);
@@ -86,18 +97,38 @@ public class JournalService extends GenericServiceFull<Journal> {
 
 			for (int i = 0; i < wordArray.length; i++) {
 				if (option.equals("ISSN")) {
-					if (NumberUtils.isDigits(wordArray[i])) {
-						sql = sql + "ISSN=" + wordArray[i] + " or ";
+					if (NumberUtils.isDigits(wordArray[i].replace("-", "")
+							.substring(0, 6))
+							&& wordArray[i].replace("-", "").length() == 8) {
+
+						if (wordArray[i].replace("-", "").substring(7)
+								.equals("x")
+								|| wordArray[i].replace("-", "").substring(7)
+										.equals("X")
+								|| NumberUtils.isDigits(wordArray[i].replace(
+										"-", "").substring(7))) {
+							sql = sql
+									+ "ISSN='"
+									+ wordArray[i].replace("-", "").replace(
+											"x", "X") + "' or ";
+						}
 					}
 				} else {
-					if (wordArray[i].isEmpty() == false) {
+					if (!wordArray[i].isEmpty() && !option.isEmpty()) {
 						sql = sql + "LOWER(" + option + ") like LOWER('%"
 								+ wordArray[i] + "%') or ";
 					}
 				}
 			}
 
-			restrictions.sqlQuery(sql.substring(0, sql.length() - 4));
+			if (sql.isEmpty()) {
+				Pager pager = ds.getPager();
+				pager.setTotalRecord(0L);
+				ds.setPager(pager);
+				return ds;
+			} else {
+				restrictions.sqlQuery(sql.substring(0, sql.length() - 4));
+			}
 		}
 		return dao.findByRestrictions(restrictions, ds);
 	}
@@ -117,13 +148,21 @@ public class JournalService extends GenericServiceFull<Journal> {
 		HttpServletRequest request = ServletActionContext.getRequest();
 
 		String keywords = request.getParameter("keywords");
+		if (keywords == null || keywords.trim().equals("")) {
+			Pager pager = ds.getPager();
+			pager.setTotalRecord(0L);
+			ds.setPager(pager);
+			return ds;
+		}
 
 		String recordPerPage = request.getParameter("recordPerPage");
-		if (recordPerPage != null) {
+		if (recordPerPage != null && NumberUtils.isDigits(recordPerPage)
+				&& Integer.parseInt(recordPerPage) > 0) {
 			Pager pager = ds.getPager();
 			pager.setRecordPerPage(Integer.parseInt(recordPerPage));
 			ds.setPager(pager);
 		}
+
 		if (StringUtils.isNotEmpty(keywords)) {
 			char[] cArray = keywords.toCharArray();
 			keywords = "";
@@ -152,13 +191,35 @@ public class JournalService extends GenericServiceFull<Journal> {
 							+ "%') or  LOWER(abbreviationtitle) like LOWER('%"
 							+ wordArray[i]
 							+ "%') or  LOWER(publishname) like LOWER('%"
-							+ wordArray[i] + "%') or  ISSN='" + wordArray[i]
-							+ "' or ";
+							+ wordArray[i] + "%') or ";
+				}
+
+				if (wordArray[i].replace("-", "").length() == 8
+						&& NumberUtils.isDigits(wordArray[i].replace("-", "")
+								.substring(0, 6))) {
+					if (wordArray[i].replace("-", "").substring(7).equals("x")
+							|| wordArray[i].replace("-", "").substring(7)
+									.equals("X")
+							|| NumberUtils.isDigits(wordArray[i].replace("-",
+									"").substring(7))) {
+						sql = sql
+								+ "ISSN='"
+								+ wordArray[i].replace("-", "").replace("x",
+										"X") + "' or ";
+					}
+
 				}
 
 			}
 
-			restrictions.sqlQuery(sql.substring(0, sql.length() - 4));
+			if (sql.isEmpty()) {
+				Pager pager = ds.getPager();
+				pager.setTotalRecord(0L);
+				ds.setPager(pager);
+				return ds;
+			} else {
+				restrictions.sqlQuery(sql.substring(0, sql.length() - 4));
+			}
 		}
 
 		return dao.findByRestrictions(restrictions, ds);
@@ -173,20 +234,22 @@ public class JournalService extends GenericServiceFull<Journal> {
 		String cusSerNo = request.getParameter("cusSerNo");
 
 		String recordPerPage = request.getParameter("recordPerPage");
-		if (recordPerPage != null) {
+		if (recordPerPage != null && NumberUtils.isDigits(recordPerPage)
+				&& Integer.parseInt(recordPerPage) > 0) {
 			Pager pager = ds.getPager();
 			pager.setRecordPerPage(Integer.parseInt(recordPerPage));
 			ds.setPager(pager);
 		}
 
 		ArrayList<ResourcesUnion> resourcesUnionList = null;
-		if (NumberUtils.isDigits(cusSerNo)) {
+		if (NumberUtils.isDigits(cusSerNo) && Long.parseLong(cusSerNo) > 0) {
 			resourcesUnionList = resourcesUnionService.totalJournal(Long
 					.parseLong(cusSerNo));
 		}
 
 		String sql = "";
-		if (resourcesUnionList.size() > 0) {
+		if (resourcesUnionList != null && !resourcesUnionList.isEmpty()
+				&& resourcesUnionList.size() > 0) {
 			for (int i = 0; i < resourcesUnionList.size(); i++) {
 				sql = sql + "serNo=" + resourcesUnionList.get(i).getJouSerNo()
 						+ " or ";
@@ -194,8 +257,10 @@ public class JournalService extends GenericServiceFull<Journal> {
 
 			restrictions.sqlQuery(sql.substring(0, sql.length() - 4));
 		} else {
-			restrictions.eq("serNo", -1L);
-			return dao.findByRestrictions(restrictions, ds);
+			Pager pager = ds.getPager();
+			pager.setTotalRecord(0L);
+			ds.setPager(pager);
+			return ds;
 		}
 		return dao.findByRestrictions(restrictions, ds);
 	}

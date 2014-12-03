@@ -19,37 +19,39 @@
 				<!-- 內容開始 -->
 				<div class="result">
 
+					<c:if test="${not empty query}">
+						<div class="pager">
+							<table width="100%" border="0" cellpadding="0" cellspacing="0">
+								<tr>
+									<s:form action="apply.customer.query.action">
+										<td align="left" class="p_01">共 <strong>${ds.pager.totalRecord}</strong>
+											筆記錄， 每頁顯示筆數 <select name="recordPerPage"
+											id="apply_customer_query_action_recordPerPage"
+											onchange="document.getElementById('apply_customer_query_action');this.form.submit();">
+												<option value="${ds.pager.recordPerPage}">${ds.pager.recordPerPage}</option>
+												<option value="5">5</option>
+												<option value="10">10</option>
+												<option value="20">20</option>
+												<option value="50">50</option>
+												<option value="100">100</option>
+										</select> <input type="hidden" name="keywords" value="${keywords }" />
 
-					<div class="pager">
-						<table width="100%" border="0" cellpadding="0" cellspacing="0">
-							<tr>
-								<s:form action="apply.customer.query.action">
-									<td align="left" class="p_01">共 <strong>${ds.pager.totalRecord}</strong>
-										筆記錄， 每頁顯示筆數 <select name="recordPerPage"
-										id="apply_customer_query_action_recordPerPage"
-										onchange="document.getElementById('apply_customer_query_action');this.form.submit();">
-											<option value="${ds.pager.recordPerPage}">${ds.pager.recordPerPage}</option>
-											<option value="5">5</option>
-											<option value="10">10</option>
-											<option value="20">20</option>
-											<option value="50">50</option>
-											<option value="100">100</option>
-									</select> <input type="hidden" name="keywords" value="${keywords }" />
-
-									</td>
-								</s:form>
-								<td align="right" class="p_02"><jsp:include
-										page="/WEB-INF/jsp/layout/pagination.jsp">
-										<jsp:param name="namespace" value="/crud" />
-										<jsp:param name="action" value="apply.customer.query" />
-										<jsp:param name="pager" value="${ds.pager}" />
-										<jsp:param name="keywords" value="${keywords}" />
-										<jsp:param name="recordPerPage"
-											value="${ds.pager.recordPerPage}" />
-									</jsp:include></td>
-							</tr>
-						</table>
-					</div>
+										</td>
+									</s:form>
+									<td align="right" class="p_02"><c:if
+											test="${ds.pager.totalRecord > 0 }"><jsp:include
+												page="/WEB-INF/jsp/layout/pagination.jsp">
+												<jsp:param name="namespace" value="/crud" />
+												<jsp:param name="action" value="apply.customer.query" />
+												<jsp:param name="pager" value="${ds.pager}" />
+												<jsp:param name="keywords" value="${keywords}" />
+												<jsp:param name="recordPerPage"
+													value="${ds.pager.recordPerPage}" />
+											</jsp:include></c:if></td>
+								</tr>
+							</table>
+						</div>
+					</c:if>
 
 					<div class="list">
 						<table width="100%" border="0" cellpadding="0" cellspacing="0">
@@ -66,17 +68,17 @@
 								<c:set var="orderInt" scope="session"
 									value="${ds.pager.offset+(status.index+1)}" />
 								<c:set var="ownJorunal">
-									<s:url namespace="/crud" action="apply.journal.ownerJournal">
+									<s:url namespace="/crud" action="apply.journal.owner">
 										<s:param name="cusSerNo">${item.serNo}</s:param>
 									</s:url>
 								</c:set>
 								<c:set var="ownDb">
-									<s:url namespace="/crud" action="apply.database.ownerDb">
+									<s:url namespace="/crud" action="apply.database.owner">
 										<s:param name="cusSerNo">${item.serNo}</s:param>
 									</s:url>
 								</c:set>
 								<c:set var="ownEbook">
-									<s:url namespace="/crud" action="apply.ebook.ownerEbook">
+									<s:url namespace="/crud" action="apply.ebook.owner">
 										<s:param name="cusSerNo">${item.serNo}</s:param>
 									</s:url>
 								</c:set>
@@ -140,37 +142,39 @@
 						</table>
 					</div>
 
+					<c:if test="${not empty query}">
+						<div class="pager">
+							<table width="100%" border="0" cellpadding="0" cellspacing="0">
+								<tr>
+									<s:form action="apply.customer.query.action">
+										<td align="left" class="p_01">共 <strong>${ds.pager.totalRecord}</strong>
+											筆記錄， 每頁顯示筆數 <select name="recordPerPage"
+											id="apply_customer_query_action_recordPerPage"
+											onchange="document.getElementById('apply_customer_query_action');this.form.submit();">
+												<option value="${ds.pager.recordPerPage}">${ds.pager.recordPerPage}</option>
+												<option value="5">5</option>
+												<option value="10">10</option>
+												<option value="20">20</option>
+												<option value="50">50</option>
+												<option value="100">100</option>
+										</select> <input type="hidden" name="keywords" value="${keywords }" />
 
-					<div class="pager">
-						<table width="100%" border="0" cellpadding="0" cellspacing="0">
-							<tr>
-								<s:form action="apply.customer.query.action">
-									<td align="left" class="p_01">共 <strong>${ds.pager.totalRecord}</strong>
-										筆記錄， 每頁顯示筆數 <select name="recordPerPage"
-										id="apply_customer_query_action_recordPerPage"
-										onchange="document.getElementById('apply_customer_query_action');this.form.submit();">
-											<option value="${ds.pager.recordPerPage}">${ds.pager.recordPerPage}</option>
-											<option value="5">5</option>
-											<option value="10">10</option>
-											<option value="20">20</option>
-											<option value="50">50</option>
-											<option value="100">100</option>
-									</select> <input type="hidden" name="keywords" value="${keywords }" />
-
-									</td>
-								</s:form>
-								<td align="right" class="p_02"><jsp:include
-										page="/WEB-INF/jsp/layout/pagination.jsp">
-										<jsp:param name="namespace" value="/crud" />
-										<jsp:param name="action" value="apply.customer.query" />
-										<jsp:param name="pager" value="${ds.pager}" />
-										<jsp:param name="keywords" value="${keywords}" />
-										<jsp:param name="recordPerPage"
-											value="${ds.pager.recordPerPage}" />
-									</jsp:include></td>
-							</tr>
-						</table>
-					</div>
+										</td>
+									</s:form>
+									<td align="right" class="p_02"><c:if
+											test="${ds.pager.totalRecord > 0 }"><jsp:include
+												page="/WEB-INF/jsp/layout/pagination.jsp">
+												<jsp:param name="namespace" value="/crud" />
+												<jsp:param name="action" value="apply.customer.query" />
+												<jsp:param name="pager" value="${ds.pager}" />
+												<jsp:param name="keywords" value="${keywords}" />
+												<jsp:param name="recordPerPage"
+													value="${ds.pager.recordPerPage}" />
+											</jsp:include></c:if></td>
+								</tr>
+							</table>
+						</div>
+					</c:if>
 
 				</div>
 				<!-- 內容結束 -->

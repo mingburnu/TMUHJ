@@ -96,6 +96,7 @@ public class CustomerAction extends GenericCRUDActionFull<Customer> {
 			getRequest().setAttribute("success", "新增成功");
 			getRequest().setAttribute("displayShow", "display: block;");
 			getRequest().setAttribute("alertShow", "display: block;");
+			
 			return LIST;
 		}
 	}

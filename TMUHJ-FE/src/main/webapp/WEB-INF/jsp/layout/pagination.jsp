@@ -17,8 +17,7 @@
 <c:set var="lastPage" value="${factor + (1 - (factor % 1)) % 1}" />
 
 <c:choose>
-	<c:when
-		test="${(empty cusSerNo) && (not empty keywords) && (empty option)}">
+	<c:when test="${not empty query}">
 		<c:set var="goToPage">
 			<c:url value="${param.namespace}/${param.action}.action" />
 		</c:set>
@@ -26,8 +25,7 @@
 		&recordPerPage=${param.recordPerPage }&keywords=${param.keywords}
 		</c:set>
 	</c:when>
-	<c:when
-		test="${(empty keywords) && (empty option) && (not empty cusSerNo)}">
+	<c:when test="${not empty owner}">
 		<c:set var="goToPage">
 			<c:url value="${param.namespace}/${param.action}.action" />
 		</c:set>
@@ -35,8 +33,7 @@
 		&recordPerPage=${param.recordPerPage }&cusSerNo=${param.cusSerNo}
 		</c:set>
 	</c:when>
-	<c:when
-		test="${(not empty keywords) && (not empty option) && (empty cusSerNo)}">
+	<c:when test="${not empty focus}">
 		<c:set var="goToPage">
 			<c:url value="${param.namespace}/${param.action}.action" />
 		</c:set>

@@ -26,16 +26,15 @@ public class DatabaseAction extends GenericCRUDActionFull<Database> {
 
 	@Autowired
 	private ResourcesUnion resourcesUnion;
-	
+
 	@Autowired
 	private ResourcesUnionService resourcesUnionService;
-	
+
 	@Autowired
 	private ResourcesBuyers resourcesBuyers;
-	
+
 	@Autowired
 	private ResourcesBuyersService resourcesBuyersService;
-
 
 	@Override
 	public void validateSave() throws Exception {
@@ -59,7 +58,7 @@ public class DatabaseAction extends GenericCRUDActionFull<Database> {
 	public String query() throws Exception {
 		getRequest().setAttribute("keywords",
 				getRequest().getParameter("keywords"));
-
+		getRequest().setAttribute("query", "apply.database.query.action");
 		DataSet<Database> ds = databaseService.getBySql(initDataSet());
 		setDs(ds);
 		return "database";
@@ -69,12 +68,14 @@ public class DatabaseAction extends GenericCRUDActionFull<Database> {
 	public String list() throws Exception {
 		database = databaseService.getBySerNo(Long.parseLong(getRequest()
 				.getParameter("serNo")));
-		
-		resourcesUnion=resourcesUnionService.getByObjSerNo(Long.parseLong(getRequest()
-				.getParameter("serNo")), database.getClass());
-		
-		resourcesBuyers=resourcesBuyersService.getBySerNo(resourcesUnion.getResSerNo());
-		
+
+		resourcesUnion = resourcesUnionService.getByObjSerNo(
+				Long.parseLong(getRequest().getParameter("serNo")),
+				database.getClass());
+
+		resourcesBuyers = resourcesBuyersService.getBySerNo(resourcesUnion
+				.getResSerNo());
+
 		getRequest().setAttribute("database", database);
 		getRequest().setAttribute("resourcesBuyers", resourcesBuyers);
 		return "d-detail";
@@ -98,9 +99,10 @@ public class DatabaseAction extends GenericCRUDActionFull<Database> {
 		return null;
 	}
 
-	public String ownerDb() throws Exception {
+	public String owner() throws Exception {
 		getRequest().setAttribute("cusSerNo",
 				getRequest().getParameter("cusSerNo"));
+		getRequest().setAttribute("owner", "apply.database.owner.action");
 		DataSet<Database> ds = databaseService.getByCusSerNo(initDataSet());
 		setDs(ds);
 
@@ -112,6 +114,7 @@ public class DatabaseAction extends GenericCRUDActionFull<Database> {
 				getRequest().getParameter("keywords"));
 		getRequest()
 				.setAttribute("option", getRequest().getParameter("option"));
+		getRequest().setAttribute("focus", "apply.database.focus.action");
 		DataSet<Database> ds = databaseService.getByRestrictions(initDataSet());
 		setDs(ds);
 		return "database";

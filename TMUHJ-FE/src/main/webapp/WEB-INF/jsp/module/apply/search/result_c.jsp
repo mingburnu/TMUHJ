@@ -20,8 +20,7 @@
 				<div class="result">
 
 					<c:choose>
-						<c:when
-							test="${(empty cusSerNo) && (not empty keywords) && (empty option)}">
+						<c:when test="${not empty query}">
 							<div class="pager">
 								<table width="100%" border="0" cellpadding="0" cellspacing="0">
 									<tr>
@@ -40,29 +39,29 @@
 
 											</td>
 										</s:form>
-										<td align="right" class="p_02"><jsp:include
-												page="/WEB-INF/jsp/layout/pagination.jsp">
-												<jsp:param name="namespace" value="/crud" />
-												<jsp:param name="action" value="apply.journal.query" />
-												<jsp:param name="pager" value="${ds.pager}" />
-												<jsp:param name="keywords" value="${keywords}" />
-												<jsp:param name="recordPerPage"
-													value="${ds.pager.recordPerPage}" />
-											</jsp:include></td>
+										<td align="right" class="p_02"><c:if
+												test="${ds.pager.totalRecord > 0 }"><jsp:include
+													page="/WEB-INF/jsp/layout/pagination.jsp">
+													<jsp:param name="namespace" value="/crud" />
+													<jsp:param name="action" value="apply.journal.query" />
+													<jsp:param name="pager" value="${ds.pager}" />
+													<jsp:param name="keywords" value="${keywords}" />
+													<jsp:param name="recordPerPage"
+														value="${ds.pager.recordPerPage}" />
+												</jsp:include></c:if></td>
 									</tr>
 								</table>
 							</div>
 						</c:when>
-						<c:when
-							test="${(empty keywords) && (empty option) && (not empty cusSerNo)}">
+						<c:when test="${not empty owner}">
 							<div class="pager">
 								<table width="100%" border="0" cellpadding="0" cellspacing="0">
 									<tr>
-										<s:form action="apply.journal.ownerJournal.action">
+										<s:form action="apply.journal.owner.action">
 											<td align="left" class="p_01">共 <strong>${ds.pager.totalRecord}</strong>
 												筆記錄， 每頁顯示筆數 <select name="recordPerPage"
-												id="apply_journal_ownerJournal_action_recordPerPage"
-												onchange="document.getElementById('apply_journal_ownerJournal_action');this.form.submit();">
+												id="apply_journal_owner_action_recordPerPage"
+												onchange="document.getElementById('apply_journal_owner_action');this.form.submit();">
 													<option value="${ds.pager.recordPerPage}">${ds.pager.recordPerPage}</option>
 													<option value="5">5</option>
 													<option value="10">10</option>
@@ -73,21 +72,21 @@
 
 											</td>
 										</s:form>
-										<td align="right" class="p_02"><jsp:include
-												page="/WEB-INF/jsp/layout/pagination.jsp">
-												<jsp:param name="namespace" value="/crud" />
-												<jsp:param name="action" value="apply.journal.ownerJournal" />
-												<jsp:param name="pager" value="${ds.pager}" />
-												<jsp:param name="cusSerNo" value="${cusSerNo}" />
-												<jsp:param name="recordPerPage"
-													value="${ds.pager.recordPerPage}" />
-											</jsp:include></td>
+										<td align="right" class="p_02"><c:if
+												test="${ds.pager.totalRecord > 0 }"><jsp:include
+													page="/WEB-INF/jsp/layout/pagination.jsp">
+													<jsp:param name="namespace" value="/crud" />
+													<jsp:param name="action" value="apply.journal.owner" />
+													<jsp:param name="pager" value="${ds.pager}" />
+													<jsp:param name="cusSerNo" value="${cusSerNo}" />
+													<jsp:param name="recordPerPage"
+														value="${ds.pager.recordPerPage}" />
+												</jsp:include></c:if></td>
 									</tr>
 								</table>
 							</div>
 						</c:when>
-						<c:when
-							test="${(not empty keywords) && (not empty option) && (empty cusSerNo)}">
+						<c:when test="${not empty focus}">
 							<div class="pager">
 								<table width="100%" border="0" cellpadding="0" cellspacing="0">
 									<tr>
@@ -106,16 +105,17 @@
 												type="hidden" name="keywords" value="${keywords }" />
 											</td>
 										</s:form>
-										<td align="right" class="p_02"><jsp:include
-												page="/WEB-INF/jsp/layout/pagination.jsp">
-												<jsp:param name="namespace" value="/crud" />
-												<jsp:param name="action" value="apply.journal.focus" />
-												<jsp:param name="pager" value="${ds.pager}" />
-												<jsp:param name="keywords" value="${keywords}" />
-												<jsp:param name="option" value="${option}" />
-												<jsp:param name="recordPerPage"
-													value="${ds.pager.recordPerPage}" />
-											</jsp:include></td>
+										<td align="right" class="p_02"><c:if
+												test="${ds.pager.totalRecord > 0 }"><jsp:include
+													page="/WEB-INF/jsp/layout/pagination.jsp">
+													<jsp:param name="namespace" value="/crud" />
+													<jsp:param name="action" value="apply.journal.focus" />
+													<jsp:param name="pager" value="${ds.pager}" />
+													<jsp:param name="keywords" value="${keywords}" />
+													<jsp:param name="option" value="${option}" />
+													<jsp:param name="recordPerPage"
+														value="${ds.pager.recordPerPage}" />
+												</jsp:include></c:if></td>
 									</tr>
 								</table>
 							</div>
@@ -188,8 +188,7 @@
 					</div>
 
 					<c:choose>
-						<c:when
-							test="${(empty cusSerNo) && (not empty keywords) && (empty option)}">
+						<c:when test="${not empty query}">
 							<div class="pager">
 								<table width="100%" border="0" cellpadding="0" cellspacing="0">
 									<tr>
@@ -208,29 +207,29 @@
 
 											</td>
 										</s:form>
-										<td align="right" class="p_02"><jsp:include
-												page="/WEB-INF/jsp/layout/pagination.jsp">
-												<jsp:param name="namespace" value="/crud" />
-												<jsp:param name="action" value="apply.journal.query" />
-												<jsp:param name="pager" value="${ds.pager}" />
-												<jsp:param name="keywords" value="${keywords}" />
-												<jsp:param name="recordPerPage"
-													value="${ds.pager.recordPerPage}" />
-											</jsp:include></td>
+										<td align="right" class="p_02"><c:if
+												test="${ds.pager.totalRecord > 0 }"><jsp:include
+													page="/WEB-INF/jsp/layout/pagination.jsp">
+													<jsp:param name="namespace" value="/crud" />
+													<jsp:param name="action" value="apply.journal.query" />
+													<jsp:param name="pager" value="${ds.pager}" />
+													<jsp:param name="keywords" value="${keywords}" />
+													<jsp:param name="recordPerPage"
+														value="${ds.pager.recordPerPage}" />
+												</jsp:include></c:if></td>
 									</tr>
 								</table>
 							</div>
 						</c:when>
-						<c:when
-							test="${(empty keywords) && (empty option) && (not empty cusSerNo)}">
+						<c:when test="${not empty owner}">
 							<div class="pager">
 								<table width="100%" border="0" cellpadding="0" cellspacing="0">
 									<tr>
-										<s:form action="apply.journal.ownerJournal.action">
+										<s:form action="apply.journal.owner.action">
 											<td align="left" class="p_01">共 <strong>${ds.pager.totalRecord}</strong>
 												筆記錄， 每頁顯示筆數 <select name="recordPerPage"
-												id="apply_journal_ownerJournal_action_recordPerPage"
-												onchange="document.getElementById('apply_journal_ownerJournal_action');this.form.submit();">
+												id="apply_journal_owner_action_recordPerPage"
+												onchange="document.getElementById('apply_journal_owner_action');this.form.submit();">
 													<option value="${ds.pager.recordPerPage}">${ds.pager.recordPerPage}</option>
 													<option value="5">5</option>
 													<option value="10">10</option>
@@ -241,21 +240,21 @@
 
 											</td>
 										</s:form>
-										<td align="right" class="p_02"><jsp:include
-												page="/WEB-INF/jsp/layout/pagination.jsp">
-												<jsp:param name="namespace" value="/crud" />
-												<jsp:param name="action" value="apply.journal.ownerJournal" />
-												<jsp:param name="pager" value="${ds.pager}" />
-												<jsp:param name="cusSerNo" value="${cusSerNo}" />
-												<jsp:param name="recordPerPage"
-													value="${ds.pager.recordPerPage}" />
-											</jsp:include></td>
+										<td align="right" class="p_02"><c:if
+												test="${ds.pager.totalRecord > 0 }"><jsp:include
+													page="/WEB-INF/jsp/layout/pagination.jsp">
+													<jsp:param name="namespace" value="/crud" />
+													<jsp:param name="action" value="apply.journal.owner" />
+													<jsp:param name="pager" value="${ds.pager}" />
+													<jsp:param name="cusSerNo" value="${cusSerNo}" />
+													<jsp:param name="recordPerPage"
+														value="${ds.pager.recordPerPage}" />
+												</jsp:include></c:if></td>
 									</tr>
 								</table>
 							</div>
 						</c:when>
-						<c:when
-							test="${(not empty keywords) && (not empty option) && (empty cusSerNo)}">
+						<c:when test="${not empty focus}">
 							<div class="pager">
 								<table width="100%" border="0" cellpadding="0" cellspacing="0">
 									<tr>
@@ -274,16 +273,17 @@
 												type="hidden" name="keywords" value="${keywords }" />
 											</td>
 										</s:form>
-										<td align="right" class="p_02"><jsp:include
-												page="/WEB-INF/jsp/layout/pagination.jsp">
-												<jsp:param name="namespace" value="/crud" />
-												<jsp:param name="action" value="apply.journal.focus" />
-												<jsp:param name="pager" value="${ds.pager}" />
-												<jsp:param name="keywords" value="${keywords}" />
-												<jsp:param name="option" value="${option}" />
-												<jsp:param name="recordPerPage"
-													value="${ds.pager.recordPerPage}" />
-											</jsp:include></td>
+										<td align="right" class="p_02"><c:if
+												test="${ds.pager.totalRecord > 0 }"><jsp:include
+													page="/WEB-INF/jsp/layout/pagination.jsp">
+													<jsp:param name="namespace" value="/crud" />
+													<jsp:param name="action" value="apply.journal.focus" />
+													<jsp:param name="pager" value="${ds.pager}" />
+													<jsp:param name="keywords" value="${keywords}" />
+													<jsp:param name="option" value="${option}" />
+													<jsp:param name="recordPerPage"
+														value="${ds.pager.recordPerPage}" />
+												</jsp:include></c:if></td>
 									</tr>
 								</table>
 							</div>

@@ -3,6 +3,7 @@ package com.asiaworld.tmuhj.module.apply.customer.service;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.struts2.ServletActionContext;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,14 +46,21 @@ public class CustomerService extends GenericServiceFull<Customer> {
 		HttpServletRequest request = ServletActionContext.getRequest();
 
 		String keywords = request.getParameter("keywords");
+		if (keywords == null || keywords.trim().equals("")) {
+			Pager pager = ds.getPager();
+			pager.setTotalRecord(0L);
+			ds.setPager(pager);
+			return ds;
+		}
 
 		String recordPerPage = request.getParameter("recordPerPage");
-		System.out.println(keywords);
-		if (recordPerPage != null) {
+		if (recordPerPage != null && NumberUtils.isDigits(recordPerPage)
+				&& Integer.parseInt(recordPerPage) > 0) {
 			Pager pager = ds.getPager();
 			pager.setRecordPerPage(Integer.parseInt(recordPerPage));
 			ds.setPager(pager);
 		}
+
 		if (StringUtils.isNotEmpty(keywords)) {
 			char[] cArray = keywords.toCharArray();
 			keywords = "";
@@ -79,8 +87,15 @@ public class CustomerService extends GenericServiceFull<Customer> {
 							+ wordArray[i] + "%') or ";
 				}
 			}
-			
-			restrictions.sqlQuery(sql.substring(0, sql.length() - 4));
+
+			if (sql.isEmpty()) {
+				Pager pager = ds.getPager();
+				pager.setTotalRecord(0L);
+				ds.setPager(pager);
+				return ds;
+			} else {
+				restrictions.sqlQuery(sql.substring(0, sql.length() - 4));
+			}
 		}
 
 		return dao.findByRestrictions(restrictions, ds);

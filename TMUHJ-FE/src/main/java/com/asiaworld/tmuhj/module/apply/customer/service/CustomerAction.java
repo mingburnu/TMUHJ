@@ -48,6 +48,7 @@ public class CustomerAction extends GenericCRUDActionFull<Customer> {
 	public String query() throws Exception {
 		getRequest().setAttribute("keywords",
 				getRequest().getParameter("keywords"));
+		getRequest().setAttribute("query", "apply.customer.query.action");
 
 		DataSet<Customer> ds = customerService.getBySql(initDataSet());
 		List<Customer> results = ds.getResults();
