@@ -70,7 +70,7 @@ public class JournalAction extends GenericCRUDActionFull<Journal> {
 	public String query() throws Exception {
 		getRequest().setAttribute("keywords",
 				getRequest().getParameter("keywords"));
-
+		getRequest().setAttribute("query", "apply.journal.query.action");
 		DataSet<Journal> ds = journalService.getBySql(initDataSet());
 		setDs(ds);
 		return "journal";
@@ -91,7 +91,7 @@ public class JournalAction extends GenericCRUDActionFull<Journal> {
 		List<?> journalResourcesUnionList = resourcesUnionService
 				.getByJouSerNo(Long.parseLong(getRequest()
 						.getParameter("serNo")));
-		
+
 		System.out.println("journalResourcesUnionList: "
 				+ journalResourcesUnionList.size());
 		List<String> ownerNameList = new ArrayList<String>();
@@ -100,7 +100,8 @@ public class JournalAction extends GenericCRUDActionFull<Journal> {
 
 		while (iterator.hasNext()) {
 			ResourcesUnion jouResourcesUnion = (ResourcesUnion) iterator.next();
-			customer = customerService.getBySerNo(jouResourcesUnion.getCusSerNo());
+			customer = customerService.getBySerNo(jouResourcesUnion
+					.getCusSerNo());
 			ownerNameList.add(customer.getName());
 		}
 
@@ -131,9 +132,10 @@ public class JournalAction extends GenericCRUDActionFull<Journal> {
 		return null;
 	}
 
-	public String ownerJournal() throws Exception {
+	public String owner() throws Exception {
 		getRequest().setAttribute("cusSerNo",
 				getRequest().getParameter("cusSerNo"));
+		getRequest().setAttribute("owner", "apply.journal.owner.action");
 		DataSet<Journal> ds = journalService.getByCusSerNo(initDataSet());
 		setDs(ds);
 
@@ -145,6 +147,7 @@ public class JournalAction extends GenericCRUDActionFull<Journal> {
 				getRequest().getParameter("keywords"));
 		getRequest()
 				.setAttribute("option", getRequest().getParameter("option"));
+		getRequest().setAttribute("focus", "apply.journal.focus.action");
 		DataSet<Journal> ds = journalService.getByRestrictions(initDataSet());
 		setDs(ds);
 		return "journal";

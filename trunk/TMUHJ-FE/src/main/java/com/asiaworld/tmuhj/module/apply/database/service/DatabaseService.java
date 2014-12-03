@@ -43,10 +43,18 @@ public class DatabaseService extends GenericServiceFull<Database> {
 
 		HttpServletRequest request = ServletActionContext.getRequest();
 		String keywords = request.getParameter("keywords");
+		if (keywords == null || keywords.trim().equals("")) {
+			Pager pager = ds.getPager();
+			pager.setTotalRecord(0L);
+			ds.setPager(pager);
+			return ds;
+		}
 
 		String option = request.getParameter("option");
 
-		if (option.equals("中文題名")) {
+		if (option == null) {
+			option = "";
+		} else if (option.equals("中文題名")) {
 			option = "DBchttitle";
 		} else if (option.equals("英文題名")) {
 			option = "DBengtitle";
@@ -54,14 +62,18 @@ public class DatabaseService extends GenericServiceFull<Database> {
 			option = "publishname";
 		} else if (option.equals("內容描述")) {
 			option = "Content";
+		} else {
+			option = "";
 		}
 
 		String recordPerPage = request.getParameter("recordPerPage");
-		if (recordPerPage != null) {
+		if (recordPerPage != null && NumberUtils.isDigits(recordPerPage)
+				&& Integer.parseInt(recordPerPage) > 0) {
 			Pager pager = ds.getPager();
 			pager.setRecordPerPage(Integer.parseInt(recordPerPage));
 			ds.setPager(pager);
 		}
+
 		if (StringUtils.isNotEmpty(keywords)) {
 			char[] cArray = keywords.toCharArray();
 			keywords = "";
@@ -80,13 +92,20 @@ public class DatabaseService extends GenericServiceFull<Database> {
 			String sql = "";
 
 			for (int i = 0; i < wordArray.length; i++) {
-				if (wordArray[i].isEmpty() == false) {
+				if (!wordArray[i].isEmpty() && !option.isEmpty()) {
 					sql = sql + "LOWER(" + option + ") like LOWER('%"
 							+ wordArray[i] + "%') or ";
 				}
 			}
 
-			restrictions.sqlQuery(sql.substring(0, sql.length() - 4));
+			if (sql.isEmpty()) {
+				Pager pager = ds.getPager();
+				pager.setTotalRecord(0L);
+				ds.setPager(pager);
+				return ds;
+			} else {
+				restrictions.sqlQuery(sql.substring(0, sql.length() - 4));
+			}
 		}
 		return dao.findByRestrictions(restrictions, ds);
 	}
@@ -106,13 +125,21 @@ public class DatabaseService extends GenericServiceFull<Database> {
 		HttpServletRequest request = ServletActionContext.getRequest();
 
 		String keywords = request.getParameter("keywords");
+		if (keywords == null || keywords.trim().equals("")) {
+			Pager pager = ds.getPager();
+			pager.setTotalRecord(0L);
+			ds.setPager(pager);
+			return ds;
+		}
 
 		String recordPerPage = request.getParameter("recordPerPage");
-		if (recordPerPage != null) {
+		if (recordPerPage != null && NumberUtils.isDigits(recordPerPage)
+				&& Integer.parseInt(recordPerPage) > 0) {
 			Pager pager = ds.getPager();
 			pager.setRecordPerPage(Integer.parseInt(recordPerPage));
 			ds.setPager(pager);
 		}
+
 		if (StringUtils.isNotEmpty(keywords)) {
 			char[] cArray = keywords.toCharArray();
 			keywords = "";
@@ -131,7 +158,7 @@ public class DatabaseService extends GenericServiceFull<Database> {
 			String sql = "";
 
 			for (int i = 0; i < wordArray.length; i++) {
-				if (wordArray[i].isEmpty() == false) {
+				if (!wordArray[i].isEmpty()) {
 					sql = sql + "LOWER(DBchttitle) like LOWER('%"
 							+ wordArray[i]
 							+ "%') or  LOWER(DBengtitle) like LOWER('%"
@@ -140,7 +167,14 @@ public class DatabaseService extends GenericServiceFull<Database> {
 
 			}
 
-			restrictions.sqlQuery(sql.substring(0, sql.length() - 4));
+			if (sql.isEmpty()) {
+				Pager pager = ds.getPager();
+				pager.setTotalRecord(0L);
+				ds.setPager(pager);
+				return ds;
+			} else {
+				restrictions.sqlQuery(sql.substring(0, sql.length() - 4));
+			}
 		}
 
 		return dao.findByRestrictions(restrictions, ds);
@@ -156,7 +190,8 @@ public class DatabaseService extends GenericServiceFull<Database> {
 		String cusSerNo = request.getParameter("cusSerNo");
 
 		String recordPerPage = request.getParameter("recordPerPage");
-		if (recordPerPage != null) {
+		if (recordPerPage != null && NumberUtils.isDigits(recordPerPage)
+				&& Integer.parseInt(recordPerPage) > 0) {
 			Pager pager = ds.getPager();
 			pager.setRecordPerPage(Integer.parseInt(recordPerPage));
 			ds.setPager(pager);
@@ -169,7 +204,8 @@ public class DatabaseService extends GenericServiceFull<Database> {
 		}
 
 		String sql = "";
-		if (resourcesUnionList.size() > 0) {
+		if (resourcesUnionList != null && !resourcesUnionList.isEmpty()
+				&& resourcesUnionList.size() > 0) {
 			for (int i = 0; i < resourcesUnionList.size(); i++) {
 				sql = sql + "serNo=" + resourcesUnionList.get(i).getDatSerNo()
 						+ " or ";
@@ -177,8 +213,10 @@ public class DatabaseService extends GenericServiceFull<Database> {
 
 			restrictions.sqlQuery(sql.substring(0, sql.length() - 4));
 		} else {
-			restrictions.eq("serNo", -1L);
-			return dao.findByRestrictions(restrictions, ds);
+			Pager pager = ds.getPager();
+			pager.setTotalRecord(0L);
+			ds.setPager(pager);
+			return ds;
 		}
 		return dao.findByRestrictions(restrictions, ds);
 	}

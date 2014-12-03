@@ -46,7 +46,7 @@ public class EbookAction extends GenericCRUDActionFull<Ebook> {
 	public String query() throws Exception {
 		getRequest().setAttribute("keywords",
 				getRequest().getParameter("keywords"));
-
+		getRequest().setAttribute("query", "apply.ebook.query.action");
 		DataSet<Ebook> ds = ebookService.getBySql(initDataSet());
 		setDs(ds);
 		return "ebook";
@@ -78,9 +78,10 @@ public class EbookAction extends GenericCRUDActionFull<Ebook> {
 		return null;
 	}
 
-	public String ownerEbook() throws Exception {
+	public String owner() throws Exception {
 		getRequest().setAttribute("cusSerNo",
 				getRequest().getParameter("cusSerNo"));
+		getRequest().setAttribute("owner", "apply.ebook.owner.action");
 		DataSet<Ebook> ds = ebookService.getByCusSerNo(initDataSet());
 		setDs(ds);
 
@@ -92,7 +93,8 @@ public class EbookAction extends GenericCRUDActionFull<Ebook> {
 				getRequest().getParameter("keywords"));
 		getRequest()
 				.setAttribute("option", getRequest().getParameter("option"));
-		DataSet<Ebook> ds=ebookService.getByRestrictions(initDataSet());
+		getRequest().setAttribute("focus", "apply.ebook.focus.action");
+		DataSet<Ebook> ds = ebookService.getByRestrictions(initDataSet());
 		setDs(ds);
 		return "ebook";
 	}

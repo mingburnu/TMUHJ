@@ -20,8 +20,7 @@
 				<div class="result">
 
 					<c:choose>
-						<c:when
-							test="${(empty cusSerNo) && (not empty keywords) && (empty option)}">
+						<c:when test="${not empty query}">
 							<div class="pager">
 								<table width="100%" border="0" cellpadding="0" cellspacing="0">
 									<tr>
@@ -54,16 +53,15 @@
 								</table>
 							</div>
 						</c:when>
-						<c:when
-							test="${(empty keywords) && (empty option) && (not empty cusSerNo)}">
+						<c:when test="${not empty owner}">
 							<div class="pager">
 								<table width="100%" border="0" cellpadding="0" cellspacing="0">
 									<tr>
-										<s:form action="apply.ebook.ownerEbook.action">
+										<s:form action="apply.ebook.owner.action">
 											<td align="left" class="p_01">共 <strong>${ds.pager.totalRecord}</strong>
 												筆記錄， 每頁顯示筆數 <select name="recordPerPage"
-												id="apply_ebook_ownerEbook_action_recordPerPage"
-												onchange="document.getElementById('apply_ebook_ownerEbook_action');this.form.submit();">
+												id="apply_ebook_owner_action_recordPerPage"
+												onchange="document.getElementById('apply_ebook_owner_action');this.form.submit();">
 													<option value="${ds.pager.recordPerPage}">${ds.pager.recordPerPage}</option>
 													<option value="5">5</option>
 													<option value="10">10</option>
@@ -78,7 +76,7 @@
 												test="${ds.pager.totalRecord > 0 }"><jsp:include
 													page="/WEB-INF/jsp/layout/pagination.jsp">
 													<jsp:param name="namespace" value="/crud" />
-													<jsp:param name="action" value="apply.ebook.ownerEbook" />
+													<jsp:param name="action" value="apply.ebook.owner" />
 													<jsp:param name="pager" value="${ds.pager}" />
 													<jsp:param name="cusSerNo" value="${cusSerNo}" />
 													<jsp:param name="recordPerPage"
@@ -88,8 +86,7 @@
 								</table>
 							</div>
 						</c:when>
-						<c:when
-							test="${(not empty keywords) && (not empty option) && (empty cusSerNo)}">
+						<c:when test="${not empty focus}">
 							<div class="pager">
 								<table width="100%" border="0" cellpadding="0" cellspacing="0">
 									<tr>
@@ -123,40 +120,6 @@
 								</table>
 							</div>
 						</c:when>
-						<c:otherwise>
-						<div class="pager">
-								<table width="100%" border="0" cellpadding="0" cellspacing="0">
-									<tr>
-										<s:form action="apply.ebook.query.action">
-											<td align="left" class="p_01">共 <strong>${ds.pager.totalRecord}</strong>
-												筆記錄， 每頁顯示筆數 <select name="recordPerPage"
-												id="apply_ebook_focus_action_recordPerPage"
-												onchange="document.getElementById('apply_ebook_focus_action');this.form.submit();">
-													<option value="${ds.pager.recordPerPage}">${ds.pager.recordPerPage}</option>
-													<option value="5">5</option>
-													<option value="10">10</option>
-													<option value="20">20</option>
-													<option value="50">50</option>
-													<option value="100">100</option>
-											</select> <input type="hidden" name="option" value="${option }" /> <input
-												type="hidden" name="keywords" value="${keywords }" />
-											</td>
-										</s:form>
-										<td align="right" class="p_02"><c:if
-												test="${ds.pager.totalRecord > 0 }"><jsp:include
-													page="/WEB-INF/jsp/layout/pagination.jsp">
-													<jsp:param name="namespace" value="/crud" />
-													<jsp:param name="action" value="apply.ebook.focus" />
-													<jsp:param name="pager" value="${ds.pager}" />
-													<jsp:param name="keywords" value="${keywords}" />
-													<jsp:param name="option" value="${option}" />
-													<jsp:param name="recordPerPage"
-														value="${ds.pager.recordPerPage}" />
-												</jsp:include></c:if></td>
-									</tr>
-								</table>
-							</div>
-						</c:otherwise>
 					</c:choose>
 
 					<div class="list">
@@ -199,8 +162,7 @@
 					</div>
 
 					<c:choose>
-						<c:when
-							test="${(empty cusSerNo) && (not empty keywords) && (empty option)}">
+						<c:when test="${not empty query}">
 							<div class="pager">
 								<table width="100%" border="0" cellpadding="0" cellspacing="0">
 									<tr>
@@ -233,16 +195,15 @@
 								</table>
 							</div>
 						</c:when>
-						<c:when
-							test="${(empty keywords) && (empty option) && (not empty cusSerNo)}">
+						<c:when test="${not empty owner}">
 							<div class="pager">
 								<table width="100%" border="0" cellpadding="0" cellspacing="0">
 									<tr>
-										<s:form action="apply.ebook.ownerEbook.action">
+										<s:form action="apply.ebook.owner.action">
 											<td align="left" class="p_01">共 <strong>${ds.pager.totalRecord}</strong>
 												筆記錄， 每頁顯示筆數 <select name="recordPerPage"
-												id="apply_ebook_ownerEbook_action_recordPerPage"
-												onchange="document.getElementById('apply_ebook_ownerEbook_action');this.form.submit();">
+												id="apply_ebook_owner_action_recordPerPage"
+												onchange="document.getElementById('apply_ebook_owner_action');this.form.submit();">
 													<option value="${ds.pager.recordPerPage}">${ds.pager.recordPerPage}</option>
 													<option value="5">5</option>
 													<option value="10">10</option>
@@ -257,7 +218,7 @@
 												test="${ds.pager.totalRecord > 0 }"><jsp:include
 													page="/WEB-INF/jsp/layout/pagination.jsp">
 													<jsp:param name="namespace" value="/crud" />
-													<jsp:param name="action" value="apply.ebook.ownerEbook" />
+													<jsp:param name="action" value="apply.ebook.owner" />
 													<jsp:param name="pager" value="${ds.pager}" />
 													<jsp:param name="cusSerNo" value="${cusSerNo}" />
 													<jsp:param name="recordPerPage"
@@ -267,8 +228,7 @@
 								</table>
 							</div>
 						</c:when>
-						<c:when
-							test="${(not empty keywords) && (not empty option) && (empty cusSerNo)}">
+						<c:when test="${not empty focus}">
 							<div class="pager">
 								<table width="100%" border="0" cellpadding="0" cellspacing="0">
 									<tr>
@@ -302,40 +262,6 @@
 								</table>
 							</div>
 						</c:when>
-						<c:otherwise>
-						<div class="pager">
-								<table width="100%" border="0" cellpadding="0" cellspacing="0">
-									<tr>
-										<s:form action="apply.ebook.query.action">
-											<td align="left" class="p_01">共 <strong>${ds.pager.totalRecord}</strong>
-												筆記錄， 每頁顯示筆數 <select name="recordPerPage"
-												id="apply_ebook_focus_action_recordPerPage"
-												onchange="document.getElementById('apply_ebook_focus_action');this.form.submit();">
-													<option value="${ds.pager.recordPerPage}">${ds.pager.recordPerPage}</option>
-													<option value="5">5</option>
-													<option value="10">10</option>
-													<option value="20">20</option>
-													<option value="50">50</option>
-													<option value="100">100</option>
-											</select> <input type="hidden" name="option" value="${option }" /> <input
-												type="hidden" name="keywords" value="${keywords }" />
-											</td>
-										</s:form>
-										<td align="right" class="p_02"><c:if
-												test="${ds.pager.totalRecord > 0 }"><jsp:include
-													page="/WEB-INF/jsp/layout/pagination.jsp">
-													<jsp:param name="namespace" value="/crud" />
-													<jsp:param name="action" value="apply.ebook.focus" />
-													<jsp:param name="pager" value="${ds.pager}" />
-													<jsp:param name="keywords" value="${keywords}" />
-													<jsp:param name="option" value="${option}" />
-													<jsp:param name="recordPerPage"
-														value="${ds.pager.recordPerPage}" />
-												</jsp:include></c:if></td>
-									</tr>
-								</table>
-							</div>
-						</c:otherwise>
 					</c:choose>
 
 				</div>

@@ -94,7 +94,8 @@ public class EbookService extends GenericServiceFull<Ebook> {
 
 			for (int i = 0; i < wordArray.length; i++) {
 				if (option.equals("ISBN")) {
-					if (NumberUtils.isDigits(wordArray[i])) {
+					if (NumberUtils.isDigits(wordArray[i].replace("-", ""))
+							&& wordArray[i].replace("-", "").length() == 13) {
 						sql = sql + "ISBN=" + wordArray[i] + " or ";
 					}
 				} else {
@@ -167,7 +168,7 @@ public class EbookService extends GenericServiceFull<Ebook> {
 			String sql = "";
 
 			for (int i = 0; i < wordArray.length; i++) {
-				if (wordArray[i].isEmpty() == false) {
+				if (!wordArray[i].isEmpty()) {
 					sql = sql + "LOWER(bookname) like LOWER('%" + wordArray[i]
 							+ "%') or  LOWER(publishname) like LOWER('%"
 							+ wordArray[i]
@@ -218,7 +219,8 @@ public class EbookService extends GenericServiceFull<Ebook> {
 		}
 
 		String sql = "";
-		if (resourcesUnionList.size() > 0) {
+		if (resourcesUnionList != null && !resourcesUnionList.isEmpty()
+				&& resourcesUnionList.size() > 0) {
 			for (int i = 0; i < resourcesUnionList.size(); i++) {
 				sql = sql + "serNo=" + resourcesUnionList.get(i).getEbkSerNo()
 						+ " or ";
