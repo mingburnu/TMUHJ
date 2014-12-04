@@ -85,15 +85,13 @@ public class JournalAction extends GenericCRUDActionFull<Journal> {
 				Long.parseLong(getRequest().getParameter("serNo")),
 				journal.getClass());
 
-		// resourcesBuyers=resourcesBuyersService.getBySerNo(resourcesUnion.getResSerNo());
-		resourcesBuyers = resourcesBuyersService.getBySerNo(3212L);
+		resourcesBuyers = resourcesBuyersService.getBySerNo(resourcesUnion
+				.getResSerNo());
 
 		List<?> journalResourcesUnionList = resourcesUnionService
 				.getByJouSerNo(Long.parseLong(getRequest()
 						.getParameter("serNo")));
 
-		System.out.println("journalResourcesUnionList: "
-				+ journalResourcesUnionList.size());
 		List<String> ownerNameList = new ArrayList<String>();
 
 		Iterator<?> iterator = journalResourcesUnionList.iterator();

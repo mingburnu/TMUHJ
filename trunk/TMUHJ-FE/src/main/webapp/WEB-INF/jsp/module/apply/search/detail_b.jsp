@@ -89,6 +89,12 @@
 								<td class="t_02">${ebook.bookInfoIntegral}</td>
 							</tr>
 						</c:if>
+						<c:if test="${not empty ownerNames}">
+							<tr>
+								<td class="t_01">館藏</td>
+								<td class="t_02">${ownerNames }</td>
+							</tr>
+						</c:if>
 					</table>
 
 					<div align="center">

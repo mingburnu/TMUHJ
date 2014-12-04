@@ -146,8 +146,7 @@ public class ResourcesUnionService extends GenericServiceSerNo<ResourcesUnion> {
 		return count;
 	}
 
-	public ResourcesUnion getByObjSerNo(long objSerNo,
-			Class<?> objClass) {
+	public ResourcesUnion getByObjSerNo(long objSerNo, Class<?> objClass) {
 		Session session = sessionFactory.getCurrentSession();
 		Criteria criteria = session.createCriteria(ResourcesUnion.class);
 		criteria.setFirstResult(0);
@@ -169,10 +168,32 @@ public class ResourcesUnionService extends GenericServiceSerNo<ResourcesUnion> {
 	public List<?> getByJouSerNo(long jouSerNo) {
 		Session session = sessionFactory.getCurrentSession();
 		Criteria criteria = session.createCriteria(ResourcesUnion.class);
-		
+
 		criteria.add(Restrictions.eq("jouSerNo", jouSerNo));
-		
-		List<?> journalResourcesUnionList=criteria.list();
+
+		List<?> journalResourcesUnionList = criteria.list();
+
+		return journalResourcesUnionList;
+	}
+
+	public List<?> getByEbkSerNo(long ebkSerNo) {
+		Session session = sessionFactory.getCurrentSession();
+		Criteria criteria = session.createCriteria(ResourcesUnion.class);
+
+		criteria.add(Restrictions.eq("ebkSerNo", ebkSerNo));
+
+		List<?> journalResourcesUnionList = criteria.list();
+
+		return journalResourcesUnionList;
+	}
+
+	public List<?> getByDatSerNo(long datSerNo) {
+		Session session = sessionFactory.getCurrentSession();
+		Criteria criteria = session.createCriteria(ResourcesUnion.class);
+
+		criteria.add(Restrictions.eq("datSerNo", datSerNo));
+
+		List<?> journalResourcesUnionList = criteria.list();
 
 		return journalResourcesUnionList;
 	}
