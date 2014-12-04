@@ -87,15 +87,38 @@
 			$("#div_Alert .content > .contain").html("您確定要刪除所勾選的資料嗎?");
 			$("#div_Alert .content > .func-button")
 					.html(
-							'<a id="true_btn" class="state-default" onclick="closeAlert();">是</a>&nbsp;&nbsp;'
+							'<a id="true_btn" class="state-default" onclick="deleteChecked();">是</a>&nbsp;&nbsp;'
 									+ '<a id="false_btn" class="state-default" onclick="closeAlert();">否</a>&nbsp;&nbsp;');
 			$("#div_Alert").show();
 
 		}
 	}
 
+	//送出delete
+	function deleteChecked() {
+		$("form#multiple").attr("action",
+				"<c:url value = '/'/>crud/apply.customer.deleteChecked.action");
+		showLoading();
+		$.post($("form#multiple").attr("action"), $("form#multiple")
+				.serialize(), function() {
+			$("form#multiple").submit();
+		});
+	}
+	
+	//瀏覽用戶
+	function goView(i){
+		$("input[name='viewSerNo']").remove();
+		$("form#multiple").append("<input type='hidden' name='viewSerNo'>");
+		$("input[name='viewSerNo']").val(i);
+		$("form#multiple").attr("action","<c:url value = '/'/>crud/apply.customer.view.action");
+		showLoading();
+		$.post($("form#multiple").attr("action"), $("form#multiple").serialize(), function() {
+			$("form#multiple").submit();
+			});		
+	}
+
 	//修改用戶
-	function goUpdate() {
+	function goUpdate(i) {
 		$("div#div_Detail").show();
 		$("form#apply_customer_save").hide();
 	}
@@ -173,7 +196,7 @@ input:-webkit-autofill {
 										</div>
 									</div>
 								</s:form>
-								<form>
+								<form id="multiple">
 									<div id="div_nav">
 										目前位置：<span>客戶管理</span> &gt; <span>基本設定</span>
 									</div>
@@ -220,15 +243,18 @@ input:-webkit-autofill {
 														<td>${item.address }</td>
 														<td align="center"><c:choose>
 																<c:when test="${1 eq  item.serNo }">
-																	<a class="state-default2" onclick="goView('1');"><span
+																	<a class="state-default2"
+																		onclick="goView(${item.serNo});"><span
 																		class="icon-default icon-view"></span>檢視</a>
-																	<a class="state-default2" onclick="goUpdate('1');"><span
+																	<a class="state-default2"
+																		onclick="goUpdate(${item.serNo});"><span
 																		class="icon-default icon-edit"></span>修改</a>
 																</c:when>
 																<c:otherwise>
-																	<a class="state-default2" onclick="goView('7');"><span
+																	<a class="state-default2"
+																		onclick="goView(${item.serNo});"><span
 																		class="icon-default icon-view"></span>檢視</a>
-																	<a class="state-default2" onclick="goUpdate('7');"><span
+																	<a class="state-default2" onclick="goUpdate(${item.serNo});"><span
 																		class="icon-default icon-edit"></span>修改</a>
 																	<a class="state-default2"
 																		onclick="goDel('7','碩亞高中',1);"><span
@@ -484,7 +510,7 @@ input:-webkit-autofill {
 					</tbody>
 				</table>
 				<div class="detail-func-button">
-					<a class="state-default" onclick="closeCustomers();">關閉</a>
+					<a class="state-default" onclick="closeAlert();">關閉</a>
 				</div>
 			</div>
 		</div>
@@ -523,6 +549,8 @@ input:-webkit-autofill {
 		</div>
 	</div>
 
-	<div style="display: none;"></div>
+	<div style="display: none;">
+		<form></form>
+	</div>
 </body>
 </html>

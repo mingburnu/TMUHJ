@@ -96,7 +96,7 @@ public class CustomerAction extends GenericCRUDActionFull<Customer> {
 			getRequest().setAttribute("success", "新增成功");
 			getRequest().setAttribute("displayShow", "display: block;");
 			getRequest().setAttribute("alertShow", "display: block;");
-			
+			getRequest().setAttribute("back2", "history.go(-2);");
 			return LIST;
 		}
 	}
@@ -121,7 +121,6 @@ public class CustomerAction extends GenericCRUDActionFull<Customer> {
 		return LIST;
 	}
 
-	
 	@Override
 	public String delete() throws Exception {
 		// TODO Auto-generated method stub
@@ -139,6 +138,16 @@ public class CustomerAction extends GenericCRUDActionFull<Customer> {
 			}
 			i++;
 		}
+		return LIST;
+	}
+
+	public String view() throws Exception {
+		customer = customerService.getBySerNo(Long.parseLong(getRequest()
+				.getParameter("viewSerNo")));
+		getRequest().setAttribute("title", "用戶-檢視");
+		getRequest().setAttribute("customer", customer);
+		getRequest().setAttribute("displayShow", "display: block;");
+		getRequest().setAttribute("back1", "history.go(-1);");
 		return LIST;
 	}
 
