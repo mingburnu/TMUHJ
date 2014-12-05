@@ -8,6 +8,8 @@ import org.springframework.stereotype.Controller;
 import com.asiaworld.tmuhj.core.model.DataSet;
 import com.asiaworld.tmuhj.core.web.GenericCRUDActionFull;
 import com.asiaworld.tmuhj.module.apply.customer.entity.Customer;
+import com.asiaworld.tmuhj.module.apply.ipRange.entity.IpRange;
+import com.asiaworld.tmuhj.module.apply.ipRange.service.IpRangeService;
 import com.asiaworld.tmuhj.module.apply.resourcesUnion.service.ResourcesUnionService;
 
 @Controller
@@ -27,6 +29,15 @@ public class CustomerAction extends GenericCRUDActionFull<Customer> {
 
 	@Autowired
 	private ResourcesUnionService resourcesUnionService;
+
+	@Autowired
+	private IpRange ipRange;
+
+	@Autowired
+	private IpRangeService ipRangeService;
+
+	@Autowired
+	private DataSet<IpRange> dsIpRange;
 
 	@Override
 	public void validateSave() throws Exception {
@@ -51,6 +62,8 @@ public class CustomerAction extends GenericCRUDActionFull<Customer> {
 		if (getEntity().getSerNo() != null) {
 			customer = customerService.getBySerNo(getEntity().getSerNo());
 			setEntity(customer);
+			getRequest().setAttribute("modifyShow", "display: block;");
+			getRequest().setAttribute("customerName", customer.getName());
 		} else {
 			getRequest().setAttribute("addShow", "display: block;");
 		}
@@ -67,7 +80,6 @@ public class CustomerAction extends GenericCRUDActionFull<Customer> {
 
 	@Override
 	public String save() throws Exception {
-		customer = getEntity();
 		if (getEntity().getName().trim().equals("")
 				|| getEntity().getName() == null) {
 			getRequest().setAttribute("addShow", "display: block;");
@@ -86,45 +98,45 @@ public class CustomerAction extends GenericCRUDActionFull<Customer> {
 			setEntity(customer);
 			System.out.println("ssserNo:" + customer.getSerNo());
 
-			// DataSet<Customer> ds =
-			// customerService.getEditedData(initDataSet(),
-			// customer.getSerNo());
-			// setDs(ds);
-			getRequest().setAttribute("entity", null);
+			// getRequest().setAttribute("entity", null);
 			getRequest().setAttribute("title", "用戶-新增");
 			getRequest().setAttribute("customer", customer);
 			getRequest().setAttribute("success", "新增成功");
 			getRequest().setAttribute("displayShow", "display: block;");
 			getRequest().setAttribute("alertShow", "display: block;");
 			getRequest().setAttribute("back2", "history.go(-2);");
+			list();
 			return LIST;
 		}
 	}
 
 	@Override
 	public String update() throws Exception {
-		customer = customerService.update(getEntity(), getLoginUser());
+		customer = customerService.update(getEntity(), getLoginUser(), "name");
 		setEntity(customer);
+		System.out.println("ssserNo:" + customer.getSerNo());
 
-		System.out.println("java version" + System.getProperty("java.version"));
-		System.out.println("lasturl: "
-				+ getRequest()
-						.getAttribute("javax.servlet.forward.request_uri"));
-		getRequest().setAttribute("last",
-				getRequest().getAttribute("javax.servlet.forward.request_uri"));
-
-		// DataSet<Customer> ds = customerService.getEditedData(initDataSet(),
-		// customer.getSerNo());
-		// setDs(ds);
+		// getRequest().setAttribute("entity", null);
+		getRequest().setAttribute("title", "用戶-修改");
+		getRequest().setAttribute("customer", customer);
 		getRequest().setAttribute("success", "修改成功");
-		getRequest().setAttribute("show", "display: block;");
+		getRequest().setAttribute("displayShow", "display: block;");
+		getRequest().setAttribute("alertShow", "display: block;");
+		getRequest().setAttribute("back2", "history.go(-2);");
+		list();
 		return LIST;
+
 	}
 
 	@Override
 	public String delete() throws Exception {
-		// TODO Auto-generated method stub
-		return null;
+		customerService.deleteBySerNo(getEntity().getSerNo());
+		setEntity(null);
+		getRequest().setAttribute("title", "用戶-刪除");
+		getRequest().setAttribute("success", "刪除成功");
+		getRequest().setAttribute("alertShow", "display: block;");
+		getRequest().setAttribute("back2", "history.go(-2);");
+		return LIST;
 	}
 
 	public String deleteChecked() throws Exception {
@@ -148,6 +160,18 @@ public class CustomerAction extends GenericCRUDActionFull<Customer> {
 		getRequest().setAttribute("customer", customer);
 		getRequest().setAttribute("displayShow", "display: block;");
 		getRequest().setAttribute("back1", "history.go(-1);");
+		return LIST;
+	}
+
+	public String ipMaintain() throws NumberFormatException, Exception {
+		dsIpRange.setEntity(ipRange);
+		dsIpRange.setPager(getPager());
+
+		dsIpRange=ipRangeService.getByCusSerNo(dsIpRange, Long.parseLong(getRequest().getParameter("cusSerNo")));
+		
+		getRequest().setAttribute("ipMaintain", "display: block;");
+		getRequest().setAttribute("cusSerNo", getRequest().getParameter("cusSerNo"));
+		getRequest().setAttribute("dsIpRange", dsIpRange);
 		return LIST;
 	}
 
