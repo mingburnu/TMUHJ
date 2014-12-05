@@ -117,11 +117,15 @@
 			});		
 	}
 
-	//修改用戶
-	function goUpdate(i) {
-		$("div#div_Detail").show();
-		$("form#apply_customer_save").hide();
+	//刪除單筆
+	function goDel(i){
+		$("div#div_Alert").show();
+		$("div#div_Alert .contain").text("確定要刪除此筆資料嗎?");
+		$("div#div_Alert > div > div > a").before("<a id='true_btn' href='' class='state-default'>是</a>&nbsp;&nbsp;");
+		$("div#div_Alert > div > div > a#true_btn").attr("href","<c:url value = '/'/>crud/apply.customer.delete.action?entity.serNo="+i);
+		$("div#div_Alert > div > div > a#false_btn").html("否");
 	}
+	
 
 	//重設所有欄位(清空)
 	function resetData() {
@@ -135,9 +139,6 @@
 		});
 	});
 
-	function showLoading() {
-		$("div#div_Loading").show();
-	}
 
 	$(document).ready(function() {
 		showMenuItems('1');
@@ -247,20 +248,22 @@ input:-webkit-autofill {
 																		onclick="goView(${item.serNo});"><span
 																		class="icon-default icon-view"></span>檢視</a>
 																	<a class="state-default2"
-																		onclick="goUpdate(${item.serNo});"><span
+																		href="<c:url value = '/'/>crud/apply.customer.query.action?entity.serNo=${item.serNo}"><span
 																		class="icon-default icon-edit"></span>修改</a>
 																</c:when>
 																<c:otherwise>
 																	<a class="state-default2"
 																		onclick="goView(${item.serNo});"><span
 																		class="icon-default icon-view"></span>檢視</a>
-																	<a class="state-default2" onclick="goUpdate(${item.serNo});"><span
+																	<a class="state-default2"
+																		href="<c:url value = '/'/>crud/apply.customer.query.action?entity.serNo=${item.serNo}"><span
 																		class="icon-default icon-edit"></span>修改</a>
 																	<a class="state-default2"
-																		onclick="goDel('7','碩亞高中',1);"><span
+																		onclick="goDel(${item.serNo});"><span
 																		class="icon-default icon-delete"></span>刪除</a>
 																	<a class="state-default2"
-																		onclick="goIpRangeManager('7');">IP Range管理</a>
+																		href="<c:url value = '/'/>crud/apply.customer.ipMaintain.action?cusSerNo=${item.serNo}">IP
+																		Range管理</a>
 																</c:otherwise>
 															</c:choose></td>
 													</tr>
@@ -339,132 +342,295 @@ input:-webkit-autofill {
 		<div id="div-footer">© 版權聲明:本系統版權歸碩亞數碼所有</div>
 	</div>
 
-	<div id="div_Detail" style="${addShow}">
-		<div class="overlay"
-			style="width: 1423px; height: 100vh; top: 0px; left: 0px;"></div>
-		<div class="content">
-			<div class="header">
-				<div class="title">客戶-新增</div>
-				<div class="close">
-					<a href="#" onclick="closeDetail();">關閉</a>
+	<c:if test="${not empty addShow }">
+		<div id="div_Detail" style="${addShow}">
+			<div class="overlay"
+				style="width: 1423px; height: 100vh; top: 0px; left: 0px;"></div>
+			<div class="content">
+				<div class="header">
+					<div class="title">客戶-新增</div>
+					<div class="close">
+						<a href="#" onclick="closeDetail();">關閉</a>
+					</div>
 				</div>
-			</div>
-			<div class="contain">
-				<div id="contaner">
-					<div id="contaner_box">
-						<div class="content_box">
-							<table cellspacing="0" cellpadding="0" class="input_form"
-								width="400">
-								<s:form namespace="/crud" action="apply.customer.save">
-									<s:hidden name="entity.serNo" />
-									<table cellspacing="1" class="detail-table">
-										<tr>
-											<th width="130">用戶名稱<span class="required">(&#8226;)</span></th>
-											<td><s:textfield name="entity.name"
-													cssClass="input_text" /></td>
-										</tr>
-										<tr>
-											<th width="130">用戶英文名稱</th>
-											<td><s:textfield name="entity.engName"
-													cssClass="input_text" /></td>
-										</tr>
-										<tr>
-											<th width="130">聯絡人</th>
-											<td><s:textfield name="entity.contactUserName"
-													cssClass="input_text" /></td>
-										</tr>
-										<tr>
-											<th width="130">地址</th>
-											<td><s:textfield name="entity.address"
-													cssClass="input_text" /></td>
-										</tr>
-										<tr>
-											<th width="130">電話</th>
-											<td><s:textfield name="entity.tel" cssClass="input_text" /></td>
-										</tr>
-										<tr>
-											<th width="130">Email</th>
-											<td><s:textfield name="entity.email"
-													cssClass="input_text" /></td>
-										</tr>
-									</table>
-									<div class="button_box">
-										<div class="detail-func-button">
-											<a class="state-default" onclick="closeDetail();resetData();">取消</a>
-											&nbsp;<a class="state-default" onclick="resetData();">重設</a>&nbsp;
-											<button class="state-default" onclick="showLoading();">確認</button>
+				<div class="contain">
+					<div id="contaner">
+						<div id="contaner_box">
+							<div class="content_box">
+								<table cellspacing="0" cellpadding="0" class="input_form"
+									width="400">
+									<s:form namespace="/crud" action="apply.customer.save">
+										<s:hidden name="entity.serNo" />
+										<table cellspacing="1" class="detail-table">
+											<tr>
+												<th width="130">用戶名稱<span class="required">(&#8226;)</span></th>
+												<td><s:textfield name="entity.name"
+														cssClass="input_text" /></td>
+											</tr>
+											<tr>
+												<th width="130">用戶英文名稱</th>
+												<td><s:textfield name="entity.engName"
+														cssClass="input_text" /></td>
+											</tr>
+											<tr>
+												<th width="130">聯絡人</th>
+												<td><s:textfield name="entity.contactUserName"
+														cssClass="input_text" /></td>
+											</tr>
+											<tr>
+												<th width="130">地址</th>
+												<td><s:textfield name="entity.address"
+														cssClass="input_text" /></td>
+											</tr>
+											<tr>
+												<th width="130">電話</th>
+												<td><s:textfield name="entity.tel"
+														cssClass="input_text" /></td>
+											</tr>
+											<tr>
+												<th width="130">Email</th>
+												<td><s:textfield name="entity.email"
+														cssClass="input_text" /></td>
+											</tr>
+										</table>
+										<div class="button_box">
+											<div class="detail-func-button">
+												<a class="state-default"
+													onclick="closeDetail();resetData();">取消</a> &nbsp;<a
+													class="state-default" onclick="resetData();">重設</a>&nbsp;
+												<button class="state-default" onclick="showLoading();">確認</button>
+											</div>
 										</div>
-									</div>
-									<div class="detail_note">
-										<div class="detail_note_title">Note</div>
-										<div class="detail_note_content">
-											<span class="required">(&#8226;)</span>為必填欄位
+										<div class="detail_note">
+											<div class="detail_note_title">Note</div>
+											<div class="detail_note_content">
+												<span class="required">(&#8226;)</span>為必填欄位
+											</div>
 										</div>
-									</div>
-								</s:form>
+									</s:form>
 
-							</table>
+								</table>
+							</div>
 						</div>
 					</div>
 				</div>
 			</div>
 		</div>
-	</div>
+	</c:if>
+	<c:if test="${not empty modifyShow }">
+		<div id="div_Detail" style="${modifyShow}">
+			<div class="overlay"
+				style="width: 1423px; height: 100vh; top: 0px; left: 0px;"></div>
+			<div class="content">
+				<div class="header">
+					<div class="title">客戶-修改</div>
+					<div class="close">
+						<a href="#" onclick="closeDetail();">關閉</a>
+					</div>
+				</div>
+				<div class="contain">
+					<s:form namespace="/crud" action="apply.customer.update">
+						<s:hidden name="entity.serNo" />
+						<table cellspacing="1" class="detail-table">
+							<tr>
+								<th width="130">用戶名稱<span class="required">(&#8226;)</span></th>
+								<td>${entity.name }</td>
+							</tr>
+							<tr>
+								<th width="130">用戶英文名稱</th>
+								<td><s:textfield name="entity.engName"
+										cssClass="input_text" /></td>
+							</tr>
+							<tr>
+								<th width="130">聯絡人</th>
+								<td><s:textfield name="entity.contactUserName"
+										cssClass="input_text" /></td>
+							</tr>
+							<tr>
+								<th width="130">地址</th>
+								<td><s:textfield name="entity.address"
+										cssClass="input_text" /></td>
+							</tr>
+							<tr>
+								<th width="130">電話</th>
+								<td><s:textfield name="entity.tel" cssClass="input_text" /></td>
+							</tr>
+							<tr>
+								<th>Email</th>
+								<td><s:textfield name="entity.tel" cssClass="input_text" /></td>
+							</tr>
+						</table>
+						<div class="button_box">
+							<div class="detail-func-button">
+								<a class="state-default" onclick="closeDetail();">取消</a> &nbsp;<a
+									class="state-default" onclick="resetData();">重設</a>&nbsp;
+								<button type="submit" id="button" class="state-default">確認</button>
+							</div>
+						</div>
+						<div class="detail_note">
+							<div class="detail_note_title">Note</div>
+							<div class="detail_note_content">
+								<span class="required">(&#8226;)</span>為必填欄位
+							</div>
+						</div>
+					</s:form>
+				</div>
+			</div>
+		</div>
+	</c:if>
+	<c:if test="${not empty ipMaintain }">
+		<div id="div_Detail" style="${ipMaintain}">
+			<div class="overlay"
+				style="width: 1423px; height: 100vh; top: 0px; left: 0px;"></div>
+			<div class="content">
+				<div class="header">
+					<div class="title">客戶-IP Range管理</div>
+					<div class="close">
+						<a href="#" onclick="closeDetail();">關閉</a>
+					</div>
+				</div>
+				<div class="contain">
+					<form id="iplistForm" name="iplistForm" onsubmit="return false;"
+						action="/TWBE/beCustomer_ip_query.action" method="post">
+						<input type="hidden" name="totalPage" value="1"
+							id="iplistForm_totalPage"> <input type="hidden"
+							name="fkCustomerSerno" value="97" id="iplistForm_fkCustomerSerno">
+						<div class="list-box">
+							<div class="list-buttons">
+								<a class="state-default" onclick="goAdd_detail();">新增</a>
+								<!--<a class="state-default" onclick="goDetail_2('ipRange_import.action','IP Range管理-匯入');">匯入</a>-->
+							</div>
+							<table cellspacing="1" class="list-table">
+								<tbody>
+									<tr>
+										<td colspan="4" class="topic">IP Range管理</td>
+									</tr>
+									<tr>
+										<th>NO.</th>
+										<th>IP Range</th>
+										<th>操作</th>
+									</tr>
+									<c:forEach var="item" items="${dsIpRange.results}"
+										varStatus="status">
+										<c:set var="orderInt" scope="session"
+									value="${dsIpRange.pager.offset+(status.index+1)}" />
+										<tr>
+											<td align="center">${orderInt}</td>
+											<td align="center">${item.ipRangeStart}~${item.ipRangeEnd}</td>
+											<td align="center"><a class="state-default2"
+												onclick="goUpdate_detail('1','243');"><span
+													class="icon-default icon-edit"></span>修改</a> <a
+												class="state-default2" onclick="goDel_detail('243',0);"><span
+													class="icon-default icon-delete"></span>刪除</a></td>
+										</tr>
+									</c:forEach>
+								</tbody>
+							</table>
+							<div class="page-box" align="right">
+								<table border="0" cellspacing="0" cellpadding="0">
+									<tbody>
+										<tr>
+											<td>&nbsp;&nbsp; &nbsp;&nbsp;</td>
+											<td>每頁顯示 <select name="pageSize"
+												id="iplistForm_pageSize" onchange="chagePageSize_detail()">
+													<option value="10">10</option>
+													<option value="20">20</option>
+													<option value="50" selected="selected">50</option>
+											</select> 筆記錄, 第 <select name="currentPageHeader" size="1"
+												id="iplistForm_currentPageHeader"
+												onchange="gotoPage_detail(this.value)">
+													<option value="1" selected="selected">1</option>
+											</select> 頁, 共<span class="totalNum">1</span>頁
+											</td>
+										</tr>
+										<tr>
+											<td align="left" class="p_02"><jsp:include
+													page="/WEB-INF/jsp/layout/pagination.jsp">
+													<jsp:param name="namespace" value="/crud" />
+													<jsp:param name="action" value="apply.customer.ipMaintain" />
+													<jsp:param name="pager" value="${dsIpRange.pager}" />
+													<jsp:param name="cusSerNo" value="${cusSerNo }"/>
+													<jsp:param name="recordPerPage"
+														value="${dsIpRange.pager.recordPerPage}" />
+												</jsp:include></td>
+											<td align="right" class="p_01"><c:set var="pageFactor"
+													value="${dsIpRange.pager.totalRecord/dsIpRange.pager.recordPerPage}" />
+												<c:set var="totalPage">
+													<fmt:formatNumber type="number" pattern="#"
+														value="${pageFactor+(1-(pageFactor%1))%1}" />
+												</c:set> <input value="${dsIpRange.pager.currentPage }"
+												type="number" name="page" min="1" max="${totalPage }"
+												onchange="jumpPage()">/${totalPage }，共 <span
+												class="total_num">${dsIpRange.pager.totalRecord}</span>筆資料</td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+							<div class="detail_note">
+								<div class="detail_note_title">Note</div>
+								<div class="detail_note_content"></div>
+							</div>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</c:if>
 
-	<div id="div_Detail_2">
+	<div id="div_Detail_2" style="display: none;">
 		<div class="overlay"
-			style="width: 1423px; height: 383px; top: 0px; left: 0px;"></div>
+			style="width: 1423px; height: 100vh; top: 0px; left: 0px;"></div>
 		<div class="content">
 			<div class="header">
-				<div class="title"></div>
+				<div class="title">IP Range管理-修改</div>
 				<div class="close">
 					<a href="#" onclick="closeDetail_2();">關閉</a>
 				</div>
 			</div>
 			<div class="contain">
-				<s:form namespace="/crud" action="apply.customer.update">
-					<s:hidden name="entity.serNo" />
+				<form id="ipsetupmaintainForm" name="ipsetupmaintainForm"
+					onsubmit="return false;" action="/TWBE/beCustomer_ip_toEdit.action"
+					method="post">
+					<input type="hidden" name="ipRange.serNo" value="250"
+						id="ipsetupmaintainForm_ipRange_serNo"> <input
+						type="hidden" name="ipRange.fkCustomerSerno" value="102"
+						id="ipsetupmaintainForm_ipRange_fkCustomerSerno"> <input
+						type="hidden" name="ipRange.cuid" value="admin"
+						id="ipsetupmaintainForm_ipRange_cuid"> <input
+						type="hidden" name="ipRange.cdTime"
+						value="2012/6/27 下午 02:22:04.000"
+						id="ipsetupmaintainForm_ipRange_cdTime"> <input
+						type="hidden" name="listNo" value="1"
+						id="ipsetupmaintainForm_listNo">
 					<table cellspacing="1" class="detail-table">
-						<tr>
-							<th width="130">用戶名稱<span class="required">(&#8226;)</span></th>
-							<td><s:textfield name="entity.name" cssClass="input_text" /></td>
-						</tr>
-						<tr>
-							<th width="130">用戶英文名稱</th>
-							<td><s:textfield name="entity.engName" cssClass="input_text" /></td>
-						</tr>
-						<tr>
-							<th width="130">聯絡人</th>
-							<td><s:textfield name="entity.contactUserName"
-									cssClass="input_text" /></td>
-						</tr>
-						<tr>
-							<th width="130">地址</th>
-							<td><s:textfield name="entity.address" cssClass="input_text" /></td>
-						</tr>
-						<tr>
-							<th width="130">電話</th>
-							<td><s:textfield name="entity.tel" cssClass="input_text" /></td>
-						</tr>
-						<tr>
-							<th>Email</th>
-							<td><s:textfield name="entity.tel" cssClass="input_text" /></td>
-						</tr>
+						<tbody>
+							<tr>
+								<th width="130">ID</th>
+								<td>1</td>
+							</tr>
+							<tr>
+								<th>IP Range<span class="required">(•)</span></th>
+								<td><input type="text" name="ipRange.ipRangeStart"
+									value="210.243.17.129"
+									id="ipsetupmaintainForm_ipRange_ipRangeStart"
+									class="input_text"> ~ <input type="text"
+									name="ipRange.ipRangeEnd" value="210.243.17.254"
+									id="ipsetupmaintainForm_ipRange_ipRangeEnd" class="input_text"></td>
+							</tr>
+						</tbody>
 					</table>
-					<div class="button_box">
-						<div class="detail-func-button">
-							<a class="state-default" onclick="closeDetail();">取消</a> &nbsp;<a
-								class="state-default" onclick="resetData();">重設</a>&nbsp;
-							<button type="submit" id="button" class="state-default">確認</button>
-						</div>
+					<div class="detail-func-button">
+						<a class="state-default" onclick="closeDetail_2();">取消</a> <a
+							class="state-default" onclick="resetData();">重設</a> <a
+							class="state-default" onclick="checkData();">確認</a>
 					</div>
 					<div class="detail_note">
 						<div class="detail_note_title">Note</div>
 						<div class="detail_note_content">
-							<span class="required">(&#8226;)</span>為必填欄位
+							<span class="required">(•)</span>為必填欄位
 						</div>
 					</div>
-				</s:form>
+				</form>
 			</div>
 		</div>
 	</div>
@@ -510,7 +676,7 @@ input:-webkit-autofill {
 					</tbody>
 				</table>
 				<div class="detail-func-button">
-					<a class="state-default" onclick="closeAlert();">關閉</a>
+					<a class="state-default" onclick="closeCustomers();">關閉</a>
 				</div>
 			</div>
 		</div>
@@ -536,7 +702,7 @@ input:-webkit-autofill {
 				</c:if>
 			</div>
 			<div class="func-button">
-				<a class="state-default" onclick="closeAlert();">關閉</a>
+				<a id="false_btn" class="state-default" onclick="closeAlert();">關閉</a>
 			</div>
 		</div>
 	</div>

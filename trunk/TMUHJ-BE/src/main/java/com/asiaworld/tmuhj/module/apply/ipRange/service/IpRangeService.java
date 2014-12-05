@@ -1,10 +1,5 @@
 package com.asiaworld.tmuhj.module.apply.ipRange.service;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-
-import org.hibernate.Criteria;
-import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -13,6 +8,7 @@ import org.springframework.util.Assert;
 import com.asiaworld.tmuhj.core.dao.GenericDaoFull;
 import com.asiaworld.tmuhj.core.dao.IiiRestrictions;
 import com.asiaworld.tmuhj.core.model.DataSet;
+import com.asiaworld.tmuhj.core.model.Pager;
 import com.asiaworld.tmuhj.core.service.GenericServiceFull;
 import com.asiaworld.tmuhj.core.util.IiiBeanFactory;
 import com.asiaworld.tmuhj.module.apply.ipRange.entity.IpRange;
@@ -23,7 +19,7 @@ public class IpRangeService extends GenericServiceFull<IpRange> {
 
 	@Autowired
 	private SessionFactory sessionFactory;
-	
+
 	@Autowired
 	private IpRangeDao dao;
 
@@ -42,19 +38,30 @@ public class IpRangeService extends GenericServiceFull<IpRange> {
 		// TODO Auto-generated method stub
 		return dao;
 	}
-	
-	public ArrayList<IpRange> getIpList() {
-		ArrayList<IpRange> ipList=new ArrayList<IpRange>();
-		Session session = sessionFactory.getCurrentSession();
-		Criteria criteria = session.createCriteria(IpRange.class);
-		Iterator<?> iterator = criteria.list().iterator();
+
+	public DataSet<IpRange> getByCusSerNo(DataSet<IpRange> ds, long cusSerNo)
+			throws Exception {
+		Assert.notNull(ds);
+		Assert.notNull(ds.getEntity());
+
+		IiiRestrictions restrictions = IiiBeanFactory.getIiiRestrictions();
 		
-		while(iterator.hasNext()){
-			IpRange ipRange=(IpRange) iterator.next();
-			ipList.add(ipRange);
+		if(cusSerNo>0){
+			restrictions.eq("cusSerNo", cusSerNo);
+		}else{
+			Pager pager = ds.getPager();
+			pager.setTotalRecord(0L);
+			ds.setPager(pager);
+			return ds;
 		}
 		
-		return ipList;	
+/**		if (StringUtils.isNotEmpty(entity.getCusSerNo())
+				&& StringUtils.isNotBlank(entity.getCusSerNo()) {
+			restrictions.eq("cusSerNo", entity.getCusSerNo()
+					);
+		}*/
+
+		return dao.findByRestrictions(restrictions, ds);
 	}
 
 }
