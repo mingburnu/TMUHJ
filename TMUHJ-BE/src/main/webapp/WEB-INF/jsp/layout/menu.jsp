@@ -12,7 +12,7 @@
 		</div>
 		<div id="menu_items_1" style="">
 			<div class="menu-items">
-				<a href="<%=request.getContextPath()%>/page/basic.action">基本設定</a>
+				<a onclick="goURL('<%=request.getContextPath()%>/basic.action');">基本設定</a>
 			</div>
 		</div>
 

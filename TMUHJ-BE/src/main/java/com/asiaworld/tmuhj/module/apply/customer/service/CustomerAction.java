@@ -1,5 +1,8 @@
 package com.asiaworld.tmuhj.module.apply.customer.service;
 
+import java.util.Iterator;
+
+import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
@@ -10,14 +13,13 @@ import com.asiaworld.tmuhj.core.web.GenericCRUDActionFull;
 import com.asiaworld.tmuhj.module.apply.customer.entity.Customer;
 import com.asiaworld.tmuhj.module.apply.ipRange.entity.IpRange;
 import com.asiaworld.tmuhj.module.apply.ipRange.service.IpRangeService;
-import com.asiaworld.tmuhj.module.apply.resourcesUnion.service.ResourcesUnionService;
 
 @Controller
 @SuppressWarnings("serial")
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class CustomerAction extends GenericCRUDActionFull<Customer> {
 
-	private Long[] checkItem;
+	private String[] checkItem;
 
 	private String lastUrl;
 
@@ -28,16 +30,10 @@ public class CustomerAction extends GenericCRUDActionFull<Customer> {
 	private CustomerService customerService;
 
 	@Autowired
-	private ResourcesUnionService resourcesUnionService;
-
-	@Autowired
 	private IpRange ipRange;
 
 	@Autowired
 	private IpRangeService ipRangeService;
-
-	@Autowired
-	private DataSet<IpRange> dsIpRange;
 
 	@Override
 	public void validateSave() throws Exception {
@@ -62,17 +58,14 @@ public class CustomerAction extends GenericCRUDActionFull<Customer> {
 		if (getEntity().getSerNo() != null) {
 			customer = customerService.getBySerNo(getEntity().getSerNo());
 			setEntity(customer);
-			getRequest().setAttribute("modifyShow", "display: block;");
-			getRequest().setAttribute("customerName", customer.getName());
-		} else {
-			getRequest().setAttribute("addShow", "display: block;");
 		}
-
-		return LIST;
+		return EDIT;
 	}
 
 	@Override
 	public String list() throws Exception {
+		getRequest()
+				.setAttribute("option", getRequest().getParameter("option"));
 		DataSet<Customer> ds = customerService.getByRestrictions(initDataSet());
 		setDs(ds);
 		return LIST;
@@ -82,31 +75,21 @@ public class CustomerAction extends GenericCRUDActionFull<Customer> {
 	public String save() throws Exception {
 		if (getEntity().getName().trim().equals("")
 				|| getEntity().getName() == null) {
-			getRequest().setAttribute("addShow", "display: block;");
-			getRequest().setAttribute("alertShow", "display: block;");
-			getRequest().setAttribute("space", "用戶名稱不可空白");
 			addActionError("用戶名稱不可空白");
-			return LIST;
-		} else if (customerService.nameIsExist(getEntity())) {
-			getRequest().setAttribute("addShow", "display: block;");
-			getRequest().setAttribute("alertShow", "display: block;");
-			getRequest().setAttribute("nameRepeat", "用戶名稱已存在");
+		}
+
+		if (customerService.nameIsExist(getEntity())) {
 			addActionError("用戶名稱已存在");
-			return LIST;
-		} else {
+		}
+
+		if (!hasActionErrors()) {
 			customer = customerService.save(getEntity(), getLoginUser());
 			setEntity(customer);
-			System.out.println("ssserNo:" + customer.getSerNo());
 
-			// getRequest().setAttribute("entity", null);
-			getRequest().setAttribute("title", "用戶-新增");
-			getRequest().setAttribute("customer", customer);
-			getRequest().setAttribute("success", "新增成功");
-			getRequest().setAttribute("displayShow", "display: block;");
-			getRequest().setAttribute("alertShow", "display: block;");
-			getRequest().setAttribute("back2", "history.go(-2);");
-			list();
-			return LIST;
+			addActionMessage("新增成功");
+			return VIEW;
+		} else {
+			return EDIT;
 		}
 	}
 
@@ -114,71 +97,82 @@ public class CustomerAction extends GenericCRUDActionFull<Customer> {
 	public String update() throws Exception {
 		customer = customerService.update(getEntity(), getLoginUser(), "name");
 		setEntity(customer);
-		System.out.println("ssserNo:" + customer.getSerNo());
-
-		// getRequest().setAttribute("entity", null);
-		getRequest().setAttribute("title", "用戶-修改");
-		getRequest().setAttribute("customer", customer);
-		getRequest().setAttribute("success", "修改成功");
-		getRequest().setAttribute("displayShow", "display: block;");
-		getRequest().setAttribute("alertShow", "display: block;");
-		getRequest().setAttribute("back2", "history.go(-2);");
-		list();
-		return LIST;
-
+		addActionMessage("修改成功");
+		return VIEW;
 	}
 
 	@Override
 	public String delete() throws Exception {
+
+		Iterator<?> iterator = ipRangeService.getOwnerIpRangeByCusSerNo(
+				getEntity().getSerNo()).iterator();
+		while (iterator.hasNext()) {
+			ipRange = (IpRange) iterator.next();
+			ipRangeService.deleteBySerNo(ipRange.getSerNo());
+		}
+
 		customerService.deleteBySerNo(getEntity().getSerNo());
-		setEntity(null);
-		getRequest().setAttribute("title", "用戶-刪除");
-		getRequest().setAttribute("success", "刪除成功");
-		getRequest().setAttribute("alertShow", "display: block;");
-		getRequest().setAttribute("back2", "history.go(-2);");
+
+		DataSet<Customer> ds = customerService.getByRestrictions(initDataSet());
+		setDs(ds);
+
 		return LIST;
 	}
 
 	public String deleteChecked() throws Exception {
-		int i = 0;
-		while (i < checkItem.length) {
-			if (checkItem[i] > 0) {
-				if (customerService.getBySerNo(checkItem[i]) != null) {
-					customerService.deleteBySerNo(checkItem[i]);
+		if (checkItem == null || checkItem.length == 0) {
+			addActionError("請選擇一筆或一筆以上的資料");
+		} else {
+			int i = 0;
+			while (i < checkItem.length) {
+				if (!NumberUtils.isDigits(String.valueOf(checkItem[i]))
+						&& Long.parseLong(checkItem[i]) < 1) {
+					addActionError(checkItem[i] + "為不可利用的流水號");
 				}
-				System.out.println("serNos= " + checkItem[i]);
+				i++;
 			}
-			i++;
 		}
-		return LIST;
+
+		if (!hasActionErrors()) {
+			int i = 0;
+			while (i < checkItem.length) {
+				if (customerService.getBySerNo(Long.parseLong(checkItem[i])) != null) {
+					Iterator<?> iterator = ipRangeService
+							.getOwnerIpRangeByCusSerNo(
+									Long.parseLong(checkItem[i])).iterator();
+					while (iterator.hasNext()) {
+						ipRange = (IpRange) iterator.next();
+						ipRangeService.deleteBySerNo(ipRange.getSerNo());
+					}
+
+					customerService.deleteBySerNo(Long.parseLong(checkItem[i]));
+				}
+				i++;
+			}
+			DataSet<Customer> ds = customerService
+					.getByRestrictions(initDataSet());
+			setDs(ds);
+			addActionMessage("刪除成功");
+			return LIST;
+		} else {
+			DataSet<Customer> ds = customerService
+					.getByRestrictions(initDataSet());
+			setDs(ds);
+			return LIST;
+		}
 	}
 
 	public String view() throws Exception {
 		customer = customerService.getBySerNo(Long.parseLong(getRequest()
 				.getParameter("viewSerNo")));
-		getRequest().setAttribute("title", "用戶-檢視");
-		getRequest().setAttribute("customer", customer);
-		getRequest().setAttribute("displayShow", "display: block;");
-		getRequest().setAttribute("back1", "history.go(-1);");
-		return LIST;
-	}
-
-	public String ipMaintain() throws NumberFormatException, Exception {
-		dsIpRange.setEntity(ipRange);
-		dsIpRange.setPager(getPager());
-
-		dsIpRange=ipRangeService.getByCusSerNo(dsIpRange, Long.parseLong(getRequest().getParameter("cusSerNo")));
-		
-		getRequest().setAttribute("ipMaintain", "display: block;");
-		getRequest().setAttribute("cusSerNo", getRequest().getParameter("cusSerNo"));
-		getRequest().setAttribute("dsIpRange", dsIpRange);
-		return LIST;
+		setEntity(customer);
+		return VIEW;
 	}
 
 	/**
 	 * @return the checkItem
 	 */
-	public Long[] getCheckItem() {
+	public String[] getCheckItem() {
 		return checkItem;
 	}
 
@@ -186,7 +180,7 @@ public class CustomerAction extends GenericCRUDActionFull<Customer> {
 	 * @param checkItem
 	 *            the checkItem to set
 	 */
-	public void setCheckItem(Long[] checkItem) {
+	public void setCheckItem(String[] checkItem) {
 		this.checkItem = checkItem;
 	}
 

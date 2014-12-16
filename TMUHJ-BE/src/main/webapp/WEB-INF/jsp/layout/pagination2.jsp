@@ -14,13 +14,18 @@
 <c:set var="goToPage">
 	<c:url value="${param.namespace}/${param.action}.action" />
 </c:set>
-<!--<c:choose>
+<c:choose>
 	<c:when test="${not empty dsIpRange}">
 		<c:set var="queryParameter">
 		&recordPerPage=${param.recordPerPage }&cusSerNo=${param.cusSerNo}
 	</c:set>
 	</c:when>
-</c:choose>-->
+	<c:when test="${not empty queryCustomerByKeyword }">
+		<c:set var="queryParameter">
+		&recordPerPage=${param.recordPerPage }&option=${param.option }&${param.option }=${param.keyword }
+	</c:set>
+	</c:when>
+</c:choose>
 
 <pg:pager url="${goToPage}" items="${totalRecord}"
 	maxPageItems="${recordPerPage}" maxIndexPages="5">
@@ -29,23 +34,23 @@
 			<c:when test="${1 eq currentPage}">
 				<pg:next ifnull="true">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a
 						class="state-default"
-						href="javascript:gotoPage(${currentPage+1});">下一頁</a>&nbsp;&nbsp;&nbsp;&nbsp;
+						href="${pageUrl}&pager.currentPage=${pageNumber}${queryParameter}">下一頁</a>&nbsp;&nbsp;&nbsp;&nbsp;
 				</pg:next>
 			</c:when>
 			<c:when test="${lastPage eq currentPage}">
 				<pg:prev ifnull="true">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a
 						class="state-default"
-						href="javascript:gotoPage(${currentPage-1});">上一頁</a>&nbsp;&nbsp;&nbsp;&nbsp;
+						href="${pageUrl}&pager.currentPage=${pageNumber}${queryParameter}">上一頁</a>&nbsp;&nbsp;&nbsp;&nbsp;
 				</pg:prev>
 			</c:when>
 			<c:otherwise>
 				<pg:prev ifnull="true">
 					<a class="state-default"
-						href="javascript:gotoPage(${currentPage-1});">上一頁</a>
+						href="${pageUrl}&pager.currentPage=${pageNumber}${queryParameter}">上一頁</a>
 				</pg:prev>
 				<pg:next ifnull="true">&nbsp;&nbsp;<a
 						class="state-default"
-						href="javascript:gotoPage(${currentPage+1});">下一頁</a>&nbsp;&nbsp;&nbsp;&nbsp;
+						href="${pageUrl}&pager.currentPage=${pageNumber}${queryParameter}">下一頁</a>&nbsp;&nbsp;&nbsp;&nbsp;
 				</pg:next>
 			</c:otherwise>
 		</c:choose>

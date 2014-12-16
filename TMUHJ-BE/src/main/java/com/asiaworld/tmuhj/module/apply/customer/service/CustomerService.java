@@ -2,7 +2,11 @@ package com.asiaworld.tmuhj.module.apply.customer.service;
 
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
+import org.apache.struts2.ServletActionContext;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.MatchMode;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,10 +14,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
 import com.asiaworld.tmuhj.core.dao.GenericDaoFull;
-import com.asiaworld.tmuhj.core.dao.IiiRestrictions;
+import com.asiaworld.tmuhj.core.dao.DsRestrictions;
 import com.asiaworld.tmuhj.core.model.DataSet;
+import com.asiaworld.tmuhj.core.model.Pager;
 import com.asiaworld.tmuhj.core.service.GenericServiceFull;
-import com.asiaworld.tmuhj.core.util.IiiBeanFactory;
+import com.asiaworld.tmuhj.core.util.DsBeanFactory;
 import com.asiaworld.tmuhj.module.apply.customer.entity.Customer;
 import com.asiaworld.tmuhj.module.apply.customer.entity.CustomerDao;
 
@@ -31,7 +36,35 @@ public class CustomerService extends GenericServiceFull<Customer> {
 		Assert.notNull(ds);
 		Assert.notNull(ds.getEntity());
 		Customer entity = ds.getEntity();
-		IiiRestrictions restrictions = IiiBeanFactory.getIiiRestrictions();
+		DsRestrictions restrictions = DsBeanFactory.getDsRestrictions();
+
+		HttpServletRequest request = ServletActionContext.getRequest();
+
+		String recordPerPage = request.getParameter("recordPerPage");
+		String recordPoint = request.getParameter("recordPoint");
+
+		Pager pager = ds.getPager();
+
+		if (recordPerPage != null && NumberUtils.isDigits(recordPerPage)
+				&& Integer.parseInt(recordPerPage) > 0 && recordPoint != null
+				&& NumberUtils.isDigits(recordPoint)
+				&& Integer.parseInt(recordPoint) >= 0) {
+			pager.setRecordPerPage(Integer.parseInt(recordPerPage));
+			pager.setCurrentPage(Integer.parseInt(recordPoint)
+					/ Integer.parseInt(recordPerPage) + 1);
+			pager.setOffset(Integer.parseInt(recordPerPage)
+					* (pager.getCurrentPage() - 1));
+			pager.setRecordPoint(Integer.parseInt(recordPoint));
+			ds.setPager(pager);
+		} else if (recordPerPage != null && NumberUtils.isDigits(recordPerPage)
+				&& Integer.parseInt(recordPerPage) > 0 && recordPoint == null) {
+			pager.setRecordPerPage(Integer.parseInt(recordPerPage));
+			pager.setRecordPoint(pager.getOffset());
+			ds.setPager(pager);
+		} else {
+			pager.setRecordPoint(pager.getOffset());
+			ds.setPager(pager);
+		}
 
 		if (StringUtils.isNotEmpty(entity.getEngName())
 				&& StringUtils.isNotBlank(entity.getEngName())) {
@@ -41,8 +74,6 @@ public class CustomerService extends GenericServiceFull<Customer> {
 				&& StringUtils.isNotBlank(entity.getName())) {
 			restrictions.likeIgnoreCase("name", entity.getName(),
 					MatchMode.ANYWHERE);
-			// } else {
-			// return null;
 		}
 
 		restrictions.addOrderAsc("serNo");
@@ -57,11 +88,10 @@ public class CustomerService extends GenericServiceFull<Customer> {
 		return dao;
 	}
 
-	public boolean nameIsExist(Customer entity)
-			throws Exception {
+	public boolean nameIsExist(Customer entity) throws Exception {
 		Assert.notNull(entity);
 
-		IiiRestrictions restrictions = IiiBeanFactory.getIiiRestrictions();
+		DsRestrictions restrictions = DsBeanFactory.getDsRestrictions();
 		restrictions.eq("name", entity.getName().trim());
 
 		List<Customer> customers = dao.findByRestrictions(restrictions);
@@ -70,15 +100,5 @@ public class CustomerService extends GenericServiceFull<Customer> {
 		} else {
 			return true;
 		}
-	}
-
-	public DataSet<Customer> getEditedData(DataSet<Customer> ds, long serNo)
-			throws Exception {
-		Assert.notNull(ds);
-		Assert.notNull(ds.getEntity());
-
-		IiiRestrictions restrictions = IiiBeanFactory.getIiiRestrictions();
-		restrictions.eq("serNo", serNo);
-		return dao.findByRestrictions(restrictions, ds);
 	}
 }
