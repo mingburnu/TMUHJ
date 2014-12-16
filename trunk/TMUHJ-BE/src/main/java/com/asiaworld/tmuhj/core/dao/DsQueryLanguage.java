@@ -8,7 +8,7 @@ import java.util.Map;
  * @author David Hsu
  * @version 2014/3/12
  */
-public interface IiiQueryLanguage extends Serializable {
+public interface DsQueryLanguage extends Serializable {
 
 	public String getSql();
 	
@@ -16,6 +16,6 @@ public interface IiiQueryLanguage extends Serializable {
 	
 	public Map<String, Object> getParameters();
 	
-	public IiiQueryLanguage addParameter(String name, Object value);
+	public DsQueryLanguage addParameter(String name, Object value);
 	
 }

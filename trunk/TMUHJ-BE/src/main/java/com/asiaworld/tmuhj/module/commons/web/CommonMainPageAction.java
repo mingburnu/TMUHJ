@@ -16,5 +16,5 @@ import com.asiaworld.tmuhj.core.web.GenericWebActionFull;
 @Controller
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 @SuppressWarnings("serial")
-public class CommonHomePageAction extends GenericWebActionFull<AccountNumber> {
+public class CommonMainPageAction extends GenericWebActionFull<AccountNumber> {
 }

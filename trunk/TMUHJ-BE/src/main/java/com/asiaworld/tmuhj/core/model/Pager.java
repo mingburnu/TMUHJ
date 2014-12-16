@@ -8,8 +8,8 @@ import org.springframework.stereotype.Component;
 
 /**
  * 
- * @author David Hsu
- * @version 2014/3/27
+ * @author Roderick
+ * @version 2014/12/01
  */
 @Component
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
@@ -19,30 +19,37 @@ public class Pager implements Serializable {
 	 * 
 	 */
 	private static final long serialVersionUID = -6769777808559296049L;
-	
+
 	/**
 	 * 每頁顯示筆數
 	 */
 	private Integer recordPerPage = 10;
-	
+
 	/**
 	 * 當前頁數
 	 */
 	private Integer currentPage = 1;
-	
+
 	/**
 	 * 總筆數
 	 */
 	private Long totalRecord;
-	
+
 	private Integer offset = 0;
+	
+	/**
+	 * 紀錄點
+	 */
+	private Integer recordPoint;
 	
 	public Integer getRecordPerPage() {
 		return recordPerPage;
 	}
 
 	public void setRecordPerPage(Integer recordPerPage) {
-		this.recordPerPage = recordPerPage;
+		if (recordPerPage > 0) {
+			this.recordPerPage = recordPerPage;
+		}
 	}
 
 	public Integer getCurrentPage() {
@@ -50,7 +57,9 @@ public class Pager implements Serializable {
 	}
 
 	public void setCurrentPage(Integer currentPage) {
-		this.currentPage = currentPage;
+		if (currentPage > 0) {
+			this.currentPage = currentPage;
+		}
 	}
 
 	public Long getTotalRecord() {
@@ -66,7 +75,23 @@ public class Pager implements Serializable {
 	}
 
 	public void setOffset(Integer offset) {
-		this.offset = offset;
+		if (offset >= 0) {
+			this.offset = offset;
+		}
+	}
+
+	/**
+	 * @return the recordPoint
+	 */
+	public Integer getRecordPoint() {
+		return recordPoint;
+	}
+
+	/**
+	 * @param recordPoint the recordPoint to set
+	 */
+	public void setRecordPoint(Integer recordPoint) {
+		this.recordPoint = recordPoint;
 	}
 
 }

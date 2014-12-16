@@ -7,8 +7,8 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.asiaworld.tmuhj.core.GenericTest;
-import com.asiaworld.tmuhj.core.dao.IiiRestrictions;
-import com.asiaworld.tmuhj.core.util.IiiBeanFactory;
+import com.asiaworld.tmuhj.core.dao.DsRestrictions;
+import com.asiaworld.tmuhj.core.util.DsBeanFactory;
 import com.asiaworld.tmuhj.module.apply.resourcesUnion.entity.ResourcesUnion;
 import com.asiaworld.tmuhj.module.apply.resourcesUnion.entity.ResourcesUnionDao;
 
@@ -60,7 +60,7 @@ public class ResourcesUnionDaoTest extends GenericTest {
 		Assert.assertTrue(updated);
 
 		// query by condition
-		IiiRestrictions restrictions = IiiBeanFactory.getIiiRestrictions();
+		DsRestrictions restrictions = DsBeanFactory.getDsRestrictions();
 		restrictions.eq("cusSerNo", dbResourcesUnion1UpdNum);
 		List<ResourcesUnion> resourcesUnions = dao
 				.findByRestrictions(restrictions);

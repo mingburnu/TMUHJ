@@ -1,7 +1,9 @@
 package com.asiaworld.tmuhj.module.apply.ipRange.entity;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
@@ -19,13 +21,19 @@ public class IpRange extends GenericEntityFull {
 	private static final long serialVersionUID = -1606674601447344379L;
 
 	// 用戶流水號
+	@Column(name="cus_serNo")
 	private long cusSerNo;
 
 	// IP開始
+	@Column(name="ipRangeStart")
 	private String ipRangeStart;
 
 	// IP結束
+	@Column(name="ipRangeEnd")
 	private String ipRangeEnd;
+	
+	@Transient
+	private int listNo;
 
 	/**
 	 * @return the cusSerNo
@@ -70,6 +78,20 @@ public class IpRange extends GenericEntityFull {
 	 */
 	public void setIpRangeEnd(String ipRangeEnd) {
 		this.ipRangeEnd = ipRangeEnd;
+	}
+
+	/**
+	 * @return the listNo
+	 */
+	public int getListNo() {
+		return listNo;
+	}
+
+	/**
+	 * @param listNo the listNo to set
+	 */
+	public void setListNo(int listNo) {
+		this.listNo = listNo;
 	}
 
 }

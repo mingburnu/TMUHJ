@@ -6,7 +6,7 @@
 		<tbody>
 			<tr>
 				<td width="75%"><div>
-						<a class="logo_box" href="<%=request.getContextPath()%>/page/home.action">&nbsp;</a>
+						<a class="logo_box" href="<%=request.getContextPath()%>/main.action">&nbsp;</a>
 					</div></td>
 				<td width="25%" align="left" valign="middle">
 					<div>

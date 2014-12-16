@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.asiaworld.tmuhj.core.security.accountNumber.entity.AccountNumber;
+import com.asiaworld.tmuhj.core.util.EncryptorUtil;
 
 public class Test {
 
@@ -100,6 +101,8 @@ public class Test {
 		list.add("b");
 		list.add("c");
 
-		System.out.println(list.toString().replace("[", ""));
+		String encryptedPassword = EncryptorUtil.encrypt("MOHW");
+		System.out.println(encryptedPassword);
+
 	}
 }

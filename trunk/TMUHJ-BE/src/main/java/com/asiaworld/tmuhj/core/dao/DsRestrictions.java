@@ -13,7 +13,7 @@ import org.hibernate.criterion.MatchMode;
  * @author Roderick
  * @version 2014/10/21
  */
-public interface IiiRestrictions extends Serializable {
+public interface DsRestrictions extends Serializable {
 
 	public List<?> getCriterions();
 

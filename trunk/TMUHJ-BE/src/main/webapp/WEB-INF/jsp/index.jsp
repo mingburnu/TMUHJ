@@ -51,68 +51,31 @@
 	$(document).ready(function() {
 		showMenuItems('1');
 	});
-</script>
-<%--<script language="javascript" type="text/javascript">
-	$(document).ready(function() {
-		showTabsContain("A");
-	});
+	
+	 //打開Alert畫面之函式
+    function goAlert(argTitle,argMsg,argBtnFunc){
+        $("#div_Alert").show();
+        UI_Resize();
+        $(window).scrollTop(0);
+        $("#div_Alert .content > .header > .title").html(argTitle);
+        $("#div_Alert .content > .contain").html(argMsg);
+        $("#div_Alert .content > .func-button").empty();
+        if(argBtnFunc){
+            if(argBtnFunc.trueText && argBtnFunc.trueFunc){
+                $("#div_Alert .content > .func-button").append('<a id="true_btn" class="state-default" onclick="closeAlert();">'+argBtnFunc.trueText+'</a>&nbsp;&nbsp;');
+                $("#div_Alert .content > .func-button > #true_btn").bind('click',argBtnFunc.trueFunc);
+            }
+            if(argBtnFunc.falseText && argBtnFunc.falseFunc){
+                $("#div_Alert .content > .func-button").append('<a id="false_btn" class="state-default" onclick="closeAlert();">'+argBtnFunc.falseText+'</a>&nbsp;&nbsp;');
+                $("#div_Alert .content > .func-button > #false_btn").bind('click',argBtnFunc.falseFunc);
+    }
+        }else{
+            $("#div_Alert .content > .func-button").append('<a class="state-default" onclick="closeAlert();">關閉</a>');
+        }
+    }
 
-	function showTabsContain(argTarget) {
-		var arr = new Array();
-		arr[arr.length] = "A";
-		arr[arr.length] = "B";
-		arr[arr.length] = "C";
-		for (var i = 0; i < arr.length; i++) {
-			if (argTarget == arr[i]) {
-				currentTab = argTarget;
-				$("#TabsContain_" + arr[i]).show();
-				$("#tabs-items_" + arr[i]).removeClass("tabs-items");
-				$("#tabs-items_" + arr[i] + " span").removeClass(
-						"tabs-items-span");
-				$("#tabs-items_" + arr[i]).addClass("tabs-items-hover");
-				$("#tabs-items_" + arr[i] + " span").addClass(
-						"tabs-items-hover-span");
-			} else {
-				$("#TabsContain_" + arr[i]).hide();
-				$("#tabs-items_" + arr[i]).removeClass("tabs-items-hover");
-				$("#tabs-items_" + arr[i] + " span").removeClass(
-						"tabs-items-hover-span");
-				$("#tabs-items_" + arr[i]).addClass("tabs-items");
-				$("#tabs-items_" + arr[i] + " span")
-						.addClass("tabs-items-span");
-			}
-		}
-	}
-	//打開Alert畫面之函式
-	function goAlert(argTitle, argMsg, argBtnFunc) {
-		$("#div_Alert").show();
-		UI_Resize();
-		$(window).scrollTop(0);
-		$("#div_Alert .content > .header > .title").html(argTitle);
-		$("#div_Alert .content > .contain").html(argMsg);
-		$("#div_Alert .content > .func-button").empty();
-		if (argBtnFunc) {
-			if (argBtnFunc.trueText && argBtnFunc.trueFunc) {
-				$("#div_Alert .content > .func-button").append(
-						'<a id="true_btn" class="state-default" onclick="closeAlert();">'
-								+ argBtnFunc.trueText + '</a>&nbsp;&nbsp;');
-				$("#div_Alert .content > .func-button > #true_btn").bind(
-						'click', argBtnFunc.trueFunc);
-			}
-			if (argBtnFunc.falseText && argBtnFunc.falseFunc) {
-				$("#div_Alert .content > .func-button").append(
-						'<a id="false_btn" class="state-default" onclick="closeAlert();">'
-								+ argBtnFunc.falseText + '</a>&nbsp;&nbsp;');
-				$("#div_Alert .content > .func-button > #false_btn").bind(
-						'click', argBtnFunc.falseFunc);
-			}
-		} else {
-			$("#div_Alert .content > .func-button")
-					.append(
-							'<a class="state-default" onclick="closeAlert();"><s:text name="button.close"/></a>');
-		}
-	}
-</script>--%>
+</script>
+<jsp:include page="/WEB-INF/jsp/layout/css.jsp" />
 </head>
 <body>
 	<div id="div-wrapper">
@@ -170,6 +133,65 @@
 			</table>
 		</div>
 		<jsp:include page="/WEB-INF/jsp/layout/footer.jsp" />
+	</div>
+	<div id="div_Detail">
+		<div class="overlay"></div>
+		<div class="content">
+			<div class="header">
+				<div class="title"></div>
+				<div class="close">
+					<a href="#" onclick="closeDetail();">關閉</a>
+				</div>
+			</div>
+			<div class="contain"></div>
+		</div>
+	</div>
+
+	<div id="div_Detail_2">
+		<div class="overlay"></div>
+		<div class="content">
+			<div class="header">
+				<div class="title"></div>
+				<div class="close">
+					<a href="#" onclick="closeDetail_2();">關閉</a>
+				</div>
+			</div>
+			<div class="contain"></div>
+		</div>
+	</div>
+
+	<div id="div_Customers">
+		<div class="overlay"></div>
+		<div class="content">
+			<div class="header">
+				<div class="title"></div>
+				<div class="close">
+					<a href="#" onclick="closeCustomers();">&nbsp;</a>
+				</div>
+			</div>
+			<div class="contain"></div>
+		</div>
+	</div>
+
+	<div id="div_Alert">
+		<div class="overlay"></div>
+		<div class="content">
+			<div class="header">
+				<div class="title"></div>
+				<div class="close">
+					<a href="#" onclick="closeAlert();">&nbsp;</a>
+				</div>
+			</div>
+			<div class="contain"></div>
+			<div class="func-button"></div>
+		</div>
+	</div>
+
+	<div id="div_Loading">
+		<div class="overlay"></div>
+		<div class="content">
+			<span class="div_loading_icon"></span>
+		</div>
 	</div>
 </body>
 </html>

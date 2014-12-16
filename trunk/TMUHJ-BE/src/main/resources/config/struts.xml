@@ -52,11 +52,11 @@
 		<action name="userEntry" class="authorizationAction" method="userEntry" />
 	</package>
 
-	<package name="pageAction" namespace="/page" extends="global">
-		<action name="home" class="commonHomePageAction">
+	<package name="pageAction" extends="global">
+		<action name="main" class="commonMainPageAction">
 			<result name="success">/WEB-INF/jsp/index.jsp</result>
 		</action>
-		<action name="basic" class="commonHomePageAction">
+		<action name="basic" class="commonMainPageAction">
 			<result name="success">/WEB-INF/jsp/module/apply/customer/customerList.jsp</result>
 		</action>
 	</package>
@@ -67,6 +67,8 @@
 			<result name="list">/WEB-INF/jsp/module/apply/{1}/{1}List.jsp
 			</result>
 			<result name="edit">/WEB-INF/jsp/module/apply/{1}/{1}Edit.jsp
+			</result>
+			<result name="view">/WEB-INF/jsp/module/apply/{1}/{1}View.jsp
 			</result>
 			<result name="delete">/WEB-INF/jsp/module/apply/{1}/{1}Edit.jsp
 			</result>
