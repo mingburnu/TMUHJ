@@ -26,27 +26,57 @@
 	maxPageItems="${recordPerPage}" maxIndexPages="5">
 	<pg:index>
 		<c:choose>
-			<c:when test="${1 eq currentPage}">
-				<pg:next ifnull="true">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a
-						class="state-default"
-						href="javascript:gotoPage(${currentPage+1});">下一頁</a>&nbsp;&nbsp;&nbsp;&nbsp;
+			<c:when test="${1 eq param.detail }">
+				<c:choose>
+					<c:when test="${1 eq currentPage}">
+						<pg:next ifnull="true">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a
+								class="state-default"
+								href="javascript:gotoPage_detail(${currentPage+1});">下一頁</a>&nbsp;&nbsp;&nbsp;&nbsp;
 				</pg:next>
-			</c:when>
-			<c:when test="${lastPage eq currentPage}">
-				<pg:prev ifnull="true">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a
-						class="state-default"
-						href="javascript:gotoPage(${currentPage-1});">上一頁</a>&nbsp;&nbsp;&nbsp;&nbsp;
+					</c:when>
+					<c:when test="${lastPage eq currentPage}">
+						<pg:prev ifnull="true">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a
+								class="state-default"
+								href="javascript:gotoPage_detail(${currentPage-1});">上一頁</a>&nbsp;&nbsp;&nbsp;&nbsp;
 				</pg:prev>
+					</c:when>
+					<c:otherwise>
+						<pg:prev ifnull="true">
+							<a class="state-default"
+								href="javascript:gotoPage_detail(${currentPage-1});">上一頁</a>
+						</pg:prev>
+						<pg:next ifnull="true">&nbsp;&nbsp;<a
+								class="state-default"
+								href="javascript:gotoPage_detail(${currentPage+1});">下一頁</a>&nbsp;&nbsp;&nbsp;&nbsp;
+				</pg:next>
+					</c:otherwise>
+				</c:choose>
 			</c:when>
 			<c:otherwise>
-				<pg:prev ifnull="true">
-					<a class="state-default"
-						href="javascript:gotoPage(${currentPage-1});">上一頁</a>
-				</pg:prev>
-				<pg:next ifnull="true">&nbsp;&nbsp;<a
-						class="state-default"
-						href="javascript:gotoPage(${currentPage+1});">下一頁</a>&nbsp;&nbsp;&nbsp;&nbsp;
+				<c:choose>
+					<c:when test="${1 eq currentPage}">
+						<pg:next ifnull="true">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a
+								class="state-default"
+								href="javascript:gotoPage(${currentPage+1});">下一頁</a>&nbsp;&nbsp;&nbsp;&nbsp;
 				</pg:next>
+					</c:when>
+					<c:when test="${lastPage eq currentPage}">
+						<pg:prev ifnull="true">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a
+								class="state-default"
+								href="javascript:gotoPage(${currentPage-1});">上一頁</a>&nbsp;&nbsp;&nbsp;&nbsp;
+				</pg:prev>
+					</c:when>
+					<c:otherwise>
+						<pg:prev ifnull="true">
+							<a class="state-default"
+								href="javascript:gotoPage(${currentPage-1});">上一頁</a>
+						</pg:prev>
+						<pg:next ifnull="true">&nbsp;&nbsp;<a
+								class="state-default"
+								href="javascript:gotoPage(${currentPage+1});">下一頁</a>&nbsp;&nbsp;&nbsp;&nbsp;
+				</pg:next>
+					</c:otherwise>
+				</c:choose>
 			</c:otherwise>
 		</c:choose>
 	</pg:index>

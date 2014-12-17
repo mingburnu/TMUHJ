@@ -16,7 +16,7 @@
 function closeDetail_ToQuery() {
     $("#div_Detail").hide();
     UI_Resize();
-    gotoPage($("input#listForm_currentPageHeader").val());
+    gotoPage($("form#apply_customer_list input#listForm_currentPageHeader").val());
 	}
 	
 </script>

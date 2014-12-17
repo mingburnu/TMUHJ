@@ -1,6 +1,6 @@
 package com.asiaworld.tmuhj.module.security.web;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
@@ -74,17 +74,21 @@ public class AuthorizationAction extends GenericWebActionFull<AccountNumber> {
 		}
 	}
 
-	public boolean validateIp(String ip, ArrayList<IpRange> ipList) {
+	public boolean validateIp(String ip, List<IpRange> allIpList) {
 		String[] ipNum = ip.split("\\.");
-		for (int i = 0; i < ipList.size(); i++) {
-			String[] start = ipList.get(i).getIpRangeStart().split("\\.");
-			String[] end = ipList.get(i).getIpRangeEnd().split("\\.");
+		for (int i = 0; i < allIpList.size(); i++) {
+			String[] start = allIpList.get(i).getIpRangeStart().split("\\.");
+			String[] end = allIpList.get(i).getIpRangeEnd().split("\\.");
 
-			if (ipNum[0].equals(start[0]) && ipNum[1].equals(start[1])
-					&& ipNum[2].equals(start[2])) {
-				if (Integer.parseInt(ipNum[3]) >= Integer.parseInt(start[3])
-						&& Integer.parseInt(ipNum[3]) <= Integer
-								.parseInt(end[3])) {
+			if (ipNum[0].equals(start[0]) && ipNum[1].equals(start[1])) {
+				if (Integer.parseInt(ipNum[2]) * 1000
+						+ Integer.parseInt(ipNum[3]) >= Integer
+						.parseInt(start[2]) * 1000 + Integer.parseInt(start[3])
+						&& Integer.parseInt(ipNum[2]) * 1000
+								+ Integer.parseInt(ipNum[3]) <= Integer
+								.parseInt(end[2])
+								* 1000
+								+ Integer.parseInt(end[3])) {
 					return true;
 				}
 			}
@@ -92,18 +96,22 @@ public class AuthorizationAction extends GenericWebActionFull<AccountNumber> {
 		return false;
 	}
 
-	public long getMatchCusSerNo(String ip, ArrayList<IpRange> ipList) {
+	public long getMatchCusSerNo(String ip, List<IpRange> allIpList) {
 		String[] ipNum = ip.split("\\.");
-		for (int i = 0; i < ipList.size(); i++) {
-			String[] start = ipList.get(i).getIpRangeStart().split("\\.");
-			String[] end = ipList.get(i).getIpRangeEnd().split("\\.");
+		for (int i = 0; i < allIpList.size(); i++) {
+			String[] start = allIpList.get(i).getIpRangeStart().split("\\.");
+			String[] end = allIpList.get(i).getIpRangeEnd().split("\\.");
 
-			if (ipNum[0].equals(start[0]) && ipNum[1].equals(start[1])
-					&& ipNum[2].equals(start[2])) {
-				if (Integer.parseInt(ipNum[3]) >= Integer.parseInt(start[3])
-						&& Integer.parseInt(ipNum[3]) <= Integer
-								.parseInt(end[3])) {
-					return ipList.get(i).getCusSerNo();
+			if (ipNum[0].equals(start[0]) && ipNum[1].equals(start[1])) {
+				if (Integer.parseInt(ipNum[2]) * 1000
+						+ Integer.parseInt(ipNum[3]) >= Integer
+						.parseInt(start[2]) * 1000 + Integer.parseInt(start[3])
+						&& Integer.parseInt(ipNum[2]) * 1000
+								+ Integer.parseInt(ipNum[3]) <= Integer
+								.parseInt(end[2])
+								* 1000
+								+ Integer.parseInt(end[3])) {
+					return allIpList.get(i).getCusSerNo();
 				}
 			}
 		}
@@ -143,13 +151,14 @@ public class AuthorizationAction extends GenericWebActionFull<AccountNumber> {
 	 */
 	public String userEntry() throws Exception {
 		String ip = getRequest().getRemoteAddr();
-		ArrayList<IpRange> ipList = ipRangeService.getIpList();
 
-		if (validateIp(ip, ipList) && getLoginUser() == null) {
+		if (validateIp(ip, ipRangeService.getAllIpList())
+				&& getLoginUser() == null) {
 			try {
 				user = new AccountNumber();
 				user.setUserId("guest");
-				user.setCusSerNo(getMatchCusSerNo(ip, ipList));
+				user.setCusSerNo(getMatchCusSerNo(ip,
+						ipRangeService.getAllIpList()));
 				ds.setEntity(user);
 				ds = userService.getByRestrictions(ds);
 			} catch (Exception e) {
@@ -180,12 +189,12 @@ public class AuthorizationAction extends GenericWebActionFull<AccountNumber> {
 			getSession().put(LOGIN, null);
 		}
 		String ip = getRequest().getRemoteAddr();
-		ArrayList<IpRange> ipList = ipRangeService.getIpList();
-		if (validateIp(ip, ipList) && getLoginUser() == null) {
+		List<IpRange> allipList = ipRangeService.getAllIpList();
+		if (validateIp(ip, allipList) && getLoginUser() == null) {
 			try {
 				user = new AccountNumber();
 				user.setUserId("guest");
-				user.setCusSerNo(getMatchCusSerNo(ip, ipList));
+				user.setCusSerNo(getMatchCusSerNo(ip, allipList));
 				ds.setEntity(user);
 				ds = userService.getByRestrictions(ds);
 			} catch (Exception e) {
