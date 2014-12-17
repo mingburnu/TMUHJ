@@ -9,6 +9,13 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title></title>
 <script type="text/javascript">
+//刪除後引導頁面
+$(document).ready(function() {
+	if($("table.list-table:eq(1) tbody tr").length==2&&$("form#apply_ipRange_list input#listForm_currentPageHeader").val()>1){
+		 gotoPage_detail($("form#apply_ipRange_list input#listForm_currentPageHeader").val()-1);
+	};
+});
+	
 	//新增IP Range
 	function goAdd_detail() {
 		var url = "<c:url value = '/'/>/crud/apply.ipRange.query.action";
@@ -29,7 +36,7 @@
 			        trueText:'是',
 			        trueFunc:function(){
 			            var url = "<c:url value = '/'/>crud/apply.ipRange.delete.action";
-			            var data = 'entity.serNo='+serNo+'&entity.cusSerNo='+'<%=request.getParameter("entity.cusSerNo")%>';
+			            var data = $('#apply_ipRange_list').serialize()+'&entity.serNo='+serNo+'&pager.offset='+'${ds.pager.offset}'+'&pager.currentPage='+'${ds.pager.currentPage}'+'&pager.offsetPoint'+'${ds.pager.offset}';
 			            goDetail_Main(url,'',data);
 			        },
 			        falseText:'否',
@@ -41,8 +48,8 @@
 	}
 
 	//GoPage
-	function gotoPage(page) {
-		var totalPage = $("span.totalNum").html();
+	function gotoPage_detail(page) {
+		var totalPage = $("span.totalNum:eq(1)").html();
 		var recordPerPage = "${ds.pager.recordPerPage}";
 		var offset = parseInt(recordPerPage) * (parseInt(page) - 1);
 		if (parseInt(page) < 1) {
@@ -50,20 +57,20 @@
 		} else if (parseInt(page) > parseInt(totalPage)) {
 			page = totalPage;
 		}
-		goMain('<c:url value = '/'/>crud/apply.customer.list.action',
-				'#apply_customer_list', '&pager.offset=' + offset
-						+ '&pager.currentPage=' + page);
+		goDetail_Main('<c:url value = '/'/>crud/apply.ipRange.list.action',
+				'#apply_ipRange_list', '&pager.offset='+offset+'&pager.currentPage='+page+'&pager.offsetPoint'+offset);
 	}
 
 	//變更顯示筆數
-	function chagePageSize(i) {
-		goMain('<c:url value = '/'/>crud/apply.customer.list.action',
-				'#apply_customer_list', '&recordPerPage=' + i);
+	function chagePageSize_detail(recordPerPage,recordPoint) {
+		goDetail_Main('<c:url value = '/'/>crud/apply.ipRange.list.action',
+				'#apply_ipRange_list', '&recordPerPage='+recordPerPage+'&recordPoint='+recordPoint);
 	}
 </script>
 </head>
 <body>
 	<s:form action="apply.ipRange.list" namespace="/crud" method="post">
+		<input type="hidden" name="entity.cusSerNo" value="<%=request.getParameter("entity.cusSerNo")%>"/>
 		<div class="list-box">
 			<div class="list-buttons">
 				<a class="state-default" onclick="goAdd_detail();">新增</a>
@@ -97,37 +104,30 @@
 				<table border="0" cellspacing="0" cellpadding="0">
 					<tbody>
 						<tr>
-							<td>&nbsp;&nbsp; &nbsp;&nbsp;</td>
-							<td>每頁顯示 <select name="pageSize" id="iplistForm_pageSize"
-								onchange="chagePageSize_detail()">
-									<option value="10">10</option>
-									<option value="20">20</option>
-									<option value="50" selected="selected">50</option>
-							</select> 筆記錄, 第 <select name="currentPageHeader" size="1"
-								id="iplistForm_currentPageHeader"
-								onchange="gotoPage_detail(this.value)">
-									<option value="1" selected="selected">1</option>
-							</select> 頁, 共<span class="totalNum">1</span>頁
-							</td>
-						</tr>
-						<tr>
-							<td align="left" class="p_02"><jsp:include
-									page="/WEB-INF/jsp/layout/pagination.jsp">
-									<jsp:param name="namespace" value="/crud" />
-									<jsp:param name="action" value="apply.customer.ipMaintain" />
-									<jsp:param name="pager" value="${ds.pager}" />
-									<jsp:param name="cusSerNo" value="${cusSerNo }" />
-									<jsp:param name="recordPerPage"
-										value="${ds.pager.recordPerPage}" />
-								</jsp:include></td>
-							<td align="right" class="p_01"><c:set var="pageFactor"
-									value="${ds.pager.totalRecord/ds.pager.recordPerPage}" /> <c:set
-									var="totalPage">
-									<fmt:formatNumber type="number" pattern="#"
-										value="${pageFactor+(1-(pageFactor%1))%1}" />
-								</c:set> <input value="${ds.pager.currentPage }" type="number"
-								name="page" min="1" max="${totalPage }" onchange="jumpPage()">/${totalPage }，共
-								<span class="total_num">${ds.pager.totalRecord}</span>筆資料</td>
+							<td align="left" class="p_02"><jsp:include page="/WEB-INF/jsp/layout/pagination.jsp">
+										<jsp:param name="namespace" value="/crud" />
+										<jsp:param name="action" value="apply.ipRange.list" />
+										<jsp:param name="pager" value="${ds.pager}" />
+										<jsp:param name="recordPerPage"
+											value="${ds.pager.recordPerPage}" />
+										<jsp:param name="detail" value="1" />
+									</jsp:include></td>
+							<td><c:set var="pageFactor"
+										value="${ds.pager.totalRecord/ds.pager.recordPerPage}" /> <c:set
+										var="totalPage">
+										<fmt:formatNumber type="number" pattern="#"
+											value="${pageFactor+(1-(pageFactor%1))%1}" />
+									</c:set> 每頁顯示 <select name="recordPerPage" id="listForm_pageSize"
+									onchange="chagePageSize_detail(this.value,${ds.pager.recordPoint })">
+										<option value="${ds.pager.recordPerPage}">${ds.pager.recordPerPage}</option>
+										<option value="5">5</option>
+										<option value="10">10</option>
+										<option value="20">20</option>
+										<option value="50">50</option>
+								</select> 筆紀錄, 第 <input id="listForm_currentPageHeader"
+									value="${ds.pager.currentPage }" type="number" min="1"
+									max="${totalPage }" onchange="gotoPage_detail(this.value)"> 頁,
+									共<span class="totalNum">${totalPage }</span>頁</td>
 						</tr>
 					</tbody>
 				</table>

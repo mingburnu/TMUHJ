@@ -18,8 +18,8 @@ $(document).ready(function() {
 
 //刪除後引導頁面
 $(document).ready(function() {
-	if($("table.list-table tbody tr").length==2&&$("input#listForm_currentPageHeader").val()>1){
-		 gotoPage($("input#listForm_currentPageHeader").val()-1);
+	if($("table.list-table:eq(0) tbody tr").length==2&&$("form#apply_customer_list input#listForm_currentPageHeader").val()>1){
+		 gotoPage($("form#apply_customer_list input#listForm_currentPageHeader").val()-1);
 	};
 });
 
@@ -118,7 +118,7 @@ $(document).ready(function() {
 	
 	//GoPage
 	function gotoPage(page){
-	    var totalPage = $("span.totalNum").html();
+		var totalPage = $("span.totalNum:eq(1)").html();
 	    var recordPerPage="${ds.pager.recordPerPage}";
 	    var offset=parseInt(recordPerPage)*(parseInt(page)-1);
 	    if(parseInt(page) < 1){
@@ -279,11 +279,7 @@ $(document).ready(function() {
 										<jsp:param name="pager" value="${ds.pager}" />
 										<jsp:param name="recordPerPage"
 											value="${ds.pager.recordPerPage}" />
-										<jsp:param name="option"
-											value='<%=request.getParameter("option")%>' />
-										<jsp:param name="keyword"
-											value='<%=request.getParameter(request
-							.getParameter("option"))%>' />
+										<jsp:param name="detail" value="0" />
 									</jsp:include></td>
 								<td><c:set var="pageFactor"
 										value="${ds.pager.totalRecord/ds.pager.recordPerPage}" /> <c:set

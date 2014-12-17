@@ -1,5 +1,7 @@
 package com.asiaworld.tmuhj.module.apply.ipRange.service;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Pattern;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,7 +48,6 @@ public class IpRangeAction extends GenericCRUDActionFull<IpRange> {
 			ipRange = ipRangeService.getBySerNo(getEntity().getSerNo());
 			ipRange.setListNo(getEntity().getListNo());
 			setEntity(ipRange);
-		} else {
 		}
 		return EDIT;
 	}
@@ -65,28 +66,53 @@ public class IpRangeAction extends GenericCRUDActionFull<IpRange> {
 				+ "([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\."
 				+ "([01]?\\d\\d?|2[0-4]\\d|25[0-5])$";
 
-		if (!Pattern.compile(ipPattern).matcher(getEntity().getIpRangeStart())
-				.matches()) {
-			addActionError("IP起值輸入格式錯誤");
-		}
-		if (!Pattern.compile(ipPattern).matcher(getEntity().getIpRangeEnd())
-				.matches()) {
-			addActionError("IP迄值輸入格式錯誤");
-		}
-
-		String[] ipStartNum = getEntity().getIpRangeStart().split("\\.");
-		String[] ipEndNum = getEntity().getIpRangeEnd().split("\\.");
-
-		int i = 0;
-		while (i < 3) {
-			if (!ipStartNum[i].equals(ipEndNum[i])) {
-				addActionError("IP起迄值第" + (i + 1) + "位數字必須相同");
+		if (getEntity().getIpRangeStart() != null
+				&& !getEntity().getIpRangeStart().equals("")
+				&& getEntity().getIpRangeEnd() != null
+				&& !getEntity().getIpRangeEnd().equals("")) {
+			if (!Pattern.compile(ipPattern)
+					.matcher(getEntity().getIpRangeStart()).matches()) {
+				addActionError("IP起值輸入格式錯誤");
 			}
-			i++;
-		}
+			if (!Pattern.compile(ipPattern)
+					.matcher(getEntity().getIpRangeEnd()).matches()) {
+				addActionError("IP迄值輸入格式錯誤");
+			}
 
-		if (Integer.parseInt(ipStartNum[3]) > Integer.parseInt(ipEndNum[3])) {
-			addActionError("IP起值第4位數字不可大於IP迄值第4位數字");
+			if (Pattern.compile(ipPattern)
+					.matcher(getEntity().getIpRangeStart()).matches()
+					&& Pattern.compile(ipPattern)
+							.matcher(getEntity().getIpRangeEnd()).matches()) {
+				String[] ipStartNum = getEntity().getIpRangeStart()
+						.split("\\.");
+				String[] ipEndNum = getEntity().getIpRangeEnd().split("\\.");
+
+				int i = 0;
+				while (i < 2) {
+					if (!ipStartNum[i].equals(ipEndNum[i])) {
+						addActionError("IP起迄值第" + (i + 1) + "位數字必須相同");
+					}
+					i++;
+				}
+
+				if (ipStartNum[0].equals(ipEndNum[0])
+						&& ipStartNum[1].equals(ipEndNum[1])) {
+					if (Integer.parseInt(ipStartNum[2]) * 1000
+							+ Integer.parseInt(ipStartNum[3]) > Integer
+							.parseInt(ipEndNum[2])
+							* 1000
+							+ Integer.parseInt(ipEndNum[3])) {
+						addActionError("IP起值不可大於IP迄值");
+					} else {
+						if (isRepeat(getEntity().getIpRangeStart(), getEntity()
+								.getIpRangeEnd(), ipRangeService.getAllIpList())) {
+							addActionError("此IP區間尚有客戶在使用");
+						}
+					}
+				}
+			}
+		} else {
+			addActionError("IP起迄值不可空白");
 		}
 
 		if (!hasActionErrors()) {
@@ -105,28 +131,55 @@ public class IpRangeAction extends GenericCRUDActionFull<IpRange> {
 				+ "([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\."
 				+ "([01]?\\d\\d?|2[0-4]\\d|25[0-5])$";
 
-		if (!Pattern.compile(ipPattern).matcher(getEntity().getIpRangeStart())
-				.matches()) {
-			addActionError("IP起值輸入格式錯誤");
-		}
-		if (!Pattern.compile(ipPattern).matcher(getEntity().getIpRangeEnd())
-				.matches()) {
-			addActionError("IP迄值輸入格式錯誤");
-		}
-
-		String[] ipStartNum = getEntity().getIpRangeStart().split("\\.");
-		String[] ipEndNum = getEntity().getIpRangeEnd().split("\\.");
-
-		int i = 0;
-		while (i < 3) {
-			if (!ipStartNum[i].equals(ipEndNum[i])) {
-				addActionError("IP起迄值第" + (i + 1) + "個數字必須相同");
+		if (getEntity().getIpRangeStart() != null
+				&& !getEntity().getIpRangeStart().equals("")
+				&& getEntity().getIpRangeEnd() != null
+				&& !getEntity().getIpRangeEnd().equals("")) {
+			if (!Pattern.compile(ipPattern)
+					.matcher(getEntity().getIpRangeStart()).matches()) {
+				addActionError("IP起值輸入格式錯誤");
 			}
-			i++;
-		}
+			if (!Pattern.compile(ipPattern)
+					.matcher(getEntity().getIpRangeEnd()).matches()) {
+				addActionError("IP迄值輸入格式錯誤");
+			}
 
-		if (Integer.parseInt(ipStartNum[3]) > Integer.parseInt(ipEndNum[3])) {
-			addActionError("IP起值第4位數字不可大於IP迄值第4位數字");
+			if (Pattern.compile(ipPattern)
+					.matcher(getEntity().getIpRangeStart()).matches()
+					&& Pattern.compile(ipPattern)
+							.matcher(getEntity().getIpRangeEnd()).matches()) {
+				String[] ipStartNum = getEntity().getIpRangeStart()
+						.split("\\.");
+				String[] ipEndNum = getEntity().getIpRangeEnd().split("\\.");
+
+				int i = 0;
+				while (i < 2) {
+					if (!ipStartNum[i].equals(ipEndNum[i])) {
+						addActionError("IP起迄值第" + (i + 1) + "位數字必須相同");
+					}
+					i++;
+				}
+
+				if (ipStartNum[0].equals(ipEndNum[0])
+						&& ipStartNum[1].equals(ipEndNum[1])) {
+					if (Integer.parseInt(ipStartNum[2]) * 1000
+							+ Integer.parseInt(ipStartNum[3]) > Integer
+							.parseInt(ipEndNum[2])
+							* 1000
+							+ Integer.parseInt(ipEndNum[3])) {
+						addActionError("IP起值不可大於IP迄值");
+					} else {
+						if (isRepeat(getEntity().getIpRangeStart(), getEntity()
+								.getIpRangeEnd(),
+								ipRangeService.getAllIpList(getEntity()
+										.getSerNo()))) {
+							addActionError("此IP區間尚有客戶在使用");
+						}
+					}
+				}
+			}
+		} else {
+			addActionError("IP起迄值不可空白");
 		}
 
 		if (!hasActionErrors()) {
@@ -148,4 +201,40 @@ public class IpRangeAction extends GenericCRUDActionFull<IpRange> {
 		return LIST;
 	}
 
+	public boolean isRepeat(String ipStart, String ipEnd,
+			List<IpRange> allIpList) {
+
+		String[] ipStartNum = ipStart.split("\\.");
+		String[] ipEndNum = ipEnd.split("\\.");
+		List<Integer> entityIpRange = new ArrayList<Integer>();
+		for (int i = Integer.parseInt(ipStartNum[2]) * 1000
+				+ Integer.parseInt(ipStartNum[3]); i < Integer
+				.parseInt(ipEndNum[2]) * 1000 + Integer.parseInt(ipEndNum[3]); i++) {
+			entityIpRange.add(i);
+		}
+
+		for (int i = 0; i < allIpList.size(); i++) {
+			String[] existIpStartNum = allIpList.get(i).getIpRangeStart()
+					.split("\\.");
+			String[] existIpEndNum = allIpList.get(i).getIpRangeStart()
+					.split("\\.");
+			if (ipStartNum[0].equals(existIpStartNum[0])
+					&& ipStartNum[1].equals(existIpStartNum[1])) {
+
+				for (int j = 0; j < entityIpRange.size(); j++) {
+					if (entityIpRange.get(j) > Integer
+							.parseInt(existIpStartNum[2])
+							* 1000
+							+ Integer.parseInt(existIpStartNum[3])
+							&& entityIpRange.get(j) > Integer
+									.parseInt(existIpEndNum[2])
+									* 1000
+									+ Integer.parseInt(existIpEndNum[3])) {
+						return true;
+					}
+				}
+			}
+		}
+		return false;
+	}
 }

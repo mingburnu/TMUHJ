@@ -13,9 +13,7 @@
 	function closeDetail_ToQuery() {
 		$("#div_Detail_2").hide();
 		UI_Resize();
-		var url = '<c:url value = '/'/>crud/apply.ipRange.list.action';
-		data = 'entity.cusSerNo=' + '${entity.cusSerNo}';
-		goDetail(url, '客戶-IP Range管理', data);
+		gotoPage_detail($("form#apply_ipRange_list input#listForm_currentPageHeader").val());
 	}
 </script>
 </head>

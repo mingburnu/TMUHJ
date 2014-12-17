@@ -2,6 +2,7 @@ package com.asiaworld.tmuhj.module.apply.ipRange.service;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 import org.hibernate.Criteria;
 import org.hibernate.Session;
@@ -43,18 +44,17 @@ public class IpRangeService extends GenericServiceFull<IpRange> {
 		return dao;
 	}
 	
-	public ArrayList<IpRange> getIpList() {
-		ArrayList<IpRange> ipList=new ArrayList<IpRange>();
+	public List<IpRange> getAllIpList() {
+		List<IpRange> allIpList=new ArrayList<IpRange>();
 		Session session = sessionFactory.getCurrentSession();
 		Criteria criteria = session.createCriteria(IpRange.class);
-		Iterator<?> iterator = criteria.list().iterator();
+		Iterator<?> iterator=criteria.list().iterator();
 		
 		while(iterator.hasNext()){
 			IpRange ipRange=(IpRange) iterator.next();
-			ipList.add(ipRange);
+			allIpList.add(ipRange);
 		}
-		
-		return ipList;	
+		return allIpList;	
 	}
 
 }
