@@ -20,11 +20,11 @@
 		if ($("form#apply_ipRange_save").length != 0) {
 			data = $('#apply_ipRange_save').serialize();
 			goDetail_2("<c:url value = '/'/>crud/apply.ipRange.save.action",
-					'客戶-IP Range檢視', data);
+					'客戶-IP Range新增', data);
 		} else {
 			data = $('#apply_ipRange_update').serialize();
 			goDetail_2("<c:url value = '/'/>crud/apply.ipRange.update.action",
-					'客戶-IP Range檢視', data);
+					'客戶-IP Range修改', data);
 		}
 	}
 

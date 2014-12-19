@@ -2,138 +2,160 @@
 	pageEncoding="UTF-8"%>
 <%@ taglib prefix="s" uri="/struts-tags"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>使用者列表</title>
-<link id="style_main" rel="stylesheet" type="text/css"
-	href="<%=request.getContextPath()%>/resources/css/default.css" />
-<script type="text/javascript"
-	src="<%=request.getContextPath()%>/resources/js/jquery-1.4.2.js"></script>
-<script type="text/javascript"
-	src="<%=request.getContextPath()%>/resources/js/common.js"></script>
-<style type="text/css">
-.table_browse th {
-	font-size: 16px;
-}
-
-.table_browse td {
-	font-size: 16px;
-}
-</style>
+<title></title>
 <script type="text/javascript">
-	$(document).ready(function() {
-
-		//registerListForm("listForm", true); // 含排序的樣式調整
-	});
-<%--function confirmDel(id) {
-		var r = confirm("是否確定要刪除使用者「" + id + "」？");
-
-		if (r == true) {
-			// do delete...
-			ajaxPost({
-				url : "userinfo_delete.action",
-				data : "userinfo_id=" + id,
-				success : function(msg) {
-					// myAlert(msg);
-					location.reload();
-				}
-			});
-		}
-	}--%>
-	
+function goSearch(){
+    goMain("<%=request.getContextPath()%>/crud/apply.accountNumber.list.action",
+			"#apply_accountNumber_list", "");
+}
 </script>
 </head>
 <body>
-	<%@include file="/WEB-INF/jsp/layout/header.jsp"%>
-	<%@include file="/WEB-INF/jsp/layout/menu.jsp"%>
-
-	<%-- List區塊 --%>
-	<div id="contaner">
-		<div id="contaner_box">
-			<div>${uriReferer}</div>
-			<!--<s:form action="apply.accountNumber.delete" method="GET">-->
-			<!--<s:hidden name="p" />
-				<s:hidden name="sortBy" />
-				<s:hidden name="asc" />-->
-			<div class="pageTitle">查詢資料列表</div>
-			<div style="width: 700px;">
-				<div class="content_box">
-					<!--列表上方區塊 start -->
-					<div class="table_browse_top">
-						<a class="button_02" href="crud/apply.accountNumber.query.action"><span>新增</span></a>
-					</div>
-					<!--列表上方區塊 end -->
-
-					<!--表格內容 start -->
-					<table width="100%" border="0" cellspacing="0" cellpadding="0"
-						class="table_browse">
-						<tr>
-							<th class="th_first"><a name="sortable" id="id"><span>用戶代碼</span></a></th>
-							<th><a name="sortable" id="name"><span>用戶名稱</span></a></th>
-							<th width="90"><a name="sortable" id="tel"><span>聯絡人</span></a></th>
-							<th width="80"><a name="sortable" id="role"><span>建立者ID</span></a></th>
-							<th width="80"><a name="sortable" id="role"><span>最後修改者</span></a></th>
-							<th width="100"><span>&nbsp;</span></th>
-						</tr>
-						<c:forEach var="item" items="${ds.results}" varStatus="status">
-							<c:set var="editPage">
-								<s:url namespace="/crud" action="apply.accountNumber.query">
-									<s:param name="entity.serNo">${item.serNo}</s:param>
-								</s:url>
-							</c:set>
-							<tr>
-								<td align="left" class="td_first" nowrap>${item.userId }</td>
-								<td align="left" nowrap>${item.customer.name }&nbsp;</td>
-								<td align="left" nowrap>${item.customer.contactUserName }&nbsp;</td>
-								<td align="left" nowrap>${item.cUid }&nbsp;</td>
-								<td align="left" nowrap>${item.uUid }&nbsp;</td>
-								<td align="center" nowrap><a class="button_02"
-									href="${editPage}"><span>修改</span></a> <a class="button_01"
-									href="javascript:confirmDel('<s:property value="id"/>');"><span>刪除</span></a>
-								</td>
-							</tr>
-						</c:forEach>
-					</table>
-					<!--表格內容 end -->
-
-					<!--分頁 start -->
-					<div class="table_browse_pages">
-						<table width="100%" border="0" cellspacing="0" cellpadding="0">
-							<tr>
-								<td align="left"><s:iterator value="pages" var="page">
-										<s:if test="#page==currentPage">
-											<span class="pages_a_site">${page}</span>
-										</s:if>
-										<s:else>
-											<a class="pages_a" href="javascript:goPage(${page});"><span>${page}</span></a>
-										</s:else>
-									</s:iterator></td>
-								<td align="right">共<span class="total_num">${pager.totalRecord}</span>個使用者
-								</td>
-							</tr>
-						</table>
-					</div>
-					<!--分頁 end -->
-				</div>
+	<s:form action="apply.accountNumber.list" namespace="/crud"
+		method="post" onsubmit="return false;">
+		<div class="tabs-box">
+			<div>
+				<a id="tabs-items_A" class="tabs-items-hover"
+					onclick="showTabsContain('A')"><span
+					class="tabs-items-hover-span">查詢</span></a>
 			</div>
-			<!--</s:form>-->
+			<div id="TabsContain_A" class="tabs-contain">
+				<table border="0" cellspacing="4" cellpadding="0">
+
+					<tbody>
+						<tr>
+							<td align="left">用戶代碼&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;客戶名稱</td>
+							<td align="left"></td>
+						</tr>
+						<tr>
+							<td align="left"><input type="text" name="entity.userId"
+								maxlength="20" id="search" class="input_text">&nbsp;<input
+								type="text" name="entity.customer.name" maxlength="20"
+								id="search" class="input_text"></td>
+							<td align="left"><a class="state-default"
+								onclick="goSearch();">查詢</a></td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
 		</div>
-	</div>
-	<!--<table class="table table-hover" style="width: 100%">
-		<thead>
-			<tr class="list-head">
-				<th>使用者代號</th>
-			</tr>
-		</thead>
-		<tbody>
-			<c:forEach var="item" items="${ds.results}" varStatus="status">
-				<tr>
-					<td>${item.userId}</td>
-				</tr>
-			</c:forEach>
-		</tbody>
-	</table>-->
+		<div id="div_nav">
+			目前位置：<span>帳戶管理</span> &gt; <span>帳戶設定</span>
+		</div>
+		<div class="list-box">
+			<div class="list-buttons">
+				<c:choose>
+					<c:when test="${not empty ds.pager.totalRecord }">
+						<a class="state-default" onclick="allSelect(1);">全選</a>
+						<a class="state-default" onclick="allSelect(0);">取消</a>
+						<a class="state-default" onclick="goAdd();">新增</a>
+						<a class="state-default" onclick="goFail(1);">失效</a>
+						<a class="state-default" onclick="goEffect(1);">生效</a>
+					</c:when>
+					<c:otherwise>
+						<a class="state-default" onclick="goAdd();">新增</a>
+					</c:otherwise>
+				</c:choose>
+			</div>
+			<table cellspacing="1" class="list-table">
+				<tbody>
+					<tr>
+						<td colspan="8" class="topic">基本設定</td>
+					</tr>
+					<tr>
+						<th width="50" align="center">&nbsp;</th>
+						<th>用戶代碼</th>
+						<th>用戶姓名</th>
+						<th>客戶名稱</th>
+						<th>Email</th>
+						<th>權限</th>
+						<th>狀態</th>
+						<th>操作</th>
+					</tr>
+					<c:forEach var="item" items="${ds.results}" varStatus="status">
+						<tr>
+							<td align="center" class="td_first" nowrap><input
+								type="checkbox" class="checkbox" name="checkItem"
+								value="${item.serNo}"></td>
+							<td>${item.userId }</td>
+							<td align="center">${item.userName }</td>
+							<td>${item.customer.name }</td>
+							<td align="center">${item.customer.email }</td>
+							<td>${item.role.role }</td>
+							<td align="center">${item.status.status }</td>
+							<td align="center"><a class="state-default2"
+								onclick="goView(${item.serNo });"><span
+									class="icon-default icon-view"></span>檢視</a> <a
+								class="state-default2" onclick="goUpdate(${item.serNo});"><span
+									class="icon-default icon-edit"></span>修改</a></td>
+						</tr>
+					</c:forEach>
+				</tbody>
+			</table>
+			<div class="page-box" align="right">
+				<table border="0" cellspacing="0" cellpadding="0">
+					<tbody>
+
+						<c:if test="${ds.pager.totalRecord > 0 }">
+							<tr>
+								<td><jsp:include page="/WEB-INF/jsp/layout/pagination.jsp">
+										<jsp:param name="namespace" value="/crud" />
+										<jsp:param name="action" value="apply.accountNumber.list" />
+										<jsp:param name="pager" value="${ds.pager}" />
+										<jsp:param name="recordPerPage"
+											value="${ds.pager.recordPerPage}" />
+										<jsp:param name="detail" value="0" />
+									</jsp:include></td>
+								<td><c:set var="pageFactor"
+										value="${ds.pager.totalRecord/ds.pager.recordPerPage}" /> <c:set
+										var="totalPage">
+										<fmt:formatNumber type="number" pattern="#"
+											value="${pageFactor+(1-(pageFactor%1))%1}" />
+									</c:set> 每頁顯示 <select name="recordPerPage" id="listForm_pageSize"
+									onchange="chagePageSize(this.value,${ds.pager.recordPoint })">
+										<option value="${ds.pager.recordPerPage}">${ds.pager.recordPerPage}</option>
+										<option value="5">5</option>
+										<option value="10">10</option>
+										<option value="20">20</option>
+										<option value="50">50</option>
+								</select> 筆紀錄, 第 <input id="listForm_currentPageHeader"
+									value="${ds.pager.currentPage }" type="number" min="1"
+									max="${totalPage }" onchange="gotoPage(this.value)"> 頁,
+									共<span class="totalNum">${totalPage }</span>頁</td>
+							</tr>
+						</c:if>
+					</tbody>
+				</table>
+			</div>
+			<div class="detail_note">
+				<div class="detail_note_title">Note</div>
+				<div class="detail_note_content"></div>
+			</div>
+		</div>
+	</s:form>
+
+	<s:if test="hasActionMessages()">
+		<script language="javascript" type="text/javascript">
+            var msg = "";
+            <s:iterator value="actionMessages">
+                msg += '<s:property escape="false"/><br>';
+            </s:iterator>;
+            goAlert('訊息', msg);
+        </script>
+	</s:if>
+	<s:if test="hasActionErrors()">
+		<script language="javascript" type="text/javascript">
+			var msg = "";
+			<s:iterator value="actionErrors">
+			msg += '<s:property escape="false"/><br>';
+			</s:iterator>;
+			goAlert('訊息', msg);
+		</script>
+	</s:if>
 </body>
 </html>

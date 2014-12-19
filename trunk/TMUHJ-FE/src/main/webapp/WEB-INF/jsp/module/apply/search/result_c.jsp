@@ -9,8 +9,8 @@
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <title>跨司署電子資料庫索引查詢平台</title>
 </head>
-
 <body>
+
 	<div id="wrapper">
 		<jsp:include page="/WEB-INF/jsp/layout/menu.jsp" />
 
@@ -25,10 +25,12 @@
 								<table width="100%" border="0" cellpadding="0" cellspacing="0">
 									<tr>
 										<s:form action="apply.journal.query.action">
+											<input type="hidden" name="recordPoint"
+												value="${ds.pager.recordPoint}">
 											<td align="left" class="p_01">共 <strong>${ds.pager.totalRecord}</strong>
 												筆記錄， 每頁顯示筆數 <select name="recordPerPage"
 												id="apply_journal_query_action_recordPerPage"
-												onchange="document.getElementById('apply_journal_query_action');this.form.submit();">
+												onchange="changeSize(this.value);">
 													<option value="${ds.pager.recordPerPage}">${ds.pager.recordPerPage}</option>
 													<option value="5">5</option>
 													<option value="10">10</option>
@@ -36,7 +38,6 @@
 													<option value="50">50</option>
 													<option value="100">100</option>
 											</select> <input type="hidden" name="keywords" value="${keywords }" />
-
 											</td>
 										</s:form>
 										<td align="right" class="p_02"><c:if
@@ -58,10 +59,12 @@
 								<table width="100%" border="0" cellpadding="0" cellspacing="0">
 									<tr>
 										<s:form action="apply.journal.owner.action">
+											<input type="hidden" name="recordPoint"
+												value="${ds.pager.recordPoint}">
 											<td align="left" class="p_01">共 <strong>${ds.pager.totalRecord}</strong>
 												筆記錄， 每頁顯示筆數 <select name="recordPerPage"
 												id="apply_journal_owner_action_recordPerPage"
-												onchange="document.getElementById('apply_journal_owner_action');this.form.submit();">
+												onchange="changeSize(this.value);">
 													<option value="${ds.pager.recordPerPage}">${ds.pager.recordPerPage}</option>
 													<option value="5">5</option>
 													<option value="10">10</option>
@@ -69,7 +72,6 @@
 													<option value="50">50</option>
 													<option value="100">100</option>
 											</select> <input type="hidden" name="cusSerNo" value="${cusSerNo }" />
-
 											</td>
 										</s:form>
 										<td align="right" class="p_02"><c:if
@@ -91,10 +93,12 @@
 								<table width="100%" border="0" cellpadding="0" cellspacing="0">
 									<tr>
 										<s:form action="apply.journal.focus.action">
+											<input type="hidden" name="recordPoint"
+												value="${ds.pager.recordPoint}">
 											<td align="left" class="p_01">共 <strong>${ds.pager.totalRecord}</strong>
 												筆記錄， 每頁顯示筆數 <select name="recordPerPage"
 												id="apply_journal_focus_action_recordPerPage"
-												onchange="document.getElementById('apply_journal_focus_action');this.form.submit();">
+												onchange="changeSize(this.value);">
 													<option value="${ds.pager.recordPerPage}">${ds.pager.recordPerPage}</option>
 													<option value="5">5</option>
 													<option value="10">10</option>
@@ -193,10 +197,12 @@
 								<table width="100%" border="0" cellpadding="0" cellspacing="0">
 									<tr>
 										<s:form action="apply.journal.query.action">
+											<input type="hidden" name="recordPoint"
+												value="${ds.pager.recordPoint}">
 											<td align="left" class="p_01">共 <strong>${ds.pager.totalRecord}</strong>
 												筆記錄， 每頁顯示筆數 <select name="recordPerPage"
 												id="apply_journal_query_action_recordPerPage"
-												onchange="document.getElementById('apply_journal_query_action');this.form.submit();">
+												onchange="changeSize(this.value);">
 													<option value="${ds.pager.recordPerPage}">${ds.pager.recordPerPage}</option>
 													<option value="5">5</option>
 													<option value="10">10</option>
@@ -226,10 +232,12 @@
 								<table width="100%" border="0" cellpadding="0" cellspacing="0">
 									<tr>
 										<s:form action="apply.journal.owner.action">
+											<input type="hidden" name="recordPoint"
+												value="${ds.pager.recordPoint}">
 											<td align="left" class="p_01">共 <strong>${ds.pager.totalRecord}</strong>
 												筆記錄， 每頁顯示筆數 <select name="recordPerPage"
 												id="apply_journal_owner_action_recordPerPage"
-												onchange="document.getElementById('apply_journal_owner_action');this.form.submit();">
+												onchange="changeSize(this.value);">
 													<option value="${ds.pager.recordPerPage}">${ds.pager.recordPerPage}</option>
 													<option value="5">5</option>
 													<option value="10">10</option>
@@ -259,10 +267,12 @@
 								<table width="100%" border="0" cellpadding="0" cellspacing="0">
 									<tr>
 										<s:form action="apply.journal.focus.action">
+											<input type="hidden" name="recordPoint"
+												value="${ds.pager.recordPoint}">
 											<td align="left" class="p_01">共 <strong>${ds.pager.totalRecord}</strong>
 												筆記錄， 每頁顯示筆數 <select name="recordPerPage"
 												id="apply_journal_focus_action_recordPerPage"
-												onchange="document.getElementById('apply_journal_focus_action');this.form.submit();">
+												onchange="changeSize(this.value);">
 													<option value="${ds.pager.recordPerPage}">${ds.pager.recordPerPage}</option>
 													<option value="5">5</option>
 													<option value="10">10</option>

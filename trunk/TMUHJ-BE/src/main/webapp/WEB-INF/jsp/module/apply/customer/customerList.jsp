@@ -118,7 +118,7 @@ $(document).ready(function() {
 	
 	//GoPage
 	function gotoPage(page){
-		var totalPage = $("span.totalNum:eq(1)").html();
+		var totalPage = $("span.totalNum:eq(0)").html();
 	    var recordPerPage="${ds.pager.recordPerPage}";
 	    var offset=parseInt(recordPerPage)*(parseInt(page)-1);
 	    if(parseInt(page) < 1){

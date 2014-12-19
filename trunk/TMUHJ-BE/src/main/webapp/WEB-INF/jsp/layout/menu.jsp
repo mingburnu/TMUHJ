@@ -12,7 +12,7 @@
 		</div>
 		<div id="menu_items_1" style="">
 			<div class="menu-items">
-				<a onclick="goURL('<%=request.getContextPath()%>/basic.action');">基本設定</a>
+				<a onclick="goURL('<%=request.getContextPath()%>/customer.action');">基本設定</a>
 			</div>
 		</div>
 
@@ -22,12 +22,12 @@
 		</div>
 		<div id="menu_items_2" style="display: none;">
 			<div class="menu-items">
-				<a onclick="goURL('/TWBE/beAccount_init.action');">帳戶設定</a>
+				<a onclick="goURL('<%=request.getContextPath()%>/accountNumber.action');">帳戶設定</a>
 			</div>
 		</div>
 
 
-		<div id="menu-titles_3" class="menu-titles">
+		<%--<div id="menu-titles_3" class="menu-titles">
 			<a onclick="showMenuItems('3');"><span class="menu-icon">書目資料管理</span></a>
 		</div>
 		<div id="menu_items_3" style="display: none;">
@@ -67,7 +67,7 @@
 				<a onclick="goURL('/TWBE/articleCollectStatics_init.action');">款目收藏次數統計</a>
 			</div>
 
-		</div>
+		</div>--%>
 
 	</div>
 </div>

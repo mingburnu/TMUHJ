@@ -84,19 +84,6 @@ public class IpRangeService extends GenericServiceFull<IpRange> {
 		return dao;
 	}
 	
-	public List<IpRange> getAllIpList() {
-		List<IpRange> allIpList=new ArrayList<IpRange>();
-		Session session = sessionFactory.getCurrentSession();
-		Criteria criteria = session.createCriteria(IpRange.class);
-		Iterator<?> iterator=criteria.list().iterator();
-		
-		while(iterator.hasNext()){
-			IpRange ipRange=(IpRange) iterator.next();
-			allIpList.add(ipRange);
-		}
-		return allIpList;	
-	}
-	
 	public List<IpRange> getAllIpList(long ipRangeSerNo) {
 		List<IpRange> allIpList=new ArrayList<IpRange>();
 		Session session = sessionFactory.getCurrentSession();

@@ -36,7 +36,12 @@ public class Pager implements Serializable {
 	private Long totalRecord;
 
 	private Integer offset = 0;
-
+	
+	/**
+	 * 紀錄點
+	 */
+	private Integer recordPoint;
+	
 	public Integer getRecordPerPage() {
 		return recordPerPage;
 	}
@@ -73,6 +78,20 @@ public class Pager implements Serializable {
 		if (offset >= 0) {
 			this.offset = offset;
 		}
+	}
+
+	/**
+	 * @return the recordPoint
+	 */
+	public Integer getRecordPoint() {
+		return recordPoint;
+	}
+
+	/**
+	 * @param recordPoint the recordPoint to set
+	 */
+	public void setRecordPoint(Integer recordPoint) {
+		this.recordPoint = recordPoint;
 	}
 
 }

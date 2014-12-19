@@ -66,10 +66,28 @@ public class EbookService extends GenericServiceFull<Ebook> {
 		}
 
 		String recordPerPage = request.getParameter("recordPerPage");
+		String recordPoint = request.getParameter("recordPoint");
+
+		Pager pager = ds.getPager();
+
 		if (recordPerPage != null && NumberUtils.isDigits(recordPerPage)
-				&& Integer.parseInt(recordPerPage) > 0) {
-			Pager pager = ds.getPager();
+				&& Integer.parseInt(recordPerPage) > 0 && recordPoint != null
+				&& NumberUtils.isDigits(recordPoint)
+				&& Integer.parseInt(recordPoint) >= 0) {
 			pager.setRecordPerPage(Integer.parseInt(recordPerPage));
+			pager.setCurrentPage(Integer.parseInt(recordPoint)
+					/ Integer.parseInt(recordPerPage) + 1);
+			pager.setOffset(Integer.parseInt(recordPerPage)
+					* (pager.getCurrentPage() - 1));
+			pager.setRecordPoint(Integer.parseInt(recordPoint));
+			ds.setPager(pager);
+		} else if (recordPerPage != null && NumberUtils.isDigits(recordPerPage)
+				&& Integer.parseInt(recordPerPage) > 0 && recordPoint == null) {
+			pager.setRecordPerPage(Integer.parseInt(recordPerPage));
+			pager.setRecordPoint(pager.getOffset());
+			ds.setPager(pager);
+		} else {
+			pager.setRecordPoint(pager.getOffset());
 			ds.setPager(pager);
 		}
 
@@ -107,7 +125,7 @@ public class EbookService extends GenericServiceFull<Ebook> {
 			}
 
 			if (sql.isEmpty()) {
-				Pager pager = ds.getPager();
+				pager = ds.getPager();
 				pager.setTotalRecord(0L);
 				ds.setPager(pager);
 				return ds;
@@ -141,10 +159,28 @@ public class EbookService extends GenericServiceFull<Ebook> {
 		}
 
 		String recordPerPage = request.getParameter("recordPerPage");
+		String recordPoint = request.getParameter("recordPoint");
+
+		Pager pager = ds.getPager();
+
 		if (recordPerPage != null && NumberUtils.isDigits(recordPerPage)
-				&& Integer.parseInt(recordPerPage) > 0) {
-			Pager pager = ds.getPager();
+				&& Integer.parseInt(recordPerPage) > 0 && recordPoint != null
+				&& NumberUtils.isDigits(recordPoint)
+				&& Integer.parseInt(recordPoint) >= 0) {
 			pager.setRecordPerPage(Integer.parseInt(recordPerPage));
+			pager.setCurrentPage(Integer.parseInt(recordPoint)
+					/ Integer.parseInt(recordPerPage) + 1);
+			pager.setOffset(Integer.parseInt(recordPerPage)
+					* (pager.getCurrentPage() - 1));
+			pager.setRecordPoint(Integer.parseInt(recordPoint));
+			ds.setPager(pager);
+		} else if (recordPerPage != null && NumberUtils.isDigits(recordPerPage)
+				&& Integer.parseInt(recordPerPage) > 0 && recordPoint == null) {
+			pager.setRecordPerPage(Integer.parseInt(recordPerPage));
+			pager.setRecordPoint(pager.getOffset());
+			ds.setPager(pager);
+		} else {
+			pager.setRecordPoint(pager.getOffset());
 			ds.setPager(pager);
 		}
 
@@ -184,7 +220,7 @@ public class EbookService extends GenericServiceFull<Ebook> {
 			}
 
 			if (sql.isEmpty()) {
-				Pager pager = ds.getPager();
+				pager = ds.getPager();
 				pager.setTotalRecord(0L);
 				ds.setPager(pager);
 				return ds;
@@ -205,10 +241,28 @@ public class EbookService extends GenericServiceFull<Ebook> {
 		String cusSerNo = request.getParameter("cusSerNo");
 
 		String recordPerPage = request.getParameter("recordPerPage");
+		String recordPoint = request.getParameter("recordPoint");
+
+		Pager pager = ds.getPager();
+
 		if (recordPerPage != null && NumberUtils.isDigits(recordPerPage)
-				&& Integer.parseInt(recordPerPage) > 0) {
-			Pager pager = ds.getPager();
+				&& Integer.parseInt(recordPerPage) > 0 && recordPoint != null
+				&& NumberUtils.isDigits(recordPoint)
+				&& Integer.parseInt(recordPoint) >= 0) {
 			pager.setRecordPerPage(Integer.parseInt(recordPerPage));
+			pager.setCurrentPage(Integer.parseInt(recordPoint)
+					/ Integer.parseInt(recordPerPage) + 1);
+			pager.setOffset(Integer.parseInt(recordPerPage)
+					* (pager.getCurrentPage() - 1));
+			pager.setRecordPoint(Integer.parseInt(recordPoint));
+			ds.setPager(pager);
+		} else if (recordPerPage != null && NumberUtils.isDigits(recordPerPage)
+				&& Integer.parseInt(recordPerPage) > 0 && recordPoint == null) {
+			pager.setRecordPerPage(Integer.parseInt(recordPerPage));
+			pager.setRecordPoint(pager.getOffset());
+			ds.setPager(pager);
+		} else {
+			pager.setRecordPoint(pager.getOffset());
 			ds.setPager(pager);
 		}
 
@@ -228,7 +282,7 @@ public class EbookService extends GenericServiceFull<Ebook> {
 
 			restrictions.sqlQuery(sql.substring(0, sql.length() - 4));
 		} else {
-			Pager pager = ds.getPager();
+			pager = ds.getPager();
 			pager.setTotalRecord(0L);
 			ds.setPager(pager);
 			return ds;

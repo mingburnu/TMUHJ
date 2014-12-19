@@ -10,7 +10,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.hibernate.criterion.MatchMode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
@@ -24,6 +23,8 @@ import com.asiaworld.tmuhj.core.security.accountNumber.entity.AccountNumberDao;
 import com.asiaworld.tmuhj.core.service.GenericServiceFull;
 import com.asiaworld.tmuhj.core.util.EncryptorUtil;
 import com.asiaworld.tmuhj.core.util.DsBeanFactory;
+import com.asiaworld.tmuhj.module.apply.customer.entity.Customer;
+import com.asiaworld.tmuhj.module.apply.customer.service.CustomerService;
 
 /**
  * 使用者 Service
@@ -36,6 +37,9 @@ public class AccountNumberService extends GenericServiceFull<AccountNumber> {
 
 	@Autowired
 	private AccountNumberDao dao;
+
+	@Autowired
+	private CustomerService customerService;
 
 	@Autowired
 	private SessionFactory sessionFactory;
@@ -56,9 +60,22 @@ public class AccountNumberService extends GenericServiceFull<AccountNumber> {
 		if (StringUtils.isNotEmpty(entity.getUserId())) {
 			restrictions.eq("userId", entity.getUserId());
 		}
-		if (StringUtils.isNotEmpty(entity.getUserName())) {
-			restrictions.likeIgnoreCase("userName", entity.getUserName(),
-					MatchMode.ANYWHERE);
+		if (StringUtils.isNotEmpty(entity.getCustomer().getName())) {
+			List<?> customerList = customerService.getCustomerListByName(entity
+					.getCustomer().getName());
+			Iterator<?> iterator = customerList.iterator();
+
+			String sql = "";
+			while (iterator.hasNext()) {
+				Customer customer = (Customer) iterator.next();
+				sql = sql + "cus_serNo=" + customer.getSerNo() + " or ";
+			}
+			if (!sql.isEmpty()) {
+				restrictions.sqlQuery(sql.substring(0, sql.length() - 4));
+			} else {
+				return ds;
+			}
+
 		}
 		if (entity != null && entity.getRole() != null) {
 			restrictions.eq("role", entity.getRole());

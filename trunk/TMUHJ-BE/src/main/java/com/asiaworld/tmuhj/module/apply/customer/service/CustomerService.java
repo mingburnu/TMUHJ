@@ -7,8 +7,11 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.struts2.ServletActionContext;
+import org.hibernate.Criteria;
+import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.MatchMode;
+import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
@@ -100,5 +103,12 @@ public class CustomerService extends GenericServiceFull<Customer> {
 		} else {
 			return true;
 		}
+	}
+	
+	public List<?> getCustomerListByName(String name) throws Exception {
+		Session session = sessionFactory.getCurrentSession();
+		Criteria criteria = session.createCriteria(Customer.class);
+		criteria.add(Restrictions.like("name", name.trim(), MatchMode.ANYWHERE));
+		return criteria.list();
 	}
 }
