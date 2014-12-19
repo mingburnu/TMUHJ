@@ -14,13 +14,6 @@
 <c:set var="goToPage">
 	<c:url value="${param.namespace}/${param.action}.action" />
 </c:set>
-<!--<c:choose>
-	<c:when test="${not empty dsIpRange}">
-		<c:set var="queryParameter">
-		&recordPerPage=${param.recordPerPage }&cusSerNo=${param.cusSerNo}
-	</c:set>
-	</c:when>
-</c:choose>-->
 
 <pg:pager url="${goToPage}" items="${totalRecord}"
 	maxPageItems="${recordPerPage}" maxIndexPages="5">

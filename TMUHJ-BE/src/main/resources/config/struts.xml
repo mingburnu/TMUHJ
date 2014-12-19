@@ -56,8 +56,8 @@
 		<action name="main" class="commonMainPageAction">
 			<result name="success">/WEB-INF/jsp/index.jsp</result>
 		</action>
-		<action name="basic" class="commonMainPageAction">
-			<result name="success">/WEB-INF/jsp/module/apply/customer/customerList.jsp</result>
+		<action name="*" class="commonMainPageAction">
+			<result name="success">/WEB-INF/jsp/module/apply/{1}/{1}List.jsp</result>
 		</action>
 	</package>
 

@@ -140,5 +140,19 @@
 
 			});
 
+	function changeSize(recordPerPage) {
+		var action = $("form").attr("action");
+		var data = $("form:eq(0)").serialize();
+
+		var recordPoint = '${ds.pager.recordPoint}';
+		var newPage = Math.floor(parseInt(recordPoint)
+				/ parseInt(recordPerPage) + 1);
+		var newOffset = parseInt(recordPerPage) * (newPage - 1);
+		var pageParameter = '?pager.offset=' + newOffset
+				+ '&pager.currentPage=' + newPage + "&";
+
+		document.location = action + pageParameter + data;
+	}
+
 	
 </script>

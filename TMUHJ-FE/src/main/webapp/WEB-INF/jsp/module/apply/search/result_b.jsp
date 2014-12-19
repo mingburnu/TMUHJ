@@ -25,10 +25,12 @@
 								<table width="100%" border="0" cellpadding="0" cellspacing="0">
 									<tr>
 										<s:form action="apply.ebook.query.action">
+											<input type="hidden" name="recordPoint"
+												value="${ds.pager.recordPoint}">
 											<td align="left" class="p_01">共 <strong>${ds.pager.totalRecord}</strong>
 												筆記錄， 每頁顯示筆數 <select name="recordPerPage"
 												id="apply_ebook_query_action_recordPerPage"
-												onchange="document.getElementById('apply_ebook_query_action');this.form.submit();">
+												onchange="changeSize(this.value);">
 													<option value="${ds.pager.recordPerPage}">${ds.pager.recordPerPage}</option>
 													<option value="5">5</option>
 													<option value="10">10</option>
@@ -58,10 +60,12 @@
 								<table width="100%" border="0" cellpadding="0" cellspacing="0">
 									<tr>
 										<s:form action="apply.ebook.owner.action">
+											<input type="hidden" name="recordPoint"
+												value="${ds.pager.recordPoint}">
 											<td align="left" class="p_01">共 <strong>${ds.pager.totalRecord}</strong>
 												筆記錄， 每頁顯示筆數 <select name="recordPerPage"
 												id="apply_ebook_owner_action_recordPerPage"
-												onchange="document.getElementById('apply_ebook_owner_action');this.form.submit();">
+												onchange="changeSize(this.value);">
 													<option value="${ds.pager.recordPerPage}">${ds.pager.recordPerPage}</option>
 													<option value="5">5</option>
 													<option value="10">10</option>
@@ -91,10 +95,12 @@
 								<table width="100%" border="0" cellpadding="0" cellspacing="0">
 									<tr>
 										<s:form action="apply.ebook.focus.action">
+											<input type="hidden" name="recordPoint"
+												value="${ds.pager.recordPoint}">
 											<td align="left" class="p_01">共 <strong>${ds.pager.totalRecord}</strong>
 												筆記錄， 每頁顯示筆數 <select name="recordPerPage"
 												id="apply_ebook_focus_action_recordPerPage"
-												onchange="document.getElementById('apply_ebook_focus_action');this.form.submit();">
+												onchange="changeSize(this.value);">
 													<option value="${ds.pager.recordPerPage}">${ds.pager.recordPerPage}</option>
 													<option value="5">5</option>
 													<option value="10">10</option>
@@ -167,10 +173,12 @@
 								<table width="100%" border="0" cellpadding="0" cellspacing="0">
 									<tr>
 										<s:form action="apply.ebook.query.action">
+											<input type="hidden" name="recordPoint"
+												value="${ds.pager.recordPoint}">
 											<td align="left" class="p_01">共 <strong>${ds.pager.totalRecord}</strong>
 												筆記錄， 每頁顯示筆數 <select name="recordPerPage"
 												id="apply_ebook_query_action_recordPerPage"
-												onchange="document.getElementById('apply_ebook_query_action');this.form.submit();">
+												onchange="changeSize(this.value);">
 													<option value="${ds.pager.recordPerPage}">${ds.pager.recordPerPage}</option>
 													<option value="5">5</option>
 													<option value="10">10</option>
@@ -200,10 +208,12 @@
 								<table width="100%" border="0" cellpadding="0" cellspacing="0">
 									<tr>
 										<s:form action="apply.ebook.owner.action">
+											<input type="hidden" name="recordPoint"
+												value="${ds.pager.recordPoint}">
 											<td align="left" class="p_01">共 <strong>${ds.pager.totalRecord}</strong>
 												筆記錄， 每頁顯示筆數 <select name="recordPerPage"
 												id="apply_ebook_owner_action_recordPerPage"
-												onchange="document.getElementById('apply_ebook_owner_action');this.form.submit();">
+												onchange="changeSize(this.value);">
 													<option value="${ds.pager.recordPerPage}">${ds.pager.recordPerPage}</option>
 													<option value="5">5</option>
 													<option value="10">10</option>
@@ -233,10 +243,12 @@
 								<table width="100%" border="0" cellpadding="0" cellspacing="0">
 									<tr>
 										<s:form action="apply.ebook.focus.action">
+											<input type="hidden" name="recordPoint"
+												value="${ds.pager.recordPoint}">
 											<td align="left" class="p_01">共 <strong>${ds.pager.totalRecord}</strong>
 												筆記錄， 每頁顯示筆數 <select name="recordPerPage"
 												id="apply_ebook_focus_action_recordPerPage"
-												onchange="document.getElementById('apply_ebook_focus_action');this.form.submit();">
+												onchange="changeSize(this.value);">
 													<option value="${ds.pager.recordPerPage}">${ds.pager.recordPerPage}</option>
 													<option value="5">5</option>
 													<option value="10">10</option>

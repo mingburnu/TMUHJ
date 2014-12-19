@@ -11,6 +11,7 @@ import org.springframework.stereotype.Controller;
 
 import com.asiaworld.tmuhj.core.model.DataSet;
 import com.asiaworld.tmuhj.core.web.GenericCRUDActionFull;
+import com.asiaworld.tmuhj.module.apply.customer.service.CustomerService;
 import com.asiaworld.tmuhj.module.apply.ipRange.entity.IpRange;
 
 @Controller
@@ -23,6 +24,9 @@ public class IpRangeAction extends GenericCRUDActionFull<IpRange> {
 
 	@Autowired
 	IpRangeService ipRangeService;
+
+	@Autowired
+	CustomerService customerService;
 
 	@Override
 	public void validateSave() throws Exception {
@@ -104,9 +108,15 @@ public class IpRangeAction extends GenericCRUDActionFull<IpRange> {
 							+ Integer.parseInt(ipEndNum[3])) {
 						addActionError("IP起值不可大於IP迄值");
 					} else {
-						if (isRepeat(getEntity().getIpRangeStart(), getEntity()
-								.getIpRangeEnd(), ipRangeService.getAllIpList())) {
-							addActionError("此IP區間尚有客戶在使用");
+						IpRange repeatIpRange = checkRepeatIpRange(getEntity()
+								.getIpRangeStart(),
+								getEntity().getIpRangeEnd(),
+								ipRangeService.getAllIpList(0));
+						if (repeatIpRange != null) {
+							addActionError("此IP區間"
+									+ customerService.getBySerNo(
+											repeatIpRange.getCusSerNo())
+											.getName() + "正在使用");
 						}
 					}
 				}
@@ -169,11 +179,15 @@ public class IpRangeAction extends GenericCRUDActionFull<IpRange> {
 							+ Integer.parseInt(ipEndNum[3])) {
 						addActionError("IP起值不可大於IP迄值");
 					} else {
-						if (isRepeat(getEntity().getIpRangeStart(), getEntity()
-								.getIpRangeEnd(),
+						IpRange repeatIpRange = checkRepeatIpRange(getEntity()
+								.getIpRangeStart(),
+								getEntity().getIpRangeEnd(),
 								ipRangeService.getAllIpList(getEntity()
-										.getSerNo()))) {
-							addActionError("此IP區間尚有客戶在使用");
+										.getSerNo()));
+						if (repeatIpRange != null) {
+							String name = customerService.getBySerNo(
+									repeatIpRange.getCusSerNo()).getName();
+							addActionError("此IP區間" + name + "正在使用");
 						}
 					}
 				}
@@ -236,5 +250,47 @@ public class IpRangeAction extends GenericCRUDActionFull<IpRange> {
 			}
 		}
 		return false;
+	}
+
+	public IpRange checkRepeatIpRange(String ipStart, String ipEnd,
+			List<IpRange> allIpList) {
+
+		String[] ipStartNum = ipStart.split("\\.");
+		String[] ipEndNum = ipEnd.split("\\.");
+		List<Integer> entityIpRange = new ArrayList<Integer>();
+		for (int i = Integer.parseInt(ipStartNum[2]) * 1000
+				+ Integer.parseInt(ipStartNum[3]); i <= Integer
+				.parseInt(ipEndNum[2]) * 1000 + Integer.parseInt(ipEndNum[3]); i++) {
+			entityIpRange.add(i);
+			if (i % 1000 == 255) {
+				i = i - 255 + 999;
+			}
+		}
+
+		for (int i = 0; i < allIpList.size(); i++) {
+			String[] existIpStartNum = allIpList.get(i).getIpRangeStart()
+					.split("\\.");
+			String[] existIpEndNum = allIpList.get(i).getIpRangeEnd()
+					.split("\\.");
+
+			if (ipStartNum[0].equals(existIpStartNum[0])
+					&& ipStartNum[1].equals(existIpStartNum[1])) {
+
+				for (int j = 0; j < entityIpRange.size(); j++) {
+					if (entityIpRange.get(j) >= Integer
+							.parseInt(existIpStartNum[2])
+							* 1000
+							+ Integer.parseInt(existIpStartNum[3])
+							&& entityIpRange.get(j) <= Integer
+									.parseInt(existIpEndNum[2])
+									* 1000
+									+ Integer.parseInt(existIpEndNum[3])) {
+						return allIpList.get(i);
+					}
+
+				}
+			}
+		}
+		return null;
 	}
 }

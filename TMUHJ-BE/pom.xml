@@ -262,12 +262,10 @@
 		</dependency>
 
 		<!-- Maria Driver -->
-		<dependency>
-			<groupId>org.jumpmind.symmetric.jdbc</groupId>
-			<artifactId>mariadb-java-client</artifactId>
-			<version>1.1.1</version>
-		</dependency>
+		<!--<dependency> <groupId>org.jumpmind.symmetric.jdbc</groupId> <artifactId>mariadb-java-client</artifactId> 
+			<version>1.1.1</version> </dependency> -->
 
+		<!-- MySql Driver -->
 		<dependency>
 			<groupId>mysql</groupId>
 			<artifactId>mysql-connector-java</artifactId>
@@ -342,28 +340,16 @@
 		</dependency>
 
 		<!--POI -->
-		<dependency>
-			<groupId>org.apache.poi</groupId>
-			<artifactId>poi</artifactId>
-			<version>3.9</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.poi</groupId>
-			<artifactId>poi-ooxml</artifactId>
-			<version>3.9</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.poi</groupId>
-			<artifactId>poi-ooxml-schemas</artifactId>
-			<version>3.9</version>
-		</dependency>
+		<!--<dependency> <groupId>org.apache.poi</groupId> <artifactId>poi</artifactId> 
+			<version>3.9</version> </dependency> <dependency> <groupId>org.apache.poi</groupId> 
+			<artifactId>poi-ooxml</artifactId> <version>3.9</version> </dependency> <dependency> 
+			<groupId>org.apache.poi</groupId> <artifactId>poi-ooxml-schemas</artifactId> 
+			<version>3.9</version> </dependency> -->
 
 		<!--xmlbeans -->
-		<dependency>
-			<groupId>org.apache.xmlbeans</groupId>
-			<artifactId>xmlbeans</artifactId>
-			<version>2.5.0</version>
-		</dependency>
+		<!--<dependency> <groupId>org.apache.xmlbeans</groupId> <artifactId>xmlbeans</artifactId> 
+			<version>2.5.0</version> </dependency> -->
+
 	</dependencies>
 
 	<build>
@@ -386,7 +372,7 @@
 				<version>2.2</version>
 				<configuration>
 					<port>8080</port>
-					<path>/journal</path>
+					<path>/tmuhj-be</path>
 					<uriEncoding>UTF-8</uriEncoding>
 					<finalName>${project.artifactId}</finalName>
 					<server>tomcat7</server>
@@ -415,5 +401,6 @@
 		<struts-version>2.3.16</struts-version>
 		<spring-version>4.0.2.RELEASE</spring-version>
 		<hibernate-version>4.2.16.Final</hibernate-version>
+		<!--<hibernate-version>4.3.1.Final</hibernate-version> -->
 	</properties>
 </project>

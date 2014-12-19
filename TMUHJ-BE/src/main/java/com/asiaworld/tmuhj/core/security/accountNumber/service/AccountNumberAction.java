@@ -64,9 +64,11 @@ public class AccountNumberAction extends GenericCRUDActionFull<AccountNumber> {
 				.getByRestrictions(initDataSet());
 		List<AccountNumber> results = ds.getResults();
 
-		for (int i = 0; i < results.size(); i++) {
+		int i = 0;
+		while (i < results.size()) {
 			results.get(i).setCustomer(
 					customerService.getBySerNo(results.get(i).getCusSerNo()));
+			i++;
 		}
 
 		ds.setResults(results);
@@ -84,14 +86,13 @@ public class AccountNumberAction extends GenericCRUDActionFull<AccountNumber> {
 	@Override
 	public String update() throws Exception {
 
-//		String uriReferer = new URI(getRequest().getHeader("referer"))
-//				.getPath();
+		// String uriReferer = new URI(getRequest().getHeader("referer"))
+		// .getPath();
 
-		
 		accountNumber = userService.update(getEntity(), getLoginUser(),
-				"userId","userPw");
+				"userId", "userPw");
 		setEntity(accountNumber);
-		
+
 		getResponse().sendRedirect(getRequest().getHeader("referer"));
 		return LIST;
 	}
