@@ -73,7 +73,19 @@
             $("#div_Alert .content > .func-button").append('<a class="state-default" onclick="closeAlert();">關閉</a>');
         }
     }
-
+	 
+  //全選之函式
+	function allSelect(action) {
+		$(document).ready(function() {
+			for (var i = 0; i < $(".checkbox").length; i++) {
+				if (action == 1) {
+					$(".checkbox").get(i).checked = true;
+				} else {
+					$(".checkbox").get(i).checked = false;
+				}
+			}
+		});
+	}
 </script>
 <jsp:include page="/WEB-INF/jsp/layout/css.jsp" />
 </head>

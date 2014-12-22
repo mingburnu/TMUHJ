@@ -48,25 +48,29 @@ public class CustomerService extends GenericServiceFull<Customer> {
 
 		Pager pager = ds.getPager();
 
-		if (recordPerPage != null && NumberUtils.isDigits(recordPerPage)
-				&& Integer.parseInt(recordPerPage) > 0 && recordPoint != null
-				&& NumberUtils.isDigits(recordPoint)
-				&& Integer.parseInt(recordPoint) >= 0) {
-			pager.setRecordPerPage(Integer.parseInt(recordPerPage));
-			pager.setCurrentPage(Integer.parseInt(recordPoint)
-					/ Integer.parseInt(recordPerPage) + 1);
-			pager.setOffset(Integer.parseInt(recordPerPage)
-					* (pager.getCurrentPage() - 1));
-			pager.setRecordPoint(Integer.parseInt(recordPoint));
-			ds.setPager(pager);
-		} else if (recordPerPage != null && NumberUtils.isDigits(recordPerPage)
-				&& Integer.parseInt(recordPerPage) > 0 && recordPoint == null) {
-			pager.setRecordPerPage(Integer.parseInt(recordPerPage));
-			pager.setRecordPoint(pager.getOffset());
-			ds.setPager(pager);
-		} else {
-			pager.setRecordPoint(pager.getOffset());
-			ds.setPager(pager);
+		if (pager != null) {
+			if (recordPerPage != null && NumberUtils.isDigits(recordPerPage)
+					&& Integer.parseInt(recordPerPage) > 0
+					&& recordPoint != null && NumberUtils.isDigits(recordPoint)
+					&& Integer.parseInt(recordPoint) >= 0) {
+				pager.setRecordPerPage(Integer.parseInt(recordPerPage));
+				pager.setCurrentPage(Integer.parseInt(recordPoint)
+						/ Integer.parseInt(recordPerPage) + 1);
+				pager.setOffset(Integer.parseInt(recordPerPage)
+						* (pager.getCurrentPage() - 1));
+				pager.setRecordPoint(Integer.parseInt(recordPoint));
+				ds.setPager(pager);
+			} else if (recordPerPage != null
+					&& NumberUtils.isDigits(recordPerPage)
+					&& Integer.parseInt(recordPerPage) > 0
+					&& recordPoint == null) {
+				pager.setRecordPerPage(Integer.parseInt(recordPerPage));
+				pager.setRecordPoint(pager.getOffset());
+				ds.setPager(pager);
+			} else {
+				pager.setRecordPoint(pager.getOffset());
+				ds.setPager(pager);
+			}
 		}
 
 		if (StringUtils.isNotEmpty(entity.getEngName())
@@ -104,7 +108,7 @@ public class CustomerService extends GenericServiceFull<Customer> {
 			return true;
 		}
 	}
-	
+
 	public List<?> getCustomerListByName(String name) throws Exception {
 		Session session = sessionFactory.getCurrentSession();
 		Criteria criteria = session.createCriteria(Customer.class);
