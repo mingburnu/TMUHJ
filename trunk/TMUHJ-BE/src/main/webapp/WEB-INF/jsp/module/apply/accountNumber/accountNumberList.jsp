@@ -13,6 +13,141 @@ function goSearch(){
     goMain("<%=request.getContextPath()%>/crud/apply.accountNumber.list.action",
 			"#apply_accountNumber_list", "");
 }
+
+//新增
+function goAdd(){
+        goDetail('<%=request.getContextPath()%>/crud/apply.accountNumber.query.action','帳戶-新增');
+}
+
+//失效多筆資料之函式
+function goFail(){
+    //檢查資料是否已被勾選
+    var IsSelected = false;
+    var serNoStr = "";
+    var checkbox_checked_num = 0;
+    for(var i=0;i<$(".checkbox").length;i++){
+        if($(".checkbox").get(i).checked){
+            serNoStr = serNoStr + $(".checkbox").get(i).value + "；；";
+            IsSelected = true;
+            checkbox_checked_num++;
+        }
+    }
+    //進行刪除動作
+    if(IsSelected){
+    	var f = {
+                trueText:'是',
+                trueFunc:function(){
+                        var url = '<%=request.getContextPath()%>/crud/apply.accountNumber.invalidChecked.action';
+                        var data = $('#apply_accountNumber_list').serialize()+'&pager.offset='+'${ds.pager.offset}'+'&pager.currentPage='+'${ds.pager.currentPage}'+'&pager.offsetPoint'+'${ds.pager.offset}';
+                        goMain(url,'',data);
+                },
+                falseText:'否',
+                falseFunc:function(){
+                        //不進行刪除...
+                }
+        };
+    	goAlert('提醒','您確定要失效所勾選的帳戶嗎?',f);
+    }else{
+    	goAlert("提醒","請選擇一筆或一筆以上的資料");
+    }
+}
+
+//失效多筆資料之函式
+function goFail(){
+    //檢查資料是否已被勾選
+    var IsSelected = false;
+    var serNoStr = "";
+    var checkbox_checked_num = 0;
+    for(var i=0;i<$(".checkbox").length;i++){
+        if($(".checkbox").get(i).checked){
+            serNoStr = serNoStr + $(".checkbox").get(i).value + "；；";
+            IsSelected = true;
+            checkbox_checked_num++;
+        }
+    }
+    //進行失效動作
+    if(IsSelected){
+    	var f = {
+                trueText:'是',
+                trueFunc:function(){
+                        var url = '<%=request.getContextPath()%>/crud/apply.accountNumber.invalidChecked.action';
+                        var data = $('#apply_accountNumber_list').serialize()+'&pager.offset='+'${ds.pager.offset}'+'&pager.currentPage='+'${ds.pager.currentPage}'+'&pager.offsetPoint'+'${ds.pager.offset}';
+                        goMain(url,'',data);
+                },
+                falseText:'否',
+                falseFunc:function(){
+                        //不進行刪除...
+                }
+        };
+    	goAlert('提醒','您確定要失效所勾選的帳戶嗎?',f);
+    }else{
+    	goAlert("提醒","請選擇一筆或一筆以上的資料");
+    }
+}
+
+//生效多筆資料之函式
+function goEffect(){
+    //檢查資料是否已被勾選
+    var IsSelected = false;
+    var serNoStr = "";
+    var checkbox_checked_num = 0;
+    for(var i=0;i<$(".checkbox").length;i++){
+        if($(".checkbox").get(i).checked){
+            serNoStr = serNoStr + $(".checkbox").get(i).value + "；；";
+            IsSelected = true;
+            checkbox_checked_num++;
+        }
+    }
+    //進行生效動作
+    if(IsSelected){
+    	var f = {
+                trueText:'是',
+                trueFunc:function(){
+                        var url = '<%=request.getContextPath()%>/crud/apply.accountNumber.validChecked.action';
+                        var data = $('#apply_accountNumber_list').serialize()+'&pager.offset='+'${ds.pager.offset}'+'&pager.currentPage='+'${ds.pager.currentPage}'+'&pager.offsetPoint'+'${ds.pager.offset}';
+                        goMain(url,'',data);
+                },
+                falseText:'否',
+                falseFunc:function(){
+                        //不進行刪除...
+                }
+        };
+    	goAlert('提醒','您確定要生效所勾選的帳戶嗎?',f);
+    }else{
+    	goAlert("提醒","請選擇一筆或一筆以上的資料");
+    }
+}
+
+//資料檢視
+function goView(serNo){
+        var url = "<c:url value = '/'/>crud/apply.accountNumber.view.action";
+        var data = 'viewSerNo='+serNo;
+        goDetail(url,'帳戶-檢視',data);
+}
+
+//更新資料
+function goUpdate(serNo) {
+	goDetail('<%=request.getContextPath()%>/crud/apply.accountNumber.query.action?'+'entity.serNo='+serNo,'帳戶-修改');
+}
+
+//GoPage
+function gotoPage(page){
+	var totalPage = $("span.totalNum:eq(0)").html();
+    var recordPerPage="${ds.pager.recordPerPage}";
+    var offset=parseInt(recordPerPage)*(parseInt(page)-1);
+    if(parseInt(page) < 1){
+        page=1;
+    }
+    else if(parseInt(page)>parseInt(totalPage)){
+        page=totalPage;
+    }
+    goMain('<c:url value = '/'/>crud/apply.accountNumber.list.action','#apply_accountNumber_list','&pager.offset='+offset+'&pager.currentPage='+page+'&pager.offsetPoint'+offset);
+}
+
+//變更顯示筆數
+function chagePageSize(recordPerPage,recordPoint){
+        goMain('<c:url value = '/'/>crud/apply.accountNumber.list.action','#apply_accountNumber_list','&recordPerPage='+recordPerPage+'&recordPoint='+recordPoint);
+}
 </script>
 </head>
 <body>
@@ -50,12 +185,13 @@ function goSearch(){
 		<div class="list-box">
 			<div class="list-buttons">
 				<c:choose>
-					<c:when test="${not empty ds.pager.totalRecord }">
+					<c:when
+						test="${(not empty ds.pager.totalRecord)&& (0 ne ds.pager.totalRecord) }">
 						<a class="state-default" onclick="allSelect(1);">全選</a>
 						<a class="state-default" onclick="allSelect(0);">取消</a>
 						<a class="state-default" onclick="goAdd();">新增</a>
-						<a class="state-default" onclick="goFail(1);">失效</a>
-						<a class="state-default" onclick="goEffect(1);">生效</a>
+						<a class="state-default" onclick="goFail();">失效</a>
+						<a class="state-default" onclick="goEffect();">生效</a>
 					</c:when>
 					<c:otherwise>
 						<a class="state-default" onclick="goAdd();">新增</a>
@@ -134,7 +270,11 @@ function goSearch(){
 			</div>
 			<div class="detail_note">
 				<div class="detail_note_title">Note</div>
-				<div class="detail_note_content"></div>
+				<div class="detail_note_content">
+                <c:if test="${0 eq ds.pager.totalRecord}">
+				<span>查無資料</span>
+				</c:if>
+				</div>
 			</div>
 		</div>
 	</s:form>
@@ -142,8 +282,7 @@ function goSearch(){
 	<s:if test="hasActionMessages()">
 		<script language="javascript" type="text/javascript">
             var msg = "";
-            <s:iterator value="actionMessages">
-                msg += '<s:property escape="false"/><br>';
+            <s:iterator value="actionMessages">msg += '<s:property escape="false"/><br>';
             </s:iterator>;
             goAlert('訊息', msg);
         </script>

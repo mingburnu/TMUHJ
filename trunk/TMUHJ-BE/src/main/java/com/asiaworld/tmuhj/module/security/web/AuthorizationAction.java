@@ -98,7 +98,6 @@ public class AuthorizationAction extends GenericWebActionFull<AccountNumber> {
 								.getCusSerNo()));
 
 		getSession().put(LOGIN, ds.getResults().get(0));
-
 		return INDEX;
 	}
 

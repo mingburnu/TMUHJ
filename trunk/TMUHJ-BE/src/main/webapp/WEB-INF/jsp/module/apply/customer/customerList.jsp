@@ -28,19 +28,6 @@ $(document).ready(function() {
 				"#apply_customer_list", "");
 	}
 	
-	//全選之函式
-	function allSelect(action) {
-		$(document).ready(function() {
-			for (var i = 0; i < $(".checkbox").length; i++) {
-				if (action == 1) {
-					$(".checkbox").get(i).checked = true;
-				} else {
-					$(".checkbox").get(i).checked = false;
-				}
-			}
-		});
-	}
-	
 	//新增
 	function goAdd(){
 	        goDetail('<%=request.getContextPath()%>/crud/apply.customer.query.action','客戶-新增');
@@ -210,7 +197,7 @@ $(document).ready(function() {
 		<div class="list-box">
 			<div class="list-buttons">
 				<c:choose>
-					<c:when test="${not empty ds.pager.totalRecord }">
+					<c:when test="${(not empty ds.pager.totalRecord)&& (0 ne ds.pager.totalRecord) }">
 						<a class="state-default" onclick="allSelect(1);">全選</a>
 						<a class="state-default" onclick="allSelect(0);">取消</a>
 						<a class="state-default" onclick="goAdd();">新增</a>
@@ -304,7 +291,11 @@ $(document).ready(function() {
 			</div>
 			<div class="detail_note">
 				<div class="detail_note_title">Note</div>
-				<div class="detail_note_content"></div>
+				<div class="detail_note_content">
+				<c:if test="${0 eq ds.pager.totalRecord}">
+				<span>查無資料</span>
+				</c:if>
+				</div>
 			</div>
 		</div>
 	</s:form>

@@ -126,7 +126,7 @@ public class CustomerAction extends GenericCRUDActionFull<Customer> {
 			int i = 0;
 			while (i < checkItem.length) {
 				if (!NumberUtils.isDigits(String.valueOf(checkItem[i]))
-						&& Long.parseLong(checkItem[i]) < 1) {
+						|| Long.parseLong(checkItem[i]) < 1) {
 					addActionError(checkItem[i] + "為不可利用的流水號");
 				}
 				i++;
