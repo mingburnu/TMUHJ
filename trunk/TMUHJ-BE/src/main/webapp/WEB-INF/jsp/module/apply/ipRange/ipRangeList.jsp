@@ -54,11 +54,13 @@ $(document).ready(function() {
 		var offset = parseInt(recordPerPage) * (parseInt(page) - 1);
 		if (parseInt(page) < 1) {
 			page = 1;
+			offset=parseInt(recordPerPage)*(parseInt(page)-1);
 		} else if (parseInt(page) > parseInt(totalPage)) {
 			page = totalPage;
+			offset=parseInt(recordPerPage)*(parseInt(page)-1);
 		}
 		goDetail_Main('<c:url value = '/'/>crud/apply.ipRange.list.action',
-				'#apply_ipRange_list', '&pager.offset='+offset+'&pager.currentPage='+page+'&pager.offsetPoint'+offset);
+				'#apply_ipRange_list', '&pager.offset='+offset+'&pager.currentPage='+page);
 	}
 
 	//變更顯示筆數
@@ -70,7 +72,8 @@ $(document).ready(function() {
 </head>
 <body>
 	<s:form action="apply.ipRange.list" namespace="/crud" method="post">
-		<input type="hidden" name="entity.cusSerNo" value="<%=request.getParameter("entity.cusSerNo")%>"/>
+		<input type="hidden" name="entity.cusSerNo"
+			value="<%=request.getParameter("entity.cusSerNo")%>" />
 		<div class="list-box">
 			<div class="list-buttons">
 				<a class="state-default" onclick="goAdd_detail();">新增</a>
@@ -104,30 +107,31 @@ $(document).ready(function() {
 				<table border="0" cellspacing="0" cellpadding="0">
 					<tbody>
 						<tr>
-							<td align="left" class="p_02"><jsp:include page="/WEB-INF/jsp/layout/pagination.jsp">
-										<jsp:param name="namespace" value="/crud" />
-										<jsp:param name="action" value="apply.ipRange.list" />
-										<jsp:param name="pager" value="${ds.pager}" />
-										<jsp:param name="recordPerPage"
-											value="${ds.pager.recordPerPage}" />
-										<jsp:param name="detail" value="1" />
-									</jsp:include></td>
+							<td align="left" class="p_02"><jsp:include
+									page="/WEB-INF/jsp/layout/pagination.jsp">
+									<jsp:param name="namespace" value="/crud" />
+									<jsp:param name="action" value="apply.ipRange.list" />
+									<jsp:param name="pager" value="${ds.pager}" />
+									<jsp:param name="recordPerPage"
+										value="${ds.pager.recordPerPage}" />
+									<jsp:param name="detail" value="1" />
+								</jsp:include></td>
 							<td><c:set var="pageFactor"
-										value="${ds.pager.totalRecord/ds.pager.recordPerPage}" /> <c:set
-										var="totalPage">
-										<fmt:formatNumber type="number" pattern="#"
-											value="${pageFactor+(1-(pageFactor%1))%1}" />
-									</c:set> 每頁顯示 <select name="recordPerPage" id="listForm_pageSize"
-									onchange="chagePageSize_detail(this.value,${ds.pager.recordPoint })">
-										<option value="${ds.pager.recordPerPage}">${ds.pager.recordPerPage}</option>
-										<option value="5">5</option>
-										<option value="10">10</option>
-										<option value="20">20</option>
-										<option value="50">50</option>
-								</select> 筆紀錄, 第 <input id="listForm_currentPageHeader"
-									value="${ds.pager.currentPage }" type="number" min="1"
-									max="${totalPage }" onchange="gotoPage_detail(this.value)"> 頁,
-									共<span class="totalNum">${totalPage }</span>頁</td>
+									value="${ds.pager.totalRecord/ds.pager.recordPerPage}" /> <c:set
+									var="totalPage">
+									<fmt:formatNumber type="number" pattern="#"
+										value="${pageFactor+(1-(pageFactor%1))%1}" />
+								</c:set> 每頁顯示 <select name="recordPerPage" id="listForm_pageSize"
+								onchange="chagePageSize_detail(this.value,${ds.pager.recordPoint })">
+									<option value="${ds.pager.recordPerPage}">${ds.pager.recordPerPage}</option>
+									<option value="5">5</option>
+									<option value="10">10</option>
+									<option value="20">20</option>
+									<option value="50">50</option>
+							</select> 筆紀錄, 第 <input id="listForm_currentPageHeader"
+								value="${ds.pager.currentPage }" type="number" min="1"
+								max="${totalPage }" onchange="gotoPage_detail(this.value)">
+								頁, 共<span class="totalNum">${totalPage }</span>頁</td>
 						</tr>
 					</tbody>
 				</table>

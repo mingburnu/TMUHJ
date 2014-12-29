@@ -1,13 +1,18 @@
 package com.asiaworld.tmuhj.module.apply.journal.entity;
 
+import java.util.List;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 
 import com.asiaworld.tmuhj.core.entity.GenericEntityFull;
+import com.asiaworld.tmuhj.module.apply.customer.entity.Customer;
+import com.asiaworld.tmuhj.module.apply.resourcesBuyers.entity.ResourcesBuyers;
 
 @Entity
 @Table(name = "journal")
@@ -83,6 +88,12 @@ public class Journal extends GenericEntityFull {
 	@Column(name = "DBengtitle")
 	private String dbEngTitle;
 
+	@Transient
+	private ResourcesBuyers resourcesBuyers;
+	
+	@Transient
+	private List<Customer> customers;
+	
 	/**
 	 * @return the chineseTitle
 	 */
@@ -323,9 +334,36 @@ public class Journal extends GenericEntityFull {
 		this.dbEngTitle = dbEngTitle;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/**
+	 * @return the resourcesBuyers
+	 */
+	public ResourcesBuyers getResourcesBuyers() {
+		return resourcesBuyers;
+	}
+
+	/**
+	 * @param resourcesBuyers
+	 *            the resourcesBuyers to set
+	 */
+	public void setResourcesBuyers(ResourcesBuyers resourcesBuyers) {
+		this.resourcesBuyers = resourcesBuyers;
+	}
+	
+	/**
+	 * @return the customers
+	 */
+	public List<Customer> getCustomers() {
+		return customers;
+	}
+
+	/**
+	 * @param customers the customers to set
+	 */
+	public void setCustomers(List<Customer> customers) {
+		this.customers = customers;
+	}
+
+	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */
 	@Override
@@ -339,6 +377,8 @@ public class Journal extends GenericEntityFull {
 				+ publication + ", congressClassification="
 				+ congressClassification + ", version=" + version
 				+ ", dbChtTitle=" + dbChtTitle + ", dbEngTitle=" + dbEngTitle
-				+ "]";
+				+ ", resourcesBuyers=" + resourcesBuyers + ", customers="
+				+ customers + "]";
 	}
+
 }

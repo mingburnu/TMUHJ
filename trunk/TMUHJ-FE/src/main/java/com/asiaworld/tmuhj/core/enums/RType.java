@@ -16,16 +16,16 @@ public enum RType {
 	/** 資料庫. */
 	資料庫("資料庫");
 
-	private String rType;
+	private String type;
 
 	private RType() {
 	}
 
-	private RType(String rType) {
-		this.rType = rType;
+	private RType(String type) {
+		this.type = type;
 	}
 
-	public String getrType() {
-		return rType;
+	public String getType() {
+		return type;
 	}
 }

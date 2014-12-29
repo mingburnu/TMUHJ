@@ -66,9 +66,9 @@ public class AccountNumberAction extends GenericCRUDActionFull<AccountNumber> {
 		dsCustomer.setEntity(customer);
 		dsCustomer = customerService.getByRestrictions(dsCustomer);
 		if (getEntity().getSerNo() != null) {
-			AccountNumber user = accountNumberService.getBySerNo(getEntity()
+			accountNumber = accountNumberService.getBySerNo(getEntity()
 					.getSerNo());
-			setEntity(user);
+			setEntity(accountNumber);
 		}
 		return EDIT;
 	}
@@ -112,14 +112,14 @@ public class AccountNumberAction extends GenericCRUDActionFull<AccountNumber> {
 		if (getEntity().getCusSerNo() < 1) {
 			addActionError("用戶名稱必選");
 		}
-		
-		if(getEntity().getUserId() != null
-				&& !getEntity().getUserId().trim().equals("")){
-			if(accountNumberService.userIdIsExist(getEntity())){
+
+		if (getEntity().getUserId() != null
+				&& !getEntity().getUserId().trim().equals("")) {
+			if (accountNumberService.userIdIsExist(getEntity())) {
 				addActionError("用戶代碼已存在");
 			}
-			
-			if(getEntity().getUserId().trim().equals("guest")){
+
+			if (getEntity().getUserId().trim().equals("guest")) {
 				addActionError("不可使用guest作為用戶代碼");
 			}
 		}
@@ -152,8 +152,15 @@ public class AccountNumberAction extends GenericCRUDActionFull<AccountNumber> {
 			addActionError("用戶名稱必選");
 		}
 		if (!hasActionErrors()) {
-			accountNumber = accountNumberService.update(getEntity(),
-					getLoginUser(), "userId");
+			if (getEntity().getUserPw() == null
+					|| getEntity().getUserPw().trim().equals("")) {
+				accountNumber = accountNumberService.update(getEntity(),
+						getLoginUser(), "userId", "userPw");
+			} else {
+				accountNumber = accountNumberService.update(getEntity(),
+						getLoginUser(), "userId");
+			}
+
 			setEntity(accountNumber);
 			addActionMessage("修改成功");
 			return VIEW;

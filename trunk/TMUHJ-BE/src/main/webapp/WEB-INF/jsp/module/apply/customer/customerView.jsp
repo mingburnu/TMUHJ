@@ -10,14 +10,20 @@
 
 
 <script type="text/javascript">
-//關閉並更新上一層資料
+	//關閉並更新上一層資料
 
-function closeDetail_ToQuery() {
-    $("#div_Detail").hide();
-    UI_Resize();
-    gotoPage($("form#apply_customer_list input#listForm_currentPageHeader").val());
+	function closeDetail_ToQuery() {
+		$("#div_Detail").hide();
+		UI_Resize();
+		if ($("form#apply_customer_list input#listForm_currentPageHeader")
+				.val() != null) {
+			gotoPage($(
+					"form#apply_customer_list input#listForm_currentPageHeader")
+					.val());
+		} else {
+			goSearch();
+		}
 	}
-	
 </script>
 
 </head>

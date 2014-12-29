@@ -27,26 +27,25 @@
 		</div>
 
 
-		<%--<div id="menu-titles_3" class="menu-titles">
+		<div id="menu-titles_3" class="menu-titles">
 			<a onclick="showMenuItems('3');"><span class="menu-icon">書目資料管理</span></a>
 		</div>
 		<div id="menu_items_3" style="display: none;">
-
 			<div class="menu-items">
-				<a onclick="goURL('/TWBE/recommendedArticle_init.action');">推薦款目</a>
+				<a onclick="goURL('<%=request.getContextPath()%>/journal.action');">期刊</a>
 			</div>
 
 			<div class="menu-items">
-				<a onclick="goURL('/TWBE/news_init.action');">最新消息管理</a>
+				<a onclick="goURL('<%=request.getContextPath()%>/ebook.action');">電子書</a>
 			</div>
 
-			<div class="menu-items">
+			<!--<div class="menu-items">
 				<a onclick="goURL('/TWBE/advertisement_init.action');">廣告管理</a>
-			</div>
+			</div>-->
 
 		</div>
 
-		<div id="menu-titles_4" class="menu-titles">
+		<%--<div id="menu-titles_4" class="menu-titles">
 			<a onclick="showMenuItems('6');"><span class="menu-icon">統計資訊</span></a>
 		</div>
 		<div id="menu_items_6" style="display: none;">

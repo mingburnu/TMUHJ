@@ -1,6 +1,8 @@
 package com.asiaworld.tmuhj.test;
 
 import java.io.UnsupportedEncodingException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Test {
 
@@ -87,5 +89,16 @@ public class Test {
 		}
 		
 		System.out.println(System.getProperty("java.version"));
+		
+		String regex="\\d{7}[\\dX]";
+		Pattern pattern=Pattern.compile(regex);
+		
+		String issn="1211118x".toUpperCase();
+		Matcher matcher=pattern.matcher(issn);
+		System.out.println(issn.substring(7,7));
+		System.out.println(matcher.matches());
+		String str=""+1+3;
+		
+		System.out.println(str.length());
 	}
 }

@@ -8,13 +8,19 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title></title>
 <script type="text/javascript">
-//關閉並更新上一層資料
-function closeDetail_ToQuery() {
-    $("#div_Detail").hide();
-    UI_Resize();
-    gotoPage($("form#apply_accountNumber_list input#listForm_currentPageHeader").val());
+	//關閉並更新上一層資料
+	function closeDetail_ToQuery() {
+		$("#div_Detail").hide();
+		UI_Resize();
+		if ($("form#apply_accountNumber_list input#listForm_currentPageHeader")
+				.val() != null) {
+			gotoPage($(
+					"form#apply_accountNumber_list input#listForm_currentPageHeader")
+					.val());
+		} else {
+			goSearch();
+		}
 	}
-	
 </script>
 </head>
 <body>
