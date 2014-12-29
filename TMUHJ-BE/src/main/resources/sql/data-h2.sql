@@ -51,7 +51,7 @@ insert into customer(serNo, cUid, uUid, cDTime, uDTime, name, engName, contactUs
 --resourcesBuyers
 insert into resourcesBuyers(serNo, cUid, uUid, cDTime, uDTime, startdate, maturitydate, Rcategory, Rtype, DBchttitle, DBengtitle) values(1, 'admin', 'admin', sysdate(), sysdate(),'1980', '2020', '買斷', '資料庫', '醫學', 'Medcine');
 insert into resourcesBuyers(serNo, cUid, uUid, cDTime, uDTime, startdate, maturitydate, Rcategory, Rtype, DBchttitle, DBengtitle) values(2, 'admin', 'admin', sysdate(), sysdate(),'1980', '2020', '買斷', '資料庫', '醫學', 'Medcine');
-insert into resourcesBuyers(serNo, cUid, uUid, cDTime, uDTime, startdate, maturitydate, Rcategory, Rtype, DBchttitle, DBengtitle) values(3, 'admin', 'admin', sysdate(), sysdate(),'1980', '2020', 'RC1', 'RT3', '醫學', 'Medcine');
+insert into resourcesBuyers(serNo, cUid, uUid, cDTime, uDTime, startdate, maturitydate, Rcategory, Rtype, DBchttitle, DBengtitle) values(3, 'admin', 'admin', sysdate(), sysdate(),'1980', '2020', '買斷', '資料庫', '醫學', 'Medcine');
 --resourcesUnion
 insert into resourcesUnion(serNo, cus_serNo, res_serNo, ebk_serNo, dat_serNo, jou_serNo) values(1, 3, 1, 0, 0, 1);
 insert into resourcesUnion(serNo, cus_serNo, res_serNo, ebk_serNo, dat_serNo, jou_serNo) values(2, 3, 1, 0, 0, 2);

@@ -62,7 +62,7 @@ public abstract class GenericEntitySerNo implements Entity {
 	public boolean isNew() {
 		return serNo == null;
 	}
-
+	
 	/*
 	 * (non-Javadoc)
 	 * 

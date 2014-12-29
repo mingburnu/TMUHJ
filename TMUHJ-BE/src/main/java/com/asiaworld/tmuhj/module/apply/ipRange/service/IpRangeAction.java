@@ -31,19 +31,16 @@ public class IpRangeAction extends GenericCRUDActionFull<IpRange> {
 	@Override
 	public void validateSave() throws Exception {
 		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	public void validateUpdate() throws Exception {
 		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	public void validateDelete() throws Exception {
 		// TODO Auto-generated method stub
-
 	}
 
 	@Override
@@ -108,15 +105,20 @@ public class IpRangeAction extends GenericCRUDActionFull<IpRange> {
 							+ Integer.parseInt(ipEndNum[3])) {
 						addActionError("IP起值不可大於IP迄值");
 					} else {
-						IpRange repeatIpRange = checkRepeatIpRange(getEntity()
-								.getIpRangeStart(),
-								getEntity().getIpRangeEnd(),
-								ipRangeService.getAllIpList(0));
-						if (repeatIpRange != null) {
-							addActionError("此IP區間"
-									+ customerService.getBySerNo(
-											repeatIpRange.getCusSerNo())
-											.getName() + "正在使用");
+						if (isPrivateIp(getEntity().getIpRangeStart(),
+								getEntity().getIpRangeEnd())) {
+							addActionError("此IP區間為私有Ip");
+						} else {
+							IpRange repeatIpRange = checkRepeatIpRange(
+									getEntity().getIpRangeStart(), getEntity()
+											.getIpRangeEnd(),
+									ipRangeService.getAllIpList(0));
+							if (repeatIpRange != null) {
+								addActionError("此IP區間"
+										+ customerService.getBySerNo(
+												repeatIpRange.getCusSerNo())
+												.getName() + "正在使用");
+							}
 						}
 					}
 				}
@@ -179,15 +181,21 @@ public class IpRangeAction extends GenericCRUDActionFull<IpRange> {
 							+ Integer.parseInt(ipEndNum[3])) {
 						addActionError("IP起值不可大於IP迄值");
 					} else {
-						IpRange repeatIpRange = checkRepeatIpRange(getEntity()
-								.getIpRangeStart(),
-								getEntity().getIpRangeEnd(),
-								ipRangeService.getAllIpList(getEntity()
-										.getSerNo()));
-						if (repeatIpRange != null) {
-							String name = customerService.getBySerNo(
-									repeatIpRange.getCusSerNo()).getName();
-							addActionError("此IP區間" + name + "正在使用");
+						if (isPrivateIp(getEntity().getIpRangeStart(),
+								getEntity().getIpRangeEnd())) {
+							addActionError("此IP區間為私有Ip");
+						} else {
+							IpRange repeatIpRange = checkRepeatIpRange(
+									getEntity().getIpRangeStart(), getEntity()
+											.getIpRangeEnd(),
+									ipRangeService.getAllIpList(getEntity()
+											.getSerNo()));
+
+							if (repeatIpRange != null) {
+								String name = customerService.getBySerNo(
+										repeatIpRange.getCusSerNo()).getName();
+								addActionError("此IP區間" + name + "正在使用");
+							}
 						}
 					}
 				}
@@ -209,10 +217,24 @@ public class IpRangeAction extends GenericCRUDActionFull<IpRange> {
 
 	@Override
 	public String delete() throws Exception {
-		ipRangeService.deleteBySerNo(getEntity().getSerNo());
-		DataSet<IpRange> ds = ipRangeService.getByRestrictions(initDataSet());
-		setDs(ds);
-		return LIST;
+		if (getEntity().getSerNo() <= 0) {
+			addActionError("流水號不正確");
+		} else if (ipRangeService.getBySerNo(getEntity().getSerNo()) == null) {
+			addActionError("沒有這個物件");
+		}
+
+		if (!hasActionErrors()) {
+			ipRangeService.deleteBySerNo(getEntity().getSerNo());
+			DataSet<IpRange> ds = ipRangeService
+					.getByRestrictions(initDataSet());
+			setDs(ds);
+			return LIST;
+		} else {
+			DataSet<IpRange> ds = ipRangeService
+					.getByRestrictions(initDataSet());
+			setDs(ds);
+			return LIST;
+		}
 	}
 
 	public boolean isRepeat(String ipStart, String ipEnd,
@@ -292,5 +314,35 @@ public class IpRangeAction extends GenericCRUDActionFull<IpRange> {
 			}
 		}
 		return null;
+	}
+
+	public boolean isPrivateIp(String ipStart, String ipEnd) {
+		String[] ipStartNum = ipStart.split("\\.");
+		String[] ipEndNum = ipEnd.split("\\.");
+
+		// 10.0.0.0~10.255.255.255
+		if (ipStartNum[0].equals("10") && ipEndNum[0].equals("10")) {
+			return true;
+		}
+
+		// 172.16.0.0~172.31.255.255
+		if (ipStartNum[0].equals("172") && ipEndNum[0].equals("172")) {
+			if (Integer.parseInt(ipStartNum[1]) >= 16
+					&& Integer.parseInt(ipStartNum[1]) <= 31) {
+				return true;
+			}
+			if (Integer.parseInt(ipEndNum[1]) >= 16
+					&& Integer.parseInt(ipEndNum[1]) <= 31) {
+				return true;
+			}
+		}
+
+		// 192.168.0.0~192.168.255.255
+		if (ipStartNum[0].equals("192") && ipEndNum[0].equals("192")
+				&& ipStartNum[0].equals("168") && ipEndNum[0].equals("168")) {
+			return true;
+		}
+
+		return false;
 	}
 }

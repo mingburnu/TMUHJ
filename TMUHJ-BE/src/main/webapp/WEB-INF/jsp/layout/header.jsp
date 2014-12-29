@@ -14,7 +14,7 @@
 						<!--<span>最後登出:</span> 2009/11/10-->
 					</div>
 					<div>&nbsp;</div>
-					<div>
+					<div class="header_text">
 						<span>嗨,</span> <font face="verdana">${login.customer.name}&nbsp;${login.customer.contactUserName}</font>
 						<!--|  <a href="#">設定</a>-->
 						| <a href='<s:url namespace="/authorization" action="logout" />'>登出</a>

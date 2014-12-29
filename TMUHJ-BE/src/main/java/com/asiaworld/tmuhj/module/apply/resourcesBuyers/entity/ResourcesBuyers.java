@@ -145,4 +145,19 @@ public class ResourcesBuyers extends GenericEntityFull {
 				+ dbEngTitle + "]";
 	}
 
+	public ResourcesBuyers() {
+	}
+
+	public ResourcesBuyers(String startDate, String maturityDate,
+			RCategory rCategory, RType rType, String dbChtTitle,
+			String dbEngTitle) {
+		super();
+		this.startDate = startDate;
+		this.maturityDate = maturityDate;
+		this.rCategory = rCategory;
+		this.rType = rType;
+		this.dbChtTitle = dbChtTitle;
+		this.dbEngTitle = dbEngTitle;
+	}
+
 }

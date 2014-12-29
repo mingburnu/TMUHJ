@@ -1,5 +1,7 @@
 package com.asiaworld.tmuhj.module.apply.customer.service;
 
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -114,5 +116,21 @@ public class CustomerService extends GenericServiceFull<Customer> {
 		Criteria criteria = session.createCriteria(Customer.class);
 		criteria.add(Restrictions.like("name", name.trim(), MatchMode.ANYWHERE));
 		return criteria.list();
+	}
+	
+	public List<Customer> getAllCustomers(){
+		Session session = sessionFactory.getCurrentSession();
+		Criteria criteria = session.createCriteria(Customer.class);
+		
+		List<Customer> customers=new ArrayList<Customer>();
+		
+		Iterator<?> iterator=criteria.list().iterator();
+		
+		while(iterator.hasNext()){
+		Customer customer=(Customer)iterator.next();
+		customers.add(customer);
+		}
+		
+		return customers;
 	}
 }

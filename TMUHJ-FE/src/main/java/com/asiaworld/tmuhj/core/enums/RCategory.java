@@ -16,17 +16,17 @@ public enum RCategory {
 	/** 未註明. */
 	未註明("未註明");
 
-	private String rCategory;
+	private String category;
 
 	private RCategory() {
 	}
 
-	private RCategory(String rCategory) {
-		this.rCategory = rCategory;
+	private RCategory(String category) {
+		this.category = category;
 	}
 
-	public String getrCategory() {
-		return rCategory;
+	public String getCategory() {
+		return category;
 	}
 
 }

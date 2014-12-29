@@ -40,11 +40,11 @@ iframe {
 	background: url(../images/login_header.jpg) no-repeat;
 	display: block;
 	width: 431px;
-	height: 58px;
+	height: 70px;
 }
 
 #login_box #div_login_contain {
-	border: 1px solid #4b7713;
+	border: 1px solid #5f9718;
 	margin: 0px;
 	padding: 30px;
 }
@@ -98,6 +98,13 @@ iframe {
 
 #div-header table {
 	height: 71px;
+}
+
+#div-header .header_text {
+	margin:0;
+	padding:5px 10px;
+	background:#fff583;
+	display:inline
 }
 
 #div-middle {

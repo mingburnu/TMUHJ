@@ -1,6 +1,7 @@
 package com.asiaworld.tmuhj.module.apply.customer.service;
 
 import java.util.Iterator;
+import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,8 +21,6 @@ import com.asiaworld.tmuhj.module.apply.ipRange.service.IpRangeService;
 public class CustomerAction extends GenericCRUDActionFull<Customer> {
 
 	private String[] checkItem;
-
-	private String lastUrl;
 
 	@Autowired
 	private Customer customer;
@@ -73,6 +72,8 @@ public class CustomerAction extends GenericCRUDActionFull<Customer> {
 
 	@Override
 	public String save() throws Exception {
+		String emailPattern = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@"
+				+ "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
 		if (getEntity().getName().trim().equals("")
 				|| getEntity().getName() == null) {
 			addActionError("用戶名稱不可空白");
@@ -80,6 +81,14 @@ public class CustomerAction extends GenericCRUDActionFull<Customer> {
 
 		if (customerService.nameIsExist(getEntity())) {
 			addActionError("用戶名稱已存在");
+		}
+
+		if (getEntity().getEmail() != null
+				|| !getEntity().getEmail().equals("")) {
+			if (!Pattern.compile(emailPattern).matcher(getEntity().getEmail())
+					.matches()) {
+				addActionError("email格式不正確");
+			}
 		}
 
 		if (!hasActionErrors()) {
@@ -95,28 +104,57 @@ public class CustomerAction extends GenericCRUDActionFull<Customer> {
 
 	@Override
 	public String update() throws Exception {
-		customer = customerService.update(getEntity(), getLoginUser(), "name");
-		setEntity(customer);
-		addActionMessage("修改成功");
-		return VIEW;
+		String emailPattern = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@"
+				+ "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
+
+		if (getEntity().getEmail() != null
+				|| !getEntity().getEmail().equals("")) {
+			if (!Pattern.compile(emailPattern).matcher(getEntity().getEmail())
+					.matches()) {
+				addActionError("email格式不正確");
+			}
+		}
+
+		if (!hasActionErrors()) {
+			customer = customerService.update(getEntity(), getLoginUser(),
+					"name");
+			setEntity(customer);
+			addActionMessage("修改成功");
+			return VIEW;
+		} else {
+			return EDIT;
+		}
 	}
 
 	@Override
 	public String delete() throws Exception {
-
-		Iterator<?> iterator = ipRangeService.getOwnerIpRangeByCusSerNo(
-				getEntity().getSerNo()).iterator();
-		while (iterator.hasNext()) {
-			ipRange = (IpRange) iterator.next();
-			ipRangeService.deleteBySerNo(ipRange.getSerNo());
+		if (getEntity().getSerNo() <= 0) {
+			addActionError("流水號不正確");
+		} else if (customerService.getBySerNo(getEntity().getSerNo()) == null) {
+			addActionError("沒有這個物件");
 		}
 
-		customerService.deleteBySerNo(getEntity().getSerNo());
+		if (!hasActionErrors()) {
+			Iterator<?> iterator = ipRangeService.getOwnerIpRangeByCusSerNo(
+					getEntity().getSerNo()).iterator();
+			while (iterator.hasNext()) {
+				ipRange = (IpRange) iterator.next();
+				ipRangeService.deleteBySerNo(ipRange.getSerNo());
+			}
 
-		DataSet<Customer> ds = customerService.getByRestrictions(initDataSet());
-		setDs(ds);
+			customerService.deleteBySerNo(getEntity().getSerNo());
 
-		return LIST;
+			DataSet<Customer> ds = customerService
+					.getByRestrictions(initDataSet());
+			setDs(ds);
+
+			return LIST;
+		} else {
+			DataSet<Customer> ds = customerService
+					.getByRestrictions(initDataSet());
+			setDs(ds);
+			return LIST;
+		}
 	}
 
 	public String deleteChecked() throws Exception {
@@ -169,6 +207,12 @@ public class CustomerAction extends GenericCRUDActionFull<Customer> {
 		return VIEW;
 	}
 
+	public String ajax() throws Exception {
+		getRequest().setAttribute("customerUnits",
+				customerService.getAllCustomers());
+		return AJAX;
+	}
+
 	/**
 	 * @return the checkItem
 	 */
@@ -182,21 +226,6 @@ public class CustomerAction extends GenericCRUDActionFull<Customer> {
 	 */
 	public void setCheckItem(String[] checkItem) {
 		this.checkItem = checkItem;
-	}
-
-	/**
-	 * @return the lastUrl
-	 */
-	public String getLastUrl() {
-		return lastUrl;
-	}
-
-	/**
-	 * @param lastUrl
-	 *            the lastUrl to set
-	 */
-	public void setLastUrl(String lastUrl) {
-		this.lastUrl = lastUrl;
 	}
 
 }

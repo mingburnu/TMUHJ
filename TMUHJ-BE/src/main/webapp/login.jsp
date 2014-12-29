@@ -6,7 +6,7 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<link href="<c:url value = '/'/>resources/css/air-ui-cms.css"
+<link href="<%=request.getContextPath()%>/resources/css/air-ui-cms.css"
 	rel="stylesheet" type="text/css">
 <script language="javascript" type="text/javascript"
 	src="<c:url value = '/'/>resources/js/jquery-1.3.2.js"></script>

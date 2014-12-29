@@ -42,7 +42,8 @@ public class ResourcesUnion extends GenericEntitySerNo {
 	}
 
 	/**
-	 * @param cusSerNo the cusSerNo to set
+	 * @param cusSerNo
+	 *            the cusSerNo to set
 	 */
 	public void setCusSerNo(long cusSerNo) {
 		this.cusSerNo = cusSerNo;
@@ -56,7 +57,8 @@ public class ResourcesUnion extends GenericEntitySerNo {
 	}
 
 	/**
-	 * @param resSerNo the resSerNo to set
+	 * @param resSerNo
+	 *            the resSerNo to set
 	 */
 	public void setResSerNo(long resSerNo) {
 		this.resSerNo = resSerNo;
@@ -70,7 +72,8 @@ public class ResourcesUnion extends GenericEntitySerNo {
 	}
 
 	/**
-	 * @param ebkSerNo the ebkSerNo to set
+	 * @param ebkSerNo
+	 *            the ebkSerNo to set
 	 */
 	public void setEbkSerNo(long ebkSerNo) {
 		this.ebkSerNo = ebkSerNo;
@@ -84,7 +87,8 @@ public class ResourcesUnion extends GenericEntitySerNo {
 	}
 
 	/**
-	 * @param datSerNo the datSerNo to set
+	 * @param datSerNo
+	 *            the datSerNo to set
 	 */
 	public void setDatSerNo(long datSerNo) {
 		this.datSerNo = datSerNo;
@@ -98,10 +102,24 @@ public class ResourcesUnion extends GenericEntitySerNo {
 	}
 
 	/**
-	 * @param jouSerNo the jouSerNo to set
+	 * @param jouSerNo
+	 *            the jouSerNo to set
 	 */
 	public void setJouSerNo(long jouSerNo) {
 		this.jouSerNo = jouSerNo;
 	}
-	
+
+	public ResourcesUnion() {
+	}
+
+	public ResourcesUnion(long cusSerNo, long resSerNo, long ebkSerNo,
+			long datSerNo, long jouSerNo) {
+		super();
+		this.cusSerNo = cusSerNo;
+		this.resSerNo = resSerNo;
+		this.ebkSerNo = ebkSerNo;
+		this.datSerNo = datSerNo;
+		this.jouSerNo = jouSerNo;
+	}
+
 }

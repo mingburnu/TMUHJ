@@ -70,23 +70,7 @@
 			</result>
 			<result name="view">/WEB-INF/jsp/module/apply/{1}/{1}View.jsp
 			</result>
-			<result name="delete">/WEB-INF/jsp/module/apply/{1}/{1}Edit.jsp
-			</result>
-			<result name="search">/WEB-INF/jsp/index.jsp</result>
-			<result name="query">/WEB-INF/jsp/adv_query.jsp</result>
-			<result name="database">/WEB-INF/jsp/module/apply/search/result_a.jsp
-			</result>
-			<result name="ebook">/WEB-INF/jsp/module/apply/search/result_b.jsp
-			</result>
-			<result name="journal">/WEB-INF/jsp/module/apply/search/result_c.jsp
-			</result>
-			<result name="customer">/WEB-INF/jsp/module/apply/search/result_d.jsp
-			</result>
-			<result name="d-detail">/WEB-INF/jsp/module/apply/search/detail_a.jsp
-			</result>
-			<result name="e-detail">/WEB-INF/jsp/module/apply/search/detail_b.jsp
-			</result>
-			<result name="j-detail">/WEB-INF/jsp/module/apply/search/detail_c.jsp
+			<result name="ajax">/WEB-INF/jsp/module/apply/{1}/{1}Ajax.jsp
 			</result>
 		</action>
 	</package>

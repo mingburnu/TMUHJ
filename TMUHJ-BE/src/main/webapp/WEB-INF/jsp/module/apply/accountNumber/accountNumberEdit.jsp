@@ -35,49 +35,7 @@
 					"<c:url value = '/'/>crud/apply.accountNumber.update.action",
 					'帳戶-新增', data);
 		}
-	}
-
-<%--function check() {
-		// 密碼檢核
-		var inputPasswdObj = $("#updateForm input[name='userinfo_passwd']");
-		if (trim(inputPasswdObj.val()).length == 0) {
-			myAlert("密碼不可空白！");
-			inputPasswdObj.focus();
-			return false;
-		}
-
-		return true;
-	}
-	function send() {
-		if (!check())
-			return;
-
-		// do update...
-		var argData = $('#updateForm').serialize();
-		ajaxPost({
-			url : "crud/apply.accountNumber.update.action",
-			data : argData,
-			success : function(msg) {
-				// myAlert(msg);
-				location.href = $("input[name='lastURL']").val();
-			},
-			failure : function(msg) {
-				myAlert(msg);
-			}
-		});
-	}
-	function showLeader(value) {
-		var jQueryObj = $("select[name='userinfo_parentId']");
-		if (value == '4') {
-			jQueryObj.show();
-			jQueryObj.removeAttr("disabled");
-		} else {
-			jQueryObj.hide();
-			jQueryObj.attr("disabled", "disabled");
-		}
-
-	}--%>
-	
+	}	
 </script>
 </head>
 <body>
@@ -136,7 +94,7 @@
 						<td>${entity.userId }</td>
 					</tr>
 					<tr>
-						<th width="130">用戶密碼<span class="required">(&#8226;)</span></th>
+						<th width="130">用戶密碼</th>
 						<td><s:password name="entity.userPw" cssClass="input_text" /></td>
 					</tr>
 					<tr>

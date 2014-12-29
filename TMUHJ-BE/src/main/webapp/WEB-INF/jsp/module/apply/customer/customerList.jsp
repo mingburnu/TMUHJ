@@ -110,11 +110,13 @@ $(document).ready(function() {
 	    var offset=parseInt(recordPerPage)*(parseInt(page)-1);
 	    if(parseInt(page) < 1){
 	        page=1;
+	        offset=parseInt(recordPerPage)*(parseInt(page)-1);
 	    }
 	    else if(parseInt(page)>parseInt(totalPage)){
 	        page=totalPage;
+	        offset=parseInt(recordPerPage)*(parseInt(page)-1);
 	    }
-	    goMain('<c:url value = '/'/>crud/apply.customer.list.action','#apply_customer_list','&pager.offset='+offset+'&pager.currentPage='+page+'&pager.offsetPoint'+offset);
+	    goMain('<c:url value = '/'/>crud/apply.customer.list.action','#apply_customer_list','&pager.offset='+offset+'&pager.currentPage='+page);
 	}
 	
 	//變更顯示筆數
