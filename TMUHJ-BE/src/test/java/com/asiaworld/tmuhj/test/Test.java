@@ -1,12 +1,16 @@
 package com.asiaworld.tmuhj.test;
 
-import java.io.UnsupportedEncodingException;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+
 public class Test {
 
-	public static void main(String[] args) throws UnsupportedEncodingException {
+	public static void main(String[] args) throws IOException {
 
 		String[] sql = {
 				"	INSERT INTO ip_range(serNo, cDTime, cUid, uDTime, uUid, ipRangeEnd, ipRangeStart, cusSerNo) VALUES	(	1	,	sysdate()	,	'admin'	,	sysdate()	,	'admin'	,	'	59.120.245.198	'	,	'	59.120.245.193	'	,	9	);	",
@@ -90,15 +94,23 @@ public class Test {
 		
 		System.out.println(System.getProperty("java.version"));
 		
-		String regex="\\d{7}[\\dX]";
+		String regex="(@)?(href=')?(HREF=')?(HREF=\")?(href=\")?(http://)?(https://)?[a-zA-Z_0-9\\-]+(\\.\\w[`~!@#$%^&*()_-{[}]|;:<>?,./a-zA-Z0-9\u0000-\uffff\\+=]+)+(/[#&\\n\\-=?\\+\\%/\\.\\w]+)?";
 		Pattern pattern=Pattern.compile(regex);
 		
-		String issn="1211118x".toUpperCase();
-		Matcher matcher=pattern.matcher(issn);
-		System.out.println(issn.substring(7,7));
+		String url="http://";
+		Matcher matcher=pattern.matcher(url);
 		System.out.println(matcher.matches());
-		String str=""+1+3;
 		
-		System.out.println(str.length());
+		
+		  //Create Blank workbook
+	      XSSFWorkbook workbook = new XSSFWorkbook(); 
+	      //Create file system using specific name
+	      FileOutputStream out = new FileOutputStream(
+	      new File("createworkbook.xlsx"));
+	      //write operation workbook using file out object 
+	      workbook.write(out);
+	      out.close();
+	      System.out.println("createworkbook.xlsx written successfully");
+	   
 	}
 }

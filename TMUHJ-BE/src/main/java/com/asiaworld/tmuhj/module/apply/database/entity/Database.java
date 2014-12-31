@@ -1,14 +1,19 @@
 package com.asiaworld.tmuhj.module.apply.database.entity;
 
+import java.util.List;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import org.hibernate.annotations.Type;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 
 import com.asiaworld.tmuhj.core.entity.GenericEntityFull;
+import com.asiaworld.tmuhj.module.apply.customer.entity.Customer;
+import com.asiaworld.tmuhj.module.apply.resourcesBuyers.entity.ResourcesBuyers;
 
 @Entity
 @Table(name = "db")
@@ -60,6 +65,12 @@ public class Database extends GenericEntityFull {
 	// 收錄年代
 	@Column(name = "IndexedYears")
 	private String indexedYears;
+	
+	@Transient
+	private ResourcesBuyers resourcesBuyers;
+	
+	@Transient
+	private List<Customer> customers;
 
 	/**
 	 * @return the dbChtTitle
@@ -211,24 +222,35 @@ public class Database extends GenericEntityFull {
 		this.indexedYears = indexedYears;
 	}
 
-	// public Database(String dbChtTitle, String dbEngTitle, String languages,
-	// String includedSpecies, String publishName, String content,
-	// String url, String topic, String classification, String indexedYears) {
-	// this.dbChtTitle = dbChtTitle;
-	// this.dbEngTitle = dbEngTitle;
-	// this.languages = languages;
-	// this.includedSpecies = includedSpecies;
-	// this.publishName = publishName;
-	// this.content = content;
-	// this.url = url;
-	// this.topic = topic;
-	// this.classification = classification;
-	// this.indexedYears = indexedYears;
-	// }
+	/**
+	 * @return the resourcesBuyers
+	 */
+	public ResourcesBuyers getResourcesBuyers() {
+		return resourcesBuyers;
+	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/**
+	 * @param resourcesBuyers the resourcesBuyers to set
+	 */
+	public void setResourcesBuyers(ResourcesBuyers resourcesBuyers) {
+		this.resourcesBuyers = resourcesBuyers;
+	}
+
+	/**
+	 * @return the customers
+	 */
+	public List<Customer> getCustomers() {
+		return customers;
+	}
+
+	/**
+	 * @param customers the customers to set
+	 */
+	public void setCustomers(List<Customer> customers) {
+		this.customers = customers;
+	}
+	
+	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */
 	@Override
@@ -238,6 +260,7 @@ public class Database extends GenericEntityFull {
 				+ ", includedSpecies=" + includedSpecies + ", publishName="
 				+ publishName + ", content=" + content + ", url=" + url
 				+ ", topic=" + topic + ", classification=" + classification
-				+ ", indexedYears=" + indexedYears + "]";
+				+ ", indexedYears=" + indexedYears + ", resourcesBuyers="
+				+ resourcesBuyers + ", customers=" + customers + "]";
 	}
 }

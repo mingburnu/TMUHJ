@@ -39,9 +39,9 @@
 				<a onclick="goURL('<%=request.getContextPath()%>/ebook.action');">電子書</a>
 			</div>
 
-			<!--<div class="menu-items">
-				<a onclick="goURL('/TWBE/advertisement_init.action');">廣告管理</a>
-			</div>-->
+			<div class="menu-items">
+				<a onclick="goURL('<%=request.getContextPath()%>/database.action');">資料庫</a>
+			</div>
 
 		</div>
 

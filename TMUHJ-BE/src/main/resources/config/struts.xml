@@ -72,6 +72,8 @@
 			</result>
 			<result name="ajax">/WEB-INF/jsp/module/apply/{1}/{1}Ajax.jsp
 			</result>
+			<result name="import">/WEB-INF/jsp/module/apply/{1}/{1}Import.jsp
+			</result>
 		</action>
 	</package>
 
