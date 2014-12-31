@@ -77,11 +77,13 @@ public class JournalService extends GenericServiceFull<Journal> {
 				&& StringUtils.isNotBlank(entity.getChineseTitle())) {
 			restrictions.likeIgnoreCase("chineseTitle",
 					entity.getChineseTitle(), MatchMode.ANYWHERE);
-		} else if (StringUtils.isNotEmpty(entity.getEnglishTitle())
+		}
+		if (StringUtils.isNotEmpty(entity.getEnglishTitle())
 				&& StringUtils.isNotBlank(entity.getEnglishTitle())) {
 			restrictions.likeIgnoreCase("englishTitle",
 					entity.getEnglishTitle(), MatchMode.ANYWHERE);
-		} else if (StringUtils.isNotEmpty(entity.getIssn())
+		}
+		if (StringUtils.isNotEmpty(entity.getIssn())
 				&& StringUtils.isNotBlank(entity.getIssn())) {
 			restrictions.likeIgnoreCase("issn", entity.getIssn());
 		}

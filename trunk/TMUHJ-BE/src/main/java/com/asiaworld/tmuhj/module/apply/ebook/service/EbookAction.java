@@ -17,8 +17,6 @@ import com.asiaworld.tmuhj.core.web.GenericCRUDActionFull;
 import com.asiaworld.tmuhj.module.apply.customer.entity.Customer;
 import com.asiaworld.tmuhj.module.apply.customer.service.CustomerService;
 import com.asiaworld.tmuhj.module.apply.ebook.entity.Ebook;
-import com.asiaworld.tmuhj.module.apply.ipRange.entity.IpRange;
-import com.asiaworld.tmuhj.module.apply.ipRange.service.IpRangeService;
 import com.asiaworld.tmuhj.module.apply.resourcesBuyers.entity.ResourcesBuyers;
 import com.asiaworld.tmuhj.module.apply.resourcesBuyers.service.ResourcesBuyersService;
 import com.asiaworld.tmuhj.module.apply.resourcesUnion.entity.ResourcesUnion;
@@ -56,12 +54,6 @@ public class EbookAction extends GenericCRUDActionFull<Ebook> {
 
 	@Autowired
 	private CustomerService customerService;
-
-	@Autowired
-	private IpRange ipRange;
-
-	@Autowired
-	private IpRangeService ipRangeService;
 
 	@Override
 	public void validateSave() throws Exception {
@@ -290,8 +282,8 @@ public class EbookAction extends GenericCRUDActionFull<Ebook> {
 		if (getEntity().getIsbn() <= 0) {
 			addActionError("ISBN必須填寫");
 		} else {
-			if (getEntity().getIsbn() >= 9780000000000l
-					&& getEntity().getIsbn() < 9800000000000l) {
+			if (getEntity().getIsbn() >= 9780000000002l
+					&& getEntity().getIsbn() <= 9799999999990l) {
 				String isbn = "" + getEntity().getIsbn();
 				int sum = Integer.parseInt(isbn.substring(0, 1)) * 1
 						+ Integer.parseInt(isbn.substring(1, 2)) * 3
@@ -320,7 +312,7 @@ public class EbookAction extends GenericCRUDActionFull<Ebook> {
 				}
 
 			} else {
-				addActionError("前三碼必須是978或979");
+				addActionError("ISBN區間為9780000000002~9799999999990");
 			}
 		}
 
@@ -394,8 +386,8 @@ public class EbookAction extends GenericCRUDActionFull<Ebook> {
 						Long.parseLong(cusSerNo[i]))) {
 					resourcesUnionService.save(
 							new ResourcesUnion(Long.parseLong(cusSerNo[i]),
-									resourcesBuyers.getSerNo(), 0, 0, ebook
-											.getSerNo()), getLoginUser());
+									resourcesBuyers.getSerNo(), ebook
+											.getSerNo(), 0, 0), getLoginUser());
 				}
 
 				i++;
@@ -437,22 +429,23 @@ public class EbookAction extends GenericCRUDActionFull<Ebook> {
 				getRequest().setAttribute("rType",
 						getRequest().getParameter("resourcesBuyers.rType"));
 			}
-			
+
 			List<Customer> customers = new ArrayList<Customer>();
-			if(cusSerNo!=null&&cusSerNo.length!=0){
-				int i=0;
-				while(i<cusSerNo.length){
-					customers.add(customerService.getBySerNo(Long.parseLong(cusSerNo[i])));
+			if (cusSerNo != null && cusSerNo.length != 0) {
+				int i = 0;
+				while (i < cusSerNo.length) {
+					customers.add(customerService.getBySerNo(Long
+							.parseLong(cusSerNo[i])));
 					i++;
 				}
-			}				
-				
-			ebook=getEntity();
+			}
+
+			ebook = getEntity();
 			ebook.setCustomers(customers);
 			setEntity(ebook);
 			return EDIT;
 		}
-		
+
 	}
 
 	@Override

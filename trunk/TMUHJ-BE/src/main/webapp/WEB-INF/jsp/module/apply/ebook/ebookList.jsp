@@ -64,12 +64,12 @@ function goDelete() {
 function goView(serNo){
         var url = "<c:url value = '/'/>crud/apply.ebook.view.action";
         var data = 'viewSerNo='+serNo;
-        goDetail(url,'帳戶-檢視',data);
+        goDetail(url,'電子書-檢視',data);
 }
 
 //更新資料
 function goUpdate(serNo) {
-	goDetail('<%=request.getContextPath()%>/crud/apply.ebook.query.action?'+'entity.serNo='+serNo,'帳戶-修改');
+	goDetail('<%=request.getContextPath()%>/crud/apply.ebook.query.action?'+'entity.serNo='+serNo,'電子書-修改');
 }
 
 //GoPage

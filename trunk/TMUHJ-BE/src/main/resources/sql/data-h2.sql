@@ -76,6 +76,15 @@ insert into resourcesUnion(serNo, cus_serNo, res_serNo, ebk_serNo, dat_serNo, jo
 insert into resourcesUnion(serNo, cus_serNo, res_serNo, ebk_serNo, dat_serNo, jou_serNo) values(21, 4, 3, 7, 7, 0);
 insert into resourcesUnion(serNo, cus_serNo, res_serNo, ebk_serNo, dat_serNo, jou_serNo) values(22, 4, 3, 8, 7, 0);
 insert into resourcesUnion(serNo, cus_serNo, res_serNo, ebk_serNo, dat_serNo, jou_serNo) values(23, 4, 3, 9, 7, 0);
+insert into resourcesUnion(serNo, cus_serNo, res_serNo, ebk_serNo, dat_serNo, jou_serNo) values(24, 3, 2, 0, 1, 0);
+insert into resourcesUnion(serNo, cus_serNo, res_serNo, ebk_serNo, dat_serNo, jou_serNo) values(25, 3, 2, 0, 2, 0);
+insert into resourcesUnion(serNo, cus_serNo, res_serNo, ebk_serNo, dat_serNo, jou_serNo) values(26, 3, 2, 0, 3, 0);
+insert into resourcesUnion(serNo, cus_serNo, res_serNo, ebk_serNo, dat_serNo, jou_serNo) values(27, 3, 2, 0, 4, 0);
+insert into resourcesUnion(serNo, cus_serNo, res_serNo, ebk_serNo, dat_serNo, jou_serNo) values(28, 3, 2, 0, 5, 0);
+insert into resourcesUnion(serNo, cus_serNo, res_serNo, ebk_serNo, dat_serNo, jou_serNo) values(29, 3, 2, 0, 6, 0);
+insert into resourcesUnion(serNo, cus_serNo, res_serNo, ebk_serNo, dat_serNo, jou_serNo) values(30, 3, 2, 0, 7, 0);
+insert into resourcesUnion(serNo, cus_serNo, res_serNo, ebk_serNo, dat_serNo, jou_serNo) values(31, 3, 2, 0, 8, 0);
+
 
 --ip_range
 insert into ip_range (serNo, cDTime, cUid, uDTime, uUid, cus_serNo, ipRangeEnd, ipRangeStart) values('1',sysdate(),'admin',sysdate(),'admin','9','59.120.245.198','59.120.245.193');

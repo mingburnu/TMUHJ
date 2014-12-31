@@ -1,12 +1,25 @@
 package com.asiaworld.tmuhj.module.apply.journal.service;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.math.NumberUtils;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFRow;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
@@ -18,6 +31,7 @@ import com.asiaworld.tmuhj.core.model.DataSet;
 import com.asiaworld.tmuhj.core.web.GenericCRUDActionFull;
 import com.asiaworld.tmuhj.module.apply.customer.entity.Customer;
 import com.asiaworld.tmuhj.module.apply.customer.service.CustomerService;
+import com.asiaworld.tmuhj.module.apply.journal.entity.ExcelWorkSheet;
 import com.asiaworld.tmuhj.module.apply.journal.entity.Journal;
 import com.asiaworld.tmuhj.module.apply.resourcesBuyers.entity.ResourcesBuyers;
 import com.asiaworld.tmuhj.module.apply.resourcesBuyers.service.ResourcesBuyersService;
@@ -30,8 +44,14 @@ import com.asiaworld.tmuhj.module.apply.resourcesUnion.service.ResourcesUnionSer
 public class JournalAction extends GenericCRUDActionFull<Journal> {
 
 	private String[] checkItem;
-	
+
 	private String[] cusSerNo;
+
+	private File file;
+
+	private String fileFileName;
+
+	private String fileContentType;
 
 	@Autowired
 	private Journal journal;
@@ -57,6 +77,10 @@ public class JournalAction extends GenericCRUDActionFull<Journal> {
 	@Autowired
 	private CustomerService customerService;
 
+//	private String destPath = "C:/tmuhj/";
+	
+	private ExcelWorkSheet<Journal> excelWorkSheet;
+	
 	@Override
 	public void validateSave() throws Exception {
 		// TODO Auto-generated method stub
@@ -122,7 +146,7 @@ public class JournalAction extends GenericCRUDActionFull<Journal> {
 									Journal.class).getResSerNo()));
 			i++;
 		}
-		
+
 		ds.setResults(results);
 		setDs(ds);
 		return LIST;
@@ -130,13 +154,13 @@ public class JournalAction extends GenericCRUDActionFull<Journal> {
 
 	@Override
 	public String save() throws Exception {
-		if (getEntity().getEnglishTitle().trim().equals("")
-				|| getEntity().getEnglishTitle() == null) {
+		if (getEntity().getEnglishTitle() == null
+				|| getEntity().getEnglishTitle().trim().equals("")) {
 			addActionError("英文刊名不得空白");
 		}
 
-		if (getEntity().getIssn().trim().equals("")
-				|| getEntity().getIssn() == null) {
+		if (getEntity().getIssn() == null
+				|| getEntity().getIssn().trim().equals("")) {
 			addActionError("ISSN不得空白");
 		} else {
 			String regex = "\\d{7}[\\dX]";
@@ -284,17 +308,18 @@ public class JournalAction extends GenericCRUDActionFull<Journal> {
 				getRequest().setAttribute("rType",
 						getRequest().getParameter("resourcesBuyers.rType"));
 			}
-			
+
 			List<Customer> customers = new ArrayList<Customer>();
-			if(cusSerNo!=null&&cusSerNo.length!=0){
-				int i=0;
-				while(i<cusSerNo.length){
-					customers.add(customerService.getBySerNo(Long.parseLong(cusSerNo[i])));
+			if (cusSerNo != null && cusSerNo.length != 0) {
+				int i = 0;
+				while (i < cusSerNo.length) {
+					customers.add(customerService.getBySerNo(Long
+							.parseLong(cusSerNo[i])));
 					i++;
 				}
-			}				
-				
-			journal=getEntity();
+			}
+
+			journal = getEntity();
 			journal.setCustomers(customers);
 			setEntity(journal);
 			return EDIT;
@@ -303,13 +328,13 @@ public class JournalAction extends GenericCRUDActionFull<Journal> {
 
 	@Override
 	public String update() throws Exception {
-		if (getEntity().getEnglishTitle().trim().equals("")
-				|| getEntity().getEnglishTitle() == null) {
+		if (getEntity().getEnglishTitle() == null
+				|| getEntity().getEnglishTitle().trim().equals("")) {
 			addActionError("英文刊名不得空白");
 		}
 
-		if (getEntity().getIssn().trim().equals("")
-				|| getEntity().getIssn() == null) {
+		if (getEntity().getIssn() == null
+				|| getEntity().getIssn().trim().equals("")) {
 			addActionError("ISSN不得空白");
 		} else {
 			String regex = "\\d{7}[\\dX]";
@@ -391,9 +416,9 @@ public class JournalAction extends GenericCRUDActionFull<Journal> {
 						.equals("")) {
 			addActionError("請選擇資源種類");
 		}
-		
+
 		if (!hasActionErrors()) {
-			journal=getEntity();
+			journal = getEntity();
 			journal.setIssn(getEntity().getIssn().toUpperCase());
 			journal = journalService.update(journal, getLoginUser());
 
@@ -483,17 +508,18 @@ public class JournalAction extends GenericCRUDActionFull<Journal> {
 				getRequest().setAttribute("rType",
 						getRequest().getParameter("resourcesBuyers.rType"));
 			}
-			
+
 			List<Customer> customers = new ArrayList<Customer>();
-			if(cusSerNo!=null&&cusSerNo.length!=0){
-				int i=0;
-				while(i<cusSerNo.length){
-					customers.add(customerService.getBySerNo(Long.parseLong(cusSerNo[i])));
+			if (cusSerNo != null && cusSerNo.length != 0) {
+				int i = 0;
+				while (i < cusSerNo.length) {
+					customers.add(customerService.getBySerNo(Long
+							.parseLong(cusSerNo[i])));
 					i++;
 				}
-			}				
-				
-			journal=getEntity();
+			}
+
+			journal = getEntity();
 			journal.setCustomers(customers);
 			setEntity(journal);
 			return EDIT;
@@ -603,6 +629,48 @@ public class JournalAction extends GenericCRUDActionFull<Journal> {
 			return LIST;
 		}
 	}
+	
+	 //判断文件类型   
+    public Workbook createWorkBook(InputStream is) throws IOException{   
+        if(fileFileName.toLowerCase().endsWith("xls")){  
+            return new HSSFWorkbook(is);   
+        }   
+        if(fileFileName.toLowerCase().endsWith("xlsx")){   
+        	return new XSSFWorkbook(is);
+        }   
+        return null;   
+    }    
+
+	public String imports() throws IOException {
+		Workbook book = createWorkBook(new FileInputStream(file));  
+		 //book.getNumberOfSheets();  判断Excel文件有多少个sheet   
+        Sheet sheet =  book.getSheetAt(0); 
+        excelWorkSheet = new ExcelWorkSheet<Journal>();
+        
+      //保存工作单名称   
+        Row firstRow = sheet.getRow(0);   
+        Iterator<Cell> iterator = firstRow.iterator();   
+           
+        //保存列名   
+        List<String> cellNames = new ArrayList<String>();   
+        while (iterator.hasNext()) {   
+            cellNames.add(iterator.next().getStringCellValue());   
+        }   
+        excelWorkSheet.setColumns(cellNames);   
+        for (int i = 1; i <= sheet.getLastRowNum(); i++) {   
+            Row ros = sheet.getRow(i);   
+             journal = new Journal();   
+            journal.setEnglishTitle(ros.getCell(0).getStringCellValue());   
+           
+            excelWorkSheet.getData().add(journal);   
+        }   
+        for (int i = 0; i < excelWorkSheet.getData().size(); i++) {   
+        	journal = excelWorkSheet.getData().get(i);   
+            System.out.println(journal.getEnglishTitle());   
+        }   
+      
+		return "import";
+	}
 
 	/**
 	 * @return the checkItem
@@ -648,4 +716,64 @@ public class JournalAction extends GenericCRUDActionFull<Journal> {
 	public void setResourcesBuyers(ResourcesBuyers resourcesBuyers) {
 		this.resourcesBuyers = resourcesBuyers;
 	}
+
+	/**
+	 * @return the file
+	 */
+	public File getFile() {
+		return file;
+	}
+
+	/**
+	 * @param file
+	 *            the file to set
+	 */
+	public void setFile(File file) {
+		this.file = file;
+	}
+
+	/**
+	 * @return the fileFileName
+	 */
+	public String getFileFileName() {
+		return fileFileName;
+	}
+
+	/**
+	 * @param fileFileName
+	 *            the fileFileName to set
+	 */
+	public void setFileFileName(String fileFileName) {
+		this.fileFileName = fileFileName;
+	}
+
+	/**
+	 * @return the fileContentType
+	 */
+	public String getFileContentType() {
+		return fileContentType;
+	}
+
+	/**
+	 * @param fileContentType
+	 *            the fileContentType to set
+	 */
+	public void setFileContentType(String fileContentType) {
+		this.fileContentType = fileContentType;
+	}
+
+	/**
+	 * @return the excelWorkSheet
+	 */
+	public ExcelWorkSheet<Journal> getExcelWorkSheet() {
+		return excelWorkSheet;
+	}
+
+	/**
+	 * @param excelWorkSheet the excelWorkSheet to set
+	 */
+	public void setExcelWorkSheet(ExcelWorkSheet<Journal> excelWorkSheet) {
+		this.excelWorkSheet = excelWorkSheet;
+	}
+
 }
