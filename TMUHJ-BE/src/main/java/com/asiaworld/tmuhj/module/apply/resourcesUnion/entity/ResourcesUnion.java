@@ -110,6 +110,8 @@ public class ResourcesUnion extends GenericEntitySerNo {
 	}
 
 	public ResourcesUnion() {
+		super();
+		// TODO Auto-generated constructor stub
 	}
 
 	public ResourcesUnion(long cusSerNo, long resSerNo, long ebkSerNo,

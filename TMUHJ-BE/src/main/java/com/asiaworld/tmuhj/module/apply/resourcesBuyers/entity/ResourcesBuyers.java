@@ -145,7 +145,11 @@ public class ResourcesBuyers extends GenericEntityFull {
 				+ dbEngTitle + "]";
 	}
 
+	
+
 	public ResourcesBuyers() {
+		super();
+		// TODO Auto-generated constructor stub
 	}
 
 	public ResourcesBuyers(String startDate, String maturityDate,

@@ -12,7 +12,7 @@ public class OpenWorkBook {
 	@SuppressWarnings("unused")
 	public static void main(String[] args) throws IOException,FileNotFoundException {
 		// TODO Auto-generated method stub
-		File file = new File("createworkbook.xlsx");
+		File file = new File("Writesheet.xlsx");
 		FileInputStream fIP = new FileInputStream(file);
 		// Get the workbook instance for XLSX file
 		XSSFWorkbook workbook = new XSSFWorkbook(fIP);

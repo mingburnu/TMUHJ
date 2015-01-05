@@ -28,6 +28,7 @@ public class Readsheet {
 				Cell cell = cellIterator.next();
 				System.out.print(cell.getStringCellValue() + " \t\t ");
 			}
+			System.out.print("\n");
 		}
 		fis.close();
 	}

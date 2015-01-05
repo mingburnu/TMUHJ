@@ -118,6 +118,13 @@ public class CustomerService extends GenericServiceFull<Customer> {
 		return criteria.list();
 	}
 	
+	public Customer getCustomerByName(String name) throws Exception {
+		Session session = sessionFactory.getCurrentSession();
+		Criteria criteria = session.createCriteria(Customer.class);
+		criteria.add(Restrictions.eq("name", name.trim()));
+		return (Customer) criteria.list().get(0);
+	}
+	
 	public List<Customer> getAllCustomers(){
 		Session session = sessionFactory.getCurrentSession();
 		Criteria criteria = session.createCriteria(Customer.class);
