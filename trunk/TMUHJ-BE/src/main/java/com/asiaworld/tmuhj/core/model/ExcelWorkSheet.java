@@ -1,4 +1,4 @@
-package com.asiaworld.tmuhj.module.apply.journal.entity;
+package com.asiaworld.tmuhj.core.model;
 
 import java.util.ArrayList;
 import java.util.List;

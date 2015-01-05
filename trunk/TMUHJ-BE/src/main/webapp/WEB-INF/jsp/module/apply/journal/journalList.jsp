@@ -92,105 +92,13 @@ function gotoPage(page){
 function chagePageSize(recordPerPage,recordPoint){
         goMain('<c:url value = '/'/>crud/apply.journal.list.action','#apply_journal_list','&recordPerPage='+recordPerPage+'&recordPoint='+recordPoint);
 }
-</script>
-<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
-<script>
 
-function xxxx(){
- function getDoc(frame) {
-     var doc = null;
-     
-     // IE8 cascading access check
-     try {
-         if (frame.contentWindow) {
-             doc = frame.contentWindow.document;
-         }
-     } catch(err) {
-     }
-
-     if (doc) { // successful getting content
-         return doc;
-     }
-
-     try { // simply checking may throw in ie8 under ssl or mismatched protocol
-         doc = frame.contentDocument ? frame.contentDocument : frame.document;
-     } catch(err) {
-         // last attempt
-         doc = frame.document;
-     }
-     return doc;
- }
-
-
-	 showLoading();
-	 alert( document.getElementById("apply_journal_imports"));
-	var formObj = $("form#apply_journal_imports");
-	var formURL = $("form#apply_journal_imports").attr("action");
-
-if(window.FormData !== undefined)  // for HTML5 browsers
-//	if(false)
-	{
-	
-		var formData = new FormData(document.getElementById("apply_journal_imports"));
-		$.ajax({
-        	url: formURL,
-	        type: 'POST',
-			data:  formData,
-			mimeType:"multipart/form-data",
-			contentType: false,
-    	    cache: false,
-        	processData:false,
-			success: function(data, textStatus, jqXHR)
-		    {
-					 $("#div_Detail").show();
-	                    UI_Resize();
-	                    $(window).scrollTop(0);
-	                    $("#div_Detail .content > .header > .title").html("匯入");
-	                    $("#div_Detail .content > .contain").empty().html(data);
-	                    closeLoading();
-		    },
-		  	error: function(jqXHR, textStatus, errorThrown) 
-	    	{
-		  		 goAlert("結果",XMLHttpRequest.responseText);
-                 closeLoading();
-	    	} 	        
-	   });
-        e.preventDefault();
-        e.unbind();
-   }
-   else  //for olden browsers
-	{
-		//generate a random id
-		var  iframeId = 'unique' + (new Date().getTime());
-
-		//create an empty iframe
-		var iframe = $('<iframe src="javascript:false;" name="'+iframeId+'" />');
-
-		//hide it
-		iframe.hide();
-
-		//set form target to iframe
-		formObj.attr('target',iframeId);
-
-		//Add iframe to body
-		iframe.appendTo('body');
-		iframe.load(function(e)
-		{
-			var doc = getDoc(iframe[0]);
-			var docRoot = doc.body ? doc.body : doc.documentElement;
-			var data = docRoot.innerHTML;
-			 $("#div_Detail").show();
-             UI_Resize();
-             $(window).scrollTop(0);
-             $("#div_Detail .content > .header > .title").html("匯入");
-             $("#div_Detail .content > .contain").empty().html(data);
-             closeLoading();
-		});
-	}
-	
+//批次匯入
+function goImport(){
+	goDetail('<%=request.getContextPath()%>/crud/apply.journal.query.action?'+'goImport=yes','期刊-匯入');
 }
-
 </script>
+
 </head>
 <body>
 	<s:form action="apply.journal.list" namespace="/crud" method="post"
@@ -279,7 +187,7 @@ if(window.FormData !== undefined)  // for HTML5 browsers
 			</div>
 		</div>
 		<div id="div_nav">
-			目前位置：<span>帳戶管理</span> &gt; <span>期刊</span>
+			目前位置：<span>書目資料管理</span> &gt; <span>期刊</span>
 		</div>
 		<div class="list-box">
 			<div class="list-buttons">
@@ -290,9 +198,11 @@ if(window.FormData !== undefined)  // for HTML5 browsers
 						<a class="state-default" onclick="allSelect(0);">取消</a>
 						<a class="state-default" onclick="goAdd();">新增</a>
 						<a class="state-default" onclick="goDelete();">刪除</a>
+						<a class="state-default" onclick="goImport();">批次匯入</a>
 					</c:when>
 					<c:otherwise>
 						<a class="state-default" onclick="goAdd();">新增</a>
+						<a class="state-default" onclick="goImport();">批次匯入</a>
 					</c:otherwise>
 				</c:choose>
 			</div>
@@ -373,12 +283,6 @@ if(window.FormData !== undefined)  // for HTML5 browsers
 		</div>
 	</s:form>
 
-	<s:form namespace="/crud" action="apply.journal.imports"
-		enctype="multipart/form-data" method="post">
-		<input type="file" id="file" name="file">
-		<s:submit value="IMPORT"></s:submit>
-	</s:form>
-	<button id="ports" class="state-default" onclick="xxxx();">匯入</button>
 	<s:if test="hasActionMessages()">
 		<script language="javascript" type="text/javascript">
             var msg = "";

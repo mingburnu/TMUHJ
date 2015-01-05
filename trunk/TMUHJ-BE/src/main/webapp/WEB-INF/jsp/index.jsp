@@ -47,6 +47,10 @@
 	src="<c:url value = '/'/>resources/js/jquery.datepick.js">
 	
 </script>
+<script language="javascript" type="text/javascript"
+	src="<c:url value = '/'/>resources/js/jquery.min.js">
+	
+</script>
 <script type="text/javascript">
 	$(document).ready(function() {
 		showMenuItems('1');

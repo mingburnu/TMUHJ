@@ -80,20 +80,15 @@ public class Journal extends GenericEntityFull {
 	@Column(name = "version")
 	private int version;
 
-	// 資料庫中文題名
-	@Column(name = "DBchttitle")
-	private String dbChtTitle;
-
-	// 資料庫英文題名
-	@Column(name = "DBengtitle")
-	private String dbEngTitle;
-
 	@Transient
 	private ResourcesBuyers resourcesBuyers;
-	
+
 	@Transient
 	private List<Customer> customers;
 	
+	@Transient
+	private String exist;
+
 	/**
 	 * @return the chineseTitle
 	 */
@@ -305,36 +300,6 @@ public class Journal extends GenericEntityFull {
 	}
 
 	/**
-	 * @return the dbChtTitle
-	 */
-	public String getDbChtTitle() {
-		return dbChtTitle;
-	}
-
-	/**
-	 * @param dbChtTitle
-	 *            the dbChtTitle to set
-	 */
-	public void setDbChtTitle(String dbChtTitle) {
-		this.dbChtTitle = dbChtTitle;
-	}
-
-	/**
-	 * @return the dbEngTitle
-	 */
-	public String getDbEngTitle() {
-		return dbEngTitle;
-	}
-
-	/**
-	 * @param dbEngTitle
-	 *            the dbEngTitle to set
-	 */
-	public void setDbEngTitle(String dbEngTitle) {
-		this.dbEngTitle = dbEngTitle;
-	}
-
-	/**
 	 * @return the resourcesBuyers
 	 */
 	public ResourcesBuyers getResourcesBuyers() {
@@ -348,7 +313,7 @@ public class Journal extends GenericEntityFull {
 	public void setResourcesBuyers(ResourcesBuyers resourcesBuyers) {
 		this.resourcesBuyers = resourcesBuyers;
 	}
-	
+
 	/**
 	 * @return the customers
 	 */
@@ -357,10 +322,25 @@ public class Journal extends GenericEntityFull {
 	}
 
 	/**
-	 * @param customers the customers to set
+	 * @param customers
+	 *            the customers to set
 	 */
 	public void setCustomers(List<Customer> customers) {
 		this.customers = customers;
+	}
+
+	/**
+	 * @return the exist
+	 */
+	public String getExist() {
+		return exist;
+	}
+
+	/**
+	 * @param exist the exist to set
+	 */
+	public void setExist(String exist) {
+		this.exist = exist;
 	}
 
 	/* (non-Javadoc)
@@ -376,9 +356,40 @@ public class Journal extends GenericEntityFull {
 				+ ", url=" + url + ", numB=" + numB + ", publication="
 				+ publication + ", congressClassification="
 				+ congressClassification + ", version=" + version
-				+ ", dbChtTitle=" + dbChtTitle + ", dbEngTitle=" + dbEngTitle
 				+ ", resourcesBuyers=" + resourcesBuyers + ", customers="
-				+ customers + "]";
+				+ customers + ", exist=" + exist + "]";
+	}
+
+	public Journal() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+
+	public Journal(String chineseTitle, String englishTitle,
+			String abbreviationTitle, String titleEvolution, String issn,
+			String languages, String publishName, String publishYear,
+			String caption, String url, String numB, String publication,
+			String congressClassification, int version,
+			ResourcesBuyers resourcesBuyers, List<Customer> customers,
+			String exist) {
+		super();
+		this.chineseTitle = chineseTitle;
+		this.englishTitle = englishTitle;
+		this.abbreviationTitle = abbreviationTitle;
+		this.titleEvolution = titleEvolution;
+		this.issn = issn;
+		this.languages = languages;
+		this.publishName = publishName;
+		this.publishYear = publishYear;
+		this.caption = caption;
+		this.url = url;
+		this.numB = numB;
+		this.publication = publication;
+		this.congressClassification = congressClassification;
+		this.version = version;
+		this.resourcesBuyers = resourcesBuyers;
+		this.customers = customers;
+		this.exist = exist;
 	}
 
 }

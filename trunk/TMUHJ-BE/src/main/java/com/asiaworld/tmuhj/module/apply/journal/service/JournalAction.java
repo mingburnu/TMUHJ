@@ -25,13 +25,14 @@ import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 
+import com.asiaworld.tmuhj.core.entity.GenericEntityFull;
 import com.asiaworld.tmuhj.core.enums.RCategory;
 import com.asiaworld.tmuhj.core.enums.RType;
 import com.asiaworld.tmuhj.core.model.DataSet;
+import com.asiaworld.tmuhj.core.model.ExcelWorkSheet;
 import com.asiaworld.tmuhj.core.web.GenericCRUDActionFull;
 import com.asiaworld.tmuhj.module.apply.customer.entity.Customer;
 import com.asiaworld.tmuhj.module.apply.customer.service.CustomerService;
-import com.asiaworld.tmuhj.module.apply.journal.entity.ExcelWorkSheet;
 import com.asiaworld.tmuhj.module.apply.journal.entity.Journal;
 import com.asiaworld.tmuhj.module.apply.resourcesBuyers.entity.ResourcesBuyers;
 import com.asiaworld.tmuhj.module.apply.resourcesBuyers.service.ResourcesBuyersService;
@@ -77,10 +78,10 @@ public class JournalAction extends GenericCRUDActionFull<Journal> {
 	@Autowired
 	private CustomerService customerService;
 
-//	private String destPath = "C:/tmuhj/";
-	
+	// private String destPath = "C:/tmuhj/";
+
 	private ExcelWorkSheet<Journal> excelWorkSheet;
-	
+
 	@Override
 	public void validateSave() throws Exception {
 		// TODO Auto-generated method stub
@@ -123,6 +124,10 @@ public class JournalAction extends GenericCRUDActionFull<Journal> {
 					.getBySerNo(resourcesBuyersSerNo);
 			journal.setCustomers(customers);
 			setEntity(journal);
+		} else if (getRequest().getParameter("goImport") != null
+				&& getRequest().getParameter("goImport").equals("yes")) {
+			getRequest().setAttribute("goImport",
+					getRequest().getParameter("goImport"));
 		} else {
 			List<Customer> customers = new ArrayList<Customer>();
 			journal.setCustomers(customers);
@@ -629,47 +634,101 @@ public class JournalAction extends GenericCRUDActionFull<Journal> {
 			return LIST;
 		}
 	}
-	
-	 //判断文件类型   
-    public Workbook createWorkBook(InputStream is) throws IOException{   
-        if(fileFileName.toLowerCase().endsWith("xls")){  
-            return new HSSFWorkbook(is);   
-        }   
-        if(fileFileName.toLowerCase().endsWith("xlsx")){   
-        	return new XSSFWorkbook(is);
-        }   
-        return null;   
-    }    
 
-	public String imports() throws IOException {
-		Workbook book = createWorkBook(new FileInputStream(file));  
-		 //book.getNumberOfSheets();  判断Excel文件有多少个sheet   
-        Sheet sheet =  book.getSheetAt(0); 
-        excelWorkSheet = new ExcelWorkSheet<Journal>();
-        
-      //保存工作单名称   
-        Row firstRow = sheet.getRow(0);   
-        Iterator<Cell> iterator = firstRow.iterator();   
-           
-        //保存列名   
-        List<String> cellNames = new ArrayList<String>();   
-        while (iterator.hasNext()) {   
-            cellNames.add(iterator.next().getStringCellValue());   
-        }   
-        excelWorkSheet.setColumns(cellNames);   
-        for (int i = 1; i <= sheet.getLastRowNum(); i++) {   
-            Row ros = sheet.getRow(i);   
-             journal = new Journal();   
-            journal.setEnglishTitle(ros.getCell(0).getStringCellValue());   
-           
-            excelWorkSheet.getData().add(journal);   
-        }   
-        for (int i = 0; i < excelWorkSheet.getData().size(); i++) {   
-        	journal = excelWorkSheet.getData().get(i);   
-            System.out.println(journal.getEnglishTitle());   
-        }   
-      
-		return "import";
+	// 判断文件类型
+	public Workbook createWorkBook(InputStream is) throws IOException {
+		if (fileFileName.toLowerCase().endsWith("xls")) {
+			return new HSSFWorkbook(is);
+		}
+		if (fileFileName.toLowerCase().endsWith("xlsx")) {
+			return new XSSFWorkbook(is);
+		}
+		return null;
+	}
+
+	public String imports() throws Exception {
+		if (file == null || !file.isFile()) {
+			addActionError("請選擇檔案");
+		} else {
+			if (createWorkBook(new FileInputStream(file)) == null) {
+				addActionError("檔案格式錯誤");
+			}
+		}
+
+		if (!hasActionErrors()) {
+			Workbook book = createWorkBook(new FileInputStream(file));
+			// book.getNumberOfSheets(); 判断Excel文件有多少个sheet
+			Sheet sheet = book.getSheetAt(0);
+			excelWorkSheet = new ExcelWorkSheet<Journal>();
+
+			// 保存工作单名称
+			Row firstRow = sheet.getRow(0);
+			Iterator<Cell> iterator = firstRow.iterator();
+
+			// 保存列名
+			List<String> cellNames = new ArrayList<String>();
+			while (iterator.hasNext()) {
+				cellNames.add(iterator.next().getStringCellValue());
+			}
+			excelWorkSheet.setColumns(cellNames);
+			for (int i = 1; i <= sheet.getLastRowNum(); i++) {
+				Row row = sheet.getRow(i);
+
+				String category = row.getCell(11).getStringCellValue();
+				if (category == null || category.trim().equals("")) {
+					category = "未註明";
+				}
+
+				resourcesBuyers = new ResourcesBuyers(row.getCell(9)
+						.getStringCellValue(), row.getCell(10)
+						.getStringCellValue(), RCategory.valueOf(category),
+						RType.valueOf(row.getCell(12).getStringCellValue()
+								.trim()), row.getCell(13).getStringCellValue(),
+						row.getCell(14).getStringCellValue());
+
+				journal = new Journal(row.getCell(0).getStringCellValue(), row
+						.getCell(1).getStringCellValue(), row.getCell(2)
+						.getStringCellValue(), "", row.getCell(3)
+						.getStringCellValue(), row.getCell(4)
+						.getStringCellValue(), row.getCell(5)
+						.getStringCellValue(), row.getCell(6)
+						.getStringCellValue(), "", "", "", row.getCell(7)
+						.getStringCellValue(), row.getCell(8)
+						.getStringCellValue(), 0, resourcesBuyers, null, "");
+
+				customer = new Customer();
+				customer.setName(row.getCell(15).getStringCellValue());
+				customer.setEngName(row.getCell(16).getStringCellValue());
+
+				List<Customer> customers = new ArrayList<Customer>();
+				customers.add(customer);
+				journal.setCustomers(customers);
+
+				String issn = row.getCell(3).getStringCellValue().trim();
+				String[] issnSplit = issn.split("-");
+				issn = issnSplit[0] + issnSplit[1];
+
+				customer = customerService.getCustomerByName(row
+						.getCell(15).getStringCellValue().trim());
+				long cusSerNo = customer.getSerNo();
+				if (journalService.isExist(issn)) {
+
+				} else {
+					journal.setExist("正常");
+				}
+
+				excelWorkSheet.getData().add(journal);
+			}
+			for (int i = 0; i < excelWorkSheet.getData().size(); i++) {
+				journal = excelWorkSheet.getData().get(i);
+				System.out.println(journal.getEnglishTitle());
+			}
+
+			return "import";
+		} else {
+			getRequest().setAttribute("goImport", "yes");
+			return EDIT;
+		}
 	}
 
 	/**
@@ -770,7 +829,8 @@ public class JournalAction extends GenericCRUDActionFull<Journal> {
 	}
 
 	/**
-	 * @param excelWorkSheet the excelWorkSheet to set
+	 * @param excelWorkSheet
+	 *            the excelWorkSheet to set
 	 */
 	public void setExcelWorkSheet(ExcelWorkSheet<Journal> excelWorkSheet) {
 		this.excelWorkSheet = excelWorkSheet;
