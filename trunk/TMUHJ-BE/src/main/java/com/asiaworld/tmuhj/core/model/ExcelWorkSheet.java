@@ -5,7 +5,7 @@ import java.util.List;
 
 public class ExcelWorkSheet<T> {
 	 private String sheetName;   
-	    private List<T> data = new ArrayList<T>();  //数据行   
+	    private List<T> data = new ArrayList<T>();  //數據行   
 	    private List<String> columns; //列名   
 	    public String getSheetName() {   
 	        return sheetName;   

@@ -145,8 +145,6 @@ public class ResourcesBuyers extends GenericEntityFull {
 				+ dbEngTitle + "]";
 	}
 
-	
-
 	public ResourcesBuyers() {
 		super();
 		// TODO Auto-generated constructor stub
