@@ -87,7 +87,7 @@ public class Journal extends GenericEntityFull {
 	private List<Customer> customers;
 	
 	@Transient
-	private String exist;
+	private String existStatus;
 
 	/**
 	 * @return the chineseTitle
@@ -330,17 +330,17 @@ public class Journal extends GenericEntityFull {
 	}
 
 	/**
-	 * @return the exist
+	 * @return the existStatus
 	 */
-	public String getExist() {
-		return exist;
+	public String getExistStatus() {
+		return existStatus;
 	}
 
 	/**
-	 * @param exist the exist to set
+	 * @param existStatus the existStatus to set
 	 */
-	public void setExist(String exist) {
-		this.exist = exist;
+	public void setExistStatus(String existStatus) {
+		this.existStatus = existStatus;
 	}
 
 	/* (non-Javadoc)
@@ -357,7 +357,7 @@ public class Journal extends GenericEntityFull {
 				+ publication + ", congressClassification="
 				+ congressClassification + ", version=" + version
 				+ ", resourcesBuyers=" + resourcesBuyers + ", customers="
-				+ customers + ", exist=" + exist + "]";
+				+ customers + ", existStatus=" + existStatus + "]";
 	}
 
 	public Journal() {
@@ -371,7 +371,7 @@ public class Journal extends GenericEntityFull {
 			String caption, String url, String numB, String publication,
 			String congressClassification, int version,
 			ResourcesBuyers resourcesBuyers, List<Customer> customers,
-			String exist) {
+			String existStatus) {
 		super();
 		this.chineseTitle = chineseTitle;
 		this.englishTitle = englishTitle;
@@ -389,7 +389,7 @@ public class Journal extends GenericEntityFull {
 		this.version = version;
 		this.resourcesBuyers = resourcesBuyers;
 		this.customers = customers;
-		this.exist = exist;
+		this.existStatus = existStatus;
 	}
 
 }

@@ -77,8 +77,8 @@ public class ResourcesUnionServiceTest extends GenericTest {
 		ds.setEntity(queryResourcesUnion);
 		ds = service.getByRestrictions(ds);
 		List<ResourcesUnion> resourcesUnions = ds.getResults();
-		Assert.assertEquals(2, resourcesUnions.size());
-		Assert.assertEquals(dbResourcesUnion1UpdNum, resourcesUnions.get(0)
+		Assert.assertEquals(33, resourcesUnions.size());
+		Assert.assertEquals(3, resourcesUnions.get(0)
 				.getCusSerNo());
 
 		// delete by id

@@ -101,16 +101,10 @@ public class Test {
 		Matcher matcher=pattern.matcher(url);
 		System.out.println(matcher.matches());
 		
-		
-		  //Create Blank workbook
-	      XSSFWorkbook workbook = new XSSFWorkbook(); 
-	      //Create file system using specific name
-	      FileOutputStream out = new FileOutputStream(
-	      new File("createworkbook.xlsx"));
-	      //write operation workbook using file out object 
-	      workbook.write(out);
-	      out.close();
-	      System.out.println("createworkbook.xlsx written successfully");
+String issn="11112222";
+String[] temp=issn.split("-");
+	      
+		System.out.println(temp.length);
 	   
 	}
 }

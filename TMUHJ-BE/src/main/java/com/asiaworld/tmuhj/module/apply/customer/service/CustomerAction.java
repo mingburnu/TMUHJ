@@ -10,6 +10,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 
 import com.asiaworld.tmuhj.core.model.DataSet;
+import com.asiaworld.tmuhj.core.model.Pager;
 import com.asiaworld.tmuhj.core.web.GenericCRUDActionFull;
 import com.asiaworld.tmuhj.module.apply.customer.entity.Customer;
 import com.asiaworld.tmuhj.module.apply.ipRange.entity.IpRange;
@@ -65,7 +66,38 @@ public class CustomerAction extends GenericCRUDActionFull<Customer> {
 	public String list() throws Exception {
 		getRequest()
 				.setAttribute("option", getRequest().getParameter("option"));
-		DataSet<Customer> ds = customerService.getByRestrictions(initDataSet());
+
+		String recordPerPage = getRequest().getParameter("recordPerPage");
+		String recordPoint = getRequest().getParameter("recordPoint");
+		DataSet<Customer> ds = initDataSet();
+		Pager pager = ds.getPager();
+
+		if (pager != null) {
+			if (recordPerPage != null && NumberUtils.isDigits(recordPerPage)
+					&& Integer.parseInt(recordPerPage) > 0
+					&& recordPoint != null && NumberUtils.isDigits(recordPoint)
+					&& Integer.parseInt(recordPoint) >= 0) {
+				pager.setRecordPerPage(Integer.parseInt(recordPerPage));
+				pager.setCurrentPage(Integer.parseInt(recordPoint)
+						/ Integer.parseInt(recordPerPage) + 1);
+				pager.setOffset(Integer.parseInt(recordPerPage)
+						* (pager.getCurrentPage() - 1));
+				pager.setRecordPoint(Integer.parseInt(recordPoint));
+				ds.setPager(pager);
+			} else if (recordPerPage != null
+					&& NumberUtils.isDigits(recordPerPage)
+					&& Integer.parseInt(recordPerPage) > 0
+					&& recordPoint == null) {
+				pager.setRecordPerPage(Integer.parseInt(recordPerPage));
+				pager.setRecordPoint(pager.getOffset());
+				ds.setPager(pager);
+			} else {
+				pager.setRecordPoint(pager.getOffset());
+				ds.setPager(pager);
+			}
+		}
+
+		ds = customerService.getByRestrictions(ds);
 		setDs(ds);
 		return LIST;
 	}

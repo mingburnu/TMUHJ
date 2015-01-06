@@ -10,26 +10,23 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.xssf.usermodel.XSSFRow;
-import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 
-import com.asiaworld.tmuhj.core.entity.GenericEntityFull;
 import com.asiaworld.tmuhj.core.enums.RCategory;
 import com.asiaworld.tmuhj.core.enums.RType;
 import com.asiaworld.tmuhj.core.model.DataSet;
 import com.asiaworld.tmuhj.core.model.ExcelWorkSheet;
+import com.asiaworld.tmuhj.core.model.Pager;
 import com.asiaworld.tmuhj.core.web.GenericCRUDActionFull;
 import com.asiaworld.tmuhj.module.apply.customer.entity.Customer;
 import com.asiaworld.tmuhj.module.apply.customer.service.CustomerService;
@@ -140,7 +137,38 @@ public class JournalAction extends GenericCRUDActionFull<Journal> {
 	public String list() throws Exception {
 		getRequest()
 				.setAttribute("option", getRequest().getParameter("option"));
-		DataSet<Journal> ds = journalService.getByRestrictions(initDataSet());
+
+		String recordPerPage = getRequest().getParameter("recordPerPage");
+		String recordPoint = getRequest().getParameter("recordPoint");
+		DataSet<Journal> ds = initDataSet();
+		Pager pager = ds.getPager();
+
+		if (pager != null) {
+			if (recordPerPage != null && NumberUtils.isDigits(recordPerPage)
+					&& Integer.parseInt(recordPerPage) > 0
+					&& recordPoint != null && NumberUtils.isDigits(recordPoint)
+					&& Integer.parseInt(recordPoint) >= 0) {
+				pager.setRecordPerPage(Integer.parseInt(recordPerPage));
+				pager.setCurrentPage(Integer.parseInt(recordPoint)
+						/ Integer.parseInt(recordPerPage) + 1);
+				pager.setOffset(Integer.parseInt(recordPerPage)
+						* (pager.getCurrentPage() - 1));
+				pager.setRecordPoint(Integer.parseInt(recordPoint));
+				ds.setPager(pager);
+			} else if (recordPerPage != null
+					&& NumberUtils.isDigits(recordPerPage)
+					&& Integer.parseInt(recordPerPage) > 0
+					&& recordPoint == null) {
+				pager.setRecordPerPage(Integer.parseInt(recordPerPage));
+				pager.setRecordPoint(pager.getOffset());
+				ds.setPager(pager);
+			} else {
+				pager.setRecordPoint(pager.getOffset());
+				ds.setPager(pager);
+			}
+		}
+
+		ds = journalService.getByRestrictions(ds);
 		List<Journal> results = ds.getResults();
 
 		int i = 0;
@@ -168,57 +196,7 @@ public class JournalAction extends GenericCRUDActionFull<Journal> {
 				|| getEntity().getIssn().trim().equals("")) {
 			addActionError("ISSN不得空白");
 		} else {
-			String regex = "\\d{7}[\\dX]";
-			Pattern pattern = Pattern.compile(regex);
-
-			Matcher matcher = pattern.matcher(getEntity().getIssn()
-					.toUpperCase());
-			if (matcher.matches()) {
-				int sum = Integer.parseInt(getEntity().getIssn()
-						.substring(0, 1))
-						* 8
-						+ Integer.parseInt(getEntity().getIssn()
-								.substring(1, 2))
-						* 7
-						+ Integer.parseInt(getEntity().getIssn()
-								.substring(2, 3))
-						* 6
-						+ Integer.parseInt(getEntity().getIssn()
-								.substring(3, 4))
-						* 5
-						+ Integer.parseInt(getEntity().getIssn()
-								.substring(4, 5))
-						* 4
-						+ Integer.parseInt(getEntity().getIssn()
-								.substring(5, 6))
-						* 3
-						+ Integer.parseInt(getEntity().getIssn()
-								.substring(6, 7)) * 2;
-
-				int remainder = sum % 11;
-
-				if (remainder == 0) {
-					if (!getEntity().getIssn().substring(7).equals("0")) {
-						addActionError("ISSN不正確");
-					}
-				} else {
-					if (11 - remainder == 10) {
-						if (!getEntity().getIssn().substring(7).toUpperCase()
-								.equals("X")) {
-							addActionError("ISSN不正確");
-						}
-					} else {
-						if (getEntity().getIssn().substring(7).equals("X")
-								|| getEntity().getIssn().substring(7)
-										.equals("x")
-								|| Integer.parseInt(getEntity().getIssn()
-										.substring(7)) != 11 - remainder) {
-							addActionError("ISSN不正確");
-						}
-					}
-				}
-
-			} else {
+			if (!isIssn(getEntity().getIssn())) {
 				addActionError("ISSN不正確");
 			}
 		}
@@ -342,57 +320,7 @@ public class JournalAction extends GenericCRUDActionFull<Journal> {
 				|| getEntity().getIssn().trim().equals("")) {
 			addActionError("ISSN不得空白");
 		} else {
-			String regex = "\\d{7}[\\dX]";
-			Pattern pattern = Pattern.compile(regex);
-
-			Matcher matcher = pattern.matcher(getEntity().getIssn()
-					.toUpperCase());
-			if (matcher.matches()) {
-				int sum = Integer.parseInt(getEntity().getIssn()
-						.substring(0, 1))
-						* 8
-						+ Integer.parseInt(getEntity().getIssn()
-								.substring(1, 2))
-						* 7
-						+ Integer.parseInt(getEntity().getIssn()
-								.substring(2, 3))
-						* 6
-						+ Integer.parseInt(getEntity().getIssn()
-								.substring(3, 4))
-						* 5
-						+ Integer.parseInt(getEntity().getIssn()
-								.substring(4, 5))
-						* 4
-						+ Integer.parseInt(getEntity().getIssn()
-								.substring(5, 6))
-						* 3
-						+ Integer.parseInt(getEntity().getIssn()
-								.substring(6, 7)) * 2;
-
-				int remainder = sum % 11;
-
-				if (remainder == 0) {
-					if (!getEntity().getIssn().substring(7).equals("0")) {
-						addActionError("ISSN不正確");
-					}
-				} else {
-					if (11 - remainder == 10) {
-						if (!getEntity().getIssn().substring(7).toUpperCase()
-								.equals("X")) {
-							addActionError("ISSN不正確");
-						}
-					} else {
-						if (getEntity().getIssn().substring(7).equals("X")
-								|| getEntity().getIssn().substring(7)
-										.equals("x")
-								|| Integer.parseInt(getEntity().getIssn()
-										.substring(7)) != 11 - remainder) {
-							addActionError("ISSN不正確");
-						}
-					}
-				}
-
-			} else {
+			if (!isIssn(getEntity().getIssn())) {
 				addActionError("ISSN不正確");
 			}
 		}
@@ -635,17 +563,6 @@ public class JournalAction extends GenericCRUDActionFull<Journal> {
 		}
 	}
 
-	// 判断文件类型
-	public Workbook createWorkBook(InputStream is) throws IOException {
-		if (fileFileName.toLowerCase().endsWith("xls")) {
-			return new HSSFWorkbook(is);
-		}
-		if (fileFileName.toLowerCase().endsWith("xlsx")) {
-			return new XSSFWorkbook(is);
-		}
-		return null;
-	}
-
 	public String imports() throws Exception {
 		if (file == null || !file.isFile()) {
 			addActionError("請選擇檔案");
@@ -657,11 +574,11 @@ public class JournalAction extends GenericCRUDActionFull<Journal> {
 
 		if (!hasActionErrors()) {
 			Workbook book = createWorkBook(new FileInputStream(file));
-			// book.getNumberOfSheets(); 判断Excel文件有多少个sheet
+			// book.getNumberOfSheets(); 判斷Excel文件有多少個sheet
 			Sheet sheet = book.getSheetAt(0);
 			excelWorkSheet = new ExcelWorkSheet<Journal>();
 
-			// 保存工作单名称
+			// 保存工作單名稱
 			Row firstRow = sheet.getRow(0);
 			Iterator<Cell> iterator = firstRow.iterator();
 
@@ -706,21 +623,44 @@ public class JournalAction extends GenericCRUDActionFull<Journal> {
 
 				String issn = row.getCell(3).getStringCellValue().trim();
 				String[] issnSplit = issn.split("-");
-				issn = issnSplit[0] + issnSplit[1];
 
-				customer = customerService.getCustomerByName(row
-						.getCell(15).getStringCellValue().trim());
-				long cusSerNo = customer.getSerNo();
-				if (journalService.isExist(issn)) {
+				issn = "";
+				int j = 0;
+				while (j < issnSplit.length) {
+					issn = issn + issnSplit[j];
+					j++;
+				}
 
+				if (isIssn(issn)) {
+					long jouSerNo = journalService.getJouSerNoByIssn(issn
+							.toUpperCase());
+					long cusSerNo = customerService.getCusSerNoByName(row
+							.getCell(15).getStringCellValue().trim(), row
+							.getCell(16).getStringCellValue().trim());
+					if (cusSerNo != 0) {
+						if (jouSerNo != 0) {
+							if (resourcesUnionService.isExist(
+									journalService.getBySerNo(jouSerNo),
+									Journal.class, cusSerNo)) {
+
+								journal.setExistStatus("已存在");
+							} else {
+								journal.setExistStatus("正常");
+							}
+						} else {
+							journal.setExistStatus("正常");
+						}
+					} else {
+						journal.setExistStatus("資料錯誤");
+					}
 				} else {
-					journal.setExist("正常");
+					journal.setExistStatus("資料錯誤");
 				}
 
 				excelWorkSheet.getData().add(journal);
 			}
-			for (int i = 0; i < excelWorkSheet.getData().size(); i++) {
-				journal = excelWorkSheet.getData().get(i);
+			for (int k = 0; k < excelWorkSheet.getData().size(); k++) {
+				journal = excelWorkSheet.getData().get(k);
 				System.out.println(journal.getEnglishTitle());
 			}
 
@@ -729,6 +669,57 @@ public class JournalAction extends GenericCRUDActionFull<Journal> {
 			getRequest().setAttribute("goImport", "yes");
 			return EDIT;
 		}
+	}
+
+	public boolean isIssn(String issn) {
+		String regex = "\\d{7}[\\dX]";
+		Pattern pattern = Pattern.compile(regex);
+
+		Matcher matcher = pattern.matcher(issn.toUpperCase());
+		if (matcher.matches()) {
+			int sum = Integer.parseInt(issn.substring(0, 1)) * 8
+					+ Integer.parseInt(issn.substring(1, 2)) * 7
+					+ Integer.parseInt(issn.substring(2, 3)) * 6
+					+ Integer.parseInt(issn.substring(3, 4)) * 5
+					+ Integer.parseInt(issn.substring(4, 5)) * 4
+					+ Integer.parseInt(issn.substring(5, 6)) * 3
+					+ Integer.parseInt(issn.substring(6, 7)) * 2;
+
+			int remainder = sum % 11;
+
+			if (remainder == 0) {
+				if (!issn.substring(7).equals("0")) {
+					return false;
+				}
+			} else {
+				if (11 - remainder == 10) {
+					if (!issn.substring(7).toUpperCase().equals("X")) {
+						return false;
+					}
+				} else {
+					if (issn.substring(7).equals("X")
+							|| issn.substring(7).equals("x")
+							|| Integer.parseInt(issn.substring(7)) != 11 - remainder) {
+						return false;
+					}
+				}
+			}
+
+		} else {
+			return false;
+		}
+		return true;
+	}
+
+	// 判斷文件類型
+	public Workbook createWorkBook(InputStream is) throws IOException {
+		if (fileFileName.toLowerCase().endsWith("xls")) {
+			return new HSSFWorkbook(is);
+		}
+		if (fileFileName.toLowerCase().endsWith("xlsx")) {
+			return new XSSFWorkbook(is);
+		}
+		return null;
 	}
 
 	/**

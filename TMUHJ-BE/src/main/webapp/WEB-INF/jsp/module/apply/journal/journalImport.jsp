@@ -26,9 +26,13 @@
 	<table cellspacing="1" class="list-table">
 		<tbody>
 			<tr>
+				<th></th>
 				<c:forEach var="item" items="${excelWorkSheet.columns}"
 					varStatus="status">
-					<th>${item}</th>
+					<c:if
+						test="${(1 eq status.index) || (3 eq status.index)||(11 eq status.index)||(15 eq status.index)}">
+						<th>${item}</th>
+					</c:if>
 				</c:forEach>
 				<th></th>
 			</tr>
@@ -38,30 +42,16 @@
 					<!--<td align="center" class="td_first" nowrap><input
 						type="checkbox" class="checkbox" name="checkItem"
 						value="${item.serNo}"></td>-->
-					<td>${item.chineseTitle }</td>
+					<td><input type="checkbox" class="checkbox" name="checkItem"
+						value=""></td>
 					<td>${item.englishTitle }</td>
-					<td>${item.abbreviationTitle }</td>
 					<td>${item.issn }</td>
-					<td>${item.languages }</td>
-					<td>${item.publishName }</td>
-					<td>${item.publishYear }</td>
-					<td>${item.publication }</td>
-					<td>${item.congressClassification }</td>
-					<td>${item.resourcesBuyers.startDate }</td>
-					<td>${item.resourcesBuyers.maturityDate }</td>
 					<td>${item.resourcesBuyers.rCategory.category }</td>
-					<td align="center">${item.resourcesBuyers.rType.type }</td>
-					<td>${item.resourcesBuyers.dbChtTitle }</td>
-					<td align="center">${item.resourcesBuyers.dbEngTitle }</td>
 					<td align="center"><c:forEach var="customer"
 							items="${item.customers}" varStatus="status">
 				${customer.name }
-				</c:forEach></td>
-					<td align="center"><c:forEach var="customer"
-							items="${item.customers}" varStatus="status">
-				${customer.engName }
-				</c:forEach></td>
-					<td align="center">${item.exist }</td>
+				</c:forEach></td>					
+					<td align="center">${item.existStatus }</td>
 				</tr>
 			</c:forEach>
 		</tbody>
