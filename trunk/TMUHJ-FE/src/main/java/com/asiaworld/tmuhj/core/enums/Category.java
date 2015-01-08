@@ -6,7 +6,7 @@ package com.asiaworld.tmuhj.core.enums;
  * @author Roderick
  * @version 2014/10/15
  */
-public enum RCategory {
+public enum Category {
 	/** 買斷. */
 	買斷("買斷"),
 
@@ -18,10 +18,10 @@ public enum RCategory {
 
 	private String category;
 
-	private RCategory() {
+	private Category() {
 	}
 
-	private RCategory(String category) {
+	private Category(String category) {
 		this.category = category;
 	}
 

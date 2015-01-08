@@ -95,7 +95,7 @@ function chagePageSize(recordPerPage,recordPoint){
 
 //批次匯入
 function goImport(){
-	goDetail('<%=request.getContextPath()%>/crud/apply.journal.query.action?'+'goImport=yes','期刊-匯入');
+	goDetail('<%=request.getContextPath()%>/crud/apply.journal.query.action?'+'goQueue=yes','期刊-匯入');
 }
 </script>
 

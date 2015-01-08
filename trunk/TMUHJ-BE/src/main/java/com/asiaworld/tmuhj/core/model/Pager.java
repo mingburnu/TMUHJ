@@ -2,6 +2,7 @@ package com.asiaworld.tmuhj.core.model;
 
 import java.io.Serializable;
 
+import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -36,12 +37,12 @@ public class Pager implements Serializable {
 	private Long totalRecord;
 
 	private Integer offset = 0;
-	
+
 	/**
 	 * 紀錄點
 	 */
 	private Integer recordPoint;
-	
+
 	public Integer getRecordPerPage() {
 		return recordPerPage;
 	}
@@ -88,10 +89,36 @@ public class Pager implements Serializable {
 	}
 
 	/**
-	 * @param recordPoint the recordPoint to set
+	 * @param recordPoint
+	 *            the recordPoint to set
 	 */
 	public void setRecordPoint(Integer recordPoint) {
 		this.recordPoint = recordPoint;
+	}
+
+	public static Pager getChangedPager(String recordPerPage,
+			String recordPoint, Pager pager) {
+		if (recordPerPage != null && NumberUtils.isDigits(recordPerPage)
+				&& Integer.parseInt(recordPerPage) > 0 && recordPoint != null
+				&& NumberUtils.isDigits(recordPoint)
+				&& Integer.parseInt(recordPoint) >= 0) {
+			pager.setRecordPerPage(Integer.parseInt(recordPerPage));
+			pager.setCurrentPage(Integer.parseInt(recordPoint)
+					/ Integer.parseInt(recordPerPage) + 1);
+			pager.setOffset(Integer.parseInt(recordPerPage)
+					* (pager.getCurrentPage() - 1));
+			pager.setRecordPoint(Integer.parseInt(recordPoint));
+
+			return pager;
+		} else if (recordPerPage != null && NumberUtils.isDigits(recordPerPage)
+				&& Integer.parseInt(recordPerPage) > 0 && recordPoint == null) {
+			pager.setRecordPerPage(Integer.parseInt(recordPerPage));
+			pager.setRecordPoint(pager.getOffset());
+			return pager;
+		} else {
+			pager.setRecordPoint(pager.getOffset());
+			return pager;
+		}
 	}
 
 }

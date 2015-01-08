@@ -6,7 +6,7 @@ package com.asiaworld.tmuhj.core.enums;
  * @author Roderick
  * @version 2014/10/15
  */
-public enum RType {
+public enum Type {
 	/** 電子書. */
 	電子書("電子書"),
 
@@ -18,10 +18,10 @@ public enum RType {
 
 	private String type;
 
-	private RType() {
+	private Type() {
 	}
 
-	private RType(String type) {
+	private Type(String type) {
 		this.type = type;
 	}
 

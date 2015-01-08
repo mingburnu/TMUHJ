@@ -38,7 +38,7 @@ public class JournalService extends GenericServiceFull<Journal> {
 		Assert.notNull(ds.getEntity());
 		Journal entity = ds.getEntity();
 		DsRestrictions restrictions = DsBeanFactory.getDsRestrictions();
-
+		
 		if (StringUtils.isNotEmpty(entity.getChineseTitle())
 				&& StringUtils.isNotBlank(entity.getChineseTitle())) {
 			restrictions.likeIgnoreCase("chineseTitle",

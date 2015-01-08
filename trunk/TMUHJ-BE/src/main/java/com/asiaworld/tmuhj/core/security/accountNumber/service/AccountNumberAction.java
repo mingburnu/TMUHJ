@@ -76,38 +76,12 @@ public class AccountNumberAction extends GenericCRUDActionFull<AccountNumber> {
 
 	@Override
 	public String list() throws Exception {
-		String recordPerPage = getRequest().getParameter("recordPerPage");
-		String recordPoint = getRequest().getParameter("recordPoint");
-		DataSet<AccountNumber> ds=initDataSet();
-		Pager pager = ds.getPager();
+		DataSet<AccountNumber> ds = accountNumberService
+				.getByRestrictions(initDataSet());
+		ds.setPager(Pager.getChangedPager(
+				getRequest().getParameter("recordPerPage"), getRequest()
+						.getParameter("recordPoint"), ds.getPager()));
 
-		if (pager != null) {
-			if (recordPerPage != null && NumberUtils.isDigits(recordPerPage)
-					&& Integer.parseInt(recordPerPage) > 0
-					&& recordPoint != null && NumberUtils.isDigits(recordPoint)
-					&& Integer.parseInt(recordPoint) >= 0) {
-				pager.setRecordPerPage(Integer.parseInt(recordPerPage));
-				pager.setCurrentPage(Integer.parseInt(recordPoint)
-						/ Integer.parseInt(recordPerPage) + 1);
-				pager.setOffset(Integer.parseInt(recordPerPage)
-						* (pager.getCurrentPage() - 1));
-				pager.setRecordPoint(Integer.parseInt(recordPoint));
-				ds.setPager(pager);
-			} else if (recordPerPage != null
-					&& NumberUtils.isDigits(recordPerPage)
-					&& Integer.parseInt(recordPerPage) > 0
-					&& recordPoint == null) {
-				pager.setRecordPerPage(Integer.parseInt(recordPerPage));
-				pager.setRecordPoint(pager.getOffset());
-				ds.setPager(pager);
-			} else {
-				pager.setRecordPoint(pager.getOffset());
-				ds.setPager(pager);
-			}
-		}		
-		
-		ds = accountNumberService
-				.getByRestrictions(ds);
 		List<AccountNumber> results = ds.getResults();
 
 		int i = 0;

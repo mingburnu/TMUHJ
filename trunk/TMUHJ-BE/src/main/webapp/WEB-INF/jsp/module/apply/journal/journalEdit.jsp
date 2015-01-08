@@ -81,7 +81,7 @@
 		$("#div_Detail_2 .content .header .title").html(" ");
 	}
 
-	function analysis() {
+	function goQueue() {
 		function getDoc(frame) {
 			var doc = null;
 
@@ -108,16 +108,16 @@
 		}
 
 		showLoading();
-		alert(document.getElementById("apply_journal_imports"));
-		var formObj = $("form#apply_journal_imports");
-		var formURL = $("form#apply_journal_imports").attr("action");
+		//alert(document.getElementById("apply_journal_queue"));
+		var formObj = $("form#apply_journal_queue");
+		var formURL = $("form#apply_journal_queue").attr("action");
 
 		if (window.FormData !== undefined) // for HTML5 browsers
 		//			if(false)
 		{
 
 			var formData = new FormData(document
-					.getElementById("apply_journal_imports"));
+					.getElementById("apply_journal_queue"));
 			$.ajax({
 				url : formURL,
 				type : 'POST',
@@ -127,11 +127,11 @@
 				cache : false,
 				processData : false,
 				success : function(data, textStatus, jqXHR) {
-					$("#div_Detail").show();
+					$("#div_Detail_2").show();
 					UI_Resize();
 					$(window).scrollTop(0);
-					$("#div_Detail .content > .header > .title").html("期刊-匯入");
-					$("#div_Detail .content > .contain").empty().html(data);
+					$("#div_Detail_2 .content > .header > .title").html("期刊-匯入");
+					$("#div_Detail_2 .content > .contain").empty().html(data);
 					closeLoading();
 				},
 				error : function(jqXHR, textStatus, errorThrown) {
@@ -161,11 +161,11 @@
 				var doc = getDoc(iframe[0]);
 				var docRoot = doc.body ? doc.body : doc.documentElement;
 				var data = docRoot.innerHTML;
-				$("#div_Detail").show();
+				$("#div_Detail_2").show();
 				UI_Resize();
 				$(window).scrollTop(0);
-				$("#div_Detail .content > .header > .title").html("匯入");
-				$("#div_Detail .content > .contain").empty().html(data);
+				$("#div_Detail_2 .content > .header > .title").html("期刊-匯入");
+				$("#div_Detail_2 .content > .contain").empty().html(data);
 				closeLoading();
 			});
 		}
@@ -191,7 +191,7 @@ input#customer_name {
 </head>
 <body>
 	<c:choose>
-		<c:when test="${(empty entity.serNo) && (empty goImport) }">
+		<c:when test="${(empty entity.serNo) && (empty goQueue) }">
 			<s:form namespace="/crud" action="apply.journal.save">
 				<s:hidden name="entity.serNo" />
 				<table cellspacing="1" class="detail-table">
@@ -380,8 +380,8 @@ input#customer_name {
 			</s:form>
 		</c:when>
 
-		<c:when test="${not empty goImport}">
-			<s:form namespace="/crud" action="apply.journal.imports"
+		<c:when test="${not empty goQueue}">
+			<s:form namespace="/crud" action="apply.journal.queue"
 				enctype="multipart/form-data" method="post">
 				<table cellspacing="1" class="detail-table">
 					<tr>
@@ -395,7 +395,7 @@ input#customer_name {
 					<div class="detail-func-button">
 						<a class="state-default" onclick="clearDetail_2();closeDetail();">取消</a>
 						&nbsp;<a class="state-default" onclick="resetData();">重置</a>&nbsp;<a
-							id="ports" class="state-default" onclick="analysis();">下一步</a>
+							id="ports" class="state-default" onclick="goQueue();">下一步</a>
 					</div>
 				</div>
 				<div class="detail_note">

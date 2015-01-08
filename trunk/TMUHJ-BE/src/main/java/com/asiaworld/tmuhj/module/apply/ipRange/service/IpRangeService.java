@@ -34,9 +34,9 @@ public class IpRangeService extends GenericServiceFull<IpRange> {
 			throws Exception {
 		Assert.notNull(ds);
 		Assert.notNull(ds.getEntity());
-		DsRestrictions restrictions = DsBeanFactory.getDsRestrictions();
 		IpRange entity = ds.getEntity();
-
+		DsRestrictions restrictions = DsBeanFactory.getDsRestrictions();
+		
 		if (entity.getCusSerNo() > 0) {
 			restrictions.eq("cusSerNo", entity.getCusSerNo());
 		}

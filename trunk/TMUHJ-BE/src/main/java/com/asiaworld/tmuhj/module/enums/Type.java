@@ -1,4 +1,4 @@
-package com.asiaworld.tmuhj.core.enums;
+package com.asiaworld.tmuhj.module.enums;
 
 /**
  * 資源種類
@@ -6,7 +6,7 @@ package com.asiaworld.tmuhj.core.enums;
  * @author Roderick
  * @version 2014/10/15
  */
-public enum RType {
+public enum Type {
 	/** 電子書. */
 	電子書("電子書"),
 
@@ -14,14 +14,17 @@ public enum RType {
 	期刊("期刊"),
 
 	/** 資料庫. */
-	資料庫("資料庫");
+	資料庫("資料庫"),
+
+	/** 不明. */
+	不明("不明");
 
 	private String type;
 
-	private RType() {
+	private Type() {
 	}
 
-	private RType(String type) {
+	private Type(String type) {
 		this.type = type;
 	}
 

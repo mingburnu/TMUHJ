@@ -37,7 +37,7 @@ public class CustomerService extends GenericServiceFull<Customer> {
 		Assert.notNull(ds.getEntity());
 		Customer entity = ds.getEntity();
 		DsRestrictions restrictions = DsBeanFactory.getDsRestrictions();
-
+		
 		if (StringUtils.isNotEmpty(entity.getEngName())
 				&& StringUtils.isNotBlank(entity.getEngName())) {
 			restrictions.likeIgnoreCase("engName", entity.getEngName(),

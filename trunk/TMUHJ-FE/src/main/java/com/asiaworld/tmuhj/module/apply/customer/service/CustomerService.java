@@ -1,10 +1,6 @@
 package com.asiaworld.tmuhj.module.apply.customer.service;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.math.NumberUtils;
-import org.apache.struts2.ServletActionContext;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -37,46 +33,17 @@ public class CustomerService extends GenericServiceFull<Customer> {
 		return dao.findByRestrictions(restrictions, ds);
 	}
 
-	public DataSet<Customer> getBySql(DataSet<Customer> ds) throws Exception {
+	public DataSet<Customer> getBySql(DataSet<Customer> ds, String keywords) throws Exception {
 		Assert.notNull(ds);
 		Assert.notNull(ds.getEntity());
 
 		DsRestrictions restrictions = DsBeanFactory.getDsRestrictions();
 
-		HttpServletRequest request = ServletActionContext.getRequest();
-
-		String keywords = request.getParameter("keywords");
 		if (keywords == null || keywords.trim().equals("")) {
 			Pager pager = ds.getPager();
 			pager.setTotalRecord(0L);
 			ds.setPager(pager);
 			return ds;
-		}
-
-		String recordPerPage = request.getParameter("recordPerPage");
-		String recordPoint = request.getParameter("recordPoint");
-
-		Pager pager = ds.getPager();
-
-		if (recordPerPage != null && NumberUtils.isDigits(recordPerPage)
-				&& Integer.parseInt(recordPerPage) > 0 && recordPoint != null
-				&& NumberUtils.isDigits(recordPoint)
-				&& Integer.parseInt(recordPoint) >= 0) {
-			pager.setRecordPerPage(Integer.parseInt(recordPerPage));
-			pager.setCurrentPage(Integer.parseInt(recordPoint)
-					/ Integer.parseInt(recordPerPage) + 1);
-			pager.setOffset(Integer.parseInt(recordPerPage)
-					* (pager.getCurrentPage() - 1));
-			pager.setRecordPoint(Integer.parseInt(recordPoint));
-			ds.setPager(pager);
-		} else if (recordPerPage != null && NumberUtils.isDigits(recordPerPage)
-				&& Integer.parseInt(recordPerPage) > 0 && recordPoint == null) {
-			pager.setRecordPerPage(Integer.parseInt(recordPerPage));
-			pager.setRecordPoint(pager.getOffset());
-			ds.setPager(pager);
-		} else {
-			pager.setRecordPoint(pager.getOffset());
-			ds.setPager(pager);
 		}
 
 		if (StringUtils.isNotEmpty(keywords)) {
@@ -107,7 +74,7 @@ public class CustomerService extends GenericServiceFull<Customer> {
 			}
 
 			if (sql.isEmpty()) {
-				pager = ds.getPager();
+				Pager pager = ds.getPager();
 				pager.setTotalRecord(0L);
 				ds.setPager(pager);
 				return ds;
