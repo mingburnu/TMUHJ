@@ -131,7 +131,7 @@ function chagePageSize(recordPerPage,recordPoint){
 							<c:choose>
 								<c:when test="${option=='entity.dbChtTitle' }">
 									<td align="left"><input type="text"
-										name="entity.chineseTitle" maxlength="20" id="search"
+										name="entity.dbChtTitle" maxlength="20" id="search"
 										class="input_text"
 										value="<%if (request
 								.getParameter(request.getParameter("option")) != null) {
@@ -141,7 +141,7 @@ function chagePageSize(recordPerPage,recordPoint){
 									</td>
 								</c:when>
 								<c:when test="${option=='entity.dbEngTitle' }">
-									<td align="left"><input type="text" name="entity.isbn"
+									<td align="left"><input type="text" name="entity.dbEngTitle"
 										maxlength="20" id="search" class="input_text"
 										value="<%if (request
 								.getParameter(request.getParameter("option")) != null) {

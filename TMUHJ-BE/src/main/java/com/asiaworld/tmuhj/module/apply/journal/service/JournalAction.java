@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
@@ -22,8 +23,6 @@ import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 
-import com.asiaworld.tmuhj.core.enums.RCategory;
-import com.asiaworld.tmuhj.core.enums.RType;
 import com.asiaworld.tmuhj.core.model.DataSet;
 import com.asiaworld.tmuhj.core.model.ExcelWorkSheet;
 import com.asiaworld.tmuhj.core.model.Pager;
@@ -35,6 +34,8 @@ import com.asiaworld.tmuhj.module.apply.resourcesBuyers.entity.ResourcesBuyers;
 import com.asiaworld.tmuhj.module.apply.resourcesBuyers.service.ResourcesBuyersService;
 import com.asiaworld.tmuhj.module.apply.resourcesUnion.entity.ResourcesUnion;
 import com.asiaworld.tmuhj.module.apply.resourcesUnion.service.ResourcesUnionService;
+import com.asiaworld.tmuhj.module.enums.Category;
+import com.asiaworld.tmuhj.module.enums.Type;
 
 @Controller
 @SuppressWarnings("serial")
@@ -121,10 +122,10 @@ public class JournalAction extends GenericCRUDActionFull<Journal> {
 					.getBySerNo(resourcesBuyersSerNo);
 			journal.setCustomers(customers);
 			setEntity(journal);
-		} else if (getRequest().getParameter("goImport") != null
-				&& getRequest().getParameter("goImport").equals("yes")) {
-			getRequest().setAttribute("goImport",
-					getRequest().getParameter("goImport"));
+		} else if (getRequest().getParameter("goQueue") != null
+				&& getRequest().getParameter("goQueue").equals("yes")) {
+			getRequest().setAttribute("goQueue",
+					getRequest().getParameter("goQueue"));
 		} else {
 			List<Customer> customers = new ArrayList<Customer>();
 			journal.setCustomers(customers);
@@ -138,37 +139,11 @@ public class JournalAction extends GenericCRUDActionFull<Journal> {
 		getRequest()
 				.setAttribute("option", getRequest().getParameter("option"));
 
-		String recordPerPage = getRequest().getParameter("recordPerPage");
-		String recordPoint = getRequest().getParameter("recordPoint");
-		DataSet<Journal> ds = initDataSet();
-		Pager pager = ds.getPager();
+		DataSet<Journal> ds = journalService.getByRestrictions(initDataSet());
+		ds.setPager(Pager.getChangedPager(
+				getRequest().getParameter("recordPerPage"), getRequest()
+						.getParameter("recordPoint"), ds.getPager()));
 
-		if (pager != null) {
-			if (recordPerPage != null && NumberUtils.isDigits(recordPerPage)
-					&& Integer.parseInt(recordPerPage) > 0
-					&& recordPoint != null && NumberUtils.isDigits(recordPoint)
-					&& Integer.parseInt(recordPoint) >= 0) {
-				pager.setRecordPerPage(Integer.parseInt(recordPerPage));
-				pager.setCurrentPage(Integer.parseInt(recordPoint)
-						/ Integer.parseInt(recordPerPage) + 1);
-				pager.setOffset(Integer.parseInt(recordPerPage)
-						* (pager.getCurrentPage() - 1));
-				pager.setRecordPoint(Integer.parseInt(recordPoint));
-				ds.setPager(pager);
-			} else if (recordPerPage != null
-					&& NumberUtils.isDigits(recordPerPage)
-					&& Integer.parseInt(recordPerPage) > 0
-					&& recordPoint == null) {
-				pager.setRecordPerPage(Integer.parseInt(recordPerPage));
-				pager.setRecordPoint(pager.getOffset());
-				ds.setPager(pager);
-			} else {
-				pager.setRecordPoint(pager.getOffset());
-				ds.setPager(pager);
-			}
-		}
-
-		ds = journalService.getByRestrictions(ds);
 		List<Journal> results = ds.getResults();
 
 		int i = 0;
@@ -235,8 +210,8 @@ public class JournalAction extends GenericCRUDActionFull<Journal> {
 					.save(new ResourcesBuyers(getRequest().getParameter(
 							"resourcesBuyers.startDate"), getRequest()
 							.getParameter("resourcesBuyers.maturityDate"),
-							RCategory.valueOf(getRequest().getParameter(
-									"resourcesBuyers.rCategory")), RType
+							Category.valueOf(getRequest().getParameter(
+									"resourcesBuyers.rCategory")), Type
 									.valueOf(getRequest().getParameter(
 											"resourcesBuyers.rType")),
 							getRequest().getParameter(
@@ -362,9 +337,9 @@ public class JournalAction extends GenericCRUDActionFull<Journal> {
 					"resourcesBuyers.startDate"));
 			resourcesBuyers.setMaturityDate(getRequest().getParameter(
 					"resourcesBuyers.maturityDate"));
-			resourcesBuyers.setrCategory(RCategory.valueOf(getRequest()
+			resourcesBuyers.setrCategory(Category.valueOf(getRequest()
 					.getParameter("resourcesBuyers.rCategory")));
-			resourcesBuyers.setrType(RType.valueOf(getRequest().getParameter(
+			resourcesBuyers.setrType(Type.valueOf(getRequest().getParameter(
 					"resourcesBuyers.rType")));
 			resourcesBuyers.setDbChtTitle(getRequest().getParameter(
 					"resourcesBuyers.dbChtTitle"));
@@ -563,7 +538,7 @@ public class JournalAction extends GenericCRUDActionFull<Journal> {
 		}
 	}
 
-	public String imports() throws Exception {
+	public String queue() throws Exception {
 		if (file == null || !file.isFile()) {
 			addActionError("請選擇檔案");
 		} else {
@@ -591,31 +566,85 @@ public class JournalAction extends GenericCRUDActionFull<Journal> {
 			for (int i = 1; i <= sheet.getLastRowNum(); i++) {
 				Row row = sheet.getRow(i);
 
-				String category = row.getCell(11).getStringCellValue();
-				if (category == null || category.trim().equals("")) {
-					category = "未註明";
+				String[] rowValues = new String[17];
+				int k = 0;
+				while (k < rowValues.length) {
+					if (row.getCell(k) == null) {
+						rowValues[k] = "";
+					} else {
+						int typeInt = row.getCell(k).getCellType();
+						switch (typeInt) {
+						case 0:
+							String tempNumeric = "";
+							tempNumeric = tempNumeric
+									+ row.getCell(k).getNumericCellValue();
+							rowValues[k] = tempNumeric;
+							break;
+
+						case 1:
+							rowValues[k] = row.getCell(k).getStringCellValue().trim();
+							break;
+
+						case 2:
+							rowValues[k] = row.getCell(k).getCellFormula().trim();
+							break;
+
+						case 3:
+							rowValues[k] = "";
+							break;
+
+						case 4:
+							String tempBoolean = "";
+							tempBoolean = ""
+									+ row.getCell(k).getBooleanCellValue();
+							rowValues[k] = tempBoolean;
+							break;
+
+						case 5:
+							String tempByte = "";
+							tempByte = tempByte
+									+ row.getCell(k).getErrorCellValue();
+							rowValues[k] = tempByte;
+							break;
+						}
+
+					}
+					k++;
 				}
 
-				resourcesBuyers = new ResourcesBuyers(row.getCell(9)
-						.getStringCellValue(), row.getCell(10)
-						.getStringCellValue(), RCategory.valueOf(category),
-						RType.valueOf(row.getCell(12).getStringCellValue()
-								.trim()), row.getCell(13).getStringCellValue(),
-						row.getCell(14).getStringCellValue());
+				String category = "";
+				if (rowValues[11].equals("")) {
+					category = "未註明";
+				} else if (!rowValues[11].equals("買斷")
+						&& !rowValues[11].equals("租貸")) {
+					category = "不明";
+				} else {
+					category = rowValues[11];
+				}
 
-				journal = new Journal(row.getCell(0).getStringCellValue(), row
-						.getCell(1).getStringCellValue(), row.getCell(2)
-						.getStringCellValue(), "", row.getCell(3)
-						.getStringCellValue(), row.getCell(4)
-						.getStringCellValue(), row.getCell(5)
-						.getStringCellValue(), row.getCell(6)
-						.getStringCellValue(), "", "", "", row.getCell(7)
-						.getStringCellValue(), row.getCell(8)
-						.getStringCellValue(), 0, resourcesBuyers, null, "");
+				String type = "";
+				if (rowValues[12].equals("")) {
+					type = "不明";
+				} else if (!rowValues[12].equals("期刊")
+						&& !rowValues[12].equals("電子書")
+						&& !rowValues[12].equals("資料庫")) {
+					type = "不明";
+				} else {
+					type = rowValues[12];
+				}
+
+				resourcesBuyers = new ResourcesBuyers(rowValues[9],
+						rowValues[10], Category.valueOf(category),
+						Type.valueOf(type), rowValues[13], rowValues[14]);
+
+				journal = new Journal(rowValues[0], rowValues[1], rowValues[2],
+						"", rowValues[3], rowValues[4], rowValues[5],
+						rowValues[6], "", "", "", rowValues[7], rowValues[8],
+						0, resourcesBuyers, null, "");
 
 				customer = new Customer();
-				customer.setName(row.getCell(15).getStringCellValue());
-				customer.setEngName(row.getCell(16).getStringCellValue());
+				customer.setName(rowValues[15]);
+				customer.setEngName(rowValues[16]);
 
 				List<Customer> customers = new ArrayList<Customer>();
 				customers.add(customer);
@@ -664,9 +693,9 @@ public class JournalAction extends GenericCRUDActionFull<Journal> {
 				System.out.println(journal.getEnglishTitle());
 			}
 
-			return "import";
+			return Queue;
 		} else {
-			getRequest().setAttribute("goImport", "yes");
+			getRequest().setAttribute("goQueue", "yes");
 			return EDIT;
 		}
 	}

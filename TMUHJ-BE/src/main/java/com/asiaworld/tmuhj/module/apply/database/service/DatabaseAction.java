@@ -12,8 +12,6 @@ import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 
-import com.asiaworld.tmuhj.core.enums.RCategory;
-import com.asiaworld.tmuhj.core.enums.RType;
 import com.asiaworld.tmuhj.core.model.DataSet;
 import com.asiaworld.tmuhj.core.model.Pager;
 import com.asiaworld.tmuhj.core.web.GenericCRUDActionFull;
@@ -24,6 +22,8 @@ import com.asiaworld.tmuhj.module.apply.resourcesBuyers.entity.ResourcesBuyers;
 import com.asiaworld.tmuhj.module.apply.resourcesBuyers.service.ResourcesBuyersService;
 import com.asiaworld.tmuhj.module.apply.resourcesUnion.entity.ResourcesUnion;
 import com.asiaworld.tmuhj.module.apply.resourcesUnion.service.ResourcesUnionService;
+import com.asiaworld.tmuhj.module.enums.Category;
+import com.asiaworld.tmuhj.module.enums.Type;
 
 @Controller
 @SuppressWarnings("serial")
@@ -110,36 +110,12 @@ public class DatabaseAction extends GenericCRUDActionFull<Database> {
 		getRequest()
 				.setAttribute("option", getRequest().getParameter("option"));
 
-		String recordPerPage = getRequest().getParameter("recordPerPage");
-		String recordPoint = getRequest().getParameter("recordPoint");
-		DataSet<Database> ds = initDataSet();
-		Pager pager = ds.getPager();
+		DataSet<Database> ds = databaseService.getByRestrictions(initDataSet());
+		ds.setPager(Pager.getChangedPager(
+				getRequest().getParameter("recordPerPage"), getRequest()
+						.getParameter("recordPoint"), ds.getPager()));
 
-		if (pager != null) {
-			if (recordPerPage != null && NumberUtils.isDigits(recordPerPage)
-					&& Integer.parseInt(recordPerPage) > 0
-					&& recordPoint != null && NumberUtils.isDigits(recordPoint)
-					&& Integer.parseInt(recordPoint) >= 0) {
-				pager.setRecordPerPage(Integer.parseInt(recordPerPage));
-				pager.setCurrentPage(Integer.parseInt(recordPoint)
-						/ Integer.parseInt(recordPerPage) + 1);
-				pager.setOffset(Integer.parseInt(recordPerPage)
-						* (pager.getCurrentPage() - 1));
-				pager.setRecordPoint(Integer.parseInt(recordPoint));
-				ds.setPager(pager);
-			} else if (recordPerPage != null
-					&& NumberUtils.isDigits(recordPerPage)
-					&& Integer.parseInt(recordPerPage) > 0
-					&& recordPoint == null) {
-				pager.setRecordPerPage(Integer.parseInt(recordPerPage));
-				pager.setRecordPoint(pager.getOffset());
-				ds.setPager(pager);
-			} else {
-				pager.setRecordPoint(pager.getOffset());
-				ds.setPager(pager);
-			}
-		}
-		ds = databaseService.getByRestrictions(ds);
+		
 		List<Database> results = ds.getResults();
 
 		int i = 0;
@@ -202,8 +178,8 @@ public class DatabaseAction extends GenericCRUDActionFull<Database> {
 					.save(new ResourcesBuyers(getRequest().getParameter(
 							"resourcesBuyers.startDate"), getRequest()
 							.getParameter("resourcesBuyers.maturityDate"),
-							RCategory.valueOf(getRequest().getParameter(
-									"resourcesBuyers.rCategory")), RType
+							Category.valueOf(getRequest().getParameter(
+									"resourcesBuyers.rCategory")), Type
 									.valueOf(getRequest().getParameter(
 											"resourcesBuyers.rType")), database
 									.getDbChtTitle(), database.getDbEngTitle()),
@@ -334,9 +310,9 @@ public class DatabaseAction extends GenericCRUDActionFull<Database> {
 					"resourcesBuyers.startDate"));
 			resourcesBuyers.setMaturityDate(getRequest().getParameter(
 					"resourcesBuyers.maturityDate"));
-			resourcesBuyers.setrCategory(RCategory.valueOf(getRequest()
+			resourcesBuyers.setrCategory(Category.valueOf(getRequest()
 					.getParameter("resourcesBuyers.rCategory")));
-			resourcesBuyers.setrType(RType.valueOf(getRequest().getParameter(
+			resourcesBuyers.setrType(Type.valueOf(getRequest().getParameter(
 					"resourcesBuyers.rType")));
 			resourcesBuyers.setDbChtTitle(database.getDbChtTitle());
 			resourcesBuyers.setDbEngTitle(database.getDbEngTitle());

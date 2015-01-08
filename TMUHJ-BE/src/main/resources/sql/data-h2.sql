@@ -47,6 +47,7 @@ insert into customer(serNo, cUid, uUid, cDTime, uDTime, name, engName, contactUs
 insert into customer(serNo, cUid, uUid, cDTime, uDTime, name, engName, contactUserName) values(12, 'admin', 'admin', sysdate(), sysdate(), '天主教耕莘醫療財團法人耕莘醫院', 'CTH', '許蕎麟');
 insert into customer(serNo, cUid, uUid, cDTime, uDTime, name, engName, contactUserName) values(13, 'admin', 'admin', sysdate(), sysdate(), '為恭紀念醫院', 'WGMH', '韓菱紗');
 insert into customer(serNo, cUid, uUid, cDTime, uDTime, name, engName, contactUserName) values(14, 'admin', 'admin', sysdate(), sysdate(), '台灣大學附設醫院', 'NTUH', '王大明');
+insert into customer(serNo, cUid, uUid, cDTime, uDTime, name, engName, contactUserName) values(15, 'admin', 'admin', sysdate(), sysdate(), '疾病管制署', 'CDC', '王小明');
 
 --resourcesBuyers
 insert into resourcesBuyers(serNo, cUid, uUid, cDTime, uDTime, startdate, maturitydate, Rcategory, Rtype, DBchttitle, DBengtitle) values(1, 'admin', 'admin', sysdate(), sysdate(),'1980', '2020', '買斷', '資料庫', '醫學', 'Medcine');

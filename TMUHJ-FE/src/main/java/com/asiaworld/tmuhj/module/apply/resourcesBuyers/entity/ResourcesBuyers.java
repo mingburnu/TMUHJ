@@ -10,8 +10,8 @@ import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 
 import com.asiaworld.tmuhj.core.entity.GenericEntityFull;
-import com.asiaworld.tmuhj.core.enums.RCategory;
-import com.asiaworld.tmuhj.core.enums.RType;
+import com.asiaworld.tmuhj.core.enums.Category;
+import com.asiaworld.tmuhj.core.enums.Type;
 
 @Entity
 @Table(name = "resourcesBuyers")
@@ -30,11 +30,11 @@ public class ResourcesBuyers extends GenericEntityFull {
 
 	@Column(name = "Rcategory")
 	@Enumerated(EnumType.STRING)
-	private RCategory rCategory;
+	private Category rCategory;
 
 	@Column(name = "Rtype")
 	@Enumerated(EnumType.STRING)
-	private RType rType;
+	private Type rType;
 
 	@Column(name = "DBchttitle")
 	private String dbChtTitle;
@@ -75,7 +75,7 @@ public class ResourcesBuyers extends GenericEntityFull {
 	/**
 	 * @return the rCategory
 	 */
-	public RCategory getrCategory() {
+	public Category getrCategory() {
 		return rCategory;
 	}
 
@@ -83,14 +83,14 @@ public class ResourcesBuyers extends GenericEntityFull {
 	 * @param rCategory
 	 *            the rCategory to set
 	 */
-	public void setrCategory(RCategory rCategory) {
+	public void setrCategory(Category rCategory) {
 		this.rCategory = rCategory;
 	}
 
 	/**
 	 * @return the rType
 	 */
-	public RType getrType() {
+	public Type getrType() {
 		return rType;
 	}
 
@@ -98,7 +98,7 @@ public class ResourcesBuyers extends GenericEntityFull {
 	 * @param rType
 	 *            the rType to set
 	 */
-	public void setrType(RType rType) {
+	public void setrType(Type rType) {
 		this.rType = rType;
 	}
 

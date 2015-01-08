@@ -1,12 +1,10 @@
 package com.asiaworld.tmuhj.test;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.apache.commons.lang3.StringUtils;
 
 public class Test {
 
@@ -101,10 +99,13 @@ public class Test {
 		Matcher matcher=pattern.matcher(url);
 		System.out.println(matcher.matches());
 		
-String issn="11112222";
-String[] temp=issn.split("-");
-	      
-		System.out.println(temp.length);
-	   
+String issn=" ";
+
+		System.out.println(StringUtils.isBlank(issn));
+		System.out.println(StringUtils.isEmpty(issn));
+		
+		Object obj=9;
+		String str="9";
+		long l=9;
 	}
 }

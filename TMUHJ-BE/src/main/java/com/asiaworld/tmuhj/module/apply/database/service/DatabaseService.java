@@ -2,6 +2,7 @@ package com.asiaworld.tmuhj.module.apply.database.service;
 
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.MatchMode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
@@ -35,10 +36,12 @@ public class DatabaseService extends GenericServiceFull<Database> {
 		DsRestrictions restrictions = DsBeanFactory.getDsRestrictions();
 
 		if (StringUtils.isNotEmpty(entity.getDbChtTitle())) {
-			restrictions.likeIgnoreCase("dbChtTitle", entity.getDbChtTitle());
+			restrictions.likeIgnoreCase("dbChtTitle", entity.getDbChtTitle(),
+					MatchMode.ANYWHERE);
 		}
 		if (StringUtils.isNotEmpty(entity.getDbEngTitle())) {
-			restrictions.likeIgnoreCase("dbEngTitle", entity.getDbEngTitle());
+			restrictions.likeIgnoreCase("dbEngTitle", entity.getDbEngTitle(),
+					MatchMode.ANYWHERE);
 		}
 
 		return dao.findByRestrictions(restrictions, ds);
