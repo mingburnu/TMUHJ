@@ -56,10 +56,11 @@ public class IpRangeAction extends GenericCRUDActionFull<IpRange> {
 
 	@Override
 	public String list() throws Exception {
-		DataSet<IpRange> ds = ipRangeService.getByRestrictions(initDataSet());
+		DataSet<IpRange> ds = initDataSet();
 		ds.setPager(Pager.getChangedPager(
 				getRequest().getParameter("recordPerPage"), getRequest()
 						.getParameter("recordPoint"), ds.getPager()));
+		ds = ipRangeService.getByRestrictions(ds);
 
 		setDs(ds);
 		return LIST;

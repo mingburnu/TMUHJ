@@ -76,11 +76,11 @@ public class AccountNumberAction extends GenericCRUDActionFull<AccountNumber> {
 
 	@Override
 	public String list() throws Exception {
-		DataSet<AccountNumber> ds = accountNumberService
-				.getByRestrictions(initDataSet());
+		DataSet<AccountNumber> ds = initDataSet();
 		ds.setPager(Pager.getChangedPager(
 				getRequest().getParameter("recordPerPage"), getRequest()
 						.getParameter("recordPoint"), ds.getPager()));
+		ds=accountNumberService.getByRestrictions(ds);
 
 		List<AccountNumber> results = ds.getResults();
 

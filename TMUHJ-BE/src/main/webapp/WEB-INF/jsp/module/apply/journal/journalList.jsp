@@ -180,7 +180,7 @@ function goImport(){
 								</c:otherwise>
 							</c:choose>
 							<td align="left"><a class="state-default"
-								onclick="goSearch();">查詢</a>&nbsp;&nbsp;</td>
+								onclick="goSearch()">查詢</a>&nbsp;&nbsp;</td>
 						</tr>
 					</tbody>
 				</table>
@@ -194,15 +194,15 @@ function goImport(){
 				<c:choose>
 					<c:when
 						test="${(not empty ds.pager.totalRecord)&& (0 ne ds.pager.totalRecord) }">
-						<a class="state-default" onclick="allSelect(1);">全選</a>
-						<a class="state-default" onclick="allSelect(0);">取消</a>
-						<a class="state-default" onclick="goAdd();">新增</a>
-						<a class="state-default" onclick="goDelete();">刪除</a>
-						<a class="state-default" onclick="goImport();">批次匯入</a>
+						<a class="state-default" onclick="allSelect(1)">全選</a>
+						<a class="state-default" onclick="allSelect(0)">取消</a>
+						<a class="state-default" onclick="goAdd()">新增</a>
+						<a class="state-default" onclick="goDelete()">刪除</a>
+						<a class="state-default" onclick="goImport()">批次匯入</a>
 					</c:when>
 					<c:otherwise>
-						<a class="state-default" onclick="goAdd();">新增</a>
-						<a class="state-default" onclick="goImport();">批次匯入</a>
+						<a class="state-default" onclick="goAdd()">新增</a>
+						<a class="state-default" onclick="goImport()">批次匯入</a>
 					</c:otherwise>
 				</c:choose>
 			</div>
@@ -229,9 +229,9 @@ function goImport(){
 							<td>${item.resourcesBuyers.cUid }</td>
 							<td align="center">${item.resourcesBuyers.uUid }</td>
 							<td align="center"><a class="state-default2"
-								onclick="goView(${item.serNo });"><span
+								onclick="goView(${item.serNo })"><span
 									class="icon-default icon-view"></span>檢視</a> <a
-								class="state-default2" onclick="goUpdate(${item.serNo});"><span
+								class="state-default2" onclick="goUpdate(${item.serNo})"><span
 									class="icon-default icon-edit"></span>修改</a></td>
 						</tr>
 					</c:forEach>

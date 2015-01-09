@@ -10,7 +10,6 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
@@ -139,10 +138,11 @@ public class JournalAction extends GenericCRUDActionFull<Journal> {
 		getRequest()
 				.setAttribute("option", getRequest().getParameter("option"));
 
-		DataSet<Journal> ds = journalService.getByRestrictions(initDataSet());
+		DataSet<Journal> ds = initDataSet();
 		ds.setPager(Pager.getChangedPager(
 				getRequest().getParameter("recordPerPage"), getRequest()
 						.getParameter("recordPoint"), ds.getPager()));
+		ds=journalService.getByRestrictions(ds);
 
 		List<Journal> results = ds.getResults();
 
@@ -582,11 +582,13 @@ public class JournalAction extends GenericCRUDActionFull<Journal> {
 							break;
 
 						case 1:
-							rowValues[k] = row.getCell(k).getStringCellValue().trim();
+							rowValues[k] = row.getCell(k).getStringCellValue()
+									.trim();
 							break;
 
 						case 2:
-							rowValues[k] = row.getCell(k).getCellFormula().trim();
+							rowValues[k] = row.getCell(k).getCellFormula()
+									.trim();
 							break;
 
 						case 3:
