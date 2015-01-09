@@ -67,10 +67,11 @@ public class CustomerAction extends GenericCRUDActionFull<Customer> {
 		getRequest()
 				.setAttribute("option", getRequest().getParameter("option"));
 
-		DataSet<Customer> ds = customerService.getByRestrictions(initDataSet());
+		DataSet<Customer> ds = initDataSet();
 		ds.setPager(Pager.getChangedPager(
 				getRequest().getParameter("recordPerPage"), getRequest()
 						.getParameter("recordPoint"), ds.getPager()));
+		ds = customerService.getByRestrictions(ds);
 
 		setDs(ds);
 		return LIST;

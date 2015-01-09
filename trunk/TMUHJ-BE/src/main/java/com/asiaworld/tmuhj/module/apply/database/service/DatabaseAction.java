@@ -110,12 +110,12 @@ public class DatabaseAction extends GenericCRUDActionFull<Database> {
 		getRequest()
 				.setAttribute("option", getRequest().getParameter("option"));
 
-		DataSet<Database> ds = databaseService.getByRestrictions(initDataSet());
+		DataSet<Database> ds = initDataSet();
 		ds.setPager(Pager.getChangedPager(
 				getRequest().getParameter("recordPerPage"), getRequest()
 						.getParameter("recordPoint"), ds.getPager()));
+		ds = databaseService.getByRestrictions(ds);
 
-		
 		List<Database> results = ds.getResults();
 
 		int i = 0;

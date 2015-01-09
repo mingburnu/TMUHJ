@@ -11,6 +11,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 
 import com.asiaworld.tmuhj.core.model.DataSet;
+import com.asiaworld.tmuhj.core.model.Pager;
 import com.asiaworld.tmuhj.core.web.GenericCRUDActionFull;
 import com.asiaworld.tmuhj.module.apply.customer.entity.Customer;
 import com.asiaworld.tmuhj.module.apply.customer.service.CustomerService;
@@ -107,7 +108,12 @@ public class EbookAction extends GenericCRUDActionFull<Ebook> {
 		getRequest()
 				.setAttribute("option", getRequest().getParameter("option"));
 
-		DataSet<Ebook> ds = ebookService.getByRestrictions(initDataSet());
+		DataSet<Ebook> ds = initDataSet();
+		ds.setPager(Pager.getChangedPager(
+				getRequest().getParameter("recordPerPage"), getRequest()
+						.getParameter("recordPoint"), ds.getPager()));
+		ds = ebookService.getByRestrictions(ds);
+
 		List<Ebook> results = ds.getResults();
 
 		int i = 0;

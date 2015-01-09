@@ -127,11 +127,11 @@
 				cache : false,
 				processData : false,
 				success : function(data, textStatus, jqXHR) {
-					$("#div_Detail_2").show();
+					$("#div_Detail").show();
 					UI_Resize();
 					$(window).scrollTop(0);
-					$("#div_Detail_2 .content > .header > .title").html("期刊-匯入");
-					$("#div_Detail_2 .content > .contain").empty().html(data);
+					$("#div_Detail .content > .header > .title").html("期刊-匯入");
+					$("#div_Detail .content > .contain").empty().html(data);
 					closeLoading();
 				},
 				error : function(jqXHR, textStatus, errorThrown) {
@@ -161,11 +161,11 @@
 				var doc = getDoc(iframe[0]);
 				var docRoot = doc.body ? doc.body : doc.documentElement;
 				var data = docRoot.innerHTML;
-				$("#div_Detail_2").show();
+				$("#div_Detail").show();
 				UI_Resize();
 				$(window).scrollTop(0);
-				$("#div_Detail_2 .content > .header > .title").html("期刊-匯入");
-				$("#div_Detail_2 .content > .contain").empty().html(data);
+				$("#div_Detail .content > .header > .title").html("期刊-匯入");
+				$("#div_Detail .content > .contain").empty().html(data);
 				closeLoading();
 			});
 		}
@@ -607,7 +607,7 @@ input#customer_name {
 				<div class="detail_note">
 					<div class="detail_note_title">Note</div>
 					<div class="detail_note_content">
-						<span class="required">(&#8226;)</span>為必填欄位
+						<span class="required">(•)</span>為必填欄位
 					</div>
 				</div>
 			</s:form>

@@ -73,4 +73,5 @@ public class JournalService extends GenericServiceFull<Journal> {
 			return 0;
 		}
 	}
+	
 }
