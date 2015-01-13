@@ -124,6 +124,11 @@ $(document).ready(function() {
             goMain('<c:url value = '/'/>crud/apply.customer.list.action','#apply_customer_list','&recordPerPage='+recordPerPage+'&recordPoint='+recordPoint);
     }
 	
+  //批次匯入
+    function goImport(){
+    	goDetail('<%=request.getContextPath()%>/crud/apply.customer.query.action?'+'goQueue=yes','客戶-匯入');
+    }
+	
 </script>
 </head>
 <body>
@@ -204,9 +209,11 @@ $(document).ready(function() {
 						<a class="state-default" onclick="allSelect(0);">取消</a>
 						<a class="state-default" onclick="goAdd();">新增</a>
 						<a class="state-default" onclick="goDelete();">刪除</a>
+						<a class="state-default" onclick="goImport()">批次匯入</a>
 					</c:when>
 					<c:otherwise>
 						<a class="state-default" onclick="goAdd();">新增</a>
+						<a class="state-default" onclick="goImport()">批次匯入</a>
 					</c:otherwise>
 				</c:choose>
 			</div>
