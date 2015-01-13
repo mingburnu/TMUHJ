@@ -75,8 +75,6 @@ public class JournalAction extends GenericCRUDActionFull<Journal> {
 	@Autowired
 	private CustomerService customerService;
 
-	// private String destPath = "C:/tmuhj/";
-
 	private ExcelWorkSheet<Journal> excelWorkSheet;
 
 	@Override
@@ -142,7 +140,7 @@ public class JournalAction extends GenericCRUDActionFull<Journal> {
 		ds.setPager(Pager.getChangedPager(
 				getRequest().getParameter("recordPerPage"), getRequest()
 						.getParameter("recordPoint"), ds.getPager()));
-		ds=journalService.getByRestrictions(ds);
+		ds = journalService.getByRestrictions(ds);
 
 		List<Journal> results = ds.getResults();
 
@@ -617,22 +615,30 @@ public class JournalAction extends GenericCRUDActionFull<Journal> {
 				String category = "";
 				if (rowValues[11].equals("")) {
 					category = "未註明";
-				} else if (!rowValues[11].equals("買斷")
-						&& !rowValues[11].equals("租貸")) {
-					category = "不明";
+				} else if (rowValues[11].equals("買斷")
+						|| rowValues[11].contains("買斷")) {
+					category = "買斷";
+				} else if (rowValues[11].equals("租貸")
+						&& rowValues[11].contains("租")) {
+					category = "租貸";
 				} else {
-					category = rowValues[11];
+					category = "不明";
 				}
 
 				String type = "";
 				if (rowValues[12].equals("")) {
 					type = "不明";
-				} else if (!rowValues[12].equals("期刊")
-						&& !rowValues[12].equals("電子書")
-						&& !rowValues[12].equals("資料庫")) {
-					type = "不明";
+				} else if (rowValues[12].equals("期刊")
+						|| rowValues[12].contains("期刊")) {
+					type = "期刊";
+				} else if (rowValues[12].equals("電子書")
+						|| rowValues[12].contains("電子書")) {
+					type = "電子書";
+				} else if (rowValues[12].equals("資料庫")
+						|| rowValues[12].contains("資料庫")) {
+					type = "資料庫";
 				} else {
-					type = rowValues[12];
+					type = "不明";
 				}
 
 				resourcesBuyers = new ResourcesBuyers(rowValues[9],
@@ -645,8 +651,8 @@ public class JournalAction extends GenericCRUDActionFull<Journal> {
 						0, resourcesBuyers, null, "");
 
 				customer = new Customer();
-				customer.setName(rowValues[15]);
-				customer.setEngName(rowValues[16]);
+				customer.setName(rowValues[15].trim());
+				customer.setEngName(rowValues[16].trim());
 
 				List<Customer> customers = new ArrayList<Customer>();
 				customers.add(customer);
@@ -665,9 +671,9 @@ public class JournalAction extends GenericCRUDActionFull<Journal> {
 				if (isIssn(issn)) {
 					long jouSerNo = journalService.getJouSerNoByIssn(issn
 							.toUpperCase());
-					long cusSerNo = customerService.getCusSerNoByName(row
-							.getCell(15).getStringCellValue().trim(), row
-							.getCell(16).getStringCellValue().trim());
+
+					long cusSerNo = customerService.getCusSerNoByName(rowValues[15].trim(),
+							rowValues[16].trim());
 					if (cusSerNo != 0) {
 						if (jouSerNo != 0) {
 							if (resourcesUnionService.isExist(
@@ -676,26 +682,22 @@ public class JournalAction extends GenericCRUDActionFull<Journal> {
 
 								journal.setExistStatus("已存在");
 							} else {
-								journal.setExistStatus("正常");
+								journal.setExistStatus("添加客戶");
 							}
 						} else {
-							journal.setExistStatus("正常");
+							journal.setExistStatus("新資源");
 						}
 					} else {
-						journal.setExistStatus("資料錯誤");
+						journal.setExistStatus("無此客戶");
 					}
 				} else {
-					journal.setExistStatus("資料錯誤");
+					journal.setExistStatus("ISSN異常");
 				}
 
 				excelWorkSheet.getData().add(journal);
 			}
-			for (int k = 0; k < excelWorkSheet.getData().size(); k++) {
-				journal = excelWorkSheet.getData().get(k);
-				System.out.println(journal.getEnglishTitle());
-			}
 
-			return Queue;
+			return QUEUE;
 		} else {
 			getRequest().setAttribute("goQueue", "yes");
 			return EDIT;

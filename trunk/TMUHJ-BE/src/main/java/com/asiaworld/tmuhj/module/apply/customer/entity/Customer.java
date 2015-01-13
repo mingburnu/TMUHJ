@@ -51,14 +51,8 @@ public class Customer extends GenericEntityFull {
 	private String memo;
 
 	@Transient
-	private int dbAmount;
+	String existStatus;
 
-	@Transient
-	private int ebookAmount;
-
-	@Transient
-	private int journalAount;
-	
 	/**
 	 * @return the name
 	 */
@@ -165,51 +159,23 @@ public class Customer extends GenericEntityFull {
 	}
 
 	/**
-	 * @return the dbAmount
+	 * @return the existStatus
 	 */
-	public int getDbAmount() {
-		return dbAmount;
+	public String getExistStatus() {
+		return existStatus;
 	}
 
 	/**
-	 * @param dbAmount
-	 *            the dbAmount to set
+	 * @param existStatus
+	 *            the existStatus to set
 	 */
-	public void setDbAmount(int dbAmount) {
-		this.dbAmount = dbAmount;
+	public void setExistStatus(String existStatus) {
+		this.existStatus = existStatus;
 	}
 
-	/**
-	 * @return the ebookAmount
-	 */
-	public int getEbookAmount() {
-		return ebookAmount;
-	}
-
-	/**
-	 * @param ebookAmount
-	 *            the ebookAmount to set
-	 */
-	public void setEbookAmount(int ebookAmount) {
-		this.ebookAmount = ebookAmount;
-	}
-
-	/**
-	 * @return the journalAount
-	 */
-	public int getJournalAount() {
-		return journalAount;
-	}
-
-	/**
-	 * @param journalAount
-	 *            the journalAount to set
-	 */
-	public void setJournalAount(int journalAount) {
-		this.journalAount = journalAount;
-	}
-
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#toString()
 	 */
 	@Override
@@ -217,8 +183,24 @@ public class Customer extends GenericEntityFull {
 		return "Customer [name=" + name + ", engName=" + engName + ", address="
 				+ address + ", email=" + email + ", tel=" + tel
 				+ ", contactUserName=" + contactUserName + ", memo=" + memo
-				+ ", dbAmount=" + dbAmount + ", ebookAmount=" + ebookAmount
-				+ ", journalAount=" + journalAount + "]";
+				+ ", existStatus=" + existStatus + "]";
 	}
 
+	public Customer() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+
+	public Customer(String name, String engName, String address, String email,
+			String tel, String contactUserName, String memo, String existStatus) {
+		super();
+		this.name = name;
+		this.engName = engName;
+		this.address = address;
+		this.email = email;
+		this.tel = tel;
+		this.contactUserName = contactUserName;
+		this.memo = memo;
+		this.existStatus = existStatus;
+	}
 }

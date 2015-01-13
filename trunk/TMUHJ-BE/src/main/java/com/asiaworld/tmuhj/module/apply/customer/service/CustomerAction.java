@@ -1,15 +1,31 @@
 package com.asiaworld.tmuhj.module.apply.customer.service;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.math.NumberUtils;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 
 import com.asiaworld.tmuhj.core.model.DataSet;
+import com.asiaworld.tmuhj.core.model.ExcelWorkSheet;
 import com.asiaworld.tmuhj.core.model.Pager;
 import com.asiaworld.tmuhj.core.web.GenericCRUDActionFull;
 import com.asiaworld.tmuhj.module.apply.customer.entity.Customer;
@@ -23,6 +39,12 @@ public class CustomerAction extends GenericCRUDActionFull<Customer> {
 
 	private String[] checkItem;
 
+	private File file;
+
+	private String fileFileName;
+
+	private String fileContentType;
+
 	@Autowired
 	private Customer customer;
 
@@ -34,6 +56,12 @@ public class CustomerAction extends GenericCRUDActionFull<Customer> {
 
 	@Autowired
 	private IpRangeService ipRangeService;
+
+	private ExcelWorkSheet<Customer> excelWorkSheet;
+
+	private String importSerNo;
+
+	private String[] importSerNos;
 
 	@Override
 	public void validateSave() throws Exception {
@@ -58,7 +86,12 @@ public class CustomerAction extends GenericCRUDActionFull<Customer> {
 		if (getEntity().getSerNo() != null) {
 			customer = customerService.getBySerNo(getEntity().getSerNo());
 			setEntity(customer);
+		} else if (getRequest().getParameter("goQueue") != null
+				&& getRequest().getParameter("goQueue").equals("yes")) {
+			getRequest().setAttribute("goQueue",
+					getRequest().getParameter("goQueue"));
 		}
+
 		return EDIT;
 	}
 
@@ -220,6 +253,212 @@ public class CustomerAction extends GenericCRUDActionFull<Customer> {
 		return AJAX;
 	}
 
+	public String queue() throws Exception {
+		if (file == null || !file.isFile()) {
+			addActionError("請選擇檔案");
+		} else {
+			if (createWorkBook(new FileInputStream(file)) == null) {
+				addActionError("檔案格式錯誤");
+			}
+		}
+
+		if (!hasActionErrors()) {
+			getSession().remove("importList");
+			getSession().remove("checkItemMap");
+			Workbook book = createWorkBook(new FileInputStream(file));
+			// book.getNumberOfSheets(); 判斷Excel文件有多少個sheet
+			Sheet sheet = book.getSheetAt(0);
+			excelWorkSheet = new ExcelWorkSheet<Customer>();
+
+			// 保存工作單名稱
+			Row firstRow = sheet.getRow(0);
+			Iterator<Cell> iterator = firstRow.iterator();
+
+			// 保存列名
+			List<String> cellNames = new ArrayList<String>();
+			while (iterator.hasNext()) {
+				cellNames.add(iterator.next().getStringCellValue());
+			}
+			excelWorkSheet.setColumns(cellNames);
+
+			LinkedHashSet<Customer> originalData = new LinkedHashSet<Customer>();
+			for (int i = 1; i <= sheet.getLastRowNum(); i++) {
+				Row row = sheet.getRow(i);
+
+				String[] rowValues = new String[6];
+				int k = 0;
+				while (k < rowValues.length) {
+					if (row.getCell(k) == null) {
+						rowValues[k] = "";
+					} else {
+						int typeInt = row.getCell(k).getCellType();
+						switch (typeInt) {
+						case 0:
+							String tempNumeric = "";
+							tempNumeric = tempNumeric
+									+ row.getCell(k).getNumericCellValue();
+							rowValues[k] = tempNumeric;
+							break;
+
+						case 1:
+							rowValues[k] = row.getCell(k).getStringCellValue()
+									.trim();
+							break;
+
+						case 2:
+							rowValues[k] = row.getCell(k).getCellFormula()
+									.trim();
+							break;
+
+						case 3:
+							rowValues[k] = "";
+							break;
+
+						case 4:
+							String tempBoolean = "";
+							tempBoolean = ""
+									+ row.getCell(k).getBooleanCellValue();
+							rowValues[k] = tempBoolean;
+							break;
+
+						case 5:
+							String tempByte = "";
+							tempByte = tempByte
+									+ row.getCell(k).getErrorCellValue();
+							rowValues[k] = tempByte;
+							break;
+						}
+
+					}
+					k++;
+				}
+
+				customer = new Customer(rowValues[0].trim(),
+						rowValues[1].trim(), rowValues[2], rowValues[5],
+						rowValues[4], rowValues[3], "", "");
+
+				if (customer.getName().isEmpty()
+						|| customer.getEngName().isEmpty()) {
+					customer.setExistStatus("資料錯誤");
+				} else {
+					long cusSerNo = customerService.getCusSerNoByName(
+							customer.getName(), customer.getEngName());
+					if (cusSerNo != 0) {
+						customer.setExistStatus("已存在");
+					} else {
+						customer.setExistStatus("正常");
+					}
+
+				}
+				originalData.add(customer);
+
+			}
+
+			Iterator<Customer> setIterator = originalData.iterator();
+			int normal=0;
+			while (setIterator.hasNext()) {
+				customer=setIterator.next();
+				excelWorkSheet.getData().add(customer);
+				if(customer.getExistStatus().equals("正常")){
+					normal=normal+1;
+				}
+			}
+
+			getSession().put("importList", excelWorkSheet.getData());
+			getRequest().setAttribute("total", excelWorkSheet.getData().size());
+			getRequest().setAttribute("normal", normal );
+			getRequest().setAttribute("abnormal", excelWorkSheet.getData().size()-normal );
+			
+			return QUEUE;
+		} else {
+			getRequest().setAttribute("goQueue", "yes");
+			return EDIT;
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	public void getCheckedItem() {
+		Map<String, Object> checkItemMap;
+		if (getSession().containsKey("checkItemMap")) {
+			checkItemMap = (TreeMap<String, Object>) getSession().get(
+					"checkItemMap");
+		} else {
+			checkItemMap = new TreeMap<String, Object>();
+		}
+
+		if (!checkItemMap.containsKey(this.importSerNo)) {
+			checkItemMap.put(this.importSerNo, this.importSerNo);
+		} else {
+			checkItemMap.remove(this.importSerNo);
+		}
+		getSession().put("checkItemMap", checkItemMap);
+		System.out.println(checkItemMap);
+	}
+
+	public void allCheckedItem() {
+		Map<String, Object> checkItemMap = new TreeMap<String, Object>();
+
+		int i = 0;
+		while (i < importSerNos.length) {
+			checkItemMap.put(importSerNos[i], importSerNos[i]);
+			i++;
+		}
+
+		getSession().put("checkItemMap", checkItemMap);
+		System.out.println(checkItemMap);
+	}
+
+	public void clearCheckedItem() {
+		Map<String, Object> checkItemMap = new TreeMap<String, Object>();
+		getSession().put("checkItemMap", checkItemMap);
+		System.out.println(checkItemMap);
+	}
+
+	@SuppressWarnings("unchecked")
+	public String importData() throws Exception {
+		List<Customer> customers = (List<Customer>) getSession().get(
+				"importList");
+
+		Map<String, Object> checkItemMap = (TreeMap<String, Object>) getSession()
+				.get("checkItemMap");
+		
+		if(checkItemMap==null||checkItemMap.size()==0){
+			addActionError("請選擇一筆或一筆以上的資料");
+		}
+
+		if(!hasActionErrors()){
+		Iterator<?> it = checkItemMap.values().iterator();
+		List<Customer> importList = new ArrayList<Customer>();
+		while (it.hasNext()) {
+			String index = it.next().toString();
+			importList.add(customers.get(Integer.parseInt(index)));
+		}
+
+		for (int i = 0; i < importList.size(); i++) {
+			System.out.println(importList.get(i));
+			customerService.save(importList.get(i), getLoginUser());
+		}
+
+		return VIEW;
+		}else{
+			getSession().put("importList",getSession().get(
+					"importList"));
+			excelWorkSheet.setData(customers);
+			return QUEUE;
+		}
+	}
+
+	// 判斷文件類型
+	public Workbook createWorkBook(InputStream is) throws IOException {
+		if (fileFileName.toLowerCase().endsWith("xls")) {
+			return new HSSFWorkbook(is);
+		}
+		if (fileFileName.toLowerCase().endsWith("xlsx")) {
+			return new XSSFWorkbook(is);
+		}
+		return null;
+	}
+
 	/**
 	 * @return the checkItem
 	 */
@@ -235,4 +474,93 @@ public class CustomerAction extends GenericCRUDActionFull<Customer> {
 		this.checkItem = checkItem;
 	}
 
+	/**
+	 * @return the file
+	 */
+	public File getFile() {
+		return file;
+	}
+
+	/**
+	 * @param file
+	 *            the file to set
+	 */
+	public void setFile(File file) {
+		this.file = file;
+	}
+
+	/**
+	 * @return the fileFileName
+	 */
+	public String getFileFileName() {
+		return fileFileName;
+	}
+
+	/**
+	 * @param fileFileName
+	 *            the fileFileName to set
+	 */
+	public void setFileFileName(String fileFileName) {
+		this.fileFileName = fileFileName;
+	}
+
+	/**
+	 * @return the fileContentType
+	 */
+	public String getFileContentType() {
+		return fileContentType;
+	}
+
+	/**
+	 * @param fileContentType
+	 *            the fileContentType to set
+	 */
+	public void setFileContentType(String fileContentType) {
+		this.fileContentType = fileContentType;
+	}
+
+	/**
+	 * @return the excelWorkSheet
+	 */
+	public ExcelWorkSheet<Customer> getExcelWorkSheet() {
+		return excelWorkSheet;
+	}
+
+	/**
+	 * @param excelWorkSheet
+	 *            the excelWorkSheet to set
+	 */
+	public void setExcelWorkSheet(ExcelWorkSheet<Customer> excelWorkSheet) {
+		this.excelWorkSheet = excelWorkSheet;
+	}
+
+	/**
+	 * @return the importSerNo
+	 */
+	public String getImportSerNo() {
+		return importSerNo;
+	}
+
+	/**
+	 * @param importSerNo
+	 *            the importSerNo to set
+	 */
+	public void setImportSerNo(String importSerNo) {
+		this.importSerNo = importSerNo;
+	}
+
+	/**
+	 * @return the importSerNos
+	 */
+	public String[] getImportSerNos() {
+		return importSerNos;
+	}
+
+	/**
+	 * @param importSerNos
+	 *            the importSerNos to set
+	 */
+	public void setImportSerNos(String[] importSerNos) {
+		this.importSerNos = importSerNos;
+	}
 }

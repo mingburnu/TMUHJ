@@ -23,6 +23,6 @@ public interface Action<T extends Entity> {
 	
 	public final static String AJAX = "ajax";
 	
-	public final static String Queue = "queue";
+	public final static String QUEUE = "queue";
 
 }

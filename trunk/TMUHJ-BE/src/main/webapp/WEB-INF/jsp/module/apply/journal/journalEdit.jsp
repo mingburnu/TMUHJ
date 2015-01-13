@@ -15,7 +15,7 @@
 	$(document).ready(function() {
 		saveForm = $("form#apply_journal_save").html();
 		updateForm = $("form#apply_journal_update").html();
-		importForm = $("form#apply_journal_imports").html();
+		importForm = $("form#apply_journal_queue").html();
 	});
 
 	$(document)
@@ -45,7 +45,7 @@
 		clearDetail_2();
 		$("form#apply_journal_save").html(saveForm);
 		$("form#apply_journal_update").html(updateForm);
-		$("form#apply_journal_imports").html(importForm);
+		$("form#apply_journal_queue").html(importForm);
 	}
 
 	//遞交表單
@@ -81,6 +81,7 @@
 		$("#div_Detail_2 .content .header .title").html(" ");
 	}
 
+	//Excel列表
 	function goQueue() {
 		function getDoc(frame) {
 			var doc = null;
@@ -133,6 +134,7 @@
 					$("#div_Detail .content > .header > .title").html("期刊-匯入");
 					$("#div_Detail .content > .contain").empty().html(data);
 					closeLoading();
+					
 				},
 				error : function(jqXHR, textStatus, errorThrown) {
 					goAlert("結果", XMLHttpRequest.responseText);
@@ -407,6 +409,7 @@ input#customer_name {
 			</s:form>
 
 		</c:when>
+		
 		<c:otherwise>
 			<%
 				ArrayList<?> allCustomers = (ArrayList<?>) request
