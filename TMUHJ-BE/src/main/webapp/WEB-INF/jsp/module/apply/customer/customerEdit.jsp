@@ -195,7 +195,7 @@
 				</table>
 				<div class="button_box">
 					<div class="detail-func-button">
-						<a class="state-default" onclick="clearDetail_2();closeDetail();">取消</a>
+						<a class="state-default" onclick="closeDetail();">取消</a>
 						&nbsp;<a class="state-default" onclick="resetData();">重置</a>&nbsp;<a
 							id="ports" class="state-default" onclick="goQueue();">下一步</a>
 					</div>

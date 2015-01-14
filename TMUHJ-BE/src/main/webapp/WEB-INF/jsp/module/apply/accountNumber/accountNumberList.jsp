@@ -150,6 +150,11 @@ function gotoPage(page){
 function chagePageSize(recordPerPage,recordPoint){
         goMain('<c:url value = '/'/>crud/apply.accountNumber.list.action','#apply_accountNumber_list','&recordPerPage='+recordPerPage+'&recordPoint='+recordPoint);
 }
+
+//批次匯入
+function goImport(){
+	goDetail('<%=request.getContextPath()%>/crud/apply.accountNumber.query.action?'+'goQueue=yes','帳戶-匯入');
+}
 </script>
 </head>
 <body>
@@ -194,9 +199,11 @@ function chagePageSize(recordPerPage,recordPoint){
 						<a class="state-default" onclick="goAdd();">新增</a>
 						<a class="state-default" onclick="goFail();">失效</a>
 						<a class="state-default" onclick="goEffect();">生效</a>
+						<a class="state-default" onclick="goImport()">匯入</a>
 					</c:when>
 					<c:otherwise>
 						<a class="state-default" onclick="goAdd();">新增</a>
+						<a class="state-default" onclick="goImport()">匯入</a>
 					</c:otherwise>
 				</c:choose>
 			</div>

@@ -5,7 +5,10 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
+import org.hibernate.Criteria;
+import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
@@ -149,6 +152,17 @@ public class AccountNumberService extends GenericServiceFull<AccountNumber> {
 			return false;
 		} else {
 			return true;
+		}
+	}
+
+	public long getSerNoByUserId(String userId) {
+		Session session = sessionFactory.getCurrentSession();
+		Criteria criteria = session.createCriteria(AccountNumber.class);
+		criteria.add(Restrictions.eq("userId", userId));
+		if (criteria.list().size() > 0) {
+			return ((AccountNumber) criteria.list().get(0)).getSerNo();
+		} else {
+			return 0;
 		}
 	}
 }

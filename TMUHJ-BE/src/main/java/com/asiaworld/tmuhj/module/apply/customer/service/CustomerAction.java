@@ -14,7 +14,6 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -184,14 +183,22 @@ public class CustomerAction extends GenericCRUDActionFull<Customer> {
 
 			customerService.deleteBySerNo(getEntity().getSerNo());
 
-			DataSet<Customer> ds = customerService
-					.getByRestrictions(initDataSet());
+			DataSet<Customer> ds = initDataSet();
+			ds.setPager(Pager.getChangedPager(
+					getRequest().getParameter("recordPerPage"), getRequest()
+							.getParameter("recordPoint"), ds.getPager()));
+			ds = customerService.getByRestrictions(ds);
+
 			setDs(ds);
 
 			return LIST;
 		} else {
-			DataSet<Customer> ds = customerService
-					.getByRestrictions(initDataSet());
+			DataSet<Customer> ds = initDataSet();
+			ds.setPager(Pager.getChangedPager(
+					getRequest().getParameter("recordPerPage"), getRequest()
+							.getParameter("recordPoint"), ds.getPager()));
+			ds = customerService.getByRestrictions(ds);
+
 			setDs(ds);
 			return LIST;
 		}
@@ -233,8 +240,12 @@ public class CustomerAction extends GenericCRUDActionFull<Customer> {
 			addActionMessage("刪除成功");
 			return LIST;
 		} else {
-			DataSet<Customer> ds = customerService
-					.getByRestrictions(initDataSet());
+			DataSet<Customer> ds = initDataSet();
+			ds.setPager(Pager.getChangedPager(
+					getRequest().getParameter("recordPerPage"), getRequest()
+							.getParameter("recordPoint"), ds.getPager()));
+			ds = customerService.getByRestrictions(ds);
+
 			setDs(ds);
 			return LIST;
 		}
@@ -272,13 +283,60 @@ public class CustomerAction extends GenericCRUDActionFull<Customer> {
 
 			// 保存工作單名稱
 			Row firstRow = sheet.getRow(0);
-			Iterator<Cell> iterator = firstRow.iterator();
 
 			// 保存列名
 			List<String> cellNames = new ArrayList<String>();
-			while (iterator.hasNext()) {
-				cellNames.add(iterator.next().getStringCellValue());
+			String[] rowTitles = new String[6];
+			int n = 0;
+			while (n < rowTitles.length) {
+				if (firstRow.getCell(n) == null) {
+					rowTitles[n] = "";
+				} else {
+					int typeInt = firstRow.getCell(n).getCellType();
+					switch (typeInt) {
+					case 0:
+						String tempNumeric = "";
+						tempNumeric = tempNumeric
+								+ firstRow.getCell(n).getNumericCellValue();
+						rowTitles[n] = tempNumeric;
+						break;
+
+					case 1:
+						rowTitles[n] = firstRow.getCell(n).getStringCellValue()
+								.trim();
+						break;
+
+					case 2:
+						rowTitles[n] = firstRow.getCell(n).getCellFormula()
+								.trim();
+						break;
+
+					case 3:
+						rowTitles[n] = "";
+						break;
+
+					case 4:
+						String tempBoolean = "";
+						tempBoolean = ""
+								+ firstRow.getCell(n).getBooleanCellValue();
+						rowTitles[n] = tempBoolean;
+						break;
+
+					case 5:
+						String tempByte = "";
+						tempByte = tempByte
+								+ firstRow.getCell(n).getErrorCellValue();
+						rowTitles[n] = tempByte;
+						break;
+					}
+
+				}
+
+				cellNames.add(rowTitles[n]);
+				n++;
 			}
+
+			getSession().put("cellNames", cellNames);
 			excelWorkSheet.setColumns(cellNames);
 
 			LinkedHashSet<Customer> originalData = new LinkedHashSet<Customer>();
@@ -341,8 +399,8 @@ public class CustomerAction extends GenericCRUDActionFull<Customer> {
 						|| customer.getEngName().isEmpty()) {
 					customer.setExistStatus("資料錯誤");
 				} else {
-					long cusSerNo = customerService.getCusSerNoByName(
-							customer.getName(), customer.getEngName());
+					long cusSerNo = customerService.getCusSerNoByName(customer
+							.getName());
 					if (cusSerNo != 0) {
 						customer.setExistStatus("已存在");
 					} else {
@@ -355,20 +413,21 @@ public class CustomerAction extends GenericCRUDActionFull<Customer> {
 			}
 
 			Iterator<Customer> setIterator = originalData.iterator();
-			int normal=0;
+			int normal = 0;
 			while (setIterator.hasNext()) {
-				customer=setIterator.next();
+				customer = setIterator.next();
 				excelWorkSheet.getData().add(customer);
-				if(customer.getExistStatus().equals("正常")){
-					normal=normal+1;
+				if (customer.getExistStatus().equals("正常")) {
+					normal = normal + 1;
 				}
 			}
 
 			getSession().put("importList", excelWorkSheet.getData());
-			getRequest().setAttribute("total", excelWorkSheet.getData().size());
-			getRequest().setAttribute("normal", normal );
-			getRequest().setAttribute("abnormal", excelWorkSheet.getData().size()-normal );
-			
+			getSession().put("total", excelWorkSheet.getData().size());
+			getSession().put("normal", normal);
+			getSession().put("abnormal",
+					excelWorkSheet.getData().size() - normal);
+
 			return QUEUE;
 		} else {
 			getRequest().setAttribute("goQueue", "yes");
@@ -419,30 +478,48 @@ public class CustomerAction extends GenericCRUDActionFull<Customer> {
 		List<Customer> customers = (List<Customer>) getSession().get(
 				"importList");
 
+		List<String> cellNames = (List<String>) getSession().get("cellNames");
+
 		Map<String, Object> checkItemMap = (TreeMap<String, Object>) getSession()
 				.get("checkItemMap");
-		
-		if(checkItemMap==null||checkItemMap.size()==0){
+
+		if (checkItemMap == null || checkItemMap.size() == 0) {
 			addActionError("請選擇一筆或一筆以上的資料");
 		}
 
-		if(!hasActionErrors()){
-		Iterator<?> it = checkItemMap.values().iterator();
-		List<Customer> importList = new ArrayList<Customer>();
-		while (it.hasNext()) {
-			String index = it.next().toString();
-			importList.add(customers.get(Integer.parseInt(index)));
-		}
+		if (!hasActionErrors()) {
+			Iterator<?> it = checkItemMap.values().iterator();
+			List<Customer> importList = new ArrayList<Customer>();
+			while (it.hasNext()) {
+				String index = it.next().toString();
+				importList.add(customers.get(Integer.parseInt(index)));
+			}
 
-		for (int i = 0; i < importList.size(); i++) {
-			System.out.println(importList.get(i));
-			customerService.save(importList.get(i), getLoginUser());
-		}
+			for (int i = 0; i < importList.size(); i++) {
+				customerService.save(importList.get(i), getLoginUser());
+			}
+			getRequest().setAttribute("successCount", importList.size());
+			return VIEW;
+		} else {
+			Object total = getSession().get("total");
+			Object normal = getSession().get("normal");
+			Object abnormal = getSession().get("abnormal");
 
-		return VIEW;
-		}else{
-			getSession().put("importList",getSession().get(
-					"importList"));
+			getRequest().setAttribute("beforeRow",
+					getRequest().getParameter("beforeRow"));
+			getRequest().setAttribute("beforeMaxRows",
+					getRequest().getParameter("beforeMaxRows"));
+
+			getSession().put("total", total);
+			getSession().put("normal", normal);
+			getSession().put("abnormal", abnormal);
+
+			getSession().put("importList", getSession().get("importList"));
+
+			getSession().put("cellNames", getSession().get("cellNames"));
+
+			excelWorkSheet = new ExcelWorkSheet<Customer>();
+			excelWorkSheet.setColumns(cellNames);
 			excelWorkSheet.setData(customers);
 			return QUEUE;
 		}

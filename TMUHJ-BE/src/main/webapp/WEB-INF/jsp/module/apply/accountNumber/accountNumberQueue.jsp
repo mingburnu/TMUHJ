@@ -229,7 +229,7 @@
 			$
 					.ajax({
 						type : "POST",
-						url : "<c:url value = '/'/>crud/apply.customer.allCheckedItem.action",
+						url : "<c:url value = '/'/>crud/apply.accountNumber.allCheckedItem.action",
 						dataType : "html",
 						data : importSerNos.slice(0, importSerNos.length - 1),
 						success : function(message) {
@@ -248,7 +248,7 @@
 		$
 				.ajax({
 					type : "POST",
-					url : "<c:url value = '/'/>crud/apply.customer.getCheckedItem.action",
+					url : "<c:url value = '/'/>crud/apply.accountNumber.getCheckedItem.action",
 					dataType : "html",
 					data : "importSerNo=" + index,
 					success : function(message) {
@@ -263,7 +263,7 @@
 		if ($("input.checkbox.queue:checked").length > 0) {
 			var nowRow = $("input#listForm_currentRowHeader").val();
 			goDetail(
-					"<c:url value = '/'/>crud/apply.customer.importData.action?beforeMaxRows="
+					"<c:url value = '/'/>crud/apply.accountNumber.importData.action?beforeMaxRows="
 							+ maxRows + "&beforeRow=" + nowRow, '客戶-匯入', '');
 		} else {
 			goAlert("訊息", "請選擇一筆或一筆以上的資料");
@@ -274,7 +274,7 @@
 		$
 				.ajax({
 					type : "POST",
-					url : "<c:url value = '/'/>crud/apply.customer.clearCheckedItem.action",
+					url : "<c:url value = '/'/>crud/apply.accountNumber.clearCheckedItem.action",
 					dataType : "html",
 					success : function(message) {
 
@@ -285,15 +285,14 @@
 </head>
 <body>
 	<input type="hidden" value="0" id="recordPoint" />
-	<s:form namespace="/crud" action="apply.customer.importData">
+	<s:form namespace="/crud" action="apply.accountNumber.importData">
 		<table cellspacing="1" class="list-table queue">
 			<tbody>
 				<tr>
 					<th></th>
 					<c:forEach var="item" items="${excelWorkSheet.columns}"
 						varStatus="status">
-						<c:if
-							test="${(0 eq status.index) || (1 eq status.index)||(2 eq status.index)||(3 eq status.index)||(4 eq status.index)}">
+						<c:if test="${1 ne status.index }">
 							<th>${item}</th>
 						</c:if>
 					</c:forEach>
@@ -312,11 +311,10 @@
 									<input type="checkbox" disabled="disabled">
 								</c:otherwise>
 							</c:choose></td>
-						<td>${item.name }</td>
-						<td>${item.engName }</td>
-						<td>${item.address }</td>
-						<td>${item.contactUserName }</td>
-						<td align="center">${item.tel }</td>
+						<td>${item.userId }</td>
+						<td>${item.userName }</td>
+						<td>${item.customer.name }</td>
+						<td>${item.role.role }</td>
 						<td align="center">${item.existStatus }</td>
 					</tr>
 				</c:forEach>

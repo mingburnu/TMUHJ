@@ -619,7 +619,7 @@ public class JournalAction extends GenericCRUDActionFull<Journal> {
 						|| rowValues[11].contains("買斷")) {
 					category = "買斷";
 				} else if (rowValues[11].equals("租貸")
-						&& rowValues[11].contains("租")) {
+						|| rowValues[11].contains("租")) {
 					category = "租貸";
 				} else {
 					category = "不明";
@@ -672,8 +672,8 @@ public class JournalAction extends GenericCRUDActionFull<Journal> {
 					long jouSerNo = journalService.getJouSerNoByIssn(issn
 							.toUpperCase());
 
-					long cusSerNo = customerService.getCusSerNoByName(rowValues[15].trim(),
-							rowValues[16].trim());
+					long cusSerNo = customerService
+							.getCusSerNoByName(rowValues[15].trim());
 					if (cusSerNo != 0) {
 						if (jouSerNo != 0) {
 							if (resourcesUnionService.isExist(

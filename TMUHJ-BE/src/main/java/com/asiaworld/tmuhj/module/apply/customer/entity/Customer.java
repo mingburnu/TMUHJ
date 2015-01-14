@@ -51,7 +51,7 @@ public class Customer extends GenericEntityFull {
 	private String memo;
 
 	@Transient
-	String existStatus;
+	private String existStatus;
 
 	/**
 	 * @return the name
