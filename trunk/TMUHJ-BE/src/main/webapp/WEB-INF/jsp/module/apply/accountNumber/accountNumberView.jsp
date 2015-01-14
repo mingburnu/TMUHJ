@@ -24,35 +24,42 @@
 </script>
 </head>
 <body>
-	<table cellspacing="1" class="detail-table">
-		<tbody>
-			<tr>
-				<th width="130">用戶代碼</th>
-				<td>${entity.userId }</td>
+	<c:choose>
+		<c:when test="${empty successCount }">
+			<table cellspacing="1" class="detail-table">
+				<tbody>
+					<tr>
+						<th width="130">用戶代碼</th>
+						<td>${entity.userId }</td>
 
-			</tr>
-			<tr>
-				<th width="130">用戶姓名</th>
-				<td>${entity.userName }</td>
-			</tr>
-			<tr>
-				<th width="130">客戶名稱</th>
-				<td>${entity.customer.name }</td>
-			</tr>
-			<tr>
-				<th width="130">Email</th>
-				<td>${entity.customer.email }</td>
-			</tr>
-			<tr>
-				<th width="130">權限</th>
-				<td>${entity.role.role }</td>
-			</tr>
-			<tr>
-				<th width="130">狀態</th>
-				<td>${entity.status }</td>
-			</tr>
-		</tbody>
-	</table>
+					</tr>
+					<tr>
+						<th width="130">用戶姓名</th>
+						<td>${entity.userName }</td>
+					</tr>
+					<tr>
+						<th width="130">客戶名稱</th>
+						<td>${entity.customer.name }</td>
+					</tr>
+					<tr>
+						<th width="130">Email</th>
+						<td>${entity.customer.email }</td>
+					</tr>
+					<tr>
+						<th width="130">權限</th>
+						<td>${entity.role.role }</td>
+					</tr>
+					<tr>
+						<th width="130">狀態</th>
+						<td>${entity.status }</td>
+					</tr>
+				</tbody>
+			</table>
+		</c:when>
+		<c:otherwise>
+	成功筆數:${successCount}
+	</c:otherwise>
+	</c:choose>
 	<div class="detail-func-button">
 		<a class="state-default" onclick="closeDetail_ToQuery();">關閉</a>
 	</div>

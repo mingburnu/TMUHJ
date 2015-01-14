@@ -81,11 +81,10 @@ public class CustomerService extends GenericServiceFull<Customer> {
 		return criteria.list();
 	}
 
-	public long getCusSerNoByName(String name, String engName) throws Exception {
+	public long getCusSerNoByName(String name) throws Exception {
 		Session session = sessionFactory.getCurrentSession();
 		Criteria criteria = session.createCriteria(Customer.class);
-		criteria.add(Restrictions.and(Restrictions.eq("name", name.trim()),
-				Restrictions.eq("engName", engName.trim())));
+		criteria.add(Restrictions.eq("name", name.trim()));
 		if (criteria.list().size() > 0) {
 			return ((Customer) criteria.list().get(0)).getSerNo();
 		} else {

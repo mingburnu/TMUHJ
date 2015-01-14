@@ -28,6 +28,8 @@
 
 </head>
 <body>
+	<c:choose>
+	<c:when test="${empty successCount }">
 	<table cellspacing="1" class="detail-table">
 		<tbody>
 			<tr>
@@ -57,6 +59,11 @@
 			</tr>
 		</tbody>
 	</table>
+	</c:when>
+	<c:otherwise>
+	成功筆數:${successCount}
+	</c:otherwise>
+	</c:choose>
 	<div class="detail-func-button">
 		<a class="state-default" onclick="closeDetail_ToQuery();">關閉</a>
 	</div>

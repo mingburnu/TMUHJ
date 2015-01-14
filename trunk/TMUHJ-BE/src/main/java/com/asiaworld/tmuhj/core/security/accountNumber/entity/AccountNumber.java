@@ -72,6 +72,9 @@ public class AccountNumber extends GenericEntityFull {
 	
 	@Transient
 	private Customer customer;
+	
+	@Transient
+	private String existStatus;
 
 	/**
 	 * @return the cusSerNo
@@ -169,6 +172,39 @@ public class AccountNumber extends GenericEntityFull {
 	 */
 	public void setCustomer(Customer customer) {
 		this.customer = customer;
+	}
+
+	/**
+	 * @return the existStatus
+	 */
+	public String getExistStatus() {
+		return existStatus;
+	}
+
+	/**
+	 * @param existStatus the existStatus to set
+	 */
+	public void setExistStatus(String existStatus) {
+		this.existStatus = existStatus;
+	}
+
+	public AccountNumber() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+
+	public AccountNumber(long cusSerNo, String userId, String userPw,
+			String userName, Role role, Status status, Customer customer,
+			String existStatus) {
+		super();
+		this.cusSerNo = cusSerNo;
+		this.userId = userId;
+		this.userPw = userPw;
+		this.userName = userName;
+		this.role = role;
+		this.status = status;
+		this.customer = customer;
+		this.existStatus = existStatus;
 	}
 
 }

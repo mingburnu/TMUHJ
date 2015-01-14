@@ -26,7 +26,9 @@ public enum Role {
 	/**
 	 * 使用者
 	 */
-	使用者("使用者");
+	使用者("使用者"),
+
+	不明("不明");
 
 	private String role;
 

@@ -209,11 +209,11 @@ $(document).ready(function() {
 						<a class="state-default" onclick="allSelect(0);">取消</a>
 						<a class="state-default" onclick="goAdd();">新增</a>
 						<a class="state-default" onclick="goDelete();">刪除</a>
-						<a class="state-default" onclick="goImport()">批次匯入</a>
+						<a class="state-default" onclick="goImport()">匯入</a>
 					</c:when>
 					<c:otherwise>
 						<a class="state-default" onclick="goAdd();">新增</a>
-						<a class="state-default" onclick="goImport()">批次匯入</a>
+						<a class="state-default" onclick="goImport()">匯入</a>
 					</c:otherwise>
 				</c:choose>
 			</div>
