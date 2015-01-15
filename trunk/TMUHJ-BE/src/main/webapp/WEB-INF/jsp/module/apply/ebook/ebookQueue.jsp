@@ -229,7 +229,7 @@
 			$
 					.ajax({
 						type : "POST",
-						url : "<c:url value = '/'/>crud/apply.customer.allCheckedItem.action",
+						url : "<c:url value = '/'/>crud/apply.ebook.allCheckedItem.action",
 						dataType : "html",
 						data : importSerNos.slice(0, importSerNos.length - 1),
 						success : function(message) {
@@ -248,7 +248,7 @@
 		$
 				.ajax({
 					type : "POST",
-					url : "<c:url value = '/'/>crud/apply.customer.getCheckedItem.action",
+					url : "<c:url value = '/'/>crud/apply.ebook.getCheckedItem.action",
 					dataType : "html",
 					data : "importSerNo=" + index,
 					success : function(message) {
@@ -263,7 +263,7 @@
 		if ($("input.checkbox.queue:checked").length > 0) {
 			var nowRow = $("input#listForm_currentRowHeader").val();
 			goDetail(
-					"<c:url value = '/'/>crud/apply.customer.importData.action?beforeMaxRows="
+					"<c:url value = '/'/>crud/apply.ebook.importData.action?beforeMaxRows="
 							+ maxRows + "&beforeRow=" + nowRow, '客戶-匯入', '');
 		} else {
 			goAlert("訊息", "請選擇一筆或一筆以上的資料");
@@ -274,7 +274,7 @@
 		$
 				.ajax({
 					type : "POST",
-					url : "<c:url value = '/'/>crud/apply.customer.clearCheckedItem.action",
+					url : "<c:url value = '/'/>crud/apply.ebook.clearCheckedItem.action",
 					dataType : "html",
 					success : function(message) {
 
@@ -285,44 +285,45 @@
 </head>
 <body>
 	<input type="hidden" value="0" id="recordPoint" />
-	<s:form namespace="/crud" action="apply.customer.importData">
-		<table cellspacing="1" class="list-table queue">
-			<tbody>
-				<tr>
-					<th></th>
-					<c:forEach var="item" items="${excelWorkSheet.columns}"
-						varStatus="status">
-						<c:if
-							test="${(0 eq status.index) || (1 eq status.index)||(2 eq status.index)||(3 eq status.index)||(4 eq status.index)}">
-							<th>${item}</th>
-						</c:if>
-					</c:forEach>
-					<th></th>
-				</tr>
-				<c:forEach var="item" items="${excelWorkSheet.data}"
+	<table cellspacing="1" class="list-table queue">
+		<tbody>
+			<tr>
+				<th></th>
+				<c:forEach var="item" items="${excelWorkSheet.columns}"
 					varStatus="status">
-					<tr>
-						<td><c:choose>
-								<c:when test="${item.existStatus=='正常'}">
-									<input type="checkbox" class="checkbox queue" name="checkItem"
-										value="${status.index }"
-										onclick="getCheckedItem('${status.index }')">
-								</c:when>
-								<c:otherwise>
-									<input type="checkbox" disabled="disabled">
-								</c:otherwise>
-							</c:choose></td>
-						<td>${item.name }</td>
-						<td>${item.engName }</td>
-						<td>${item.address }</td>
-						<td>${item.contactUserName }</td>
-						<td align="center">${item.tel }</td>
-						<td align="center">${item.existStatus }</td>
-					</tr>
+					<c:if
+						test="${(1 eq status.index) || (3 eq status.index)||(11 eq status.index)||(12 eq status.index)||(15 eq status.index)}">
+						<th>${item}</th>
+					</c:if>
 				</c:forEach>
-			</tbody>
-		</table>
-	</s:form>
+				<th></th>
+			</tr>
+			<c:forEach var="item" items="${excelWorkSheet.data}"
+				varStatus="status">
+				<tr>
+					<td><c:choose>
+							<c:when test="${item.existStatus=='正常'}">
+								<input type="checkbox" class="checkbox queue" name="checkItem"
+									value="${status.index }"
+									onclick="getCheckedItem('${status.index }')">
+							</c:when>
+							<c:otherwise>
+								<input type="checkbox" disabled="disabled">
+							</c:otherwise>
+						</c:choose></td>
+					<td>${item.englishTitle }</td>
+					<td>${item.issn }</td>
+					<td>${item.resourcesBuyers.rCategory.category }</td>
+					<td>${item.resourcesBuyers.rType.type }</td>
+					<td align="center"><c:forEach var="customer"
+							items="${item.customers}" varStatus="status">
+				${customer.name }
+				</c:forEach></td>
+					<td align="center">${item.existStatus }</td>
+				</tr>
+			</c:forEach>
+		</tbody>
+	</table>
 	<div class="page-box" align="right">
 		<table border="0" cellspacing="0" cellpadding="0">
 			<tbody>

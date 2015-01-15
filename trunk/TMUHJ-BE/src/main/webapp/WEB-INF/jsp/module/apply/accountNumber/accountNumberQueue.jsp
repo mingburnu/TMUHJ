@@ -147,7 +147,7 @@
 		$("input#listForm_currentRowHeader").attr("max",
 				Math.floor(cRowCount / maxRows) + 1);
 		var startOffset = maxRows * (newRowPage - 1);
-		var endOffset = startOffset + maxRows + 1 - 1;
+		var endOffset = startOffset + maxRows;
 		cRows.filter(':eq(' + startOffset + ')').show();
 		cRows.filter(':lt(' + endOffset + '):gt(' + startOffset + ')').show();
 
@@ -190,7 +190,7 @@
 
 		cRows.hide();
 		var startOffset = (row - 1) * maxRows;
-		var endOffset = (row - 1) * maxRows + maxRows + 1;
+		var endOffset = (row - 1) * maxRows + maxRows;
 		cRows.filter(':eq(' + startOffset + ')').show();
 		cRows.filter(':lt(' + endOffset + '):gt(' + startOffset + ')').show();
 

@@ -6,13 +6,15 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -76,6 +78,10 @@ public class JournalAction extends GenericCRUDActionFull<Journal> {
 	private CustomerService customerService;
 
 	private ExcelWorkSheet<Journal> excelWorkSheet;
+
+	private String importSerNo;
+
+	private String[] importSerNos;
 
 	@Override
 	public void validateSave() throws Exception {
@@ -553,14 +559,63 @@ public class JournalAction extends GenericCRUDActionFull<Journal> {
 
 			// 保存工作單名稱
 			Row firstRow = sheet.getRow(0);
-			Iterator<Cell> iterator = firstRow.iterator();
 
 			// 保存列名
 			List<String> cellNames = new ArrayList<String>();
-			while (iterator.hasNext()) {
-				cellNames.add(iterator.next().getStringCellValue());
+			String[] rowTitles = new String[17];
+			int n = 0;
+			while (n < rowTitles.length) {
+				if (firstRow.getCell(n) == null) {
+					rowTitles[n] = "";
+				} else {
+					int typeInt = firstRow.getCell(n).getCellType();
+					switch (typeInt) {
+					case 0:
+						String tempNumeric = "";
+						tempNumeric = tempNumeric
+								+ firstRow.getCell(n).getNumericCellValue();
+						rowTitles[n] = tempNumeric;
+						break;
+
+					case 1:
+						rowTitles[n] = firstRow.getCell(n).getStringCellValue()
+								.trim();
+						break;
+
+					case 2:
+						rowTitles[n] = firstRow.getCell(n).getCellFormula()
+								.trim();
+						break;
+
+					case 3:
+						rowTitles[n] = "";
+						break;
+
+					case 4:
+						String tempBoolean = "";
+						tempBoolean = ""
+								+ firstRow.getCell(n).getBooleanCellValue();
+						rowTitles[n] = tempBoolean;
+						break;
+
+					case 5:
+						String tempByte = "";
+						tempByte = tempByte
+								+ firstRow.getCell(n).getErrorCellValue();
+						rowTitles[n] = tempByte;
+						break;
+					}
+
+				}
+
+				cellNames.add(rowTitles[n]);
+				n++;
 			}
+
+			getSession().put("cellNames", cellNames);
 			excelWorkSheet.setColumns(cellNames);
+
+			LinkedHashSet<Journal> originalData = new LinkedHashSet<Journal>();
 			for (int i = 1; i <= sheet.getLastRowNum(); i++) {
 				Row row = sheet.getRow(i);
 
@@ -645,20 +700,7 @@ public class JournalAction extends GenericCRUDActionFull<Journal> {
 						rowValues[10], Category.valueOf(category),
 						Type.valueOf(type), rowValues[13], rowValues[14]);
 
-				journal = new Journal(rowValues[0], rowValues[1], rowValues[2],
-						"", rowValues[3], rowValues[4], rowValues[5],
-						rowValues[6], "", "", "", rowValues[7], rowValues[8],
-						0, resourcesBuyers, null, "");
-
-				customer = new Customer();
-				customer.setName(rowValues[15].trim());
-				customer.setEngName(rowValues[16].trim());
-
-				List<Customer> customers = new ArrayList<Customer>();
-				customers.add(customer);
-				journal.setCustomers(customers);
-
-				String issn = row.getCell(3).getStringCellValue().trim();
+				String issn = rowValues[3].trim().toUpperCase();
 				String[] issnSplit = issn.split("-");
 
 				issn = "";
@@ -667,6 +709,19 @@ public class JournalAction extends GenericCRUDActionFull<Journal> {
 					issn = issn + issnSplit[j];
 					j++;
 				}
+
+				journal = new Journal(rowValues[0], rowValues[1], rowValues[2],
+						"", issn, rowValues[4], rowValues[5], rowValues[6], "",
+						"", "", rowValues[7], rowValues[8], 0, resourcesBuyers,
+						null, "");
+
+				customer = new Customer();
+				customer.setName(rowValues[15].trim());
+				customer.setEngName(rowValues[16].trim());
+
+				List<Customer> customers = new ArrayList<Customer>();
+				customers.add(customer);
+				journal.setCustomers(customers);
 
 				if (isIssn(issn)) {
 					long jouSerNo = journalService.getJouSerNoByIssn(issn
@@ -682,10 +737,10 @@ public class JournalAction extends GenericCRUDActionFull<Journal> {
 
 								journal.setExistStatus("已存在");
 							} else {
-								journal.setExistStatus("添加客戶");
+								journal.setExistStatus("正常");
 							}
 						} else {
-							journal.setExistStatus("新資源");
+							journal.setExistStatus("正常");
 						}
 					} else {
 						journal.setExistStatus("無此客戶");
@@ -693,14 +748,141 @@ public class JournalAction extends GenericCRUDActionFull<Journal> {
 				} else {
 					journal.setExistStatus("ISSN異常");
 				}
-
-				excelWorkSheet.getData().add(journal);
+				originalData.add(journal);
 			}
+			Iterator<Journal> setIterator = originalData.iterator();
+			int normal = 0;
+			while (setIterator.hasNext()) {
+				journal = setIterator.next();
+				excelWorkSheet.getData().add(journal);
+				if (journal.getExistStatus().equals("正常")) {
+					normal = normal + 1;
+				}
+			}
+
+			getSession().put("importList", excelWorkSheet.getData());
+			getSession().put("total", excelWorkSheet.getData().size());
+			getSession().put("normal", normal);
+			getSession().put("abnormal",
+					excelWorkSheet.getData().size() - normal);
 
 			return QUEUE;
 		} else {
 			getRequest().setAttribute("goQueue", "yes");
 			return EDIT;
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	public void getCheckedItem() {
+		Map<String, Object> checkItemMap;
+		if (getSession().containsKey("checkItemMap")) {
+			checkItemMap = (TreeMap<String, Object>) getSession().get(
+					"checkItemMap");
+		} else {
+			checkItemMap = new TreeMap<String, Object>();
+		}
+
+		if (!checkItemMap.containsKey(this.importSerNo)) {
+			checkItemMap.put(this.importSerNo, this.importSerNo);
+		} else {
+			checkItemMap.remove(this.importSerNo);
+		}
+		getSession().put("checkItemMap", checkItemMap);
+		System.out.println(checkItemMap);
+	}
+
+	public void allCheckedItem() {
+		Map<String, Object> checkItemMap = new TreeMap<String, Object>();
+
+		int i = 0;
+		while (i < importSerNos.length) {
+			checkItemMap.put(importSerNos[i], importSerNos[i]);
+			i++;
+		}
+
+		getSession().put("checkItemMap", checkItemMap);
+		System.out.println(checkItemMap);
+	}
+
+	public void clearCheckedItem() {
+		Map<String, Object> checkItemMap = new TreeMap<String, Object>();
+		getSession().put("checkItemMap", checkItemMap);
+		System.out.println(checkItemMap);
+	}
+
+	@SuppressWarnings("unchecked")
+	public String importData() throws Exception {
+		List<Journal> journals = (List<Journal>) getSession().get("importList");
+
+		List<String> cellNames = (List<String>) getSession().get("cellNames");
+
+		Map<String, Object> checkItemMap = (TreeMap<String, Object>) getSession()
+				.get("checkItemMap");
+
+		if (checkItemMap == null || checkItemMap.size() == 0) {
+			addActionError("請選擇一筆或一筆以上的資料");
+		}
+
+		if (!hasActionErrors()) {
+			Iterator<?> it = checkItemMap.values().iterator();
+			List<Journal> importList = new ArrayList<Journal>();
+			while (it.hasNext()) {
+				String index = it.next().toString();
+				importList.add(journals.get(Integer.parseInt(index)));
+			}
+
+			for (int i = 0; i < importList.size(); i++) {
+				long jouSerNo = journalService.getJouSerNoByIssn(importList
+						.get(i).getIssn());
+				long cusSerNo = customerService.getCusSerNoByName(importList
+						.get(i).getCustomers().get(0).getName());
+
+				if (jouSerNo == 0) {
+					resourcesBuyers = resourcesBuyersService.save(importList
+							.get(i).getResourcesBuyers(), getLoginUser());
+					journal = journalService.save(importList.get(i),
+							getLoginUser());
+
+					resourcesUnionService.save(
+							new ResourcesUnion(cusSerNo, resourcesBuyers
+									.getSerNo(), 0, 0, journal.getSerNo()),
+							getLoginUser());
+				} else {
+					resourcesUnion = resourcesUnionService.getByObjSerNo(
+							jouSerNo, Journal.class);
+					resourcesUnionService.save(new ResourcesUnion(cusSerNo,
+							resourcesUnion.getResSerNo(), 0, 0, jouSerNo),
+							getLoginUser());
+
+				}
+			}
+
+			clearCheckedItem();
+			getRequest().setAttribute("successCount", importList.size());
+			return VIEW;
+		} else {
+			Object total = getSession().get("total");
+			Object normal = getSession().get("normal");
+			Object abnormal = getSession().get("abnormal");
+
+			getRequest().setAttribute("beforeRow",
+					getRequest().getParameter("beforeRow"));
+			getRequest().setAttribute("beforeMaxRows",
+					getRequest().getParameter("beforeMaxRows"));
+
+			getSession().put("total", total);
+			getSession().put("normal", normal);
+			getSession().put("abnormal", abnormal);
+
+			getSession().put("importList", getSession().get("importList"));
+
+			getSession().put("cellNames", getSession().get("cellNames"));
+
+			excelWorkSheet = new ExcelWorkSheet<Journal>();
+			excelWorkSheet.setColumns(cellNames);
+			excelWorkSheet.setData(journals);
+			return QUEUE;
 		}
 	}
 
@@ -860,4 +1042,33 @@ public class JournalAction extends GenericCRUDActionFull<Journal> {
 		this.excelWorkSheet = excelWorkSheet;
 	}
 
+	/**
+	 * @return the importSerNo
+	 */
+	public String getImportSerNo() {
+		return importSerNo;
+	}
+
+	/**
+	 * @param importSerNo
+	 *            the importSerNo to set
+	 */
+	public void setImportSerNo(String importSerNo) {
+		this.importSerNo = importSerNo;
+	}
+
+	/**
+	 * @return the importSerNos
+	 */
+	public String[] getImportSerNos() {
+		return importSerNos;
+	}
+
+	/**
+	 * @param importSerNos
+	 *            the importSerNos to set
+	 */
+	public void setImportSerNos(String[] importSerNos) {
+		this.importSerNos = importSerNos;
+	}
 }

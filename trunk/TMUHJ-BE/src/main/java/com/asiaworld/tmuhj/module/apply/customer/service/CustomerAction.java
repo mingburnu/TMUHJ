@@ -498,6 +498,8 @@ public class CustomerAction extends GenericCRUDActionFull<Customer> {
 			for (int i = 0; i < importList.size(); i++) {
 				customerService.save(importList.get(i), getLoginUser());
 			}
+			
+			clearCheckedItem();
 			getRequest().setAttribute("successCount", importList.size());
 			return VIEW;
 		} else {

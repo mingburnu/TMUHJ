@@ -81,10 +81,13 @@ public class Ebook extends GenericEntityFull {
 
 	@Transient
 	private ResourcesBuyers resourcesBuyers;
-	
+
 	@Transient
 	private List<Customer> customers;
-	
+
+	@Transient
+	private String existStatus;
+
 	/**
 	 * @return the bookName
 	 */
@@ -303,7 +306,8 @@ public class Ebook extends GenericEntityFull {
 	}
 
 	/**
-	 * @param resourcesBuyers the resourcesBuyers to set
+	 * @param resourcesBuyers
+	 *            the resourcesBuyers to set
 	 */
 	public void setResourcesBuyers(ResourcesBuyers resourcesBuyers) {
 		this.resourcesBuyers = resourcesBuyers;
@@ -317,13 +321,30 @@ public class Ebook extends GenericEntityFull {
 	}
 
 	/**
-	 * @param customers the customers to set
+	 * @param customers
+	 *            the customers to set
 	 */
 	public void setCustomers(List<Customer> customers) {
 		this.customers = customers;
 	}
 
-	/* (non-Javadoc)
+	/**
+	 * @return the existStatus
+	 */
+	public String getExistStatus() {
+		return existStatus;
+	}
+
+	/**
+	 * @param existStatus the existStatus to set
+	 */
+	public void setExistStatus(String existStatus) {
+		this.existStatus = existStatus;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#toString()
 	 */
 	@Override
@@ -336,6 +357,38 @@ public class Ebook extends GenericEntityFull {
 				+ ", bookInfoIntegral=" + bookInfoIntegral + ", url=" + url
 				+ ", style=" + style + ", publication=" + publication
 				+ ", resourcesBuyers=" + resourcesBuyers + ", customers="
-				+ customers + "]";
+				+ customers + ", existStatus=" + existStatus + "]";
 	}
+
+	public Ebook() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+
+	public Ebook(String bookName, long isbn, String publishName,
+			String autherName, String authers, String uppeName, String pubDate,
+			String languages, int version, String cnClassBzStr,
+			String bookInfoIntegral, String url, String style,
+			String publication, ResourcesBuyers resourcesBuyers,
+			List<Customer> customers, String existStatus) {
+		super();
+		this.bookName = bookName;
+		this.isbn = isbn;
+		this.publishName = publishName;
+		this.autherName = autherName;
+		this.authers = authers;
+		this.uppeName = uppeName;
+		this.pubDate = pubDate;
+		this.languages = languages;
+		this.version = version;
+		this.cnClassBzStr = cnClassBzStr;
+		this.bookInfoIntegral = bookInfoIntegral;
+		this.url = url;
+		this.style = style;
+		this.publication = publication;
+		this.resourcesBuyers = resourcesBuyers;
+		this.customers = customers;
+		this.existStatus = existStatus;
+	}
+
 }

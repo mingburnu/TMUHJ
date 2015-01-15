@@ -8,22 +8,24 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title></title>
 <script type="text/javascript">
+	var beforeMaxRows = "${beforeMaxRows}";
+	var beforeRow = "${beforeRow}";
 	var maxRows = 10;
 	var cPrev = $('a#prev');
 	var cNext = $('a#next');
-	
+
 	$('.list-table.queue').each(
 			function() {
 				var cTable = $(this);
 				var cRows = cTable.find('tr:gt(0)');
 				var cRowCount = cRows.size();
-				
+
 				if (cRowCount <= maxRows) {
 					cPrev.addClass('disabled');
 					cPrev.hide();
 					cNext.addClass('disabled');
 					cNext.hide();
-					}
+				}
 
 				if (cRowCount / maxRows > Math.floor(cRowCount / maxRows)) {
 					$("span.totalNum.queue").html(
@@ -56,7 +58,10 @@
 
 					cRows.hide();
 					if (cFirstVisible - maxRows - 1 > 0) {
-						cRows.filter(':lt(' + cFirstVisible + '):gt('+ (cFirstVisible - maxRows - 1) + ')').show();
+						cRows.filter(
+								':lt(' + cFirstVisible + '):gt('
+										+ (cFirstVisible - maxRows - 1) + ')')
+								.show();
 					} else {
 						cRows.filter(':lt(' + cFirstVisible + ')').show();
 					}
@@ -106,11 +111,19 @@
 					$('#recordPoint').val(recordPoint);
 				});
 
+				if (beforeMaxRows != null && beforeMaxRows != "") {
+					maxRows = parseInt(beforeMaxRows);
+					var row = parseInt(beforeRow);
+					changeRowSize(maxRows, 0);
+					gotoRow(row);
+					$("input#listForm_currentRowHeader").val(row);
+				}
+
 			});
-	
+
 	function changeRowSize(row, recordRow) {
 		allRow(0);
-
+		clearCheckedItem();
 		maxRows = parseInt(row);
 		var cTable = $('.list-table.queue tbody').parent();
 		var cRows = cTable.find('tr:gt(0)');
@@ -134,8 +147,8 @@
 		$("input#listForm_currentRowHeader").attr("max",
 				Math.floor(cRowCount / maxRows) + 1);
 		var startOffset = maxRows * (newRowPage - 1);
-		var endOffset = startOffset + maxRows + 1;
-		cRows.filter(':eq('+ startOffset +')').show();
+		var endOffset = startOffset + maxRows;
+		cRows.filter(':eq(' + startOffset + ')').show();
 		cRows.filter(':lt(' + endOffset + '):gt(' + startOffset + ')').show();
 
 		if (startOffset == 0) {
@@ -177,7 +190,8 @@
 
 		cRows.hide();
 		var startOffset = (row - 1) * maxRows;
-		var endOffset = (row - 1) * maxRows + maxRows + 1;
+		var endOffset = (row - 1) * maxRows + maxRows;
+		cRows.filter(':eq(' + startOffset + ')').show();
 		cRows.filter(':lt(' + endOffset + '):gt(' + startOffset + ')').show();
 
 		if (startOffset == 0) {
@@ -202,13 +216,70 @@
 	}
 
 	function allRow(action) {
-		for (var i = 0; i < $(".checkbox.queue:visible").length; i++) {
-			if (action == 1) {
-				$(".checkbox.queue:visible").get(i).checked = true;
-			} else {
-				$(".checkbox.queue:visible").get(i).checked = false;
-			}
+		if (action == 1) {
+			checkedValues = new Array($(".checkbox.queue:visible").length);
+			var importSerNos = "";
+			$(".checkbox.queue:visible").each(
+					function() {
+						$(this).prop("checked", "checked");
+						importSerNos = importSerNos + "importSerNos="
+								+ $(this).val() + "&";
+					});
+
+			$
+					.ajax({
+						type : "POST",
+						url : "<c:url value = '/'/>crud/apply.journal.allCheckedItem.action",
+						dataType : "html",
+						data : importSerNos.slice(0, importSerNos.length - 1),
+						success : function(message) {
+
+						}
+					});
+		} else {
+			clearCheckedItem();
+			$(".checkbox.queue:visible").each(function() {
+				$(this).removeAttr("checked");
+			});
 		}
+	}
+
+	function getCheckedItem(index) {
+		$
+				.ajax({
+					type : "POST",
+					url : "<c:url value = '/'/>crud/apply.journal.getCheckedItem.action",
+					dataType : "html",
+					data : "importSerNo=" + index,
+					success : function(message) {
+
+					}
+				});
+	}
+
+	function checkData() {
+		//檢查資料是否已被勾選
+		//進行動作
+		if ($("input.checkbox.queue:checked").length > 0) {
+			var nowRow = $("input#listForm_currentRowHeader").val();
+			goDetail(
+					"<c:url value = '/'/>crud/apply.journal.importData.action?beforeMaxRows="
+							+ maxRows + "&beforeRow=" + nowRow, '客戶-匯入', '');
+		} else {
+			goAlert("訊息", "請選擇一筆或一筆以上的資料");
+		}
+	}
+
+	function clearCheckedItem() {
+		$
+				.ajax({
+					type : "POST",
+					url : "<c:url value = '/'/>crud/apply.journal.clearCheckedItem.action",
+					dataType : "html",
+					success : function(message) {
+
+					}
+				});
 	}
 </script>
 </head>
@@ -230,14 +301,11 @@
 			<c:forEach var="item" items="${excelWorkSheet.data}"
 				varStatus="status">
 				<tr>
-					<!--<td align="center" class="td_first" nowrap><input
-						type="checkbox" class="checkbox" name="checkItem"
-						value="${item.serNo}"></td>-->
 					<td><c:choose>
-							<c:when
-								test="${item.existStatus=='添加客戶' || item.existStatus=='新資源'}">
+							<c:when test="${item.existStatus=='正常'}">
 								<input type="checkbox" class="checkbox queue" name="checkItem"
-									value="">
+									value="${status.index }"
+									onclick="getCheckedItem('${status.index }')">
 							</c:when>
 							<c:otherwise>
 								<input type="checkbox" disabled="disabled">
@@ -281,17 +349,15 @@
 	<div class="button_box">
 		<div class="detail-func-button">
 			<a class="state-default" onclick="allRow(1)">全選</a> <a
-				class="state-default" onclick="allRow(0)">取消</a> <a
-				class="state-default" onclick="closeDetail();">關閉</a>
-			&nbsp;<a class="state-default" onclick="resetData();">重設</a>&nbsp; <a
-				class="state-default" onclick="clearDetail_2();submitData();">確認</a>
+				class="state-default" onclick="allRow(0)">重置</a> <a
+				class="state-default" onclick="closeDetail();">關閉</a> <a
+				class="state-default" onclick="checkData()">確認</a>
 		</div>
 	</div>
 	<div class="detail_note">
 		<div class="detail_note_title">Note</div>
-		<div class="detail_note_content">
-			<span class="required">(•)</span>為必填欄位
-		</div>
+		<div class="detail_note_content">共${total }筆記錄(正常筆數 :${normal }
+			;異常筆數 :${abnormal })</div>
 	</div>
 	<s:if test="hasActionErrors()">
 		<script language="javascript" type="text/javascript">
