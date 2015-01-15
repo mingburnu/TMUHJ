@@ -7,11 +7,11 @@ package com.asiaworld.tmuhj.core.enums;
  */
 public enum Status {
 
+	/** 審核中. */
+	審核中("審核中"),
+	
 	/** 生效. */
 	生效("生效"),
-
-	/** 不生效. */
-	審核中("審核中"),
 
 	/** 不生效. */
 	不生效("不生效");

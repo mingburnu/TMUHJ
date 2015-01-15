@@ -42,7 +42,7 @@ import com.asiaworld.tmuhj.module.apply.customer.service.CustomerService;
 @SuppressWarnings("serial")
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class AccountNumberAction extends GenericCRUDActionFull<AccountNumber> {
-
+	
 	private String[] checkItem;
 
 	private File file;
@@ -92,9 +92,10 @@ public class AccountNumberAction extends GenericCRUDActionFull<AccountNumber> {
 
 	@Override
 	public String query() throws Exception {
-		dsCustomer.setEntity(customer);
-		dsCustomer = customerService.getByRestrictions(dsCustomer);
 		if (getEntity().getSerNo() != null) {
+			dsCustomer.setEntity(customer);
+			dsCustomer = customerService.getByRestrictions(dsCustomer);
+			
 			accountNumber = accountNumberService.getBySerNo(getEntity()
 					.getSerNo());
 			setEntity(accountNumber);
@@ -102,6 +103,8 @@ public class AccountNumberAction extends GenericCRUDActionFull<AccountNumber> {
 				&& getRequest().getParameter("goQueue").equals("yes")) {
 			getRequest().setAttribute("goQueue",
 					getRequest().getParameter("goQueue"));
+		}else{dsCustomer.setEntity(customer);
+		dsCustomer = customerService.getByRestrictions(dsCustomer);
 		}
 
 		return EDIT;
@@ -176,11 +179,6 @@ public class AccountNumberAction extends GenericCRUDActionFull<AccountNumber> {
 
 	@Override
 	public String update() throws Exception {
-		if (getEntity().getUserPw() == null
-				|| getEntity().getUserPw().trim().equals("")) {
-			addActionError("用戶密碼不得空白");
-		}
-
 		if (getEntity().getUserName() == null
 				|| getEntity().getUserName().trim().equals("")) {
 			addActionError("用戶姓名不得空白");
@@ -617,6 +615,8 @@ public class AccountNumberAction extends GenericCRUDActionFull<AccountNumber> {
 			for (int i = 0; i < importList.size(); i++) {
 				accountNumberService.save(importList.get(i), getLoginUser());
 			}
+			
+			clearCheckedItem();
 			getRequest().setAttribute("successCount", importList.size());
 			return VIEW;
 		} else {
@@ -654,7 +654,7 @@ public class AccountNumberAction extends GenericCRUDActionFull<AccountNumber> {
 		}
 		return null;
 	}
-
+	
 	/**
 	 * @return the dsCustomer
 	 */

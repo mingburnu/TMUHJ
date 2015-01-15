@@ -38,7 +38,7 @@ public class JournalService extends GenericServiceFull<Journal> {
 		Assert.notNull(ds.getEntity());
 		Journal entity = ds.getEntity();
 		DsRestrictions restrictions = DsBeanFactory.getDsRestrictions();
-		
+
 		if (StringUtils.isNotEmpty(entity.getChineseTitle())
 				&& StringUtils.isNotBlank(entity.getChineseTitle())) {
 			restrictions.likeIgnoreCase("chineseTitle",
@@ -51,9 +51,18 @@ public class JournalService extends GenericServiceFull<Journal> {
 		}
 		if (StringUtils.isNotEmpty(entity.getIssn())
 				&& StringUtils.isNotBlank(entity.getIssn())) {
-			restrictions.likeIgnoreCase("issn", entity.getIssn());
+
+			String[] issnSpilt = entity.getIssn().split("-");
+
+			String issn = "";
+			int i = 0;
+			while (i < issnSpilt.length) {
+				issn = issn + issnSpilt[i];
+			}
+
+			restrictions.likeIgnoreCase("issn", issn);
 		}
-		
+
 		return dao.findByRestrictions(restrictions, ds);
 	}
 
@@ -73,5 +82,5 @@ public class JournalService extends GenericServiceFull<Journal> {
 			return 0;
 		}
 	}
-	
+
 }

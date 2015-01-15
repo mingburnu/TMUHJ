@@ -1,16 +1,29 @@
 package com.asiaworld.tmuhj.module.apply.ebook.service;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 import org.apache.commons.lang3.math.NumberUtils;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 
 import com.asiaworld.tmuhj.core.model.DataSet;
+import com.asiaworld.tmuhj.core.model.ExcelWorkSheet;
 import com.asiaworld.tmuhj.core.model.Pager;
 import com.asiaworld.tmuhj.core.web.GenericCRUDActionFull;
 import com.asiaworld.tmuhj.module.apply.customer.entity.Customer;
@@ -31,6 +44,12 @@ public class EbookAction extends GenericCRUDActionFull<Ebook> {
 	private String[] checkItem;
 
 	private String[] cusSerNo;
+
+	private File file;
+
+	private String fileFileName;
+
+	private String fileContentType;
 
 	@Autowired
 	private Ebook ebook;
@@ -55,6 +74,12 @@ public class EbookAction extends GenericCRUDActionFull<Ebook> {
 
 	@Autowired
 	private CustomerService customerService;
+
+	private ExcelWorkSheet<Ebook> excelWorkSheet;
+
+	private String importSerNo;
+
+	private String[] importSerNos;
 
 	@Override
 	public void validateSave() throws Exception {
@@ -95,6 +120,10 @@ public class EbookAction extends GenericCRUDActionFull<Ebook> {
 					.getBySerNo(resourcesBuyersSerNo);
 			ebook.setCustomers(customers);
 			setEntity(ebook);
+		} else if (getRequest().getParameter("goQueue") != null
+				&& getRequest().getParameter("goQueue").equals("yes")) {
+			getRequest().setAttribute("goQueue",
+					getRequest().getParameter("goQueue"));
 		} else {
 			List<Customer> customers = new ArrayList<Customer>();
 			ebook.setCustomers(customers);
@@ -140,37 +169,8 @@ public class EbookAction extends GenericCRUDActionFull<Ebook> {
 		if (getEntity().getIsbn() <= 0) {
 			addActionError("ISBN必須填寫");
 		} else {
-			if (getEntity().getIsbn() >= 9780000000000l
-					&& getEntity().getIsbn() < 9800000000000l) {
-				String isbn = "" + getEntity().getIsbn();
-				int sum = Integer.parseInt(isbn.substring(0, 1)) * 1
-						+ Integer.parseInt(isbn.substring(1, 2)) * 3
-						+ Integer.parseInt(isbn.substring(2, 3)) * 1
-						+ Integer.parseInt(isbn.substring(3, 4)) * 3
-						+ Integer.parseInt(isbn.substring(4, 5)) * 1
-						+ Integer.parseInt(isbn.substring(5, 6)) * 3
-						+ Integer.parseInt(isbn.substring(6, 7)) * 1
-						+ Integer.parseInt(isbn.substring(7, 8)) * 3
-						+ Integer.parseInt(isbn.substring(8, 9)) * 1
-						+ Integer.parseInt(isbn.substring(9, 10)) * 3
-						+ Integer.parseInt(isbn.substring(10, 11)) * 1
-						+ Integer.parseInt(isbn.substring(11, 12)) * 3;
-
-				int remainder = sum % 10;
-				int num = 10 - remainder;
-
-				if (num == 10) {
-					if (Integer.parseInt(isbn.substring(12)) != 0) {
-						addActionError("ISBN不正確");
-					}
-				} else {
-					if (Integer.parseInt(isbn.substring(12)) != num) {
-						addActionError("ISBN不正確");
-					}
-				}
-
-			} else {
-				addActionError("前三碼必須是978或979");
+			if (!isIsbn(getEntity().getIsbn())) {
+				addActionError("ISBN不正確");
 			}
 		}
 
@@ -289,37 +289,8 @@ public class EbookAction extends GenericCRUDActionFull<Ebook> {
 		if (getEntity().getIsbn() <= 0) {
 			addActionError("ISBN必須填寫");
 		} else {
-			if (getEntity().getIsbn() >= 9780000000002l
-					&& getEntity().getIsbn() <= 9799999999990l) {
-				String isbn = "" + getEntity().getIsbn();
-				int sum = Integer.parseInt(isbn.substring(0, 1)) * 1
-						+ Integer.parseInt(isbn.substring(1, 2)) * 3
-						+ Integer.parseInt(isbn.substring(2, 3)) * 1
-						+ Integer.parseInt(isbn.substring(3, 4)) * 3
-						+ Integer.parseInt(isbn.substring(4, 5)) * 1
-						+ Integer.parseInt(isbn.substring(5, 6)) * 3
-						+ Integer.parseInt(isbn.substring(6, 7)) * 1
-						+ Integer.parseInt(isbn.substring(7, 8)) * 3
-						+ Integer.parseInt(isbn.substring(8, 9)) * 1
-						+ Integer.parseInt(isbn.substring(9, 10)) * 3
-						+ Integer.parseInt(isbn.substring(10, 11)) * 1
-						+ Integer.parseInt(isbn.substring(11, 12)) * 3;
-
-				int remainder = sum % 10;
-				int num = 10 - remainder;
-
-				if (num == 10) {
-					if (Integer.parseInt(isbn.substring(12)) != 0) {
-						addActionError("ISBN不正確");
-					}
-				} else {
-					if (Integer.parseInt(isbn.substring(12)) != num) {
-						addActionError("ISBN不正確");
-					}
-				}
-
-			} else {
-				addActionError("ISBN區間為9780000000002~9799999999990");
+			if (!isIsbn(getEntity().getIsbn())) {
+				addActionError("ISBN不正確");
 			}
 		}
 
@@ -556,6 +527,397 @@ public class EbookAction extends GenericCRUDActionFull<Ebook> {
 		}
 	}
 
+	public String queue() throws Exception {
+		if (file == null || !file.isFile()) {
+			addActionError("請選擇檔案");
+		} else {
+			if (createWorkBook(new FileInputStream(file)) == null) {
+				addActionError("檔案格式錯誤");
+			}
+		}
+
+		if (!hasActionErrors()) {
+			Workbook book = createWorkBook(new FileInputStream(file));
+			// book.getNumberOfSheets(); 判斷Excel文件有多少個sheet
+			Sheet sheet = book.getSheetAt(0);
+			excelWorkSheet = new ExcelWorkSheet<Ebook>();
+
+			// 保存工作單名稱
+			Row firstRow = sheet.getRow(0);
+
+			// 保存列名
+			List<String> cellNames = new ArrayList<String>();
+			String[] rowTitles = new String[19];
+			int n = 0;
+			while (n < rowTitles.length) {
+				if (firstRow.getCell(n) == null) {
+					rowTitles[n] = "";
+				} else {
+					int typeInt = firstRow.getCell(n).getCellType();
+					switch (typeInt) {
+					case 0:
+						String tempNumeric = "";
+						tempNumeric = tempNumeric
+								+ firstRow.getCell(n).getNumericCellValue();
+						rowTitles[n] = tempNumeric;
+						break;
+
+					case 1:
+						rowTitles[n] = firstRow.getCell(n).getStringCellValue()
+								.trim();
+						break;
+
+					case 2:
+						rowTitles[n] = firstRow.getCell(n).getCellFormula()
+								.trim();
+						break;
+
+					case 3:
+						rowTitles[n] = "";
+						break;
+
+					case 4:
+						String tempBoolean = "";
+						tempBoolean = ""
+								+ firstRow.getCell(n).getBooleanCellValue();
+						rowTitles[n] = tempBoolean;
+						break;
+
+					case 5:
+						String tempByte = "";
+						tempByte = tempByte
+								+ firstRow.getCell(n).getErrorCellValue();
+						rowTitles[n] = tempByte;
+						break;
+					}
+
+				}
+
+				cellNames.add(rowTitles[n]);
+				n++;
+			}
+
+			getSession().put("cellNames", cellNames);
+			excelWorkSheet.setColumns(cellNames);
+
+			LinkedHashSet<Ebook> originalData = new LinkedHashSet<Ebook>();
+			for (int i = 1; i <= sheet.getLastRowNum(); i++) {
+				Row row = sheet.getRow(i);
+
+				String[] rowValues = new String[17];
+				int k = 0;
+				while (k < rowValues.length) {
+					if (row.getCell(k) == null) {
+						rowValues[k] = "";
+					} else {
+						int typeInt = row.getCell(k).getCellType();
+						switch (typeInt) {
+						case 0:
+							String tempNumeric = "";
+							tempNumeric = tempNumeric
+									+ row.getCell(k).getNumericCellValue();
+							rowValues[k] = tempNumeric;
+							break;
+
+						case 1:
+							rowValues[k] = row.getCell(k).getStringCellValue()
+									.trim();
+							break;
+
+						case 2:
+							rowValues[k] = row.getCell(k).getCellFormula()
+									.trim();
+							break;
+
+						case 3:
+							rowValues[k] = "";
+							break;
+
+						case 4:
+							String tempBoolean = "";
+							tempBoolean = ""
+									+ row.getCell(k).getBooleanCellValue();
+							rowValues[k] = tempBoolean;
+							break;
+
+						case 5:
+							String tempByte = "";
+							tempByte = tempByte
+									+ row.getCell(k).getErrorCellValue();
+							rowValues[k] = tempByte;
+							break;
+						}
+
+					}
+					k++;
+				}
+
+				String category = "";
+				if (rowValues[11].equals("")) {
+					category = "未註明";
+				} else if (rowValues[11].equals("買斷")
+						|| rowValues[11].contains("買斷")) {
+					category = "買斷";
+				} else if (rowValues[11].equals("租貸")
+						|| rowValues[11].contains("租")) {
+					category = "租貸";
+				} else {
+					category = "不明";
+				}
+
+				String type = "";
+				if (rowValues[12].equals("")) {
+					type = "不明";
+				} else if (rowValues[12].equals("期刊")
+						|| rowValues[12].contains("期刊")) {
+					type = "期刊";
+				} else if (rowValues[12].equals("電子書")
+						|| rowValues[12].contains("電子書")) {
+					type = "電子書";
+				} else if (rowValues[12].equals("資料庫")
+						|| rowValues[12].contains("資料庫")) {
+					type = "資料庫";
+				} else {
+					type = "不明";
+				}
+
+				resourcesBuyers = new ResourcesBuyers(rowValues[11],
+						rowValues[12], Category.valueOf(category),
+						Type.valueOf(type), rowValues[15], rowValues[16]);
+
+				String isbn = rowValues[1].trim().toUpperCase();
+				String[] isbnSplit = isbn.split("-");
+
+				isbn = "";
+				int j = 0;
+				while (j < isbnSplit.length) {
+					isbn = isbn + isbnSplit[j];
+					j++;
+				}
+
+				ebook = new Ebook(rowValues[0], Long.parseLong(isbn),
+						rowValues[2], rowValues[3], rowValues[4], rowValues[5],
+						rowValues[6], rowValues[7],
+						Integer.parseInt(rowValues[8]), rowValues[9],
+						rowValues[10], "", "", "", resourcesBuyers, null, "");
+
+				customer = new Customer();
+				customer.setName(rowValues[17].trim());
+				customer.setEngName(rowValues[18].trim());
+
+				List<Customer> customers = new ArrayList<Customer>();
+				customers.add(customer);
+				ebook.setCustomers(customers);
+
+				if (isIsbn(Long.parseLong(isbn))) {
+					long ebkSerNo = ebookService.getEbkSerNoByIsbn(Long
+							.parseLong(isbn));
+
+					long cusSerNo = customerService
+							.getCusSerNoByName(rowValues[17].trim());
+					if (cusSerNo != 0) {
+						if (ebkSerNo != 0) {
+							if (resourcesUnionService.isExist(
+									ebookService.getBySerNo(ebkSerNo),
+									Ebook.class, cusSerNo)) {
+
+								ebook.setExistStatus("已存在");
+							} else {
+								ebook.setExistStatus("正常");
+							}
+						} else {
+							ebook.setExistStatus("正常");
+						}
+					} else {
+						ebook.setExistStatus("無此客戶");
+					}
+				} else {
+					ebook.setExistStatus("ISBN異常");
+				}
+				originalData.add(ebook);
+			}
+			Iterator<Ebook> setIterator = originalData.iterator();
+			int normal = 0;
+			while (setIterator.hasNext()) {
+				ebook = setIterator.next();
+				excelWorkSheet.getData().add(ebook);
+				if (ebook.getExistStatus().equals("正常")) {
+					normal = normal + 1;
+				}
+			}
+
+			getSession().put("importList", excelWorkSheet.getData());
+			getSession().put("total", excelWorkSheet.getData().size());
+			getSession().put("normal", normal);
+			getSession().put("abnormal",
+					excelWorkSheet.getData().size() - normal);
+
+			return QUEUE;
+		} else {
+			getRequest().setAttribute("goQueue", "yes");
+			return EDIT;
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	public void getCheckedItem() {
+		Map<String, Object> checkItemMap;
+		if (getSession().containsKey("checkItemMap")) {
+			checkItemMap = (TreeMap<String, Object>) getSession().get(
+					"checkItemMap");
+		} else {
+			checkItemMap = new TreeMap<String, Object>();
+		}
+
+		if (!checkItemMap.containsKey(this.importSerNo)) {
+			checkItemMap.put(this.importSerNo, this.importSerNo);
+		} else {
+			checkItemMap.remove(this.importSerNo);
+		}
+		getSession().put("checkItemMap", checkItemMap);
+		System.out.println(checkItemMap);
+	}
+
+	public void allCheckedItem() {
+		Map<String, Object> checkItemMap = new TreeMap<String, Object>();
+
+		int i = 0;
+		while (i < importSerNos.length) {
+			checkItemMap.put(importSerNos[i], importSerNos[i]);
+			i++;
+		}
+
+		getSession().put("checkItemMap", checkItemMap);
+		System.out.println(checkItemMap);
+	}
+
+	public void clearCheckedItem() {
+		Map<String, Object> checkItemMap = new TreeMap<String, Object>();
+		getSession().put("checkItemMap", checkItemMap);
+		System.out.println(checkItemMap);
+	}
+
+	@SuppressWarnings("unchecked")
+	public String importData() throws Exception {
+		List<Ebook> ebooks = (List<Ebook>) getSession().get("importList");
+
+		List<String> cellNames = (List<String>) getSession().get("cellNames");
+
+		Map<String, Object> checkItemMap = (TreeMap<String, Object>) getSession()
+				.get("checkItemMap");
+
+		if (checkItemMap == null || checkItemMap.size() == 0) {
+			addActionError("請選擇一筆或一筆以上的資料");
+		}
+
+		if (!hasActionErrors()) {
+			Iterator<?> it = checkItemMap.values().iterator();
+			List<Ebook> importList = new ArrayList<Ebook>();
+			while (it.hasNext()) {
+				String index = it.next().toString();
+				importList.add(ebooks.get(Integer.parseInt(index)));
+			}
+
+			for (int i = 0; i < importList.size(); i++) {
+				long ebkSerNo = ebookService.getEbkSerNoByIsbn(importList
+						.get(i).getIsbn());
+				long cusSerNo = customerService.getCusSerNoByName(importList
+						.get(i).getCustomers().get(0).getName());
+
+				if (ebkSerNo == 0) {
+					resourcesBuyers = resourcesBuyersService.save(importList
+							.get(i).getResourcesBuyers(), getLoginUser());
+					ebook = ebookService
+							.save(importList.get(i), getLoginUser());
+
+					resourcesUnionService.save(
+							new ResourcesUnion(cusSerNo, resourcesBuyers
+									.getSerNo(), ebook.getSerNo(), 0, 0),
+							getLoginUser());
+				} else {
+					resourcesUnion = resourcesUnionService.getByObjSerNo(
+							ebkSerNo, Ebook.class);
+					resourcesUnionService.save(new ResourcesUnion(cusSerNo,
+							resourcesUnion.getResSerNo(), ebkSerNo, 0, 0),
+							getLoginUser());
+
+				}
+			}
+
+			clearCheckedItem();
+			getRequest().setAttribute("successCount", importList.size());
+			return VIEW;
+		} else {
+			Object total = getSession().get("total");
+			Object normal = getSession().get("normal");
+			Object abnormal = getSession().get("abnormal");
+
+			getRequest().setAttribute("beforeRow",
+					getRequest().getParameter("beforeRow"));
+			getRequest().setAttribute("beforeMaxRows",
+					getRequest().getParameter("beforeMaxRows"));
+
+			getSession().put("total", total);
+			getSession().put("normal", normal);
+			getSession().put("abnormal", abnormal);
+
+			getSession().put("importList", getSession().get("importList"));
+
+			getSession().put("cellNames", getSession().get("cellNames"));
+
+			excelWorkSheet = new ExcelWorkSheet<Ebook>();
+			excelWorkSheet.setColumns(cellNames);
+			excelWorkSheet.setData(ebooks);
+			return QUEUE;
+		}
+	}
+
+	public boolean isIsbn(long isbnNum) {
+		if (isbnNum >= 9780000000000l && isbnNum < 9800000000000l) {
+			String isbn = "" + isbnNum;
+			int sum = Integer.parseInt(isbn.substring(0, 1)) * 1
+					+ Integer.parseInt(isbn.substring(1, 2)) * 3
+					+ Integer.parseInt(isbn.substring(2, 3)) * 1
+					+ Integer.parseInt(isbn.substring(3, 4)) * 3
+					+ Integer.parseInt(isbn.substring(4, 5)) * 1
+					+ Integer.parseInt(isbn.substring(5, 6)) * 3
+					+ Integer.parseInt(isbn.substring(6, 7)) * 1
+					+ Integer.parseInt(isbn.substring(7, 8)) * 3
+					+ Integer.parseInt(isbn.substring(8, 9)) * 1
+					+ Integer.parseInt(isbn.substring(9, 10)) * 3
+					+ Integer.parseInt(isbn.substring(10, 11)) * 1
+					+ Integer.parseInt(isbn.substring(11, 12)) * 3;
+
+			int remainder = sum % 10;
+			int num = 10 - remainder;
+
+			if (num == 10) {
+				if (Integer.parseInt(isbn.substring(12)) != 0) {
+					return false;
+				}
+			} else {
+				if (Integer.parseInt(isbn.substring(12)) != num) {
+					return false;
+				}
+			}
+
+		} else {
+			return false;
+		}
+		return true;
+	}
+
+	// 判斷文件類型
+	public Workbook createWorkBook(InputStream is) throws IOException {
+		if (fileFileName.toLowerCase().endsWith("xls")) {
+			return new HSSFWorkbook(is);
+		}
+		if (fileFileName.toLowerCase().endsWith("xlsx")) {
+			return new XSSFWorkbook(is);
+		}
+		return null;
+	}
+
 	/**
 	 * @return the checkItem
 	 */
@@ -600,4 +962,95 @@ public class EbookAction extends GenericCRUDActionFull<Ebook> {
 	public void setResourcesBuyers(ResourcesBuyers resourcesBuyers) {
 		this.resourcesBuyers = resourcesBuyers;
 	}
+
+	/**
+	 * @return the file
+	 */
+	public File getFile() {
+		return file;
+	}
+
+	/**
+	 * @param file
+	 *            the file to set
+	 */
+	public void setFile(File file) {
+		this.file = file;
+	}
+
+	/**
+	 * @return the fileFileName
+	 */
+	public String getFileFileName() {
+		return fileFileName;
+	}
+
+	/**
+	 * @param fileFileName
+	 *            the fileFileName to set
+	 */
+	public void setFileFileName(String fileFileName) {
+		this.fileFileName = fileFileName;
+	}
+
+	/**
+	 * @return the fileContentType
+	 */
+	public String getFileContentType() {
+		return fileContentType;
+	}
+
+	/**
+	 * @param fileContentType
+	 *            the fileContentType to set
+	 */
+	public void setFileContentType(String fileContentType) {
+		this.fileContentType = fileContentType;
+	}
+
+	/**
+	 * @return the excelWorkSheet
+	 */
+	public ExcelWorkSheet<Ebook> getExcelWorkSheet() {
+		return excelWorkSheet;
+	}
+
+	/**
+	 * @param excelWorkSheet
+	 *            the excelWorkSheet to set
+	 */
+	public void setExcelWorkSheet(ExcelWorkSheet<Ebook> excelWorkSheet) {
+		this.excelWorkSheet = excelWorkSheet;
+	}
+
+	/**
+	 * @return the importSerNo
+	 */
+	public String getImportSerNo() {
+		return importSerNo;
+	}
+
+	/**
+	 * @param importSerNo
+	 *            the importSerNo to set
+	 */
+	public void setImportSerNo(String importSerNo) {
+		this.importSerNo = importSerNo;
+	}
+
+	/**
+	 * @return the importSerNos
+	 */
+	public String[] getImportSerNos() {
+		return importSerNos;
+	}
+
+	/**
+	 * @param importSerNos
+	 *            the importSerNos to set
+	 */
+	public void setImportSerNos(String[] importSerNos) {
+		this.importSerNos = importSerNos;
+	}
+
 }

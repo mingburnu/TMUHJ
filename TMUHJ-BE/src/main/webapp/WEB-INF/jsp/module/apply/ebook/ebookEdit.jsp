@@ -95,25 +95,8 @@ input#customer_name {
 </style>
 </head>
 <body>
-	<%
-		ArrayList<?> allCustomers = (ArrayList<?>) request
-		.getAttribute("allCustomers");
-		ArrayList<?> entityCustomers = (ArrayList<?>) request
-		.getAttribute("entity.customers");
-		if (entityCustomers.size() > 0) {
-			for (int j = 0; j < entityCustomers.size(); j++) {
-		for (int i = 0; i < allCustomers.size(); i++) {
-
-			if (entityCustomers.get(j).equals(allCustomers.get(i))) {
-				allCustomers.remove(entityCustomers.get(j));
-			}
-		}
-			}
-		}
-		request.setAttribute("allCustomers", allCustomers);
-	%>
 	<c:choose>
-		<c:when test="${empty entity.serNo }">
+		<c:when test="${(empty entity.serNo) && (empty goQueue) }">
 			<s:form namespace="/crud" action="apply.ebook.save">
 				<s:hidden name="entity.serNo" />
 				<table cellspacing="1" class="detail-table">
@@ -303,7 +286,52 @@ input#customer_name {
 				</div>
 			</s:form>
 		</c:when>
+
+		<c:when test="${not empty goQueue}">
+			<s:form namespace="/crud" action="apply.journal.queue"
+				enctype="multipart/form-data" method="post">
+				<table cellspacing="1" class="detail-table">
+					<tr>
+						<th width="130">匯入檔案<span class="required">(•)</span>(<a
+							href="#" onclick="openSample();">範例</a>)
+						</th>
+						<td><input type="file" id="file" name="file" size="50"></td>
+					</tr>
+				</table>
+				<div class="button_box">
+					<div class="detail-func-button">
+						<a class="state-default" onclick="clearDetail_2();closeDetail();">取消</a>
+						&nbsp;<a class="state-default" onclick="resetData();">重置</a>&nbsp;<a
+							id="ports" class="state-default" onclick="goQueue();">下一步</a>
+					</div>
+				</div>
+				<div class="detail_note">
+					<div class="detail_note_title">Note</div>
+					<div class="detail_note_content">
+						<span class="required">(&#8226;)</span>為必填欄位
+					</div>
+				</div>
+			</s:form>
+
+		</c:when>
 		<c:otherwise>
+			<%
+				ArrayList<?> allCustomers = (ArrayList<?>) request
+					.getAttribute("allCustomers");
+					ArrayList<?> entityCustomers = (ArrayList<?>) request
+					.getAttribute("entity.customers");
+					if (entityCustomers.size() > 0) {
+				for (int j = 0; j < entityCustomers.size(); j++) {
+					for (int i = 0; i < allCustomers.size(); i++) {
+
+				if (entityCustomers.get(j).equals(allCustomers.get(i))) {
+					allCustomers.remove(entityCustomers.get(j));
+				}
+					}
+				}
+					}
+					request.setAttribute("allCustomers", allCustomers);
+			%>
 			<s:form namespace="/crud" action="apply.ebook.update">
 				<s:hidden name="entity.serNo" />
 				<table cellspacing="1" class="detail-table">

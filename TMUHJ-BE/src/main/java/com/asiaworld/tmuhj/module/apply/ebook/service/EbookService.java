@@ -1,8 +1,11 @@
 package com.asiaworld.tmuhj.module.apply.ebook.service;
 
 import org.apache.commons.lang3.StringUtils;
+import org.hibernate.Criteria;
+import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.MatchMode;
+import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
@@ -49,5 +52,16 @@ public class EbookService extends GenericServiceFull<Ebook> {
 	protected GenericDaoFull<Ebook> getDao() {
 		// TODO Auto-generated method stub
 		return dao;
+	}
+
+	public long getEbkSerNoByIsbn(long isbn) {
+		Session session = sessionFactory.getCurrentSession();
+		Criteria criteria = session.createCriteria(Ebook.class);
+		criteria.add(Restrictions.eq("isbn", isbn));
+		if (criteria.list().size() > 0) {
+			return ((Ebook) criteria.list().get(0)).getSerNo();
+		} else {
+			return 0;
+		}
 	}
 }

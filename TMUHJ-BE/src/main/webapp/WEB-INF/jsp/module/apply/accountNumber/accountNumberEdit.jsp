@@ -164,29 +164,19 @@
 					</tr>
 					<tr>
 						<th width="130">帳戶角色</th>
-						<td><s:select headerValue="--帳戶角色--" headerKey="使用者"
-								name="entity.role" cssClass="input_text"
-								list="@com.asiaworld.tmuhj.core.enums.Role@values()"
-								listValue="role" /></td>
+						<td><select name="entity.role"
+							id="apply_accountNumber_save_entity_role" class="input_text">
+								<option value="系統管理員">系統管理員</option>
+								<option value="維護人員">維護人員</option>
+								<option value="管理員">管理員</option>
+								<option value="使用者" selected="selected">使用者</option>
+						</select></td>
 					</tr>
 					<tr>
 						<th width="130">狀態</th>
-						<td><s:select headerValue="--狀態--" headerKey="審核中"
-								name="entity.status" cssClass="input_text"
+						<td><s:select name="entity.status" cssClass="input_text"
 								list="@com.asiaworld.tmuhj.core.enums.Status@values()"
 								listValue="status" /></td>
-					</tr>
-					<tr>
-						<th width="130">帳戶角色</th>
-						<td><select name="entity.role" id="apply_accountNumber_save_entity_role" class="input_text">
-    <option value="使用者">--帳戶角色--</option>
-    <option value="系統管理員">系統管理員</option>
-    <option value="維護人員">維護人員</option>
-    <option value="管理員">管理員</option>
-    <option value="使用者">使用者</option>
-
-
-</select></td>
 					</tr>
 				</table>
 				<div class="button_box">
@@ -258,29 +248,50 @@
 					</tr>
 					<tr>
 						<th width="130">帳戶角色</th>
-						<td><s:select headerValue="--帳戶角色--" headerKey="使用者"
-								name="entity.role" cssClass="input_text"
-								list="@com.asiaworld.tmuhj.core.enums.Role@values()"
-								listValue="role" /></td>
+						<td><c:choose>
+								<c:when test="${entity.role.role=='系統管理員' }">
+									<select name="entity.role"
+										id="apply_accountNumber_update_entity_role" class="input_text">
+										<option value="系統管理員" selected="selected">系統管理員</option>
+										<option value="維護人員">維護人員</option>
+										<option value="管理員">管理員</option>
+										<option value="使用者">使用者</option>
+									</select>
+								</c:when>
+								<c:when test="${entity.role.role=='維護人員' }">
+									<select name="entity.role"
+										id="apply_accountNumber_update_entity_role" class="input_text">
+										<option value="系統管理員">系統管理員</option>
+										<option value="維護人員" selected="selected">維護人員</option>
+										<option value="管理員">管理員</option>
+										<option value="使用者">使用者</option>
+									</select>
+								</c:when>
+								<c:when test="${entity.role.role=='管理員' }">
+									<select name="entity.role"
+										id="apply_accountNumber_update_entity_role" class="input_text">
+										<option value="系統管理員">系統管理員</option>
+										<option value="維護人員">維護人員</option>
+										<option value="管理員" selected="selected">管理員</option>
+										<option value="使用者">使用者</option>
+									</select>
+								</c:when>
+								<c:otherwise>
+									<select name="entity.role"
+										id="apply_accountNumber_update_entity_role" class="input_text">
+										<option value="系統管理員">系統管理員</option>
+										<option value="維護人員">維護人員</option>
+										<option value="管理員">管理員</option>
+										<option value="使用者" selected="selected">使用者</option>
+									</select>
+								</c:otherwise>
+							</c:choose></td>
 					</tr>
 					<tr>
 						<th width="130">狀態</th>
-						<td><s:select headerValue="--狀態--" headerKey="審核中"
-								name="entity.status" cssClass="input_text"
+						<td><s:select name="entity.status" cssClass="input_text"
 								list="@com.asiaworld.tmuhj.core.enums.Status@values()"
 								listValue="status" /></td>
-					</tr>
-					<tr>
-						<th width="130">帳戶角色</th>
-						<td><select name="entity.role" id="apply_accountNumber_update_entity_role" class="input_text">
-    <option value="使用者">--帳戶角色--</option>
-    <option value="系統管理員">系統管理員</option>
-    <option value="維護人員">維護人員</option>
-    <option value="管理員">管理員</option>
-    <option value="使用者">使用者</option>
-
-
-</select></td>
 					</tr>
 				</table>
 				<div class="button_box">
@@ -303,8 +314,7 @@
 	<s:if test="hasActionErrors()">
 		<script language="javascript" type="text/javascript">
 			var msg = "";
-			<s:iterator value="actionErrors">
-			msg += '<s:property escape="false"/><br>';
+			<s:iterator value="actionErrors">msg += '<s:property escape="false"/><br>';
 			</s:iterator>;
 			goAlert('訊息', msg);
 		</script>
