@@ -3,6 +3,8 @@ package com.asiaworld.tmuhj.module.apply.database.entity;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
+import javax.persistence.Transient;
+
 import org.hibernate.annotations.Type;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
@@ -59,6 +61,12 @@ public class Database extends GenericEntityFull {
 	// 收錄年代
 	@Column(name = "IndexedYears")
 	private String indexedYears;
+
+	@Transient
+	private String option;
+
+	@Transient
+	private String keywords;
 
 	/**
 	 * @return the dbChtTitle
@@ -210,7 +218,39 @@ public class Database extends GenericEntityFull {
 		this.indexedYears = indexedYears;
 	}
 
-	/* (non-Javadoc)
+	/**
+	 * @return the option
+	 */
+	public String getOption() {
+		return option;
+	}
+
+	/**
+	 * @param option
+	 *            the option to set
+	 */
+	public void setOption(String option) {
+		this.option = option;
+	}
+
+	/**
+	 * @return the keywords
+	 */
+	public String getKeywords() {
+		return keywords;
+	}
+
+	/**
+	 * @param keywords
+	 *            the keywords to set
+	 */
+	public void setKeywords(String keywords) {
+		this.keywords = keywords;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#toString()
 	 */
 	@Override
@@ -220,6 +260,7 @@ public class Database extends GenericEntityFull {
 				+ ", includedSpecies=" + includedSpecies + ", publishName="
 				+ publishName + ", content=" + content + ", url=" + url
 				+ ", topic=" + topic + ", classification=" + classification
-				+ ", indexedYears=" + indexedYears + "]";
+				+ ", indexedYears=" + indexedYears + ", option=" + option
+				+ ", keywords=" + keywords + "]";
 	}
 }

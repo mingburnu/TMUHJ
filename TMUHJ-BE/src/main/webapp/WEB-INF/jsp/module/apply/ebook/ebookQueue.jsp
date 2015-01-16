@@ -292,7 +292,7 @@
 				<c:forEach var="item" items="${excelWorkSheet.columns}"
 					varStatus="status">
 					<c:if
-						test="${(1 eq status.index) || (3 eq status.index)||(11 eq status.index)||(12 eq status.index)||(15 eq status.index)}">
+						test="${(0 eq status.index) || (1 eq status.index)||(13 eq status.index)||(17 eq status.index)}">
 						<th>${item}</th>
 					</c:if>
 				</c:forEach>
@@ -311,10 +311,9 @@
 								<input type="checkbox" disabled="disabled">
 							</c:otherwise>
 						</c:choose></td>
-					<td>${item.englishTitle }</td>
-					<td>${item.issn }</td>
+					<td>${item.bookName }</td>
+					<td>${item.isbn }</td>
 					<td>${item.resourcesBuyers.rCategory.category }</td>
-					<td>${item.resourcesBuyers.rType.type }</td>
 					<td align="center"><c:forEach var="customer"
 							items="${item.customers}" varStatus="status">
 				${customer.name }

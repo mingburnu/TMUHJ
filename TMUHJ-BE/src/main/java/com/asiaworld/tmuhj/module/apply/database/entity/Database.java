@@ -71,6 +71,9 @@ public class Database extends GenericEntityFull {
 	
 	@Transient
 	private List<Customer> customers;
+	
+	@Transient
+	private String existStatus;
 
 	/**
 	 * @return the dbChtTitle
@@ -250,6 +253,20 @@ public class Database extends GenericEntityFull {
 		this.customers = customers;
 	}
 	
+	/**
+	 * @return the existStatus
+	 */
+	public String getExistStatus() {
+		return existStatus;
+	}
+
+	/**
+	 * @param existStatus the existStatus to set
+	 */
+	public void setExistStatus(String existStatus) {
+		this.existStatus = existStatus;
+	}
+
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */
@@ -261,6 +278,34 @@ public class Database extends GenericEntityFull {
 				+ publishName + ", content=" + content + ", url=" + url
 				+ ", topic=" + topic + ", classification=" + classification
 				+ ", indexedYears=" + indexedYears + ", resourcesBuyers="
-				+ resourcesBuyers + ", customers=" + customers + "]";
+				+ resourcesBuyers + ", customers=" + customers
+				+ ", existStatus=" + existStatus + "]";
 	}
+
+	public Database() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+
+	public Database(String dbChtTitle, String dbEngTitle, String languages,
+			String includedSpecies, String publishName, String content,
+			String url, String topic, String classification,
+			String indexedYears, ResourcesBuyers resourcesBuyers,
+			List<Customer> customers, String existStatus) {
+		super();
+		this.dbChtTitle = dbChtTitle;
+		this.dbEngTitle = dbEngTitle;
+		this.languages = languages;
+		this.includedSpecies = includedSpecies;
+		this.publishName = publishName;
+		this.content = content;
+		this.url = url;
+		this.topic = topic;
+		this.classification = classification;
+		this.indexedYears = indexedYears;
+		this.resourcesBuyers = resourcesBuyers;
+		this.customers = customers;
+		this.existStatus = existStatus;
+	}
+		
 }

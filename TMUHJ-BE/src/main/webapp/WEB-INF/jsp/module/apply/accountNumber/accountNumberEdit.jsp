@@ -136,6 +136,11 @@
 		}
 
 	}
+	
+	function openSample(){
+	    var url = "<c:url value = '/'/>resources/sample/sheet.xlsx";
+	    window.open(url, "_top");
+	}
 </script>
 </head>
 <body>

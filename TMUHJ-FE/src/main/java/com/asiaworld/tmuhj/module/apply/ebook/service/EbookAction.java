@@ -4,12 +4,14 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 
 import com.asiaworld.tmuhj.core.model.DataSet;
+import com.asiaworld.tmuhj.core.model.Pager;
 import com.asiaworld.tmuhj.core.web.GenericCRUDActionFull;
 import com.asiaworld.tmuhj.module.apply.customer.entity.Customer;
 import com.asiaworld.tmuhj.module.apply.customer.service.CustomerService;
@@ -30,7 +32,7 @@ public class EbookAction extends GenericCRUDActionFull<Ebook> {
 
 	@Autowired
 	private ResourcesUnionService resourcesUnionService;
-	
+
 	@Autowired
 	private Customer customer;
 
@@ -57,10 +59,16 @@ public class EbookAction extends GenericCRUDActionFull<Ebook> {
 
 	@Override
 	public String query() throws Exception {
-		getRequest().setAttribute("keywords",
-				getRequest().getParameter("keywords"));
+		String keywords = getRequest().getParameter("keywords");
+
+		getRequest().setAttribute("keywords", keywords);
 		getRequest().setAttribute("query", "apply.ebook.query.action");
-		DataSet<Ebook> ds = ebookService.getBySql(initDataSet());
+		DataSet<Ebook> ds = initDataSet();
+		ds.setPager(Pager.getChangedPager(
+				getRequest().getParameter("recordPerPage"), getRequest()
+						.getParameter("recordPoint"), ds.getPager()));
+
+		ds = ebookService.getBySql(ds, keywords);
 		setDs(ds);
 		return "ebook";
 	}
@@ -69,12 +77,11 @@ public class EbookAction extends GenericCRUDActionFull<Ebook> {
 	public String list() throws Exception {
 		ebook = ebookService.getBySerNo(Long.parseLong(getRequest()
 				.getParameter("serNo")));
-		
+
 		List<?> ebookResourcesUnionList = resourcesUnionService
 				.getByEbkSerNo(Long.parseLong(getRequest()
 						.getParameter("serNo")));
 
-		
 		List<String> ownerNameList = new ArrayList<String>();
 
 		Iterator<?> iterator = ebookResourcesUnionList.iterator();
@@ -112,22 +119,41 @@ public class EbookAction extends GenericCRUDActionFull<Ebook> {
 	}
 
 	public String owner() throws Exception {
-		getRequest().setAttribute("cusSerNo",
-				getRequest().getParameter("cusSerNo"));
+		long cusSerNo = 0;
+		if (NumberUtils.isDigits(getRequest().getParameter("cusSerNo"))
+				&& Long.parseLong(getRequest().getParameter("cusSerNo")) > 0) {
+			cusSerNo = Long.parseLong(getRequest().getParameter("cusSerNo"));
+		}
+
+		getRequest().setAttribute("cusSerNo", cusSerNo);
 		getRequest().setAttribute("owner", "apply.ebook.owner.action");
-		DataSet<Ebook> ds = ebookService.getByCusSerNo(initDataSet());
+
+		DataSet<Ebook> ds = initDataSet();
+		ds.setPager(Pager.getChangedPager(
+				getRequest().getParameter("recordPerPage"), getRequest()
+						.getParameter("recordPoint"), ds.getPager()));
+		ds = ebookService.getByCusSerNo(ds, cusSerNo);
 		setDs(ds);
 
 		return "ebook";
 	}
 
 	public String focus() throws Exception {
-		getRequest().setAttribute("keywords",
-				getRequest().getParameter("keywords"));
-		getRequest()
-				.setAttribute("option", getRequest().getParameter("option"));
+		String option = getRequest().getParameter("option");
+		String keywords = getRequest().getParameter("keywords");
+
+		getRequest().setAttribute("keywords", keywords);
+		getRequest().setAttribute("option", option);
 		getRequest().setAttribute("focus", "apply.ebook.focus.action");
-		DataSet<Ebook> ds = ebookService.getByRestrictions(initDataSet());
+
+		getEntity().setOption(option);
+		getEntity().setKeywords(keywords);
+		
+		DataSet<Ebook> ds = initDataSet();
+		ds.setPager(Pager.getChangedPager(
+				getRequest().getParameter("recordPerPage"), getRequest()
+						.getParameter("recordPoint"), ds.getPager()));
+		ds = ebookService.getByRestrictions(ds);
 		setDs(ds);
 		return "ebook";
 	}

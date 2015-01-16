@@ -3,6 +3,8 @@ package com.asiaworld.tmuhj.module.apply.journal.entity;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
+import javax.persistence.Transient;
+
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 
@@ -73,6 +75,12 @@ public class Journal extends GenericEntityFull {
 	// 版本
 	@Column(name = "version")
 	private int version;
+	
+	@Transient
+	private String option;
+	
+	@Transient
+	private String keywords;
 
 	/**
 	 * @return the chineseTitle
@@ -284,6 +292,34 @@ public class Journal extends GenericEntityFull {
 		this.version = version;
 	}
 
+	/**
+	 * @return the option
+	 */
+	public String getOption() {
+		return option;
+	}
+
+	/**
+	 * @param option the option to set
+	 */
+	public void setOption(String option) {
+		this.option = option;
+	}
+
+	/**
+	 * @return the keywords
+	 */
+	public String getKeywords() {
+		return keywords;
+	}
+
+	/**
+	 * @param keywords the keywords to set
+	 */
+	public void setKeywords(String keywords) {
+		this.keywords = keywords;
+	}
+
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */
@@ -296,6 +332,7 @@ public class Journal extends GenericEntityFull {
 				+ ", publishYear=" + publishYear + ", caption=" + caption
 				+ ", url=" + url + ", numB=" + numB + ", publication="
 				+ publication + ", congressClassification="
-				+ congressClassification + ", version=" + version + "]";
+				+ congressClassification + ", version=" + version + ", option="
+				+ option + ", keywords=" + keywords + "]";
 	}
 }

@@ -1,8 +1,11 @@
 package com.asiaworld.tmuhj.module.apply.database.service;
 
 import org.apache.commons.lang3.StringUtils;
+import org.hibernate.Criteria;
+import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.MatchMode;
+import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
@@ -51,5 +54,19 @@ public class DatabaseService extends GenericServiceFull<Database> {
 	protected GenericDaoFull<Database> getDao() {
 		// TODO Auto-generated method stub
 		return dao;
+	}
+
+	public long getDatSerNoByName(String dbChtTitle, String dbEngTitle)
+			throws Exception {
+		Session session = sessionFactory.getCurrentSession();
+		Criteria criteria = session.createCriteria(Database.class);
+		criteria.add(Restrictions.and(
+				Restrictions.ilike("dbChtTitle", dbChtTitle, MatchMode.EXACT),
+				Restrictions.ilike("dbEngTitle", dbEngTitle, MatchMode.EXACT)));
+		if (criteria.list().size() > 0) {
+			return ((Database) criteria.list().get(0)).getSerNo();
+		} else {
+			return 0;
+		}
 	}
 }

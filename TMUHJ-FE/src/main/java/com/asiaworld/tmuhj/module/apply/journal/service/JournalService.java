@@ -2,11 +2,8 @@ package com.asiaworld.tmuhj.module.apply.journal.service;
 
 import java.util.ArrayList;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
-import org.apache.struts2.ServletActionContext;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -42,8 +39,9 @@ public class JournalService extends GenericServiceFull<Journal> {
 		Assert.notNull(ds.getEntity());
 		DsRestrictions restrictions = DsBeanFactory.getDsRestrictions();
 
-		HttpServletRequest request = ServletActionContext.getRequest();
-		String keywords = request.getParameter("keywords");
+		Journal entity = ds.getEntity();
+
+		String keywords = entity.getKeywords();
 		if (keywords == null || keywords.trim().equals("")) {
 			Pager pager = ds.getPager();
 			pager.setTotalRecord(0L);
@@ -51,7 +49,7 @@ public class JournalService extends GenericServiceFull<Journal> {
 			return ds;
 		}
 
-		String option = request.getParameter("option");
+		String option = entity.getOption();
 
 		if (option == null) {
 			option = "";
@@ -69,51 +67,25 @@ public class JournalService extends GenericServiceFull<Journal> {
 			option = "";
 		}
 
-		String recordPerPage = request.getParameter("recordPerPage");
-		String recordPoint = request.getParameter("recordPoint");
-
-		Pager pager = ds.getPager();
-
-		if (recordPerPage != null && NumberUtils.isDigits(recordPerPage)
-				&& Integer.parseInt(recordPerPage) > 0 && recordPoint != null
-				&& NumberUtils.isDigits(recordPoint)
-				&& Integer.parseInt(recordPoint) >= 0) {
-			pager.setRecordPerPage(Integer.parseInt(recordPerPage));
-			pager.setCurrentPage(Integer.parseInt(recordPoint)
-					/ Integer.parseInt(recordPerPage) + 1);
-			pager.setOffset(Integer.parseInt(recordPerPage)
-					* (pager.getCurrentPage() - 1));
-			pager.setRecordPoint(Integer.parseInt(recordPoint));
-			ds.setPager(pager);
-		} else if (recordPerPage != null && NumberUtils.isDigits(recordPerPage)
-				&& Integer.parseInt(recordPerPage) > 0 && recordPoint == null) {
-			pager.setRecordPerPage(Integer.parseInt(recordPerPage));
-			pager.setRecordPoint(pager.getOffset());
-			ds.setPager(pager);
-		} else {
-			pager.setRecordPoint(pager.getOffset());
-			ds.setPager(pager);
-		}
-
 		if (StringUtils.isNotEmpty(keywords)) {
 			char[] cArray = keywords.toCharArray();
-			keywords = "";
+			StringBuilder keywordsBuilder = new StringBuilder("");
 			for (int i = 0; i < cArray.length; i++) {
 				int charCode = (int) cArray[i];
 				if (charCode > 65280 && charCode < 65375) {
 					int halfChar = charCode - 65248;
 					cArray[i] = (char) halfChar;
 				}
-				keywords += cArray[i];
+				keywordsBuilder.append(cArray[i]);
 			}
 
-			keywords = keywords
-					.replaceAll(
-							"[^0-9a-zA-Z\u4e00-\u9fa5\u0391-\u03a9\u03b1-\u03c9\u002d]",
-							" ");
-			String[] wordArray = keywords.split(" ");
-			String sql = "";
+			keywords = keywordsBuilder.toString();
 
+			keywords = keywords.replaceAll(
+					"[^a-zA-Z0-9\u4e00-\u9fa5\u0391-\u03a9\u03b1-\u03c9]", " ");
+			String[] wordArray = keywords.split(" ");
+
+			StringBuilder sqlBuilder = new StringBuilder("");
 			for (int i = 0; i < wordArray.length; i++) {
 				if (option.equals("ISSN")) {
 					if (NumberUtils.isDigits(wordArray[i].replace("-", "")
@@ -126,22 +98,22 @@ public class JournalService extends GenericServiceFull<Journal> {
 										.equals("X")
 								|| NumberUtils.isDigits(wordArray[i].replace(
 										"-", "").substring(7))) {
-							sql = sql
-									+ "ISSN='"
+							sqlBuilder.append("ISSN='"
 									+ wordArray[i].replace("-", "").replace(
-											"x", "X") + "' or ";
+											"x", "X") + "' or ");
 						}
 					}
 				} else {
 					if (!wordArray[i].isEmpty() && !option.isEmpty()) {
-						sql = sql + "LOWER(" + option + ") like LOWER('%"
-								+ wordArray[i] + "%') or ";
+						sqlBuilder.append("LOWER(" + option + ") like LOWER('%"
+								+ wordArray[i] + "%') or ");
 					}
 				}
 			}
 
+			String sql = sqlBuilder.toString();
 			if (sql.isEmpty()) {
-				pager = ds.getPager();
+				Pager pager = ds.getPager();
 				pager.setTotalRecord(0L);
 				ds.setPager(pager);
 				return ds;
@@ -158,15 +130,13 @@ public class JournalService extends GenericServiceFull<Journal> {
 		return dao;
 	}
 
-	public DataSet<Journal> getBySql(DataSet<Journal> ds) throws Exception {
+	public DataSet<Journal> getBySql(DataSet<Journal> ds, String keywords)
+			throws Exception {
 		Assert.notNull(ds);
 		Assert.notNull(ds.getEntity());
 
 		DsRestrictions restrictions = DsBeanFactory.getDsRestrictions();
 
-		HttpServletRequest request = ServletActionContext.getRequest();
-
-		String keywords = request.getParameter("keywords");
 		if (keywords == null || keywords.trim().equals("")) {
 			Pager pager = ds.getPager();
 			pager.setTotalRecord(0L);
@@ -174,61 +144,34 @@ public class JournalService extends GenericServiceFull<Journal> {
 			return ds;
 		}
 
-		String recordPerPage = request.getParameter("recordPerPage");
-		String recordPoint = request.getParameter("recordPoint");
-
-		Pager pager = ds.getPager();
-
-		if (recordPerPage != null && NumberUtils.isDigits(recordPerPage)
-				&& Integer.parseInt(recordPerPage) > 0 && recordPoint != null
-				&& NumberUtils.isDigits(recordPoint)
-				&& Integer.parseInt(recordPoint) >= 0) {
-			pager.setRecordPerPage(Integer.parseInt(recordPerPage));
-			pager.setCurrentPage(Integer.parseInt(recordPoint)
-					/ Integer.parseInt(recordPerPage) + 1);
-			pager.setOffset(Integer.parseInt(recordPerPage)
-					* (pager.getCurrentPage() - 1));
-			pager.setRecordPoint(Integer.parseInt(recordPoint));
-			ds.setPager(pager);
-		} else if (recordPerPage != null && NumberUtils.isDigits(recordPerPage)
-				&& Integer.parseInt(recordPerPage) > 0 && recordPoint == null) {
-			pager.setRecordPerPage(Integer.parseInt(recordPerPage));
-			pager.setRecordPoint(pager.getOffset());
-			ds.setPager(pager);
-		} else {
-			pager.setRecordPoint(pager.getOffset());
-			ds.setPager(pager);
-		}
-
 		if (StringUtils.isNotEmpty(keywords)) {
 			char[] cArray = keywords.toCharArray();
-			keywords = "";
+			StringBuilder keywordsBuilder = new StringBuilder("");
 			for (int i = 0; i < cArray.length; i++) {
 				int charCode = (int) cArray[i];
 				if (charCode > 65280 && charCode < 65375) {
 					int halfChar = charCode - 65248;
 					cArray[i] = (char) halfChar;
 				}
-				keywords += cArray[i];
+				keywordsBuilder.append(cArray[i]);
 			}
+			keywords = keywordsBuilder.toString();
 
-			keywords = keywords
-					.replaceAll(
-							"[^a-zA-Z0-9\u4e00-\u9fa5\u0391-\u03a9\u03b1-\u03c9\u002d]",
-							" ");
+			keywords = keywords.replaceAll(
+					"[^a-zA-Z0-9\u4e00-\u9fa5\u0391-\u03a9\u03b1-\u03c9]", " ");
 			String[] wordArray = keywords.split(" ");
-			String sql = "";
 
+			StringBuilder sqlBuilder = new StringBuilder("");
 			for (int i = 0; i < wordArray.length; i++) {
 				if (wordArray[i].isEmpty() == false) {
-					sql = sql + "LOWER(chinesetitle) like LOWER('%"
+					sqlBuilder.append("LOWER(chinesetitle) like LOWER('%"
 							+ wordArray[i]
 							+ "%') or  LOWER(englishtitle) like LOWER('%"
 							+ wordArray[i]
 							+ "%') or  LOWER(abbreviationtitle) like LOWER('%"
 							+ wordArray[i]
 							+ "%') or  LOWER(publishname) like LOWER('%"
-							+ wordArray[i] + "%') or ";
+							+ wordArray[i] + "%') or ");
 				}
 
 				if (wordArray[i].replace("-", "").length() == 8
@@ -239,18 +182,18 @@ public class JournalService extends GenericServiceFull<Journal> {
 									.equals("X")
 							|| NumberUtils.isDigits(wordArray[i].replace("-",
 									"").substring(7))) {
-						sql = sql
-								+ "ISSN='"
+						sqlBuilder.append("ISSN='"
 								+ wordArray[i].replace("-", "").replace("x",
-										"X") + "' or ";
+										"X") + "' or ");
 					}
 
 				}
 
 			}
 
+			String sql = sqlBuilder.toString();
 			if (sql.isEmpty()) {
-				pager = ds.getPager();
+				Pager pager = ds.getPager();
 				pager.setTotalRecord(0L);
 				ds.setPager(pager);
 				return ds;
@@ -262,57 +205,30 @@ public class JournalService extends GenericServiceFull<Journal> {
 		return dao.findByRestrictions(restrictions, ds);
 	}
 
-	public DataSet<Journal> getByCusSerNo(DataSet<Journal> ds) throws Exception {
+	public DataSet<Journal> getByCusSerNo(DataSet<Journal> ds, long cusSerNo)
+			throws Exception {
 		Assert.notNull(ds);
 		Assert.notNull(ds.getEntity());
 
 		DsRestrictions restrictions = DsBeanFactory.getDsRestrictions();
-		HttpServletRequest request = ServletActionContext.getRequest();
-		String cusSerNo = request.getParameter("cusSerNo");
-
-		String recordPerPage = request.getParameter("recordPerPage");
-		String recordPoint = request.getParameter("recordPoint");
-
-		Pager pager = ds.getPager();
-
-		if (recordPerPage != null && NumberUtils.isDigits(recordPerPage)
-				&& Integer.parseInt(recordPerPage) > 0 && recordPoint != null
-				&& NumberUtils.isDigits(recordPoint)
-				&& Integer.parseInt(recordPoint) >= 0) {
-			pager.setRecordPerPage(Integer.parseInt(recordPerPage));
-			pager.setCurrentPage(Integer.parseInt(recordPoint)
-					/ Integer.parseInt(recordPerPage) + 1);
-			pager.setOffset(Integer.parseInt(recordPerPage)
-					* (pager.getCurrentPage() - 1));
-			pager.setRecordPoint(Integer.parseInt(recordPoint));
-			ds.setPager(pager);
-		} else if (recordPerPage != null && NumberUtils.isDigits(recordPerPage)
-				&& Integer.parseInt(recordPerPage) > 0 && recordPoint == null) {
-			pager.setRecordPerPage(Integer.parseInt(recordPerPage));
-			pager.setRecordPoint(pager.getOffset());
-			ds.setPager(pager);
-		} else {
-			pager.setRecordPoint(pager.getOffset());
-			ds.setPager(pager);
-		}
 
 		ArrayList<ResourcesUnion> resourcesUnionList = null;
-		if (NumberUtils.isDigits(cusSerNo) && Long.parseLong(cusSerNo) > 0) {
-			resourcesUnionList = resourcesUnionService.totalJournal(Long
-					.parseLong(cusSerNo));
+		if (cusSerNo > 0) {
+			resourcesUnionList = resourcesUnionService.totalJournal(cusSerNo);
 		}
 
-		String sql = "";
 		if (resourcesUnionList != null && !resourcesUnionList.isEmpty()
 				&& resourcesUnionList.size() > 0) {
+			StringBuilder sqlBuilder = new StringBuilder("");
 			for (int i = 0; i < resourcesUnionList.size(); i++) {
-				sql = sql + "serNo=" + resourcesUnionList.get(i).getJouSerNo()
-						+ " or ";
+				sqlBuilder.append("serNo="
+						+ resourcesUnionList.get(i).getJouSerNo() + " or ");
 			}
 
+			String sql = sqlBuilder.toString();
 			restrictions.sqlQuery(sql.substring(0, sql.length() - 4));
 		} else {
-			pager = ds.getPager();
+			Pager pager = ds.getPager();
 			pager.setTotalRecord(0L);
 			ds.setPager(pager);
 			return ds;

@@ -537,6 +537,8 @@ public class EbookAction extends GenericCRUDActionFull<Ebook> {
 		}
 
 		if (!hasActionErrors()) {
+			getSession().remove("importList");
+			getSession().remove("checkItemMap");
 			Workbook book = createWorkBook(new FileInputStream(file));
 			// book.getNumberOfSheets(); 判斷Excel文件有多少個sheet
 			Sheet sheet = book.getSheetAt(0);
@@ -604,7 +606,7 @@ public class EbookAction extends GenericCRUDActionFull<Ebook> {
 			for (int i = 1; i <= sheet.getLastRowNum(); i++) {
 				Row row = sheet.getRow(i);
 
-				String[] rowValues = new String[17];
+				String[] rowValues = new String[19];
 				int k = 0;
 				while (k < rowValues.length) {
 					if (row.getCell(k) == null) {
@@ -665,25 +667,9 @@ public class EbookAction extends GenericCRUDActionFull<Ebook> {
 					category = "不明";
 				}
 
-				String type = "";
-				if (rowValues[12].equals("")) {
-					type = "不明";
-				} else if (rowValues[12].equals("期刊")
-						|| rowValues[12].contains("期刊")) {
-					type = "期刊";
-				} else if (rowValues[12].equals("電子書")
-						|| rowValues[12].contains("電子書")) {
-					type = "電子書";
-				} else if (rowValues[12].equals("資料庫")
-						|| rowValues[12].contains("資料庫")) {
-					type = "資料庫";
-				} else {
-					type = "不明";
-				}
-
 				resourcesBuyers = new ResourcesBuyers(rowValues[11],
-						rowValues[12], Category.valueOf(category),
-						Type.valueOf(type), rowValues[15], rowValues[16]);
+						rowValues[12], Category.valueOf(category), Type.電子書,
+						rowValues[15], rowValues[16]);
 
 				String isbn = rowValues[1].trim().toUpperCase();
 				String[] isbnSplit = isbn.split("-");
@@ -695,10 +681,15 @@ public class EbookAction extends GenericCRUDActionFull<Ebook> {
 					j++;
 				}
 
+				int version = 0;
+				if (NumberUtils.isNumber(rowValues[8])) {
+					double d = Double.parseDouble(rowValues[8]);
+					version = (int) d;
+				}
+
 				ebook = new Ebook(rowValues[0], Long.parseLong(isbn),
 						rowValues[2], rowValues[3], rowValues[4], rowValues[5],
-						rowValues[6], rowValues[7],
-						Integer.parseInt(rowValues[8]), rowValues[9],
+						rowValues[6], rowValues[7], version, rowValues[9],
 						rowValues[10], "", "", "", resourcesBuyers, null, "");
 
 				customer = new Customer();
@@ -726,7 +717,12 @@ public class EbookAction extends GenericCRUDActionFull<Ebook> {
 								ebook.setExistStatus("正常");
 							}
 						} else {
-							ebook.setExistStatus("正常");
+							if (ebook.getResourcesBuyers().getrCategory()
+									.equals(Category.不明)) {
+								ebook.setExistStatus("資源類型不明");
+							} else {
+								ebook.setExistStatus("正常");
+							}
 						}
 					} else {
 						ebook.setExistStatus("無此客戶");

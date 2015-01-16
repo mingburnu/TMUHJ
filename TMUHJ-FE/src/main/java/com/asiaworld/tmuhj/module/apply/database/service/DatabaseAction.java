@@ -4,12 +4,14 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 
 import com.asiaworld.tmuhj.core.model.DataSet;
+import com.asiaworld.tmuhj.core.model.Pager;
 import com.asiaworld.tmuhj.core.web.GenericCRUDActionFull;
 import com.asiaworld.tmuhj.module.apply.customer.entity.Customer;
 import com.asiaworld.tmuhj.module.apply.customer.service.CustomerService;
@@ -68,10 +70,17 @@ public class DatabaseAction extends GenericCRUDActionFull<Database> {
 
 	@Override
 	public String query() throws Exception {
-		getRequest().setAttribute("keywords",
-				getRequest().getParameter("keywords"));
+		String keywords = getRequest().getParameter("keywords");
+
+		getRequest().setAttribute("keywords", keywords);
 		getRequest().setAttribute("query", "apply.database.query.action");
-		DataSet<Database> ds = databaseService.getBySql(initDataSet());
+
+		DataSet<Database> ds = initDataSet();
+		ds.setPager(Pager.getChangedPager(
+				getRequest().getParameter("recordPerPage"), getRequest()
+						.getParameter("recordPoint"), ds.getPager()));
+
+		ds = databaseService.getBySql(ds, keywords);
 		setDs(ds);
 		return "database";
 	}
@@ -88,9 +97,8 @@ public class DatabaseAction extends GenericCRUDActionFull<Database> {
 		resourcesBuyers = resourcesBuyersService.getBySerNo(resourcesUnion
 				.getResSerNo());
 
-		List<?> dbResourcesUnionList = resourcesUnionService
-				.getByDatSerNo(Long.parseLong(getRequest()
-						.getParameter("serNo")));
+		List<?> dbResourcesUnionList = resourcesUnionService.getByDatSerNo(Long
+				.parseLong(getRequest().getParameter("serNo")));
 
 		List<String> ownerNameList = new ArrayList<String>();
 
@@ -131,22 +139,41 @@ public class DatabaseAction extends GenericCRUDActionFull<Database> {
 	}
 
 	public String owner() throws Exception {
-		getRequest().setAttribute("cusSerNo",
-				getRequest().getParameter("cusSerNo"));
+		long cusSerNo = 0;
+		if (NumberUtils.isDigits(getRequest().getParameter("cusSerNo"))
+				&& Long.parseLong(getRequest().getParameter("cusSerNo")) > 0) {
+			cusSerNo = Long.parseLong(getRequest().getParameter("cusSerNo"));
+		}
+
+		getRequest().setAttribute("cusSerNo", cusSerNo);
 		getRequest().setAttribute("owner", "apply.database.owner.action");
-		DataSet<Database> ds = databaseService.getByCusSerNo(initDataSet());
+
+		DataSet<Database> ds = initDataSet();
+		ds.setPager(Pager.getChangedPager(
+				getRequest().getParameter("recordPerPage"), getRequest()
+						.getParameter("recordPoint"), ds.getPager()));
+		ds = databaseService.getByCusSerNo(ds, cusSerNo);
 		setDs(ds);
 
 		return "database";
 	}
 
 	public String focus() throws Exception {
-		getRequest().setAttribute("keywords",
-				getRequest().getParameter("keywords"));
-		getRequest()
-				.setAttribute("option", getRequest().getParameter("option"));
+		String option = getRequest().getParameter("option");
+		String keywords = getRequest().getParameter("keywords");
+
+		getRequest().setAttribute("keywords", keywords);
+		getRequest().setAttribute("option", option);
 		getRequest().setAttribute("focus", "apply.database.focus.action");
-		DataSet<Database> ds = databaseService.getByRestrictions(initDataSet());
+
+		getEntity().setOption(option);
+		getEntity().setKeywords(keywords);
+		
+		DataSet<Database> ds = initDataSet();
+		ds.setPager(Pager.getChangedPager(
+				getRequest().getParameter("recordPerPage"), getRequest()
+						.getParameter("recordPoint"), ds.getPager()));
+		ds = databaseService.getByRestrictions(ds);
 		setDs(ds);
 		return "database";
 	}

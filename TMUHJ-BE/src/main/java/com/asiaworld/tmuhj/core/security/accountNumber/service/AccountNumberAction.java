@@ -42,7 +42,7 @@ import com.asiaworld.tmuhj.module.apply.customer.service.CustomerService;
 @SuppressWarnings("serial")
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class AccountNumberAction extends GenericCRUDActionFull<AccountNumber> {
-	
+
 	private String[] checkItem;
 
 	private File file;
@@ -95,7 +95,7 @@ public class AccountNumberAction extends GenericCRUDActionFull<AccountNumber> {
 		if (getEntity().getSerNo() != null) {
 			dsCustomer.setEntity(customer);
 			dsCustomer = customerService.getByRestrictions(dsCustomer);
-			
+
 			accountNumber = accountNumberService.getBySerNo(getEntity()
 					.getSerNo());
 			setEntity(accountNumber);
@@ -103,8 +103,9 @@ public class AccountNumberAction extends GenericCRUDActionFull<AccountNumber> {
 				&& getRequest().getParameter("goQueue").equals("yes")) {
 			getRequest().setAttribute("goQueue",
 					getRequest().getParameter("goQueue"));
-		}else{dsCustomer.setEntity(customer);
-		dsCustomer = customerService.getByRestrictions(dsCustomer);
+		} else {
+			dsCustomer.setEntity(customer);
+			dsCustomer = customerService.getByRestrictions(dsCustomer);
 		}
 
 		return EDIT;
@@ -517,7 +518,7 @@ public class AccountNumberAction extends GenericCRUDActionFull<AccountNumber> {
 						customer.setName(rowValues[3].trim());
 						accountNumber.setCustomer(customer);
 						accountNumber.setExistStatus("資料錯誤");
-					}else{
+					} else {
 						customer = new Customer();
 						customer.setName(rowValues[3].trim());
 						accountNumber.setCustomer(customer);
@@ -615,7 +616,7 @@ public class AccountNumberAction extends GenericCRUDActionFull<AccountNumber> {
 			for (int i = 0; i < importList.size(); i++) {
 				accountNumberService.save(importList.get(i), getLoginUser());
 			}
-			
+
 			clearCheckedItem();
 			getRequest().setAttribute("successCount", importList.size());
 			return VIEW;
@@ -654,7 +655,7 @@ public class AccountNumberAction extends GenericCRUDActionFull<AccountNumber> {
 		}
 		return null;
 	}
-	
+
 	/**
 	 * @return the dsCustomer
 	 */

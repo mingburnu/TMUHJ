@@ -62,6 +62,8 @@ public class CustomerAction extends GenericCRUDActionFull<Customer> {
 
 	private String[] importSerNos;
 
+	private InputStream inputStream;
+
 	@Override
 	public void validateSave() throws Exception {
 		// TODO Auto-generated method stub
@@ -498,7 +500,7 @@ public class CustomerAction extends GenericCRUDActionFull<Customer> {
 			for (int i = 0; i < importList.size(); i++) {
 				customerService.save(importList.get(i), getLoginUser());
 			}
-			
+
 			clearCheckedItem();
 			getRequest().setAttribute("successCount", importList.size());
 			return VIEW;
@@ -642,4 +644,20 @@ public class CustomerAction extends GenericCRUDActionFull<Customer> {
 	public void setImportSerNos(String[] importSerNos) {
 		this.importSerNos = importSerNos;
 	}
+
+	/**
+	 * @return the inputStream
+	 */
+	public InputStream getInputStream() {
+		return inputStream;
+	}
+
+	/**
+	 * @param inputStream
+	 *            the inputStream to set
+	 */
+	public void setInputStream(InputStream inputStream) {
+		this.inputStream = inputStream;
+	}
+
 }
