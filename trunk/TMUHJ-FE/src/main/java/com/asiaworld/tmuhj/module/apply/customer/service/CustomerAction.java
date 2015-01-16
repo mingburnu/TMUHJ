@@ -2,7 +2,6 @@ package com.asiaworld.tmuhj.module.apply.customer.service;
 
 import java.util.List;
 
-import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
@@ -53,31 +52,10 @@ public class CustomerAction extends GenericCRUDActionFull<Customer> {
 		getRequest().setAttribute("keywords", keywords);
 		getRequest().setAttribute("query", "apply.customer.query.action");
 
-		String recordPerPage = getRequest().getParameter("recordPerPage");
-		String recordPoint = getRequest().getParameter("recordPoint");
 		DataSet<Customer> ds = initDataSet();
-		Pager pager = ds.getPager();
-
-		if (recordPerPage != null && NumberUtils.isDigits(recordPerPage)
-				&& Integer.parseInt(recordPerPage) > 0 && recordPoint != null
-				&& NumberUtils.isDigits(recordPoint)
-				&& Integer.parseInt(recordPoint) >= 0) {
-			pager.setRecordPerPage(Integer.parseInt(recordPerPage));
-			pager.setCurrentPage(Integer.parseInt(recordPoint)
-					/ Integer.parseInt(recordPerPage) + 1);
-			pager.setOffset(Integer.parseInt(recordPerPage)
-					* (pager.getCurrentPage() - 1));
-			pager.setRecordPoint(Integer.parseInt(recordPoint));
-			ds.setPager(pager);
-		} else if (recordPerPage != null && NumberUtils.isDigits(recordPerPage)
-				&& Integer.parseInt(recordPerPage) > 0 && recordPoint == null) {
-			pager.setRecordPerPage(Integer.parseInt(recordPerPage));
-			pager.setRecordPoint(pager.getOffset());
-			ds.setPager(pager);
-		} else {
-			pager.setRecordPoint(pager.getOffset());
-			ds.setPager(pager);
-		}
+		ds.setPager(Pager.getChangedPager(
+				getRequest().getParameter("recordPerPage"), getRequest()
+						.getParameter("recordPoint"), ds.getPager()));
 
 		ds = customerService.getBySql(ds,keywords);
 		List<Customer> results = ds.getResults();

@@ -5,6 +5,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 
 public class Test {
 
@@ -107,5 +108,11 @@ String issn=" ";
 		Object obj=9;
 		String str="9";
 		long l=9;
+		double d=5.0;
+		StringBuilder sb=new StringBuilder("sb");
+		sb.append(110);
+		System.out.println(sb.toString());
+		int cast=(int)d;
+		System.out.println(NumberUtils.isNumber(""));
 	}
 }

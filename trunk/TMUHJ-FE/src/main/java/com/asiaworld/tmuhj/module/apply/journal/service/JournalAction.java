@@ -4,12 +4,14 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 
 import com.asiaworld.tmuhj.core.model.DataSet;
+import com.asiaworld.tmuhj.core.model.Pager;
 import com.asiaworld.tmuhj.core.web.GenericCRUDActionFull;
 import com.asiaworld.tmuhj.module.apply.customer.entity.Customer;
 import com.asiaworld.tmuhj.module.apply.customer.service.CustomerService;
@@ -68,10 +70,16 @@ public class JournalAction extends GenericCRUDActionFull<Journal> {
 
 	@Override
 	public String query() throws Exception {
-		getRequest().setAttribute("keywords",
-				getRequest().getParameter("keywords"));
+		String keywords = getRequest().getParameter("keywords");
+
+		getRequest().setAttribute("keywords", keywords);
 		getRequest().setAttribute("query", "apply.journal.query.action");
-		DataSet<Journal> ds = journalService.getBySql(initDataSet());
+		DataSet<Journal> ds = initDataSet();
+		ds.setPager(Pager.getChangedPager(
+				getRequest().getParameter("recordPerPage"), getRequest()
+						.getParameter("recordPoint"), ds.getPager()));
+
+		ds = journalService.getBySql(ds, keywords);
 		setDs(ds);
 		return "journal";
 	}
@@ -131,22 +139,41 @@ public class JournalAction extends GenericCRUDActionFull<Journal> {
 	}
 
 	public String owner() throws Exception {
-		getRequest().setAttribute("cusSerNo",
-				getRequest().getParameter("cusSerNo"));
+		long cusSerNo = 0;
+		if (NumberUtils.isDigits(getRequest().getParameter("cusSerNo"))
+				&& Long.parseLong(getRequest().getParameter("cusSerNo")) > 0) {
+			cusSerNo = Long.parseLong(getRequest().getParameter("cusSerNo"));
+		}
+
+		getRequest().setAttribute("cusSerNo", cusSerNo);
 		getRequest().setAttribute("owner", "apply.journal.owner.action");
-		DataSet<Journal> ds = journalService.getByCusSerNo(initDataSet());
+
+		DataSet<Journal> ds = initDataSet();
+		ds.setPager(Pager.getChangedPager(
+				getRequest().getParameter("recordPerPage"), getRequest()
+						.getParameter("recordPoint"), ds.getPager()));
+		ds = journalService.getByCusSerNo(ds, cusSerNo);
 		setDs(ds);
 
 		return "journal";
 	}
 
 	public String focus() throws Exception {
-		getRequest().setAttribute("keywords",
-				getRequest().getParameter("keywords"));
-		getRequest()
-				.setAttribute("option", getRequest().getParameter("option"));
+		String option = getRequest().getParameter("option");
+		String keywords = getRequest().getParameter("keywords");
+
+		getRequest().setAttribute("keywords", keywords);
+		getRequest().setAttribute("option", option);
 		getRequest().setAttribute("focus", "apply.journal.focus.action");
-		DataSet<Journal> ds = journalService.getByRestrictions(initDataSet());
+
+		getEntity().setOption(option);
+		getEntity().setKeywords(keywords);
+		
+		DataSet<Journal> ds = initDataSet();
+		ds.setPager(Pager.getChangedPager(
+				getRequest().getParameter("recordPerPage"), getRequest()
+						.getParameter("recordPoint"), ds.getPager()));
+		ds = journalService.getByRestrictions(ds);
 		setDs(ds);
 		return "journal";
 	}

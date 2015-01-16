@@ -77,6 +77,103 @@
 	function clearDetail_2() {
 		$("#div_Detail_2 .content .header .title").html(" ");
 	}
+	
+	//Excel列表
+	function goQueue() {
+		function getDoc(frame) {
+			var doc = null;
+
+			// IE8 cascading access check
+			try {
+				if (frame.contentWindow) {
+					doc = frame.contentWindow.document;
+				}
+			} catch (err) {
+			}
+
+			if (doc) { // successful getting content
+				return doc;
+			}
+
+			try { // simply checking may throw in ie8 under ssl or mismatched protocol
+				doc = frame.contentDocument ? frame.contentDocument
+						: frame.document;
+			} catch (err) {
+				// last attempt
+				doc = frame.document;
+			}
+			return doc;
+		}
+
+		showLoading();
+		var formObj = $("form#apply_ebook_queue");
+		var formURL = $("form#apply_ebook_queue").attr("action");
+
+		if (window.FormData !== undefined) // for HTML5 browsers
+		//			if(false)
+		{
+
+			var formData = new FormData(document
+					.getElementById("apply_ebook_queue"));
+			$.ajax({
+				url : formURL,
+				type : 'POST',
+				data : formData,
+				mimeType : "multipart/form-data",
+				contentType : false,
+				cache : false,
+				processData : false,
+				success : function(data, textStatus, jqXHR) {
+					$("#div_Detail").show();
+					UI_Resize();
+					$(window).scrollTop(0);
+					$("#div_Detail .content > .header > .title").html("電子書-匯入");
+					$("#div_Detail .content > .contain").empty().html(data);
+					closeLoading();
+					
+				},
+				error : function(jqXHR, textStatus, errorThrown) {
+					goAlert("結果", XMLHttpRequest.responseText);
+					closeLoading();
+				}
+			});
+			e.preventDefault();
+			e.unbind();
+		} else //for olden browsers
+		{
+			//generate a random id
+			var iframeId = 'unique' + (new Date().getTime());
+
+			//create an empty iframe
+			var iframe = $('<iframe src="javascript:false;" name="'+iframeId+'" />');
+
+			//hide it
+			iframe.hide();
+
+			//set form target to iframe
+			formObj.attr('target', iframeId);
+
+			//Add iframe to body
+			iframe.appendTo('body');
+			iframe.load(function(e) {
+				var doc = getDoc(iframe[0]);
+				var docRoot = doc.body ? doc.body : doc.documentElement;
+				var data = docRoot.innerHTML;
+				$("#div_Detail").show();
+				UI_Resize();
+				$(window).scrollTop(0);
+				$("#div_Detail .content > .header > .title").html("電子書-匯入");
+				$("#div_Detail .content > .contain").empty().html(data);
+				closeLoading();
+			});
+		}
+
+	}
+	
+	function openSample(){
+	    var url = "<c:url value = '/'/>resources/sample/sheet.xlsx";
+	    window.open(url, "_top");
+	}
 </script>
 <style type="text/css">
 #div_Detail_2 {
@@ -288,7 +385,7 @@ input#customer_name {
 		</c:when>
 
 		<c:when test="${not empty goQueue}">
-			<s:form namespace="/crud" action="apply.journal.queue"
+			<s:form namespace="/crud" action="apply.ebook.queue"
 				enctype="multipart/form-data" method="post">
 				<table cellspacing="1" class="detail-table">
 					<tr>

@@ -552,6 +552,8 @@ public class JournalAction extends GenericCRUDActionFull<Journal> {
 		}
 
 		if (!hasActionErrors()) {
+			getSession().remove("importList");
+			getSession().remove("checkItemMap");
 			Workbook book = createWorkBook(new FileInputStream(file));
 			// book.getNumberOfSheets(); 判斷Excel文件有多少個sheet
 			Sheet sheet = book.getSheetAt(0);
@@ -680,25 +682,9 @@ public class JournalAction extends GenericCRUDActionFull<Journal> {
 					category = "不明";
 				}
 
-				String type = "";
-				if (rowValues[12].equals("")) {
-					type = "不明";
-				} else if (rowValues[12].equals("期刊")
-						|| rowValues[12].contains("期刊")) {
-					type = "期刊";
-				} else if (rowValues[12].equals("電子書")
-						|| rowValues[12].contains("電子書")) {
-					type = "電子書";
-				} else if (rowValues[12].equals("資料庫")
-						|| rowValues[12].contains("資料庫")) {
-					type = "資料庫";
-				} else {
-					type = "不明";
-				}
-
 				resourcesBuyers = new ResourcesBuyers(rowValues[9],
-						rowValues[10], Category.valueOf(category),
-						Type.valueOf(type), rowValues[13], rowValues[14]);
+						rowValues[10], Category.valueOf(category), Type.期刊,
+						rowValues[13], rowValues[14]);
 
 				String issn = rowValues[3].trim().toUpperCase();
 				String[] issnSplit = issn.split("-");
@@ -740,7 +726,12 @@ public class JournalAction extends GenericCRUDActionFull<Journal> {
 								journal.setExistStatus("正常");
 							}
 						} else {
-							journal.setExistStatus("正常");
+							if (journal.getResourcesBuyers().getrCategory()
+									.equals(Category.不明)) {
+								journal.setExistStatus("資源類型不明");
+							} else {
+								journal.setExistStatus("正常");
+							}
 						}
 					} else {
 						journal.setExistStatus("無此客戶");

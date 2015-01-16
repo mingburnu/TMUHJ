@@ -3,6 +3,7 @@ package com.asiaworld.tmuhj.module.apply.ebook.entity;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
@@ -74,6 +75,12 @@ public class Ebook extends GenericEntityFull {
 	@Column(name = "publication")
 	private String publication;
 
+	@Transient
+	private String option;
+	
+	@Transient
+	private String keywords;
+	
 	/**
 	 * @return the bookName
 	 */
@@ -284,9 +291,35 @@ public class Ebook extends GenericEntityFull {
 		this.publication = publication;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/**
+	 * @return the option
+	 */
+	public String getOption() {
+		return option;
+	}
+
+	/**
+	 * @param option the option to set
+	 */
+	public void setOption(String option) {
+		this.option = option;
+	}
+
+	/**
+	 * @return the keywords
+	 */
+	public String getKeywords() {
+		return keywords;
+	}
+
+	/**
+	 * @param keywords the keywords to set
+	 */
+	public void setKeywords(String keywords) {
+		this.keywords = keywords;
+	}
+
+	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */
 	@Override
@@ -297,6 +330,7 @@ public class Ebook extends GenericEntityFull {
 				+ ", pubDate=" + pubDate + ", languages=" + languages
 				+ ", version=" + version + ", cnClassBzStr=" + cnClassBzStr
 				+ ", bookInfoIntegral=" + bookInfoIntegral + ", url=" + url
-				+ ", style=" + style + ", publication=" + publication + "]";
+				+ ", style=" + style + ", publication=" + publication
+				+ ", option=" + option + ", keywords=" + keywords + "]";
 	}
 }

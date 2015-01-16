@@ -92,6 +92,11 @@ function gotoPage(page){
 function chagePageSize(recordPerPage,recordPoint){
         goMain('<c:url value = '/'/>crud/apply.database.list.action','#apply_database_list','&recordPerPage='+recordPerPage+'&recordPoint='+recordPoint);
 }
+
+//批次匯入
+function goImport(){
+	goDetail('<%=request.getContextPath()%>/crud/apply.database.query.action?'+'goQueue=yes','資料庫-匯入');
+}
 </script>
 </head>
 <body>
@@ -141,8 +146,9 @@ function chagePageSize(recordPerPage,recordPoint){
 									</td>
 								</c:when>
 								<c:when test="${option=='entity.dbEngTitle' }">
-									<td align="left"><input type="text" name="entity.dbEngTitle"
-										maxlength="20" id="search" class="input_text"
+									<td align="left"><input type="text"
+										name="entity.dbEngTitle" maxlength="20" id="search"
+										class="input_text"
 										value="<%if (request
 								.getParameter(request.getParameter("option")) != null) {
 							out.print(request.getParameter(request
@@ -174,9 +180,11 @@ function chagePageSize(recordPerPage,recordPoint){
 						<a class="state-default" onclick="allSelect(0);">取消</a>
 						<a class="state-default" onclick="goAdd();">新增</a>
 						<a class="state-default" onclick="goDelete();">刪除</a>
+						<a class="state-default" onclick="goImport()">批次匯入</a>
 					</c:when>
 					<c:otherwise>
 						<a class="state-default" onclick="goAdd();">新增</a>
+						<a class="state-default" onclick="goImport()">批次匯入</a>
 					</c:otherwise>
 				</c:choose>
 			</div>
@@ -198,7 +206,10 @@ function chagePageSize(recordPerPage,recordPoint){
 							<td align="center" class="td_first" nowrap><input
 								type="checkbox" class="checkbox" name="checkItem"
 								value="${item.serNo}"></td>
-							<td>${item.dbEngTitle }</td>
+							<td><c:choose>
+									<c:when test="${not empty item.dbEngTitle }">${item.dbEngTitle }</c:when>
+									<c:otherwise>${item.dbChtTitle }</c:otherwise>
+								</c:choose></td>
 							<td align="center">${item.resourcesBuyers.rType.type }</td>
 							<td>${item.resourcesBuyers.cUid }</td>
 							<td align="center">${item.resourcesBuyers.uUid }</td>

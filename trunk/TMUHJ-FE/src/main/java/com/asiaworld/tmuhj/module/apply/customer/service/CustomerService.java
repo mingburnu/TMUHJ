@@ -33,7 +33,8 @@ public class CustomerService extends GenericServiceFull<Customer> {
 		return dao.findByRestrictions(restrictions, ds);
 	}
 
-	public DataSet<Customer> getBySql(DataSet<Customer> ds, String keywords) throws Exception {
+	public DataSet<Customer> getBySql(DataSet<Customer> ds, String keywords)
+			throws Exception {
 		Assert.notNull(ds);
 		Assert.notNull(ds.getEntity());
 
@@ -48,31 +49,34 @@ public class CustomerService extends GenericServiceFull<Customer> {
 
 		if (StringUtils.isNotEmpty(keywords)) {
 			char[] cArray = keywords.toCharArray();
-			keywords = "";
+			StringBuilder keywordsBuilder = new StringBuilder("");
 			for (int i = 0; i < cArray.length; i++) {
 				int charCode = (int) cArray[i];
 				if (charCode > 65280 && charCode < 65375) {
 					int halfChar = charCode - 65248;
 					cArray[i] = (char) halfChar;
 				}
-				keywords += cArray[i];
+				keywordsBuilder.append(cArray[i]);
 			}
+			keywords = keywordsBuilder.toString();
 
 			keywords = keywords.replaceAll(
 					"[^a-zA-Z0-9\u4e00-\u9fa5\u0391-\u03a9\u03b1-\u03c9]", " ");
 			String[] wordArray = keywords.split(" ");
-			String sql = "";
 
+			StringBuilder sqlBuilder = new StringBuilder("");
 			for (int i = 0; i < wordArray.length; i++) {
 				if (wordArray[i].isEmpty() == false) {
-					sql = sql + "LOWER(name) like LOWER('%" + wordArray[i]
+					sqlBuilder.append("LOWER(name) like LOWER('%"
+							+ wordArray[i]
 							+ "%') or  LOWER(engName) like LOWER('%"
 							+ wordArray[i]
 							+ "%') or  LOWER(memo) like LOWER('%"
-							+ wordArray[i] + "%') or ";
+							+ wordArray[i] + "%') or ");
 				}
 			}
 
+			String sql = sqlBuilder.toString();
 			if (sql.isEmpty()) {
 				Pager pager = ds.getPager();
 				pager.setTotalRecord(0L);
