@@ -28,8 +28,8 @@ import com.asiaworld.tmuhj.core.model.Pager;
  * @author Roderick
  * @version 2014/11/7
  */
-public abstract class GenericHibernateDaoFull<T extends GenericEntityFull> extends
-		GenericDaoFull<T> {
+public abstract class GenericHibernateDaoFull<T extends GenericEntityFull>
+		extends GenericDaoFull<T> {
 
 	@Autowired
 	private SessionFactory sessionFactory;
@@ -136,12 +136,12 @@ public abstract class GenericHibernateDaoFull<T extends GenericEntityFull> exten
 	}
 
 	@Override
-	public List<?> findByQL(DsQueryLanguage iQL) {
-		Assert.notNull(iQL);
-		Assert.notNull(iQL.getSql());
+	public List<?> findByQL(DsQueryLanguage dsQL) {
+		Assert.notNull(dsQL);
+		Assert.notNull(dsQL.getSql());
 
-		Query query = getSession().createQuery(iQL.getSql());
-		for (Entry<String, Object> keyValue : iQL.getParameters().entrySet()) {
+		Query query = getSession().createQuery(dsQL.getSql());
+		for (Entry<String, Object> keyValue : dsQL.getParameters().entrySet()) {
 			query.setParameter(keyValue.getKey(), keyValue.getValue());
 		}
 

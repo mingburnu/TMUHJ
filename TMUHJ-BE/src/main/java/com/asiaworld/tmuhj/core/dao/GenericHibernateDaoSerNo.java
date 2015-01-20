@@ -136,12 +136,12 @@ public abstract class GenericHibernateDaoSerNo<T extends GenericEntitySerNo>
 	}
 
 	@Override
-	public List<?> findByQL(DsQueryLanguage iQL) {
-		Assert.notNull(iQL);
-		Assert.notNull(iQL.getSql());
+	public List<?> findByQL(DsQueryLanguage dsQL) {
+		Assert.notNull(dsQL);
+		Assert.notNull(dsQL.getSql());
 
-		Query query = getSession().createQuery(iQL.getSql());
-		for (Entry<String, Object> keyValue : iQL.getParameters().entrySet()) {
+		Query query = getSession().createQuery(dsQL.getSql());
+		for (Entry<String, Object> keyValue : dsQL.getParameters().entrySet()) {
 			query.setParameter(keyValue.getKey(), keyValue.getValue());
 		}
 

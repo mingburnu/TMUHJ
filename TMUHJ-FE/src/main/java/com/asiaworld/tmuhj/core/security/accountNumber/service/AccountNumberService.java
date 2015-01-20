@@ -11,6 +11,7 @@ import org.springframework.util.Assert;
 
 import com.asiaworld.tmuhj.core.dao.GenericDaoFull;
 import com.asiaworld.tmuhj.core.dao.DsRestrictions;
+import com.asiaworld.tmuhj.core.enums.Status;
 import com.asiaworld.tmuhj.core.model.DataSet;
 import com.asiaworld.tmuhj.core.security.accountNumber.entity.AccountNumber;
 import com.asiaworld.tmuhj.core.security.accountNumber.entity.AccountNumberDao;
@@ -58,7 +59,8 @@ public class AccountNumberService extends GenericServiceFull<AccountNumber> {
 	}
 
 	@Override
-	public AccountNumber save(AccountNumber entity, AccountNumber user) throws Exception {
+	public AccountNumber save(AccountNumber entity, AccountNumber user)
+			throws Exception {
 		Assert.notNull(entity);
 		// entity.setTimeToSystime();
 		entity.initInsert(user);
@@ -97,4 +99,18 @@ public class AccountNumberService extends GenericServiceFull<AccountNumber> {
 				secUser.getUserPw());
 	}
 
+	public boolean isValidStatus(AccountNumber entity) throws Exception {
+		Assert.notNull(entity);
+
+		DsRestrictions restrictions = DsBeanFactory.getDsRestrictions();
+		restrictions.eq("userId", entity.getUserId());
+		restrictions.eq("status", Status.生效);
+
+		List<AccountNumber> secUsers = dao.findByRestrictions(restrictions);
+		if (secUsers == null || secUsers.isEmpty()) {
+			return false;
+		}
+
+		return true;
+	}
 }

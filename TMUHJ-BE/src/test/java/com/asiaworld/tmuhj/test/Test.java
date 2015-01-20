@@ -1,14 +1,18 @@
 package com.asiaworld.tmuhj.test;
 
 import java.io.IOException;
+import java.util.Map;
+import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
+import org.joda.time.LocalDateTime;
 
 public class Test {
 
+	@SuppressWarnings("unused")
 	public static void main(String[] args) throws IOException {
 
 		String[] sql = {
@@ -114,5 +118,18 @@ String issn=" ";
 		System.out.println(sb.toString());
 		int cast=(int)d;
 		System.out.println(NumberUtils.isNumber(""));
+		
+		Map<String, Object> map=new TreeMap<String, Object>();
+		map.put("Number",1111);
+		Object object=map.get("Number");
+		Integer num=(Integer) object;
+		System.out.println(num.getClass()+"  "+num);
+		
+		LocalDateTime dt1 = LocalDateTime.parse("2013-02-01");
+		LocalDateTime dt2 = LocalDateTime.parse("2013-03-01");
+		
+		LocalDateTime dt3=dt2.plusDays(1);
+		
+		System.out.println(dt2.plusDays(1));
 	}
 }

@@ -77,6 +77,7 @@ public class DatabaseAction extends GenericCRUDActionFull<Database> {
 	@Autowired
 	private CustomerService customerService;
 
+	@Autowired
 	private ExcelWorkSheet<Database> excelWorkSheet;
 
 	private String importSerNo;
