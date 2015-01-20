@@ -71,6 +71,10 @@ public class AuthorizationAction extends GenericWebActionFull<AccountNumber> {
 			if (!isValidUser) {
 				addActionError("帳號密碼錯誤，請重新輸入");
 			}
+
+			if (!userService.isValidStatus(user)) {
+				addActionError("帳號未生效或審核中");
+			}
 		}
 	}
 

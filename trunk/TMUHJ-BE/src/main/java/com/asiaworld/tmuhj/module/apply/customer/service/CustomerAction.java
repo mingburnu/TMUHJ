@@ -56,6 +56,7 @@ public class CustomerAction extends GenericCRUDActionFull<Customer> {
 	@Autowired
 	private IpRangeService ipRangeService;
 
+	@Autowired
 	private ExcelWorkSheet<Customer> excelWorkSheet;
 
 	private String importSerNo;
