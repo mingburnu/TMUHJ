@@ -131,5 +131,7 @@ String issn=" ";
 		LocalDateTime dt3=dt2.plusDays(1);
 		
 		System.out.println(dt2.plusDays(1));
+		String string="台北醫學院附屬醫院";
+		System.out.println(string.contains("醫學"));
 	}
 }

@@ -2,6 +2,15 @@
 insert into accountNumber(serNo, cUid, uUid, cDTime, uDTime, cus_serNo, userID, userName, userPW, role, status) values(1, 'admin', 'admin', sysdate(), sysdate(), 1,'admin', 'administer', '8w5y4CYvLHP69kq5Wm2vHDVfPX1IOcrpskUugS/4KZN6budffcIYbfhpEL6HmNZ0', '系統管理員','生效');
 insert into accountNumber(serNo, cUid, uUid, cDTime, uDTime, cus_serNo, userID, userName, userPW, role, status) values(2, 'admin', 'admin', sysdate(), sysdate(), 2,'admin2', 'administer', '8w5y4CYvLHP69kq5Wm2vHDVfPX1IOcrpskUugS/4KZN6budffcIYbfhpEL6HmNZ0', '系統管理員','生效');
 insert into accountNumber(serNo, cUid, uUid, cDTime, uDTime, cus_serNo, userID, userName, userPW, role, status) values(3, 'admin', 'admin', sysdate(), sysdate(), 5, 'user', 'Default User', '8w5y4CYvLHP69kq5Wm2vHDVfPX1IOcrpskUugS/4KZN6budffcIYbfhpEL6HmNZ0', '使用者','生效');
+insert into accountNumber(serNo, cUid, uUid, cDTime, uDTime, cus_serNo, userID, userName, userPW, role, status) values(4, 'admin', 'admin', sysdate(), sysdate(), 1,'admin3', 'administer', '8w5y4CYvLHP69kq5Wm2vHDVfPX1IOcrpskUugS/4KZN6budffcIYbfhpEL6HmNZ0', '系統管理員','生效');
+insert into accountNumber(serNo, cUid, uUid, cDTime, uDTime, cus_serNo, userID, userName, userPW, role, status) values(5, 'admin', 'admin', sysdate(), sysdate(), 2,'admin4', 'administer', '8w5y4CYvLHP69kq5Wm2vHDVfPX1IOcrpskUugS/4KZN6budffcIYbfhpEL6HmNZ0', '系統管理員','生效');
+insert into accountNumber(serNo, cUid, uUid, cDTime, uDTime, cus_serNo, userID, userName, userPW, role, status) values(6, 'admin', 'admin', sysdate(), sysdate(), 5, 'user2', 'Default User', '8w5y4CYvLHP69kq5Wm2vHDVfPX1IOcrpskUugS/4KZN6budffcIYbfhpEL6HmNZ0', '使用者','生效');
+insert into accountNumber(serNo, cUid, uUid, cDTime, uDTime, cus_serNo, userID, userName, userPW, role, status) values(7, 'admin', 'admin', sysdate(), sysdate(), 1,'admin5', 'administer', '8w5y4CYvLHP69kq5Wm2vHDVfPX1IOcrpskUugS/4KZN6budffcIYbfhpEL6HmNZ0', '系統管理員','生效');
+insert into accountNumber(serNo, cUid, uUid, cDTime, uDTime, cus_serNo, userID, userName, userPW, role, status) values(8, 'admin', 'admin', sysdate(), sysdate(), 2,'admin6', 'administer', '8w5y4CYvLHP69kq5Wm2vHDVfPX1IOcrpskUugS/4KZN6budffcIYbfhpEL6HmNZ0', '系統管理員','生效');
+insert into accountNumber(serNo, cUid, uUid, cDTime, uDTime, cus_serNo, userID, userName, userPW, role, status) values(9, 'admin', 'admin', sysdate(), sysdate(), 5, 'user3', 'Default User', '8w5y4CYvLHP69kq5Wm2vHDVfPX1IOcrpskUugS/4KZN6budffcIYbfhpEL6HmNZ0', '使用者','生效');
+insert into accountNumber(serNo, cUid, uUid, cDTime, uDTime, cus_serNo, userID, userName, userPW, role, status) values(10, 'admin', 'admin', sysdate(), sysdate(), 1,'admin7', 'administer', '8w5y4CYvLHP69kq5Wm2vHDVfPX1IOcrpskUugS/4KZN6budffcIYbfhpEL6HmNZ0', '系統管理員','生效');
+insert into accountNumber(serNo, cUid, uUid, cDTime, uDTime, cus_serNo, userID, userName, userPW, role, status) values(11, 'admin', 'admin', sysdate(), sysdate(), 2,'admin8', 'administer', '8w5y4CYvLHP69kq5Wm2vHDVfPX1IOcrpskUugS/4KZN6budffcIYbfhpEL6HmNZ0', '系統管理員','生效');
+insert into accountNumber(serNo, cUid, uUid, cDTime, uDTime, cus_serNo, userID, userName, userPW, role, status) values(12, 'admin', 'admin', sysdate(), sysdate(), 5, 'user4', 'Default User', '8w5y4CYvLHP69kq5Wm2vHDVfPX1IOcrpskUugS/4KZN6budffcIYbfhpEL6HmNZ0', '使用者','生效');
 
 --journal
 insert into journal(serNo, cUid, uUid, cDTime, uDTime, chinesetitle, englishtitle, ISSN, version) values(1, 'admin', 'admin', sysdate(), sysdate(), '新英格蘭','New England', 123456, 1);
@@ -86,7 +95,6 @@ insert into resourcesUnion(serNo, cus_serNo, res_serNo, ebk_serNo, dat_serNo, jo
 insert into resourcesUnion(serNo, cus_serNo, res_serNo, ebk_serNo, dat_serNo, jou_serNo) values(30, 3, 2, 0, 7, 0);
 insert into resourcesUnion(serNo, cus_serNo, res_serNo, ebk_serNo, dat_serNo, jou_serNo) values(31, 3, 2, 0, 8, 0);
 
-
 --ip_range
 insert into ip_range (serNo, cDTime, cUid, uDTime, uUid, cus_serNo, ipRangeEnd, ipRangeStart) values('1',sysdate(),'admin',sysdate(),'admin','9','59.120.245.198','59.120.245.193');
 insert into ip_range (serNo, cDTime, cUid, uDTime, uUid, cus_serNo, ipRangeEnd, ipRangeStart) values('2',sysdate(),'admin',sysdate(),'admin','9','61.219.77.42','61.219.77.37');
@@ -144,3 +152,16 @@ insert into ip_range (serNo, cDTime, cUid, uDTime, uUid, cus_serNo, ipRangeEnd, 
 insert into ip_range (serNo, cDTime, cUid, uDTime, uUid, cus_serNo, ipRangeEnd, ipRangeStart) values('54',sysdate(),'admin',sysdate(),'admin','8','203.65.109.254','203.65.109.1');
 insert into ip_range (serNo, cDTime, cUid, uDTime, uUid, cus_serNo, ipRangeEnd, ipRangeStart) values('55',sysdate(),'admin',sysdate(),'admin','8','203.65.100.13','203.65.100.13');
 insert into ip_range (serNo, cDTime, cUid, uDTime, uUid, cus_serNo, ipRangeEnd, ipRangeStart) values('56',sysdate(),'admin',sysdate(),'admin','8','210.241.104.254','210.241.104.128');
+
+insert into BE_Logs(serNo, cDTime, actionType, fk_account_serNo, fk_customer_serNo) values(1, sysdate(), '登入', 1, 1);
+insert into BE_Logs(serNo, cDTime, actionType, fk_account_serNo, fk_customer_serNo) values(2, sysdate(), '登入', 2, 2);
+insert into BE_Logs(serNo, cDTime, actionType, fk_account_serNo, fk_customer_serNo) values(3, sysdate(), '登入', 3, 5);
+insert into BE_Logs(serNo, cDTime, actionType, fk_account_serNo, fk_customer_serNo) values(4, sysdate(), '登入', 4, 1);
+insert into BE_Logs(serNo, cDTime, actionType, fk_account_serNo, fk_customer_serNo) values(5, sysdate(), '登入', 5, 2);
+insert into BE_Logs(serNo, cDTime, actionType, fk_account_serNo, fk_customer_serNo) values(6, sysdate(), '登入', 6, 5);
+insert into BE_Logs(serNo, cDTime, actionType, fk_account_serNo, fk_customer_serNo) values(7, sysdate(), '登入', 7, 1);
+insert into BE_Logs(serNo, cDTime, actionType, fk_account_serNo, fk_customer_serNo) values(8, sysdate(), '登入', 8, 2);
+insert into BE_Logs(serNo, cDTime, actionType, fk_account_serNo, fk_customer_serNo) values(9, sysdate(), '登入', 9, 5);
+insert into BE_Logs(serNo, cDTime, actionType, fk_account_serNo, fk_customer_serNo) values(10, sysdate(), '登入', 10, 1);
+insert into BE_Logs(serNo, cDTime, actionType, fk_account_serNo, fk_customer_serNo) values(11, sysdate(), '登入', 11, 2);
+insert into BE_Logs(serNo, cDTime, actionType, fk_account_serNo, fk_customer_serNo) values(12, sysdate(), '登入', 12, 5);

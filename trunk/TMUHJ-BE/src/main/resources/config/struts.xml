@@ -58,9 +58,7 @@
 			<result name="logout">/index.jsp</result>
 			<result name="index">/WEB-INF/jsp/index.jsp</result>
 		</global-results>
-		<action name="login" class="authorizationAction" method="login">
-			<interceptor-ref name="defaultInterceptor" />
-		</action>
+		<action name="login" class="authorizationAction" method="login"/>
 		<action name="logout" class="authorizationAction" method="logout" />
 		<action name="userEntry" class="authorizationAction" method="userEntry" />
 	</package>

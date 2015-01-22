@@ -69,16 +69,14 @@ public class AuthorizationAction extends GenericWebActionFull<AccountNumber> {
 				throw new Exception(e);
 			}
 
-			if (!isTrueUserId) {
-				getRequest().setAttribute("error", "您輸入的帳號名稱不正確，請重新輸入。");
-				addActionError("您輸入的帳號名稱不正確，請重新輸入。");
-			}
-
 			if (isTrueUserId) {
 				if (!isTrueUserPw) {// 使用者存在才進行密碼檢核
 					getRequest().setAttribute("error", "您輸入的密碼不正確，請重新輸入。");
 					addActionError("您輸入的密碼不正確，請重新輸入。");
 				}
+			} else {
+				getRequest().setAttribute("error", "您輸入的帳號名稱不正確，請重新輸入。");
+				addActionError("您輸入的帳號名稱不正確，請重新輸入。");
 			}
 		}
 	}
