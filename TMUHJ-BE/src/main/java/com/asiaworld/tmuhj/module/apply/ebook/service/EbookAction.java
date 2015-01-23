@@ -1,21 +1,28 @@
 package com.asiaworld.tmuhj.module.apply.ebook.service;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFRow;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
@@ -80,6 +87,10 @@ public class EbookAction extends GenericCRUDActionFull<Ebook> {
 	private String importSerNo;
 
 	private String[] importSerNos;
+
+	private InputStream inputStream;
+
+	private String reportFile;
 
 	@Override
 	public void validateSave() throws Exception {
@@ -903,6 +914,55 @@ public class EbookAction extends GenericCRUDActionFull<Ebook> {
 		return true;
 	}
 
+	public String exports() throws Exception {
+		reportFile = "ebook_sample.xlsx";
+
+		// Create blank workbook
+		XSSFWorkbook workbook = new XSSFWorkbook();
+		// Create a blank sheet
+		XSSFSheet spreadsheet = workbook.createSheet("ebook");
+		// Create row object
+		XSSFRow row;
+		// This data needs to be written (Object[])
+		Map<String, Object[]> empinfo = new LinkedHashMap<String, Object[]>();
+		empinfo.put("1", new Object[] { "書名", "ISBN/13碼", "出版社", "作者",
+				"authers/第二第三作者等", "uppername/系列叢書名", "電子書出版日期", "語文", "版本",
+				"cnclassbzstr/中國圖書分類碼", "美國國家圖書館分類號", "startdate/起始日",
+				"maturitydate/到期日", "Rcategory/資源類型", "Rtype/資源種類",
+				"Dbchttitle/資料庫中文題名", "Dbengtitle/資料庫英文題名", "購買單位名稱",
+				"購買單位英文名稱" });
+
+		empinfo.put("2", new Object[] { "Ophthalmic Clinical Procedures",
+				"9780080449784", "Elsevier(ClinicalKey)",
+				"Frank Eperjesi & Hannah Bartlett & Mark Dunne", "", "",
+				"2008/2/7", "eng", "", "", "N/A", "", "", "", "電子書", "", "",
+				"衛生福利部基隆醫院", "" });
+		empinfo.put("3", new Object[] { "Ophthalmic Clinical Procedures",
+				"9780080449784", "Elsevier(ClinicalKey)",
+				"Frank Eperjesi & Hannah Bartlett & Mark Dunne", "", "",
+				"2008/2/7", "eng", "", "", "N/A", "", "", "", "電子書", "", "",
+				"衛生福利部臺北醫院", "" });
+
+		// Iterate over data and write to sheet
+		Set<String> keyid = empinfo.keySet();
+		int rowid = 0;
+		for (String key : keyid) {
+			row = spreadsheet.createRow(rowid++);
+			Object[] objectArr = empinfo.get(key);
+			int cellid = 0;
+			for (Object obj : objectArr) {
+				Cell cell = row.createCell(cellid++);
+				cell.setCellValue((String) obj);
+			}
+		}
+
+		ByteArrayOutputStream boas = new ByteArrayOutputStream();
+		workbook.write(boas);
+		setInputStream(new ByteArrayInputStream(boas.toByteArray()));
+
+		return SUCCESS;
+	}
+
 	// 判斷文件類型
 	public Workbook createWorkBook(InputStream is) throws IOException {
 		if (fileFileName.toLowerCase().endsWith("xls")) {
@@ -1047,6 +1107,36 @@ public class EbookAction extends GenericCRUDActionFull<Ebook> {
 	 */
 	public void setImportSerNos(String[] importSerNos) {
 		this.importSerNos = importSerNos;
+	}
+
+	/**
+	 * @return the inputStream
+	 */
+	public InputStream getInputStream() {
+		return inputStream;
+	}
+
+	/**
+	 * @param inputStream
+	 *            the inputStream to set
+	 */
+	public void setInputStream(InputStream inputStream) {
+		this.inputStream = inputStream;
+	}
+
+	/**
+	 * @return the reportFile
+	 */
+	public String getReportFile() {
+		return reportFile;
+	}
+
+	/**
+	 * @param reportFile
+	 *            the reportFile to set
+	 */
+	public void setReportFile(String reportFile) {
+		this.reportFile = reportFile;
 	}
 
 }

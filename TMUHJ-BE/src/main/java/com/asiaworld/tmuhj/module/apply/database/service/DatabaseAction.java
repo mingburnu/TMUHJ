@@ -1,23 +1,30 @@
 package com.asiaworld.tmuhj.module.apply.database.service;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFRow;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
@@ -83,6 +90,10 @@ public class DatabaseAction extends GenericCRUDActionFull<Database> {
 	private String importSerNo;
 
 	private String[] importSerNos;
+
+	private InputStream inputStream;
+
+	private String reportFile;
 
 	@Override
 	public void validateSave() throws Exception {
@@ -858,6 +869,49 @@ public class DatabaseAction extends GenericCRUDActionFull<Database> {
 		}
 	}
 
+	public String exports() throws Exception {
+		reportFile = "database_sample.xlsx";
+
+		// Create blank workbook
+		XSSFWorkbook workbook = new XSSFWorkbook();
+		// Create a blank sheet
+		XSSFSheet spreadsheet = workbook.createSheet("database");
+		// Create row object
+		XSSFRow row;
+		// This data needs to be written (Object[])
+		Map<String, Object[]> empinfo = new LinkedHashMap<String, Object[]>();
+		empinfo.put("1", new Object[] { "資料庫中文題名", "資料庫英文題名",
+				"publishname/出版社", "語文", "IncludedSpecies/收錄種類",
+				"Content/收錄內容", "URL", "起始日", "到期日", "資源類型", "資源種類", "購買單位名稱",
+				"購買單位英文名稱" });
+
+		empinfo.put("2", new Object[] { "BMJ 醫學期刊", "BMJ  Journal",
+				"The BMJ Publishing Group Ltd", "eng", "", "", "", "N/A",
+				"N/A", "租賃", " 資料庫", "衛生福利部基隆醫院", "" });
+		empinfo.put("2", new Object[] { "BMJ 醫學期刊", "BMJ  Journal",
+				"The BMJ Publishing Group Ltd", "eng", "", "", "", "N/A",
+				"N/A", "租賃", " 資料庫", "衛生福利部臺北醫院", "" });
+
+		// Iterate over data and write to sheet
+		Set<String> keyid = empinfo.keySet();
+		int rowid = 0;
+		for (String key : keyid) {
+			row = spreadsheet.createRow(rowid++);
+			Object[] objectArr = empinfo.get(key);
+			int cellid = 0;
+			for (Object obj : objectArr) {
+				Cell cell = row.createCell(cellid++);
+				cell.setCellValue((String) obj);
+			}
+		}
+
+		ByteArrayOutputStream boas = new ByteArrayOutputStream();
+		workbook.write(boas);
+		setInputStream(new ByteArrayInputStream(boas.toByteArray()));
+
+		return SUCCESS;
+	}
+
 	// 判斷文件類型
 	public Workbook createWorkBook(InputStream is) throws IOException {
 		if (fileFileName.toLowerCase().endsWith("xls")) {
@@ -1002,6 +1056,36 @@ public class DatabaseAction extends GenericCRUDActionFull<Database> {
 	 */
 	public void setImportSerNos(String[] importSerNos) {
 		this.importSerNos = importSerNos;
+	}
+
+	/**
+	 * @return the inputStream
+	 */
+	public InputStream getInputStream() {
+		return inputStream;
+	}
+
+	/**
+	 * @param inputStream
+	 *            the inputStream to set
+	 */
+	public void setInputStream(InputStream inputStream) {
+		this.inputStream = inputStream;
+	}
+
+	/**
+	 * @return the reportFile
+	 */
+	public String getReportFile() {
+		return reportFile;
+	}
+
+	/**
+	 * @param reportFile
+	 *            the reportFile to set
+	 */
+	public void setReportFile(String reportFile) {
+		this.reportFile = reportFile;
 	}
 
 }

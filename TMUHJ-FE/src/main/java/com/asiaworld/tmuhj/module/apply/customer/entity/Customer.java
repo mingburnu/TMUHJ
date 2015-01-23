@@ -51,14 +51,14 @@ public class Customer extends GenericEntityFull {
 	private String memo;
 
 	@Transient
-	private int dbAmount;
+	private long dbAmount;
 
 	@Transient
-	private int ebookAmount;
+	private long ebookAmount;
 
 	@Transient
-	private int journalAmount;
-	
+	private long journalAmount;
+
 	/**
 	 * @return the name
 	 */
@@ -167,7 +167,7 @@ public class Customer extends GenericEntityFull {
 	/**
 	 * @return the dbAmount
 	 */
-	public int getDbAmount() {
+	public long getDbAmount() {
 		return dbAmount;
 	}
 
@@ -175,14 +175,14 @@ public class Customer extends GenericEntityFull {
 	 * @param dbAmount
 	 *            the dbAmount to set
 	 */
-	public void setDbAmount(int dbAmount) {
+	public void setDbAmount(long dbAmount) {
 		this.dbAmount = dbAmount;
 	}
 
 	/**
 	 * @return the ebookAmount
 	 */
-	public int getEbookAmount() {
+	public long getEbookAmount() {
 		return ebookAmount;
 	}
 
@@ -190,14 +190,14 @@ public class Customer extends GenericEntityFull {
 	 * @param ebookAmount
 	 *            the ebookAmount to set
 	 */
-	public void setEbookAmount(int ebookAmount) {
+	public void setEbookAmount(long ebookAmount) {
 		this.ebookAmount = ebookAmount;
 	}
 
 	/**
 	 * @return the journalAount
 	 */
-	public int getJournalAmount() {
+	public long getJournalAmount() {
 		return journalAmount;
 	}
 
@@ -205,11 +205,13 @@ public class Customer extends GenericEntityFull {
 	 * @param journalAount
 	 *            the journalAount to set
 	 */
-	public void setJournalAmount(int journalAmount) {
+	public void setJournalAmount(long journalAmount) {
 		this.journalAmount = journalAmount;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#toString()
 	 */
 	@Override

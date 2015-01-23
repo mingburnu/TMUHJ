@@ -21,13 +21,13 @@ import com.asiaworld.tmuhj.module.apply.ipRange.entity.IpRange;
 public class IpRangeAction extends GenericCRUDActionFull<IpRange> {
 
 	@Autowired
-	IpRange ipRange;
+	private IpRange ipRange;
 
 	@Autowired
-	IpRangeService ipRangeService;
+	private IpRangeService ipRangeService;
 
 	@Autowired
-	CustomerService customerService;
+	private CustomerService customerService;
 
 	@Override
 	public void validateSave() throws Exception {

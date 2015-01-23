@@ -27,22 +27,19 @@ function gotoPage(page){
         page=totalPage;
         offset=parseInt(recordPerPage)*(parseInt(page)-1);
     }
-    goMain('<c:url value = '/'/>crud/apply.beLogs.pagination.action','#apply_beLogs_list','&pager.offset='+offset+'&pager.currentPage='+page);
+    goMain('<c:url value = '/'/>crud/apply.beLogs.paginate.action','#apply_beLogs_list','&pager.offset='+offset+'&pager.currentPage='+page);
 }
 
 //變更顯示筆數
 function chagePageSize(recordPerPage,recordPoint){
-        goMain('<c:url value = '/'/>crud/apply.beLogs.pagination.action','#apply_beLogs_list','&recordPerPage='+recordPerPage+'&recordPoint='+recordPoint);
+        goMain('<c:url value = '/'/>crud/apply.beLogs.paginate.action','#apply_beLogs_list','&recordPerPage='+recordPerPage+'&recordPoint='+recordPoint);
 }
 
 //匯出
 function goExport(){
 	var data=$("#apply_beLogs_list").serialize();
 	var url='<%=request.getContextPath()%>/crud/apply.beLogs.exports.action?'+ data;
-	//goDetail(url,'匯出');
-	//setTimeout(function(){ closeDetail(); }, 0000);
-	window.open(url,target='iframe1');
-	<%--location.href =url;--%>
+	window.open(url, "_top");
 }
 </script>
 </head>
@@ -57,12 +54,14 @@ function goExport(){
 			</div>
 			<div id="TabsContain_A" class="tabs-contain">
 				<table cellspacing="4" cellpadding="0" border="0">
+					<c:set var="customer">
+					</c:set>
 					<tbody>
 						<tr>
 							<th align="right">查詢統計範圍：</th>
 							<td align="left"><input type="date" name="start"
-								class="input_text" value="2015-01-01"> 至&nbsp;&nbsp<input
-								type="date" name="end" class="input_text"></td>
+								class="input_text" value="${startDate }"> 至&nbsp;&nbsp<input
+								type="date" name="end" class="input_text" value="${endDate }"></td>
 						</tr>
 						<tr>
 							<th align="right">用戶名稱：</th>
@@ -106,7 +105,7 @@ function goExport(){
 					</tr>
 					<c:forEach var="item" items="${ds.results}" varStatus="status">
 						<tr>
-							<td>${start }~${end }</td>
+							<td>${startDate }~${endDate }</td>
 							<td align="center">${item.rank }</td>
 							<td>${item.accountNumber.userId }</td>
 							<td align="center">${item.accountNumber.userName }</td>
@@ -126,7 +125,7 @@ function goExport(){
 							<tr>
 								<td><jsp:include page="/WEB-INF/jsp/layout/pagination.jsp">
 										<jsp:param name="namespace" value="/crud" />
-										<jsp:param name="action" value="apply.beLogs.pagination" />
+										<jsp:param name="action" value="apply.beLogs.paginate" />
 										<jsp:param name="pager" value="${ds.pager}" />
 										<jsp:param name="recordPerPage"
 											value="${ds.pager.recordPerPage}" />
@@ -179,6 +178,6 @@ function goExport(){
 			goAlert('訊息', msg);
 		</script>
 	</s:if>
-	<iframe name="iframe1" style="display:none;"></iframe>
+	<iframe name="iframe1" style="display: none;"></iframe>
 </body>
 </html>

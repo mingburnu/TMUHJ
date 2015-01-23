@@ -11,8 +11,6 @@ import com.asiaworld.tmuhj.core.model.DataSet;
 import com.asiaworld.tmuhj.core.security.accountNumber.entity.AccountNumber;
 import com.asiaworld.tmuhj.core.security.accountNumber.service.AccountNumberService;
 import com.asiaworld.tmuhj.core.web.GenericWebActionFull;
-import com.asiaworld.tmuhj.module.apply.beLogs.entity.BeLogs;
-import com.asiaworld.tmuhj.module.apply.beLogs.service.BeLogsService;
 import com.asiaworld.tmuhj.module.apply.customer.entity.Customer;
 import com.asiaworld.tmuhj.module.apply.customer.service.CustomerService;
 
@@ -41,12 +39,6 @@ public class AuthorizationAction extends GenericWebActionFull<AccountNumber> {
 
 	@Autowired
 	private DataSet<AccountNumber> ds;
-
-	@Autowired
-	private BeLogsService beLogsService;
-
-	@Autowired
-	private BeLogs beLogs;
 
 	public void validateLogin() throws Exception {
 		boolean checkLogin = true;

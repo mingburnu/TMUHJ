@@ -10,7 +10,8 @@ import com.asiaworld.tmuhj.module.apply.resourcesBuyers.entity.ResourcesBuyers;
 @Controller
 @SuppressWarnings("serial")
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-public class ResourcesBuyersAction extends GenericCRUDActionFull<ResourcesBuyers> {
+public class ResourcesBuyersAction extends
+		GenericCRUDActionFull<ResourcesBuyers> {
 
 	@Override
 	public void validateSave() throws Exception {

@@ -1,21 +1,28 @@
 package com.asiaworld.tmuhj.core.security.accountNumber.service;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFRow;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
@@ -71,6 +78,10 @@ public class AccountNumberAction extends GenericCRUDActionFull<AccountNumber> {
 	private String importSerNo;
 
 	private String[] importSerNos;
+
+	private InputStream inputStream;
+
+	private String reportFile;
 
 	@Override
 	public void validateSave() throws Exception {
@@ -645,6 +656,43 @@ public class AccountNumberAction extends GenericCRUDActionFull<AccountNumber> {
 		}
 	}
 
+	public String exports() throws Exception {
+		reportFile = "account_sample.xlsx";
+
+		// Create blank workbook
+		XSSFWorkbook workbook = new XSSFWorkbook();
+		// Create a blank sheet
+		XSSFSheet spreadsheet = workbook.createSheet("account");
+		// Create row object
+		XSSFRow row;
+		// This data needs to be written (Object[])
+		Map<String, Object[]> empinfo = new LinkedHashMap<String, Object[]>();
+		empinfo.put("1", new Object[] { "userID/使用者", "userPW/使用者密碼",
+				"userName/姓名", "role/角色", "fk_name/用戶名稱", "status/狀態" });
+
+		empinfo.put("2", new Object[] { "ndmc", "ndmc", "國防醫學中心", "管理員",
+				"國防醫學中心", "生效" });
+
+		// Iterate over data and write to sheet
+		Set<String> keyid = empinfo.keySet();
+		int rowid = 0;
+		for (String key : keyid) {
+			row = spreadsheet.createRow(rowid++);
+			Object[] objectArr = empinfo.get(key);
+			int cellid = 0;
+			for (Object obj : objectArr) {
+				Cell cell = row.createCell(cellid++);
+				cell.setCellValue((String) obj);
+			}
+		}
+
+		ByteArrayOutputStream boas = new ByteArrayOutputStream();
+		workbook.write(boas);
+		setInputStream(new ByteArrayInputStream(boas.toByteArray()));
+
+		return SUCCESS;
+	}
+
 	// 判斷文件類型
 	public Workbook createWorkBook(InputStream is) throws IOException {
 		if (fileFileName.toLowerCase().endsWith("xls")) {
@@ -774,6 +822,36 @@ public class AccountNumberAction extends GenericCRUDActionFull<AccountNumber> {
 	 */
 	public void setImportSerNos(String[] importSerNos) {
 		this.importSerNos = importSerNos;
+	}
+
+	/**
+	 * @return the inputStream
+	 */
+	public InputStream getInputStream() {
+		return inputStream;
+	}
+
+	/**
+	 * @param inputStream
+	 *            the inputStream to set
+	 */
+	public void setInputStream(InputStream inputStream) {
+		this.inputStream = inputStream;
+	}
+
+	/**
+	 * @return the reportFile
+	 */
+	public String getReportFile() {
+		return reportFile;
+	}
+
+	/**
+	 * @param reportFile
+	 *            the reportFile to set
+	 */
+	public void setReportFile(String reportFile) {
+		this.reportFile = reportFile;
 	}
 
 }

@@ -170,9 +170,10 @@
 
 	}
 	
-	function openSample(){
-	    var url = "<c:url value = '/'/>resources/sample/sheet.xlsx";
-	    window.open(url, "_top");
+	//匯出範本
+	function goExport(){
+		var url='<%=request.getContextPath()%>/crud/apply.ebook.exports.action';
+		window.open(url, "_top");
 	}
 </script>
 <style type="text/css">
@@ -390,7 +391,7 @@ input#customer_name {
 				<table cellspacing="1" class="detail-table">
 					<tr>
 						<th width="130">匯入檔案<span class="required">(•)</span>(<a
-							href="#" onclick="openSample();">範例</a>)
+							href="#" onclick="goExport();">範例</a>)
 						</th>
 						<td><input type="file" id="file" name="file" size="50"></td>
 					</tr>
