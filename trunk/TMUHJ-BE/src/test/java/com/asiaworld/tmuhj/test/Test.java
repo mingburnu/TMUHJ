@@ -133,5 +133,12 @@ String issn=" ";
 		System.out.println(dt2.plusDays(1));
 		String string="台北醫學院附屬醫院";
 		System.out.println(string.contains("醫學"));
+		
+		regex="((19|20)\\d\\d)-(0?[1-9]|1[012])-(0?[1-9]|[12][0-9]|3[01])";
+		pattern=Pattern.compile(regex);
+		String date="2012-09-12"; 
+		matcher=pattern.matcher(date);
+		System.out.println(matcher.matches());
+		
 	}
 }

@@ -54,27 +54,18 @@ public class BeLogsService extends GenericServicecDTime<BeLogs> {
 		Session session = sessionFactory.getCurrentSession();
 
 		SQLQuery sqlQuery = null;
-		if (entity.getStart() != null && entity.getEnd() != null) {
+		if (entity.getEnd() != null) {
 			sqlQuery = session
 					.createSQLQuery("SELECT fk_account_serNo, fk_customer_serNo, actionType, count(fk_account_serNo) as amount FROM BE_Logs WHERE cDTime >'"
 							+ start
 							+ "' and cDTime <'"
 							+ end
 							+ "' group by fk_account_serNo Order by amount desc");
-		} else if (entity.getStart() != null && entity.getEnd() == null) {
+		} else {
 			sqlQuery = session
 					.createSQLQuery("SELECT fk_account_serNo, fk_customer_serNo, actionType, count(fk_account_serNo) as amount FROM BE_Logs WHERE cDTime >'"
 							+ start
 							+ "' group by fk_account_serNo Order by amount desc");
-		} else if (entity.getStart() == null && entity.getEnd() != null) {
-			sqlQuery = session
-					.createSQLQuery("SELECT fk_account_serNo, fk_customer_serNo, actionType, count(fk_account_serNo) as amount FROM BE_Logs WHERE cDTime <'"
-							+ end
-							+ "' group by fk_account_serNo Order by amount desc");
-		} else {
-			sqlQuery = session
-					.createSQLQuery("SELECT fk_account_serNo, fk_customer_serNo, actionType, count(fk_account_serNo) as amount FROM BE_Logs "
-							+ "group by fk_account_serNo Order by amount desc");
 		}
 
 		sqlQuery.setResultTransformer(Criteria.ALIAS_TO_ENTITY_MAP);

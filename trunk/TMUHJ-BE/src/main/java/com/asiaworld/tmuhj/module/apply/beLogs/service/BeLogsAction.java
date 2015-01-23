@@ -1,13 +1,15 @@
 package com.asiaworld.tmuhj.module.apply.beLogs.service;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeMap;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.xssf.usermodel.XSSFRow;
@@ -51,6 +53,10 @@ public class BeLogsAction extends GenericCRUDActioncDTime<BeLogs> {
 	@Autowired
 	private AccountNumber accountNumber;
 
+	private InputStream inputStream;
+
+	private String reportFile;
+
 	@Override
 	public void validateSave() throws Exception {
 		// TODO Auto-generated method stub
@@ -83,18 +89,24 @@ public class BeLogsAction extends GenericCRUDActioncDTime<BeLogs> {
 
 		List<BeLogs> ranks = new ArrayList<BeLogs>();
 		List<BeLogs> results = new ArrayList<BeLogs>();
-
 		DataSet<BeLogs> ds = initDataSet();
 
 		long cusSerNo = customerService.getCusSerNoByName(customerName);
 		getEntity().setCusSerNo(cusSerNo);
 
-		if (startDate != null && !startDate.isEmpty()) {
+		if (startDate != null && !startDate.isEmpty() && isDate(startDate)) {
 			getEntity().setStart(LocalDateTime.parse(startDate));
+			getSession().put("startDate", startDate);
+		} else {
+			getEntity().setStart(LocalDateTime.parse("2015-01-01"));
+			getSession().put("startDate", "2015-01-01");
 		}
 
-		if (endDate != null && !endDate.isEmpty()) {
+		if (endDate != null && !endDate.isEmpty() && isDate(endDate)) {
 			getEntity().setEnd(LocalDateTime.parse(endDate));
+			getSession().put("endDate", endDate);
+		} else {
+			getSession().put("endDate", "");
 		}
 
 		ranks = beLogsService.getRanks(ds);
@@ -140,8 +152,6 @@ public class BeLogsAction extends GenericCRUDActioncDTime<BeLogs> {
 			}
 		}
 
-		getRequest().setAttribute("start", startDate);
-		getRequest().setAttribute("end", endDate);
 		getSession().put("ranks", ranks);
 
 		ds.setResults(results);
@@ -151,9 +161,7 @@ public class BeLogsAction extends GenericCRUDActioncDTime<BeLogs> {
 	}
 
 	@SuppressWarnings("unchecked")
-	public String pagination() throws Exception {
-		String startDate = getRequest().getParameter("start");
-		String endDate = getRequest().getParameter("end");
+	public String paginate() throws Exception {
 		List<BeLogs> ranks = (List<BeLogs>) getSession().get("ranks");
 
 		DataSet<BeLogs> ds = initDataSet();
@@ -177,8 +185,6 @@ public class BeLogsAction extends GenericCRUDActioncDTime<BeLogs> {
 		}
 
 		ds.setResults(results);
-		getRequest().setAttribute("start", startDate);
-		getRequest().setAttribute("end", endDate);
 		setDs(ds);
 		return LIST;
 	}
@@ -203,16 +209,20 @@ public class BeLogsAction extends GenericCRUDActioncDTime<BeLogs> {
 
 	public String direct() {
 		getSession().remove("ranks");
+		getSession().remove("startDate");
+		getSession().remove("endDate");
 		return LIST;
 	}
 
 	@SuppressWarnings("unchecked")
-	public void exports() throws Exception {
-		String startDate = getRequest().getParameter("start");
-		String endDate = getRequest().getParameter("end");
+	public String exports() throws Exception {
+		String startDate = (String) getSession().get("startDate");
+		String endDate = (String) getSession().get("endDate");
 
 		getSession().get("ranks");
 		List<BeLogs> ranks = (List<BeLogs>) getSession().get("ranks");
+
+		reportFile = "beLogs.xlsx";
 
 		// Create blank workbook
 		XSSFWorkbook workbook = new XSSFWorkbook();
@@ -221,18 +231,19 @@ public class BeLogsAction extends GenericCRUDActioncDTime<BeLogs> {
 		// Create row object
 		XSSFRow row;
 		// This data needs to be written (Object[])
-		Map<String, Object[]> empinfo = new TreeMap<String, Object[]>();
+		Map<String, Object[]> empinfo = new LinkedHashMap<String, Object[]>();
 		empinfo.put("1", new Object[] { "年月", "名次", "帳號", "用戶姓名", "用戶身分",
 				"客戶名稱", "狀態", "次數" });
 
 		int i = 0;
 		while (i < ranks.size()) {
 			empinfo.put(
-					String.valueOf(i + 1),
+					String.valueOf(i + 2),
 					new Object[] {
 							startDate + "~" + endDate,
 							String.valueOf(ranks.get(i).getRank()),
 							ranks.get(i).getAccountNumber().getUserId(),
+							ranks.get(i).getAccountNumber().getUserName(),
 							ranks.get(i).getAccountNumber().getRole().getRole(),
 							ranks.get(i).getCustomer().getName(),
 							ranks.get(i).getAccountNumber().getStatus()
@@ -254,10 +265,48 @@ public class BeLogsAction extends GenericCRUDActioncDTime<BeLogs> {
 				cell.setCellValue((String) obj);
 			}
 		}
-		// Write the workbook in file system
-		FileOutputStream out = new FileOutputStream(new File("c:\\login statics.xlsx"));
-		workbook.write(out);
-		out.close();
-		System.out.println("Writesheet.xlsx written successfully");
+
+		ByteArrayOutputStream boas = new ByteArrayOutputStream();
+		workbook.write(boas);
+		setInputStream(new ByteArrayInputStream(boas.toByteArray()));
+
+		return SUCCESS;
+	}
+
+	public boolean isDate(String date) {
+		String regex = "((19|20)\\d\\d)-(0?[1-9]|1[012])-(0?[1-9]|[12][0-9]|3[01])";
+		Pattern pattern = Pattern.compile(regex);
+		Matcher matcher = pattern.matcher(date);
+		return matcher.matches();
+	}
+
+	/**
+	 * @return the inputStream
+	 */
+	public InputStream getInputStream() {
+		return inputStream;
+	}
+
+	/**
+	 * @param inputStream
+	 *            the inputStream to set
+	 */
+	public void setInputStream(InputStream inputStream) {
+		this.inputStream = inputStream;
+	}
+
+	/**
+	 * @return the reportFile
+	 */
+	public String getReportFile() {
+		return reportFile;
+	}
+
+	/**
+	 * @param reportFile
+	 *            the reportFile to set
+	 */
+	public void setReportFile(String reportFile) {
+		this.reportFile = reportFile;
 	}
 }

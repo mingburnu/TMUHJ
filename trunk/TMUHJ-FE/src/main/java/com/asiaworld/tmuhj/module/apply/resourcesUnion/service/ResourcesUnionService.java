@@ -8,6 +8,7 @@ import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.LogicalExpression;
+import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -66,7 +67,7 @@ public class ResourcesUnionService extends GenericServiceSerNo<ResourcesUnion> {
 		return totalList;
 	}
 
-	public Integer countTotalDb(long cusSerNo) {
+	public long countTotalDb(long cusSerNo) {
 		Session session = sessionFactory.getCurrentSession();
 
 		Criteria criteria = session.createCriteria(ResourcesUnion.class);
@@ -74,10 +75,10 @@ public class ResourcesUnionService extends GenericServiceSerNo<ResourcesUnion> {
 				Restrictions.eq("cusSerNo", cusSerNo),
 				Restrictions.gt("datSerNo", 0L));
 		criteria.add(andOperator);
-		List<?> list = criteria.list();
-		int count = list.size();
-		System.out.println("total Db: " + count);
-		return count;
+
+		criteria.setProjection(Projections.rowCount());
+		Long totalDb = (Long) criteria.list().get(0);
+		return totalDb;
 	}
 
 	public ArrayList<ResourcesUnion> totalJournal(long cusSerNo) {
@@ -99,7 +100,7 @@ public class ResourcesUnionService extends GenericServiceSerNo<ResourcesUnion> {
 		return totalList;
 	}
 
-	public Integer countTotalJournal(long cusSerNo) {
+	public long countTotalJournal(long cusSerNo) {
 		Session session = sessionFactory.getCurrentSession();
 
 		Criteria criteria = session.createCriteria(ResourcesUnion.class);
@@ -107,10 +108,10 @@ public class ResourcesUnionService extends GenericServiceSerNo<ResourcesUnion> {
 				Restrictions.eq("cusSerNo", cusSerNo),
 				Restrictions.gt("jouSerNo", 0L));
 		criteria.add(andOperator);
-		List<?> list = criteria.list();
-		int count = list.size();
-		System.out.println("total Journal: " + count);
-		return count;
+
+		criteria.setProjection(Projections.rowCount());
+		Long totalJournal = (Long) criteria.list().get(0);
+		return totalJournal;
 	}
 
 	public ArrayList<ResourcesUnion> totalEbook(long cusSerNo) {
@@ -132,7 +133,7 @@ public class ResourcesUnionService extends GenericServiceSerNo<ResourcesUnion> {
 		return totalList;
 	}
 
-	public Integer countTotalEbook(long cusSerNo) {
+	public long countTotalEbook(long cusSerNo) {
 		Session session = sessionFactory.getCurrentSession();
 
 		Criteria criteria = session.createCriteria(ResourcesUnion.class);
@@ -140,10 +141,10 @@ public class ResourcesUnionService extends GenericServiceSerNo<ResourcesUnion> {
 				Restrictions.eq("cusSerNo", cusSerNo),
 				Restrictions.gt("ebkSerNo", 0L));
 		criteria.add(andOperator);
-		List<?> list = criteria.list();
-		int count = list.size();
-		System.out.println("total Ebook: " + count);
-		return count;
+
+		criteria.setProjection(Projections.rowCount());
+		Long totalEbook = (Long) criteria.list().get(0);
+		return totalEbook;
 	}
 
 	public ResourcesUnion getByObjSerNo(long objSerNo, Class<?> objClass) {
