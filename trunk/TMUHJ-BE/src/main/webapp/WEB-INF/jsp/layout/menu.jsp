@@ -52,6 +52,9 @@
 			<div class="menu-items">
 				<a onclick="goURL('<%=request.getContextPath()%>/crud/apply.beLogs.direct.action');">登入次數統計</a>
 			</div>
+			<div class="menu-items">
+				<a onclick="goURL('<%=request.getContextPath()%>/crud/apply.feLogs.direct.action');">關鍵字檢索統計</a>
+			</div>
 		</div>
 
 		<%--

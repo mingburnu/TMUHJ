@@ -28,7 +28,7 @@ import com.asiaworld.tmuhj.core.security.accountNumber.entity.AccountNumber;
  * 
  */
 @MappedSuperclass
-public abstract class GenericEntitycDTime implements Entity {
+public abstract class GenericEntityLog implements Entity {
 
 	/**
 	 * 
@@ -82,7 +82,6 @@ public abstract class GenericEntitycDTime implements Entity {
 		this.createdBy = createdBy;
 	}
 
-
 	/**
 	 * @return the cDTime
 	 */
@@ -98,9 +97,6 @@ public abstract class GenericEntitycDTime implements Entity {
 	public void setcDTime(LocalDateTime cDTime) {
 		this.cDTime = cDTime;
 	}
-
-
-
 
 	public AccountNumber getCreatedUser() {
 		return createdUser;

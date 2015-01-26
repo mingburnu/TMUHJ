@@ -1,4 +1,4 @@
-package com.asiaworld.tmuhj.module.apply.beLogs.service;
+package com.asiaworld.tmuhj.module.apply.feLogs.service;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -16,33 +16,38 @@ import org.springframework.util.Assert;
 import com.asiaworld.tmuhj.core.dao.GenericDaoLog;
 import com.asiaworld.tmuhj.core.model.DataSet;
 import com.asiaworld.tmuhj.core.service.GenericServiceLog;
-import com.asiaworld.tmuhj.module.apply.beLogs.entity.BeLogs;
-import com.asiaworld.tmuhj.module.apply.beLogs.entity.BeLogsDao;
+import com.asiaworld.tmuhj.module.apply.feLogs.entity.FeLogs;
+import com.asiaworld.tmuhj.module.apply.feLogs.entity.FeLogsDao;
 import com.asiaworld.tmuhj.module.enums.Act;
 
 @Service
-public class BeLogsService extends GenericServiceLog<BeLogs> {
-
+public class FeLogsService extends GenericServiceLog<FeLogs> {
 	@Autowired
 	private SessionFactory sessionFactory;
 
 	@Autowired
-	private BeLogsDao dao;
+	private FeLogsDao dao;
 	
 	@Autowired
-	private BeLogs beLogs;
+	private FeLogs feLogs;
 
 	@Override
-	public DataSet<BeLogs> getByRestrictions(DataSet<BeLogs> ds)
+	public DataSet<FeLogs> getByRestrictions(DataSet<FeLogs> ds)
 			throws Exception {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	public List<BeLogs> getRanks(DataSet<BeLogs> ds) {
+	@Override
+	protected GenericDaoLog<FeLogs> getDao() {
+		// TODO Auto-generated method stub
+		return dao;
+	}
+
+	public List<FeLogs> getRanks(DataSet<FeLogs> ds) {
 		Assert.notNull(ds);
 		Assert.notNull(ds.getEntity());
-		BeLogs entity = ds.getEntity();
+		FeLogs entity = ds.getEntity();
 
 		String start = "";
 		String end = "";
@@ -59,16 +64,15 @@ public class BeLogsService extends GenericServiceLog<BeLogs> {
 		SQLQuery sqlQuery = null;
 		if (entity.getEnd() != null) {
 			sqlQuery = session
-					.createSQLQuery("SELECT fk_account_serNo, fk_customer_serNo, actionType, count(fk_account_serNo) as amount FROM BE_Logs WHERE cDTime >'"
+					.createSQLQuery("SELECT keyword, actionType, count(keyword) as amount FROM FE_Logs WHERE cDTime >'"
 							+ start
 							+ "' and cDTime <'"
 							+ end
-							+ "' group by fk_account_serNo Order by amount desc");
+							+ "' group by keyword Order by amount desc");
 		} else {
 			sqlQuery = session
-					.createSQLQuery("SELECT fk_account_serNo, fk_customer_serNo, actionType, count(fk_account_serNo) as amount FROM BE_Logs WHERE cDTime >'"
-							+ start
-							+ "' group by fk_account_serNo Order by amount desc");
+					.createSQLQuery("SELECT keyword, actionType, count(keyword) as amount FROM FE_Logs WHERE cDTime >'"
+							+ start + "' group by keyword Order by amount desc");
 		}
 
 		sqlQuery.setResultTransformer(Criteria.ALIAS_TO_ENTITY_MAP);
@@ -76,29 +80,19 @@ public class BeLogsService extends GenericServiceLog<BeLogs> {
 		List<?> data = sqlQuery.list();
 
 		Iterator<?> iterator = data.iterator();
-		List<BeLogs> ranks = new ArrayList<BeLogs>();
+		List<FeLogs> ranks = new ArrayList<FeLogs>();
 		int i = 1;
 		while (iterator.hasNext()) {
 			Map<?, ?> row = (Map<?, ?>) iterator.next();
-			beLogs = new BeLogs(Act.valueOf(row.get("ACTIONTYPE")
-					.toString()), Long.parseLong(row.get("FK_ACCOUNT_SERNO")
-					.toString()), Long.parseLong(row.get("FK_CUSTOMER_SERNO")
-					.toString()));
-
-			beLogs.setCount(Integer.parseInt(row.get("AMOUNT").toString()));
-			beLogs.setRank(i);
-			log.debug(beLogs);
-			ranks.add(beLogs);
+			feLogs = new FeLogs(Act.valueOf(row.get("ACTIONTYPE")
+					.toString()), row.get("KEYWORD").toString(), 0, 0, 0, 0, 0);
+			feLogs.setCount(Integer.parseInt(row.get("AMOUNT").toString()));
+			feLogs.setRank(i);
+			log.debug(feLogs);
+			ranks.add(feLogs);
 			i++;
 		}
 
 		return ranks;
 	}
-
-	@Override
-	protected GenericDaoLog<BeLogs> getDao() {
-		// TODO Auto-generated method stub
-		return dao;
-	}
-
 }

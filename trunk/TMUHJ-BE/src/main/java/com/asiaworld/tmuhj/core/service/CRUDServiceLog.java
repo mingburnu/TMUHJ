@@ -1,6 +1,6 @@
 package com.asiaworld.tmuhj.core.service;
 
-import com.asiaworld.tmuhj.core.entity.GenericEntitycDTime;
+import com.asiaworld.tmuhj.core.entity.GenericEntityLog;
 
 /**
  * CRUD Service
@@ -9,7 +9,7 @@ import com.asiaworld.tmuhj.core.entity.GenericEntitycDTime;
  * @version 2015/01/19
  */
 @Deprecated
-public interface CRUDServicecDTime<T extends GenericEntitycDTime> extends
+public interface CRUDServiceLog<T extends GenericEntityLog> extends
 		Service<T> {
 
 }

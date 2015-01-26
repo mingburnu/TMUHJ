@@ -131,8 +131,8 @@ String issn=" ";
 		LocalDateTime dt3=dt2.plusDays(1);
 		
 		System.out.println(dt2.plusDays(1));
-		String string="台北醫學院附屬醫院";
-		System.out.println(string.contains("醫學"));
+		String string="cjava SE";
+		System.out.println(string.contains("java"));
 		
 		regex="((19|20)\\d\\d)-(0?[1-9]|1[012])-(0?[1-9]|[12][0-9]|3[01])";
 		pattern=Pattern.compile(regex);

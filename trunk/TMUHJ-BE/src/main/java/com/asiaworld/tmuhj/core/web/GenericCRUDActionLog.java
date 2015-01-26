@@ -1,6 +1,6 @@
 package com.asiaworld.tmuhj.core.web;
 
-import com.asiaworld.tmuhj.core.entity.GenericEntitycDTime;
+import com.asiaworld.tmuhj.core.entity.GenericEntityLog;
 
 /**
  * GenericCRUDAction
@@ -9,8 +9,8 @@ import com.asiaworld.tmuhj.core.entity.GenericEntitycDTime;
  * @version 2015/01/19
  */
 @SuppressWarnings("serial")
-public abstract class GenericCRUDActioncDTime<T extends GenericEntitycDTime>
-		extends GenericActioncDTime<T> {
+public abstract class GenericCRUDActionLog<T extends GenericEntityLog>
+		extends GenericActionLog<T> {
 
 	/**
 	 * 儲存檢核

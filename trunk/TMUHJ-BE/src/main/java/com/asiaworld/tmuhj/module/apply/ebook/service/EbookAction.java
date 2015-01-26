@@ -213,8 +213,7 @@ public class EbookAction extends GenericCRUDActionFull<Ebook> {
 		if (!hasActionErrors()) {
 			ebook = ebookService.save(getEntity(), getLoginUser());
 
-			resourcesBuyers = resourcesBuyersService
-					.save(new ResourcesBuyers(getRequest().getParameter(
+			resourcesBuyers = resourcesBuyersService.save(new ResourcesBuyers(getRequest().getParameter(
 							"resourcesBuyers.startDate"), getRequest()
 							.getParameter("resourcesBuyers.maturityDate"),
 							Category.valueOf(getRequest().getParameter(
@@ -228,8 +227,7 @@ public class EbookAction extends GenericCRUDActionFull<Ebook> {
 
 			int i = 0;
 			while (i < cusSerNo.length) {
-				resourcesUnionService.save(
-						new ResourcesUnion(Long.parseLong(cusSerNo[i]),
+				resourcesUnionService.save(new ResourcesUnion(Long.parseLong(cusSerNo[i]),
 								resourcesBuyers.getSerNo(), ebook.getSerNo(),
 								0, 0), getLoginUser());
 
@@ -373,8 +371,7 @@ public class EbookAction extends GenericCRUDActionFull<Ebook> {
 			while (i < cusSerNo.length) {
 				if (!resourcesUnionService.isExist(ebook, Ebook.class,
 						Long.parseLong(cusSerNo[i]))) {
-					resourcesUnionService.save(
-							new ResourcesUnion(Long.parseLong(cusSerNo[i]),
+					resourcesUnionService.save(new ResourcesUnion(Long.parseLong(cusSerNo[i]),
 									resourcesBuyers.getSerNo(), ebook
 											.getSerNo(), 0, 0), getLoginUser());
 				}
@@ -834,11 +831,9 @@ public class EbookAction extends GenericCRUDActionFull<Ebook> {
 				if (ebkSerNo == 0) {
 					resourcesBuyers = resourcesBuyersService.save(importList
 							.get(i).getResourcesBuyers(), getLoginUser());
-					ebook = ebookService
-							.save(importList.get(i), getLoginUser());
+					ebook = ebookService.save(importList.get(i), getLoginUser());
 
-					resourcesUnionService.save(
-							new ResourcesUnion(cusSerNo, resourcesBuyers
+					resourcesUnionService.save(new ResourcesUnion(cusSerNo, resourcesBuyers
 									.getSerNo(), ebook.getSerNo(), 0, 0),
 							getLoginUser());
 				} else {

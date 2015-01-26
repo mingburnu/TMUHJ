@@ -215,8 +215,7 @@ public class DatabaseAction extends GenericCRUDActionFull<Database> {
 		if (!hasActionErrors()) {
 			database = databaseService.save(getEntity(), getLoginUser());
 
-			resourcesBuyers = resourcesBuyersService
-					.save(new ResourcesBuyers(getRequest().getParameter(
+			resourcesBuyers = resourcesBuyersService.save(new ResourcesBuyers(getRequest().getParameter(
 							"resourcesBuyers.startDate"), getRequest()
 							.getParameter("resourcesBuyers.maturityDate"),
 							Category.valueOf(getRequest().getParameter(
@@ -228,8 +227,7 @@ public class DatabaseAction extends GenericCRUDActionFull<Database> {
 
 			int i = 0;
 			while (i < cusSerNo.length) {
-				resourcesUnionService.save(
-						new ResourcesUnion(Long.parseLong(cusSerNo[i]),
+				resourcesUnionService.save(new ResourcesUnion(Long.parseLong(cusSerNo[i]),
 								resourcesBuyers.getSerNo(), 0, database
 										.getSerNo(), 0), getLoginUser());
 
@@ -382,8 +380,7 @@ public class DatabaseAction extends GenericCRUDActionFull<Database> {
 			while (i < cusSerNo.length) {
 				if (!resourcesUnionService.isExist(database, Database.class,
 						Long.parseLong(cusSerNo[i]))) {
-					resourcesUnionService.save(
-							new ResourcesUnion(Long.parseLong(cusSerNo[i]),
+					resourcesUnionService.save(new ResourcesUnion(Long.parseLong(cusSerNo[i]),
 									resourcesBuyers.getSerNo(), 0, database
 											.getSerNo(), 0), getLoginUser());
 				}
