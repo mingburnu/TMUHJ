@@ -8,8 +8,8 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;
 
-import com.asiaworld.tmuhj.core.dao.GenericDaocDTime;
-import com.asiaworld.tmuhj.core.entity.GenericEntitycDTime;
+import com.asiaworld.tmuhj.core.dao.GenericDaoLog;
+import com.asiaworld.tmuhj.core.entity.GenericEntityLog;
 import com.asiaworld.tmuhj.core.security.accountNumber.entity.AccountNumber;
 import com.asiaworld.tmuhj.core.security.accountNumber.entity.AccountNumberDao;
 
@@ -19,12 +19,12 @@ import com.asiaworld.tmuhj.core.security.accountNumber.entity.AccountNumberDao;
  * @author Roderick
  * @version 2015/01/19
  */
-public abstract class GenericServicecDTime<T extends GenericEntitycDTime> implements
+public abstract class GenericServiceLog<T extends GenericEntityLog> implements
 		Service<T> {
 
 	protected final transient Logger log = Logger.getLogger(getClass());
 
-	protected abstract GenericDaocDTime<T> getDao();
+	protected abstract GenericDaoLog<T> getDao();
 
 	@Autowired
 	private AccountNumberDao userDao;

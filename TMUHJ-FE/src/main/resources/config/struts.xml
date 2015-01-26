@@ -62,6 +62,16 @@
 	</package>
 
 	<package name="crudAction" namespace="/crud" extends="global">
+		<interceptors>
+			<interceptor name="SearchActionInterceptor"
+				class="com.asiaworld.tmuhj.core.interceptor.SearchActionInterceptor" />
+
+			<interceptor-stack name="defaultInterceptor">
+				<interceptor-ref name="SearchActionInterceptor" />
+				<interceptor-ref name="defaultStack" />
+			</interceptor-stack>
+		</interceptors>
+		<default-interceptor-ref name="defaultInterceptor" />
 		<action name="apply.*.*" class="{1}Action" method="{2}">
 			<result name="input">/login.jsp</result>
 			<result name="list">/WEB-INF/jsp/module/apply/{1}/{1}List.jsp

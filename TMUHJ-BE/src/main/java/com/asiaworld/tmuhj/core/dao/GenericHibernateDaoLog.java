@@ -18,7 +18,7 @@ import org.hibernate.criterion.Projections;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;
 
-import com.asiaworld.tmuhj.core.entity.GenericEntitycDTime;
+import com.asiaworld.tmuhj.core.entity.GenericEntityLog;
 import com.asiaworld.tmuhj.core.model.DataSet;
 import com.asiaworld.tmuhj.core.model.Pager;
 
@@ -28,8 +28,8 @@ import com.asiaworld.tmuhj.core.model.Pager;
  * @author Roderick
  * @version 2015/01/19
  */
-public abstract class GenericHibernateDaocDTime<T extends GenericEntitycDTime>
-		extends GenericDaocDTime<T> {
+public abstract class GenericHibernateDaoLog<T extends GenericEntityLog>
+		extends GenericDaoLog<T> {
 
 	@Autowired
 	private SessionFactory sessionFactory;
@@ -37,7 +37,7 @@ public abstract class GenericHibernateDaocDTime<T extends GenericEntitycDTime>
 	private Class<T> entityClass;
 
 	@SuppressWarnings("unchecked")
-	public GenericHibernateDaocDTime() {
+	public GenericHibernateDaoLog() {
 		this.entityClass = null;
 		Class<?> c = getClass();
 		Type t = c.getGenericSuperclass();

@@ -1,4 +1,4 @@
-package com.asiaworld.tmuhj.module.apply.beLogs.entity;
+package com.asiaworld.tmuhj.module.apply.feLogs.entity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -17,33 +17,49 @@ import com.asiaworld.tmuhj.module.apply.customer.entity.Customer;
 import com.asiaworld.tmuhj.module.enums.Act;
 
 /**
- * BE_Logs
+ * FE_Logs
  * 
  * @author Roderick
- * @version 2015/01/19
+ * @version 2015/01/26
  */
 @Entity
-@Table(name = "BE_Logs")
+@Table(name = "FE_Logs")
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-public class BeLogs extends GenericEntityLog {
+public class FeLogs extends GenericEntityLog {
 
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = 493376977661815130L;
+	private static final long serialVersionUID = -7484932839592255108L;
 
 	// 類型
 	@Column(name = "actionType")
 	@Enumerated(EnumType.STRING)
 	private Act actionType;
 
-	// 帳戶流水號
-	@Column(name = "fk_account_serNo")
-	private long userSerNo;
+	// 關鍵字
+	@Column(name = "keyword")
+	private String keyword;
 
 	// 用戶流水號
-	@Column(name = "fk_customer_serNo")
+	@Column(name = "cus_SerNo")
 	private long cusSerNo;
+
+	// 帳戶流水號
+	@Column(name = "acc_SerNo")
+	private long accSerNo;
+
+	// 資料庫流水號
+	@Column(name = "dat_SerNo")
+	private long datSerNo;
+
+	// 電子書流水號
+	@Column(name = "ebk_SerNo")
+	private long ebkSerNo;
+
+	// 期刊流水號
+	@Column(name = "jou_SerNo")
+	private long jouSerNo;
 
 	@Transient
 	private AccountNumber accountNumber;
@@ -56,10 +72,10 @@ public class BeLogs extends GenericEntityLog {
 
 	@Transient
 	private LocalDateTime end;
-	
+
 	@Transient
 	private int count;
-	
+
 	@Transient
 	private int rank;
 
@@ -79,18 +95,18 @@ public class BeLogs extends GenericEntityLog {
 	}
 
 	/**
-	 * @return the userSerNo
+	 * @return the keyword
 	 */
-	public long getUserSerNo() {
-		return userSerNo;
+	public String getKeyword() {
+		return keyword;
 	}
 
 	/**
-	 * @param userSerNo
-	 *            the userSerNo to set
+	 * @param keyword
+	 *            the keyword to set
 	 */
-	public void setUserSerNo(long userSerNo) {
-		this.userSerNo = userSerNo;
+	public void setKeyword(String keyword) {
+		this.keyword = keyword;
 	}
 
 	/**
@@ -106,6 +122,66 @@ public class BeLogs extends GenericEntityLog {
 	 */
 	public void setCusSerNo(long cusSerNo) {
 		this.cusSerNo = cusSerNo;
+	}
+
+	/**
+	 * @return the accSerNo
+	 */
+	public long getAccSerNo() {
+		return accSerNo;
+	}
+
+	/**
+	 * @param accSerNo
+	 *            the accSerNo to set
+	 */
+	public void setAccSerNo(long accSerNo) {
+		this.accSerNo = accSerNo;
+	}
+
+	/**
+	 * @return the datSerNo
+	 */
+	public long getDatSerNo() {
+		return datSerNo;
+	}
+
+	/**
+	 * @param datSerNo
+	 *            the datSerNo to set
+	 */
+	public void setDatSerNo(long datSerNo) {
+		this.datSerNo = datSerNo;
+	}
+
+	/**
+	 * @return the ebkSerNo
+	 */
+	public long getEbkSerNo() {
+		return ebkSerNo;
+	}
+
+	/**
+	 * @param ebkSerNo
+	 *            the ebkSerNo to set
+	 */
+	public void setEbkSerNo(long ebkSerNo) {
+		this.ebkSerNo = ebkSerNo;
+	}
+
+	/**
+	 * @return the jouSerNo
+	 */
+	public long getJouSerNo() {
+		return jouSerNo;
+	}
+
+	/**
+	 * @param jouSerNo
+	 *            the jouSerNo to set
+	 */
+	public void setJouSerNo(long jouSerNo) {
+		this.jouSerNo = jouSerNo;
 	}
 
 	/**
@@ -146,7 +222,8 @@ public class BeLogs extends GenericEntityLog {
 	}
 
 	/**
-	 * @param start the start to set
+	 * @param start
+	 *            the start to set
 	 */
 	public void setStart(LocalDateTime start) {
 		this.start = start;
@@ -160,7 +237,8 @@ public class BeLogs extends GenericEntityLog {
 	}
 
 	/**
-	 * @param end the end to set
+	 * @param end
+	 *            the end to set
 	 */
 	public void setEnd(LocalDateTime end) {
 		this.end = end;
@@ -174,7 +252,8 @@ public class BeLogs extends GenericEntityLog {
 	}
 
 	/**
-	 * @param count the count to set
+	 * @param count
+	 *            the count to set
 	 */
 	public void setCount(int count) {
 		this.count = count;
@@ -188,33 +267,43 @@ public class BeLogs extends GenericEntityLog {
 	}
 
 	/**
-	 * @param rank the rank to set
+	 * @param rank
+	 *            the rank to set
 	 */
 	public void setRank(int rank) {
 		this.rank = rank;
 	}
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
-	@Override
-	public String toString() {
-		return "BeLogs [actionType=" + actionType + ", userSerNo=" + userSerNo
-				+ ", cusSerNo=" + cusSerNo + ", accountNumber=" + accountNumber
-				+ ", customer=" + customer + ", start=" + start + ", end="
-				+ end + ", count=" + count + ", rank=" + rank + "]";
-	}
-
-	public BeLogs() {
+	public FeLogs() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
 
-	public BeLogs(Act actionType, long userSerNo, long cusSerNo) {
+	public FeLogs(Act actionType, String keyword, long cusSerNo, long accSerNo,
+			long datSerNo, long ebkSerNo, long jouSerNo) {
 		super();
 		this.actionType = actionType;
-		this.userSerNo = userSerNo;
+		this.keyword = keyword;
 		this.cusSerNo = cusSerNo;
+		this.accSerNo = accSerNo;
+		this.datSerNo = datSerNo;
+		this.ebkSerNo = ebkSerNo;
+		this.jouSerNo = jouSerNo;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return "FeLogs [actionType=" + actionType + ", keyword=" + keyword
+				+ ", cusSerNo=" + cusSerNo + ", accSerNo=" + accSerNo
+				+ ", datSerNo=" + datSerNo + ", ebkSerNo=" + ebkSerNo
+				+ ", jouSerNo=" + jouSerNo + ", accountNumber=" + accountNumber
+				+ ", customer=" + customer + ", start=" + start + ", end="
+				+ end + ", count=" + count + ", rank=" + rank + "]";
 	}
 
 }
