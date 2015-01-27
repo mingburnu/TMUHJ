@@ -4,9 +4,9 @@ import java.io.Serializable;
 import java.util.Map;
 
 /**
- * IiiQueryLanguage
- * @author David Hsu
- * @version 2014/3/12
+ * DsQueryLanguage
+ * @author Roderick
+ * @version 2015/01/27
  */
 public interface DsQueryLanguage extends Serializable {
 
