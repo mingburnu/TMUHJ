@@ -542,6 +542,39 @@ select{
 	color:#f6783a;
 }
 
+.help{
+	margin:0;
+	padding:0;
+}
+.help strong{
+	color:#21599f;
+	line-height:30px;
+}
+
+.help_txt{
+	margin:0;
+	padding:0 0 30px 0;
+	font-size:15px;
+	line-height:30px;
+}
+.help_txt a{
+	color:#e1510b;
+	text-decoration:none;
+}
+
+.help_item{
+	margin:0;
+	padding:0 0 30px 0;
+}
+.help_item .text{
+	font-size:15px;
+	line-height:30px;
+}
+.help_item .text a{
+	color:#e1510b;
+	text-decoration:none;
+}
+
 input:-webkit-autofill {
 	-webkit-box-shadow: 0 0 0px 1000px #fafafa inset;
 }
