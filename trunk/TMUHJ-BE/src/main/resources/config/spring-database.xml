@@ -27,11 +27,12 @@
 		 <property name="driverClassName" value="${dataSource.driverClassName}" 
 			/> <property name="url" value="${dataSource.url}" /> <property name="username" 
 			value="${dataSource.username}" /> <property name="password" value="${dataSource.password}" 
-			/> 
+			/>
 		<!--<property name="driverClassName" value="com.mysql.jdbc.Driver" />
-		<property name="url" value="jdbc:mysql://192.168.20.71:3306/tmuhjdb" />
+		<property name="url" value="jdbc:mysql://192.168.20.71:3306/tmuhjdb?characterEncoding=UTF-8" />
 		<property name="username" value="java_dev_admin" />
 		<property name="password" value="7UJM9OL." />-->
+		
 	</bean>
 
 	<!-- Hibernate -->

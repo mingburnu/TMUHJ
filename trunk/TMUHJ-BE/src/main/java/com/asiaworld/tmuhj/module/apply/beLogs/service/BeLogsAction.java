@@ -125,7 +125,7 @@ public class BeLogsAction extends GenericCRUDActionLog<BeLogs> {
 		if (customerName != null && !customerName.trim().isEmpty()) {
 		List<BeLogs> temp=ranks;
 		ranks=new ArrayList<BeLogs>();
-					int k = 0;
+			int k = 0;
 			while (k < temp.size()) {
 				customer = temp.get(k).getCustomer();
 				if (customer.getName().contains(customerName.trim())) {

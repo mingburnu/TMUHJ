@@ -31,7 +31,7 @@ function gotoPage(page){
 }
 
 //變更顯示筆數
-function chagePageSize(recordPerPage,recordPoint){
+function changePageSize(recordPerPage,recordPoint){
         goMain('<c:url value = '/'/>crud/apply.beLogs.paginate.action','#apply_beLogs_list','&recordPerPage='+recordPerPage+'&recordPoint='+recordPoint);
 }
 
@@ -137,7 +137,7 @@ function goExport(){
 										<fmt:formatNumber type="number" pattern="#"
 											value="${pageFactor+(1-(pageFactor%1))%1}" />
 									</c:set> 每頁顯示 <select name="recordPerPage" id="listForm_pageSize"
-									onchange="chagePageSize(this.value,${ds.pager.recordPoint })">
+									onchange="changePageSize(this.value,${ds.pager.recordPoint })">
 										<option value="${ds.pager.recordPerPage}">${ds.pager.recordPerPage}</option>
 										<option value="5">5</option>
 										<option value="10">10</option>

@@ -5,15 +5,10 @@ import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.Table;
-import javax.persistence.Transient;
-
-import org.joda.time.LocalDateTime;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 
 import com.asiaworld.tmuhj.core.entity.GenericEntityLog;
-import com.asiaworld.tmuhj.core.security.accountNumber.entity.AccountNumber;
-import com.asiaworld.tmuhj.module.apply.customer.entity.Customer;
 import com.asiaworld.tmuhj.module.enums.Act;
 
 /**
