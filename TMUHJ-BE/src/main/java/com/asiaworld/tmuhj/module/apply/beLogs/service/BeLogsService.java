@@ -28,7 +28,7 @@ public class BeLogsService extends GenericServiceLog<BeLogs> {
 
 	@Autowired
 	private BeLogsDao dao;
-	
+
 	@Autowired
 	private BeLogs beLogs;
 
@@ -80,14 +80,23 @@ public class BeLogsService extends GenericServiceLog<BeLogs> {
 		int i = 1;
 		while (iterator.hasNext()) {
 			Map<?, ?> row = (Map<?, ?>) iterator.next();
-			beLogs = new BeLogs(Act.valueOf(row.get("ACTIONTYPE")
-					.toString()), Long.parseLong(row.get("FK_ACCOUNT_SERNO")
-					.toString()), Long.parseLong(row.get("FK_CUSTOMER_SERNO")
-					.toString()));
 
-			beLogs.setCount(Integer.parseInt(row.get("AMOUNT").toString()));
+			//資料庫不同，寫法不一樣
+			if (row.get("actionType") != null) {
+				beLogs = new BeLogs(Act.valueOf(row.get("actionType")
+						.toString()), Long.parseLong(row
+						.get("fk_account_serNo").toString()),
+						Long.parseLong(row.get("fk_customer_serNo").toString()));
+				beLogs.setCount(Integer.parseInt(row.get("amount").toString()));
+			} else {
+				beLogs = new BeLogs(Act.valueOf(row.get("ACTIONTYPE")
+						.toString()), Long.parseLong(row
+						.get("FK_ACCOUNT_SERNO").toString()),
+						Long.parseLong(row.get("FK_CUSTOMER_SERNO").toString()));
+				beLogs.setCount(Integer.parseInt(row.get("AMOUNT").toString()));
+			}
+
 			beLogs.setRank(i);
-			log.debug(beLogs);
 			ranks.add(beLogs);
 			i++;
 		}

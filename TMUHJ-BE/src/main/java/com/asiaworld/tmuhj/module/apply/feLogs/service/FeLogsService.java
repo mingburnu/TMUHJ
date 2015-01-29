@@ -27,7 +27,7 @@ public class FeLogsService extends GenericServiceLog<FeLogs> {
 
 	@Autowired
 	private FeLogsDao dao;
-	
+
 	@Autowired
 	private FeLogs feLogs;
 
@@ -84,11 +84,20 @@ public class FeLogsService extends GenericServiceLog<FeLogs> {
 		int i = 1;
 		while (iterator.hasNext()) {
 			Map<?, ?> row = (Map<?, ?>) iterator.next();
-			feLogs = new FeLogs(Act.valueOf(row.get("ACTIONTYPE")
-					.toString()), row.get("KEYWORD").toString(), 0, 0, 0, 0, 0);
-			feLogs.setCount(Integer.parseInt(row.get("AMOUNT").toString()));
+
+			//資料庫不同，寫法不一樣
+			if (row.get("actionType") != null) {
+				feLogs = new FeLogs(Act.valueOf(row.get("actionType")
+						.toString()), row.get("keyword").toString(), 0, 0, 0,
+						0, 0);
+				feLogs.setCount(Integer.parseInt(row.get("amount").toString()));
+			} else {
+				feLogs = new FeLogs(Act.valueOf(row.get("ACTIONTYPE")
+						.toString()), row.get("KEYWORD").toString(), 0, 0, 0,
+						0, 0);
+				feLogs.setCount(Integer.parseInt(row.get("AMOUNT").toString()));
+			}
 			feLogs.setRank(i);
-			log.debug(feLogs);
 			ranks.add(feLogs);
 			i++;
 		}

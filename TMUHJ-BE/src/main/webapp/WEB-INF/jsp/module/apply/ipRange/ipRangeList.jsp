@@ -64,7 +64,7 @@ $(document).ready(function() {
 	}
 
 	//變更顯示筆數
-	function chagePageSize_detail(recordPerPage,recordPoint) {
+	function changePageSize_detail(recordPerPage,recordPoint) {
 		goDetail_Main('<c:url value = '/'/>crud/apply.ipRange.list.action',
 				'#apply_ipRange_list', '&recordPerPage='+recordPerPage+'&recordPoint='+recordPoint);
 	}
@@ -122,7 +122,7 @@ $(document).ready(function() {
 									<fmt:formatNumber type="number" pattern="#"
 										value="${pageFactor+(1-(pageFactor%1))%1}" />
 								</c:set> 每頁顯示 <select name="recordPerPage" id="listForm_pageSize"
-								onchange="chagePageSize_detail(this.value,${ds.pager.recordPoint })">
+								onchange="changePageSize_detail(this.value,${ds.pager.recordPoint })">
 									<option value="${ds.pager.recordPerPage}">${ds.pager.recordPerPage}</option>
 									<option value="5">5</option>
 									<option value="10">10</option>

@@ -8,7 +8,7 @@ package com.asiaworld.tmuhj.module.enums;
  */
 public enum Act {
 	/**
-	 * 使用者
+	 * Logs
 	 */
 	登入("登入"),
 
@@ -20,20 +20,20 @@ public enum Act {
 
 	借閱("借閱");
 
-	private String action;
+	private String act;
 
 	private Act() {
 	}
 
-	private Act(String action) {
-		this.action = action;
+	private Act(String act) {
+		this.act = act;
 	}
 
 	/**
 	 * @return the action
 	 */
-	public String getAction() {
-		return action;
+	public String getAct() {
+		return act;
 	}
 
 }

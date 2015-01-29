@@ -542,6 +542,7 @@ public class AccountNumberAction extends GenericCRUDActionFull<AccountNumber> {
 			}
 
 			Iterator<AccountNumber> setIterator = originalData.iterator();
+			
 			int normal = 0;
 			while (setIterator.hasNext()) {
 				accountNumber = setIterator.next();
@@ -550,18 +551,70 @@ public class AccountNumberAction extends GenericCRUDActionFull<AccountNumber> {
 					normal = normal + 1;
 				}
 			}
+			
+			DataSet<AccountNumber> ds = initDataSet();
+			List<AccountNumber> results=ds.getResults();
+			
+			ds.getPager().setTotalRecord((long)excelWorkSheet.getData().size());
+			ds.getPager().setRecordPoint(0);
+			
+			if(excelWorkSheet.getData().size() < ds.getPager().getRecordPerPage()){
+				int i=0;
+				while(i < excelWorkSheet.getData().size()){
+					results.add(excelWorkSheet.getData().get(i));
+					i++;
+				}
+			} else {
+				int i=0;
+				while(i < ds.getPager().getRecordPerPage()){
+					results.add(excelWorkSheet.getData().get(i));
+					i++;
+				}
+			}
 
 			getSession().put("importList", excelWorkSheet.getData());
 			getSession().put("total", excelWorkSheet.getData().size());
 			getSession().put("normal", normal);
 			getSession().put("abnormal",
 					excelWorkSheet.getData().size() - normal);
-
+			
+			setDs(ds);
 			return QUEUE;
 		} else {
 			getRequest().setAttribute("goQueue", "yes");
 			return EDIT;
 		}
+	}
+	
+	@SuppressWarnings("unchecked")
+	public String paginate() throws Exception {
+		clearCheckedItem();
+		
+		List<AccountNumber> importList = (List<AccountNumber>) getSession().get("importList");
+		
+		DataSet<AccountNumber> ds = initDataSet();
+		ds.setPager(Pager.getChangedPager(
+				getRequest().getParameter("recordPerPage"), getRequest()
+						.getParameter("recordPoint"), ds.getPager()));
+
+		ds.getPager().setTotalRecord((long) importList.size());
+		int first = ds.getPager().getRecordPerPage()
+				* (ds.getPager().getCurrentPage() - 1);
+		int last = first + ds.getPager().getRecordPerPage();
+
+		List<AccountNumber> results = new ArrayList<AccountNumber>();
+
+		int i = 0;
+		while (i < importList.size()) {
+			if (i >= first && i < last) {
+				results.add(importList.get(i));
+			}
+			i++;
+		}
+
+		ds.setResults(results);
+		setDs(ds);
+		return QUEUE;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -580,7 +633,6 @@ public class AccountNumberAction extends GenericCRUDActionFull<AccountNumber> {
 			checkItemMap.remove(this.importSerNo);
 		}
 		getSession().put("checkItemMap", checkItemMap);
-		System.out.println(checkItemMap);
 	}
 
 	public void allCheckedItem() {
@@ -593,21 +645,17 @@ public class AccountNumberAction extends GenericCRUDActionFull<AccountNumber> {
 		}
 
 		getSession().put("checkItemMap", checkItemMap);
-		System.out.println(checkItemMap);
 	}
 
 	public void clearCheckedItem() {
 		Map<String, Object> checkItemMap = new TreeMap<String, Object>();
 		getSession().put("checkItemMap", checkItemMap);
-		System.out.println(checkItemMap);
 	}
 
 	@SuppressWarnings("unchecked")
 	public String importData() throws Exception {
 		List<AccountNumber> accountNumbers = (List<AccountNumber>) getSession()
 				.get("importList");
-
-		List<String> cellNames = (List<String>) getSession().get("cellNames");
 
 		Map<String, Object> checkItemMap = (TreeMap<String, Object>) getSession()
 				.get("checkItemMap");
@@ -625,33 +673,16 @@ public class AccountNumberAction extends GenericCRUDActionFull<AccountNumber> {
 			}
 
 			for (int i = 0; i < importList.size(); i++) {
+				if(importList.get(i).getExistStatus().equals("正常")){
 				accountNumberService.save(importList.get(i), getLoginUser());
+				}
 			}
 
 			clearCheckedItem();
 			getRequest().setAttribute("successCount", importList.size());
 			return VIEW;
 		} else {
-			Object total = getSession().get("total");
-			Object normal = getSession().get("normal");
-			Object abnormal = getSession().get("abnormal");
-
-			getRequest().setAttribute("beforeRow",
-					getRequest().getParameter("beforeRow"));
-			getRequest().setAttribute("beforeMaxRows",
-					getRequest().getParameter("beforeMaxRows"));
-
-			getSession().put("total", total);
-			getSession().put("normal", normal);
-			getSession().put("abnormal", abnormal);
-
-			getSession().put("importList", getSession().get("importList"));
-
-			getSession().put("cellNames", getSession().get("cellNames"));
-
-			excelWorkSheet = new ExcelWorkSheet<AccountNumber>();
-			excelWorkSheet.setColumns(cellNames);
-			excelWorkSheet.setData(accountNumbers);
+			paginate();
 			return QUEUE;
 		}
 	}

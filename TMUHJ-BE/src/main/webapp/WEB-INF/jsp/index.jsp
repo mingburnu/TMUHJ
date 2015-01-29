@@ -10,17 +10,17 @@
 <meta http-equiv="Pragma" content="no-cache" />
 <meta http-equiv="Cache-Control" content="no-cache" />
 <meta http-equiv="Expires" content="0" />
-<link href="<c:url value = '/'/>resources/css/air-ui-cms.css"
+<link href="<%=request.getContextPath()%>/resources/css/air-ui-cms.css"
 	rel="stylesheet" type="text/css" />
-<link href="<c:url value = '/'/>resources/css/jquery.autocomplete.css"
+<link href="<%=request.getContextPath()%>/resources/css/jquery.autocomplete.css"
 	rel="stylesheet" type="text/css" />
 <link
-	href="<c:url value = '/'/>resources/css/smoothness/jquery-ui-1.7.2.custom.css"
+	href="<%=request.getContextPath()%>/resources/css/smoothness/jquery-ui-1.7.2.custom.css"
 	rel="stylesheet" type="text/css" />
-<link href="<c:url value = '/'/>resources/css/jquery.datepick.css"
+<link href="<%=request.getContextPath()%>/resources/css/jquery.datepick.css"
 	rel="stylesheet" type="text/css" />
 <script language="javascript" type="text/javascript"
-	src="<c:url value = '/'/>resources/js/jquery-1.3.2.js">
+	src="<%=request.getContextPath()%>/resources/js/jquery-1.3.2.js">
 	
 </script>
 <script language="javascript" type="text/javascript"
@@ -51,11 +51,6 @@
 	src="<c:url value = '/'/>resources/js/jquery.min.js">
 	
 </script>
-<script language="javascript" type="text/javascript"
-	src="<c:url value = '/'/>resources/js/list.pagination.min.js">
-	
-</script>
-
 <script type="text/javascript">
 	$(document).ready(function() {
 		showMenuItems('1');
