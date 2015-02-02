@@ -44,6 +44,7 @@ function goExport(){
 </script>
 </head>
 <body>
+<jsp:include page="/WEB-INF/jsp/layout/getUrl.jsp" />
 	<s:form action="apply.beLogs.list" namespace="/crud" method="post"
 		onsubmit="return false;">
 		<div class="tabs-box">

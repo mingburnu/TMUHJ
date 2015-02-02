@@ -88,7 +88,7 @@ public class Journal extends GenericEntityFull {
 	
 	@Transient
 	private String existStatus;
-
+	
 	/**
 	 * @return the chineseTitle
 	 */

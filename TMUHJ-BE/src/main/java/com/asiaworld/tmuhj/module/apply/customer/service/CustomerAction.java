@@ -455,12 +455,14 @@ public class CustomerAction extends GenericCRUDActionFull<Customer> {
 				}
 			}
 			
+			ds.setResults(results);
+			
 			getSession().put("importList", excelWorkSheet.getData());
 			getSession().put("total", excelWorkSheet.getData().size());
 			getSession().put("normal", normal);
 			getSession().put("abnormal",
 					excelWorkSheet.getData().size() - normal);
-
+			
 			setDs(ds);
 			return QUEUE;
 		} else {
@@ -569,6 +571,15 @@ public class CustomerAction extends GenericCRUDActionFull<Customer> {
 			paginate();
 			return QUEUE;
 		}
+	}
+	
+	public void removeSessionObj() {
+		getSession().remove("cellNames");
+		getSession().remove("importList");
+		getSession().remove("total");
+		getSession().remove("normal");
+		getSession().remove("abnormal");
+		getSession().remove("checkItemMap");
 	}
 
 	public String exports() throws Exception {

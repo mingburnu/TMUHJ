@@ -140,5 +140,9 @@ String issn=" ";
 		matcher=pattern.matcher(date);
 		System.out.println(matcher.matches());
 		
+	
+	map.clear();
+	System.out.println(map.get("Number"));
+		
 	}
 }

@@ -104,6 +104,14 @@ function changePageSize_detail(recordPerPage,recordPoint) {
 					}
 				});
 	}
+	
+	function closeDetail() {
+		 $("#div_Detail").hide();
+	     UI_Resize();
+	     $.ajax({url: "<c:url value = '/'/>crud/apply.customer.removeSessionObj.action", success: function(result){
+	 	}
+	 	});
+	}
 </script>
 </head>
 <body>

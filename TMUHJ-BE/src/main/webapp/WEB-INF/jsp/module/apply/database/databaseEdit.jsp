@@ -109,7 +109,6 @@
 		}
 
 		showLoading();
-		//alert(document.getElementById("apply_journal_queue"));
 		var formObj = $("form#apply_database_queue");
 		var formURL = $("form#apply_database_queue").attr("action");
 

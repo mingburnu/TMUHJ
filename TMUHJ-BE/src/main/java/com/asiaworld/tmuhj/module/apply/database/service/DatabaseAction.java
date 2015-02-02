@@ -618,7 +618,6 @@ public class DatabaseAction extends GenericCRUDActionFull<Database> {
 			}
 
 			getSession().put("cellNames", cellNames);
-			excelWorkSheet.setColumns(cellNames);
 
 			LinkedHashSet<Database> originalData = new LinkedHashSet<Database>();
 			for (int i = 1; i <= sheet.getLastRowNum(); i++) {
@@ -729,7 +728,9 @@ public class DatabaseAction extends GenericCRUDActionFull<Database> {
 				}
 				originalData.add(database);
 			}
+			
 			Iterator<Database> setIterator = originalData.iterator();
+			
 			int normal = 0;
 			while (setIterator.hasNext()) {
 				database = setIterator.next();
@@ -738,18 +739,70 @@ public class DatabaseAction extends GenericCRUDActionFull<Database> {
 					normal = normal + 1;
 				}
 			}
-
+			
+			DataSet<Database> ds = initDataSet();
+			List<Database> results=ds.getResults();
+			
+			ds.getPager().setTotalRecord((long)excelWorkSheet.getData().size());
+			ds.getPager().setRecordPoint(0);
+			
+			if(excelWorkSheet.getData().size() < ds.getPager().getRecordPerPage()){
+				int i=0;
+				while(i < excelWorkSheet.getData().size()){
+					results.add(excelWorkSheet.getData().get(i));
+					i++;
+				}
+			} else {
+				int i=0;
+				while(i < ds.getPager().getRecordPerPage()){
+					results.add(excelWorkSheet.getData().get(i));
+					i++;
+				}
+			}
+			
 			getSession().put("importList", excelWorkSheet.getData());
 			getSession().put("total", excelWorkSheet.getData().size());
 			getSession().put("normal", normal);
 			getSession().put("abnormal",
 					excelWorkSheet.getData().size() - normal);
-
+			
+			setDs(ds);
 			return QUEUE;
 		} else {
 			getRequest().setAttribute("goQueue", "yes");
 			return EDIT;
 		}
+	}
+	
+	@SuppressWarnings("unchecked")
+	public String paginate() throws Exception {
+		clearCheckedItem();
+		
+		List<Database> importList = (List<Database>) getSession().get("importList");
+		
+		DataSet<Database> ds = initDataSet();
+		ds.setPager(Pager.getChangedPager(
+				getRequest().getParameter("recordPerPage"), getRequest()
+						.getParameter("recordPoint"), ds.getPager()));
+
+		ds.getPager().setTotalRecord((long) importList.size());
+		int first = ds.getPager().getRecordPerPage()
+				* (ds.getPager().getCurrentPage() - 1);
+		int last = first + ds.getPager().getRecordPerPage();
+
+		List<Database> results = new ArrayList<Database>();
+
+		int i = 0;
+		while (i < importList.size()) {
+			if (i >= first && i < last) {
+				results.add(importList.get(i));
+			}
+			i++;
+		}
+
+		ds.setResults(results);
+		setDs(ds);
+		return QUEUE;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -768,7 +821,6 @@ public class DatabaseAction extends GenericCRUDActionFull<Database> {
 			checkItemMap.remove(this.importSerNo);
 		}
 		getSession().put("checkItemMap", checkItemMap);
-		System.out.println(checkItemMap);
 	}
 
 	public void allCheckedItem() {
@@ -781,21 +833,17 @@ public class DatabaseAction extends GenericCRUDActionFull<Database> {
 		}
 
 		getSession().put("checkItemMap", checkItemMap);
-		System.out.println(checkItemMap);
 	}
 
 	public void clearCheckedItem() {
 		Map<String, Object> checkItemMap = new TreeMap<String, Object>();
 		getSession().put("checkItemMap", checkItemMap);
-		System.out.println(checkItemMap);
 	}
 
 	@SuppressWarnings("unchecked")
 	public String importData() throws Exception {
 		List<Database> databases = (List<Database>) getSession().get(
 				"importList");
-
-		List<String> cellNames = (List<String>) getSession().get("cellNames");
 
 		Map<String, Object> checkItemMap = (TreeMap<String, Object>) getSession()
 				.get("checkItemMap");
@@ -842,28 +890,18 @@ public class DatabaseAction extends GenericCRUDActionFull<Database> {
 			getRequest().setAttribute("successCount", importList.size());
 			return VIEW;
 		} else {
-			Object total = getSession().get("total");
-			Object normal = getSession().get("normal");
-			Object abnormal = getSession().get("abnormal");
-
-			getRequest().setAttribute("beforeRow",
-					getRequest().getParameter("beforeRow"));
-			getRequest().setAttribute("beforeMaxRows",
-					getRequest().getParameter("beforeMaxRows"));
-
-			getSession().put("total", total);
-			getSession().put("normal", normal);
-			getSession().put("abnormal", abnormal);
-
-			getSession().put("importList", getSession().get("importList"));
-
-			getSession().put("cellNames", getSession().get("cellNames"));
-
-			excelWorkSheet = new ExcelWorkSheet<Database>();
-			excelWorkSheet.setColumns(cellNames);
-			excelWorkSheet.setData(databases);
+			paginate();
 			return QUEUE;
 		}
+	}
+	
+	public void removeSessionObj() {
+		getSession().remove("cellNames");
+		getSession().remove("importList");
+		getSession().remove("total");
+		getSession().remove("normal");
+		getSession().remove("abnormal");
+		getSession().remove("checkItemMap");
 	}
 
 	public String exports() throws Exception {
