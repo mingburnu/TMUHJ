@@ -608,7 +608,6 @@ public class EbookAction extends GenericCRUDActionFull<Ebook> {
 			}
 
 			getSession().put("cellNames", cellNames);
-			excelWorkSheet.setColumns(cellNames);
 
 			LinkedHashSet<Ebook> originalData = new LinkedHashSet<Ebook>();
 			for (int i = 1; i <= sheet.getLastRowNum(); i++) {
@@ -740,7 +739,9 @@ public class EbookAction extends GenericCRUDActionFull<Ebook> {
 				}
 				originalData.add(ebook);
 			}
+			
 			Iterator<Ebook> setIterator = originalData.iterator();
+			
 			int normal = 0;
 			while (setIterator.hasNext()) {
 				ebook = setIterator.next();
@@ -749,7 +750,27 @@ public class EbookAction extends GenericCRUDActionFull<Ebook> {
 					normal = normal + 1;
 				}
 			}
+			
+			DataSet<Ebook> ds = initDataSet();
+			List<Ebook> results=ds.getResults();
+			
+			ds.getPager().setTotalRecord((long)excelWorkSheet.getData().size());
+			ds.getPager().setRecordPoint(0);
 
+			if(excelWorkSheet.getData().size() < ds.getPager().getRecordPerPage()){
+				int i=0;
+				while(i < excelWorkSheet.getData().size()){
+					results.add(excelWorkSheet.getData().get(i));
+					i++;
+				}
+			} else {
+				int i=0;
+				while(i < ds.getPager().getRecordPerPage()){
+					results.add(excelWorkSheet.getData().get(i));
+					i++;
+				}
+			}
+			
 			getSession().put("importList", excelWorkSheet.getData());
 			getSession().put("total", excelWorkSheet.getData().size());
 			getSession().put("normal", normal);
@@ -763,6 +784,37 @@ public class EbookAction extends GenericCRUDActionFull<Ebook> {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
+	public String paginate() throws Exception {
+		clearCheckedItem();
+
+		List<Ebook> importList = (List<Ebook>) getSession().get("importList");
+		
+		DataSet<Ebook> ds = initDataSet();
+		ds.setPager(Pager.getChangedPager(
+				getRequest().getParameter("recordPerPage"), getRequest()
+						.getParameter("recordPoint"), ds.getPager()));
+
+		ds.getPager().setTotalRecord((long) importList.size());
+		int first = ds.getPager().getRecordPerPage()
+				* (ds.getPager().getCurrentPage() - 1);
+		int last = first + ds.getPager().getRecordPerPage();
+
+		List<Ebook> results = new ArrayList<Ebook>();
+
+		int i = 0;
+		while (i < importList.size()) {
+			if (i >= first && i < last) {
+				results.add(importList.get(i));
+			}
+			i++;
+		}
+
+		ds.setResults(results);
+		setDs(ds);
+		return QUEUE;
+	}
+	
 	@SuppressWarnings("unchecked")
 	public void getCheckedItem() {
 		Map<String, Object> checkItemMap;
@@ -779,7 +831,6 @@ public class EbookAction extends GenericCRUDActionFull<Ebook> {
 			checkItemMap.remove(this.importSerNo);
 		}
 		getSession().put("checkItemMap", checkItemMap);
-		System.out.println(checkItemMap);
 	}
 
 	public void allCheckedItem() {
@@ -792,7 +843,6 @@ public class EbookAction extends GenericCRUDActionFull<Ebook> {
 		}
 
 		getSession().put("checkItemMap", checkItemMap);
-		System.out.println(checkItemMap);
 	}
 
 	public void clearCheckedItem() {
@@ -804,8 +854,6 @@ public class EbookAction extends GenericCRUDActionFull<Ebook> {
 	@SuppressWarnings("unchecked")
 	public String importData() throws Exception {
 		List<Ebook> ebooks = (List<Ebook>) getSession().get("importList");
-
-		List<String> cellNames = (List<String>) getSession().get("cellNames");
 
 		Map<String, Object> checkItemMap = (TreeMap<String, Object>) getSession()
 				.get("checkItemMap");
@@ -850,28 +898,18 @@ public class EbookAction extends GenericCRUDActionFull<Ebook> {
 			getRequest().setAttribute("successCount", importList.size());
 			return VIEW;
 		} else {
-			Object total = getSession().get("total");
-			Object normal = getSession().get("normal");
-			Object abnormal = getSession().get("abnormal");
-
-			getRequest().setAttribute("beforeRow",
-					getRequest().getParameter("beforeRow"));
-			getRequest().setAttribute("beforeMaxRows",
-					getRequest().getParameter("beforeMaxRows"));
-
-			getSession().put("total", total);
-			getSession().put("normal", normal);
-			getSession().put("abnormal", abnormal);
-
-			getSession().put("importList", getSession().get("importList"));
-
-			getSession().put("cellNames", getSession().get("cellNames"));
-
-			excelWorkSheet = new ExcelWorkSheet<Ebook>();
-			excelWorkSheet.setColumns(cellNames);
-			excelWorkSheet.setData(ebooks);
+			paginate();
 			return QUEUE;
 		}
+	}
+	
+	public void removeSessionObj() {
+		getSession().remove("cellNames");
+		getSession().remove("importList");
+		getSession().remove("total");
+		getSession().remove("normal");
+		getSession().remove("abnormal");
+		getSession().remove("checkItemMap");
 	}
 
 	public boolean isIsbn(long isbnNum) {

@@ -17,10 +17,10 @@
 <script type="text/javascript">
 	
 function gotoPage_detail(page) {
-		var totalPage = "${totalPage}";
-		var recordPerPage = "${ds.pager.recordPerPage}";
-		var offset = parseInt(recordPerPage) * (parseInt(page) - 1);
-		if (parseInt(page) < 1) {
+	var totalPage = "${totalPage}";
+	var recordPerPage = "${ds.pager.recordPerPage}";
+	var offset = parseInt(recordPerPage) * (parseInt(page) - 1);
+	if (parseInt(page) < 1) {
 			page = 1;
 			offset=parseInt(recordPerPage)*(parseInt(page)-1);
 		} else if (parseInt(page) > parseInt(totalPage)) {
@@ -37,77 +37,84 @@ function changePageSize_detail(recordPerPage,recordPoint) {
 	goDetail_Main('<c:url value = '/'/>crud/apply.accountNumber.paginate.action','#apply_accountNumber_importData','&recordPerPage='+recordPerPage+'&recordPoint='+recordPoint);
 }
 
-	function allRow(action) {
-		if (action == 1) {
-			checkedValues = new Array($(".checkbox.queue:visible").length);
-			var importSerNos = "";
-			$(".checkbox.queue:visible").each(
-					function() {
-						$(this).prop("checked", "checked");
-						importSerNos = importSerNos + "importSerNos="
-								+ $(this).val() + "&";
-					});
+function allRow(action) {
+	if (action == 1) {
+		checkedValues = new Array($(".checkbox.queue:visible").length);
+		var importSerNos = "";
+		$(".checkbox.queue:visible").each(
+				function() {
+					$(this).prop("checked", "checked");
+					importSerNos = importSerNos + "importSerNos="
+							+ $(this).val() + "&";
+				});
 
-			$
-					.ajax({
-						type : "POST",
-						url : "<c:url value = '/'/>crud/apply.accountNumber.allCheckedItem.action",
-						dataType : "html",
-						data : importSerNos.slice(0, importSerNos.length - 1),
-						success : function(message) {
+		$
+				.ajax({
+					type : "POST",
+					url : "<c:url value = '/'/>crud/apply.accountNumber.allCheckedItem.action",
+					dataType : "html",
+					data : importSerNos.slice(0, importSerNos.length - 1),
+					success : function(message) {
 
-						}
-					});
-		} else {
-			clearCheckedItem();
-			$(".checkbox.queue:visible").each(function() {
-				$(this).removeAttr("checked");
+					}
+				});
+	} else {
+		clearCheckedItem();
+		$(".checkbox.queue:visible").each(function() {
+			$(this).removeAttr("checked");
+		});
+	}
+}
+
+function getCheckedItem(index) {
+	$
+			.ajax({
+				type : "POST",
+				url : "<c:url value = '/'/>crud/apply.accountNumber.getCheckedItem.action",
+				dataType : "html",
+				data : "importSerNo=" + index,
+				success : function(message) {
+
+				}
 			});
-		}
+}
+	
+function checkData() {
+	//檢查資料是否已被勾選
+	//進行動作
+	if ($("input.checkbox.queue:checked").length > 0) {
+		var recordPoint = "${ds.pager.recordPoint}";
+ 		var recordPerPage = "${ds.pager.recordPerPage}";
+	
+	goDetail_Main('<c:url value = '/'/>crud/apply.accountNumber.importData.action','#apply_accountNumber_importData','&recordPerPage='+recordPerPage+'&recordPoint='+recordPoint);
+	
+	} else {
+		goAlert("訊息", "請選擇一筆或一筆以上的資料");
 	}
+}
 
-	function getCheckedItem(index) {
-		$
-				.ajax({
-					type : "POST",
-					url : "<c:url value = '/'/>crud/apply.accountNumber.getCheckedItem.action",
-					dataType : "html",
-					data : "importSerNo=" + index,
-					success : function(message) {
+function clearCheckedItem() {
+	$
+			.ajax({
+				type : "POST",
+				url : "<c:url value = '/'/>crud/apply.accountNumber.clearCheckedItem.action",
+				dataType : "html",
+				success : function(message) {
 
-					}
-				});
+				}
+			});
+}
+
+function closeDetail() {
+	 $("#div_Detail").hide();
+    UI_Resize();
+    $.ajax({url: "<c:url value = '/'/>crud/apply.accountNumber.removeSessionObj.action", success: function(result){
 	}
-		
-	function checkData() {
-		//檢查資料是否已被勾選
-		//進行動作
-		if ($("input.checkbox.queue:checked").length > 0) {
-			var recordPoint = "${ds.pager.recordPoint}";
-     		var recordPerPage = "${ds.pager.recordPerPage}";
-		
-		goDetail_Main('<c:url value = '/'/>crud/apply.accountNumber.importData.action','#apply_accountNumber_importData','&recordPerPage='+recordPerPage+'&recordPoint='+recordPoint);
-		
-		} else {
-			goAlert("訊息", "請選擇一筆或一筆以上的資料");
-		}
-	}
-
-	function clearCheckedItem() {
-		$
-				.ajax({
-					type : "POST",
-					url : "<c:url value = '/'/>crud/apply.accountNumber.clearCheckedItem.action",
-					dataType : "html",
-					success : function(message) {
-
-					}
-				});
-	}
+	});
+}
 </script>
 </head>
 <body>
-	<input type="hidden" value="0" id="recordPoint" />
 	<s:form namespace="/crud" action="apply.accountNumber.importData">
 		<table cellspacing="1" class="list-table queue">
 			<tbody>

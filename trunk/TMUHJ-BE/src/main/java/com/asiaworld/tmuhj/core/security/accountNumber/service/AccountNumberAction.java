@@ -375,8 +375,6 @@ public class AccountNumberAction extends GenericCRUDActionFull<AccountNumber> {
 		}
 
 		if (!hasActionErrors()) {
-			getSession().remove("importList");
-			getSession().remove("checkItemMap");
 			Workbook book = createWorkBook(new FileInputStream(file));
 			// book.getNumberOfSheets(); 判斷Excel文件有多少個sheet
 			Sheet sheet = book.getSheetAt(0);
@@ -436,9 +434,6 @@ public class AccountNumberAction extends GenericCRUDActionFull<AccountNumber> {
 				cellNames.add(rowTitles[n]);
 				n++;
 			}
-
-			getSession().put("cellNames", cellNames);
-			excelWorkSheet.setColumns(cellNames);
 
 			LinkedHashSet<AccountNumber> originalData = new LinkedHashSet<AccountNumber>();
 			for (int i = 1; i <= sheet.getLastRowNum(); i++) {
@@ -572,6 +567,7 @@ public class AccountNumberAction extends GenericCRUDActionFull<AccountNumber> {
 				}
 			}
 
+			getSession().put("cellNames", cellNames);
 			getSession().put("importList", excelWorkSheet.getData());
 			getSession().put("total", excelWorkSheet.getData().size());
 			getSession().put("normal", normal);
@@ -678,13 +674,22 @@ public class AccountNumberAction extends GenericCRUDActionFull<AccountNumber> {
 				}
 			}
 
-			clearCheckedItem();
 			getRequest().setAttribute("successCount", importList.size());
+			removeSessionObj();
 			return VIEW;
 		} else {
 			paginate();
 			return QUEUE;
 		}
+	}
+	
+	public void removeSessionObj() {
+		getSession().remove("cellNames");
+		getSession().remove("importList");
+		getSession().remove("total");
+		getSession().remove("normal");
+		getSession().remove("abnormal");
+		getSession().remove("checkItemMap");
 	}
 
 	public String exports() throws Exception {

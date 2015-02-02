@@ -207,9 +207,10 @@ public class BeLogsAction extends GenericCRUDActionLog<BeLogs> {
 	}
 
 	public String direct() {
-		getSession().remove("ranks");
-		getSession().remove("startDate");
-		getSession().remove("endDate");
+//		getSession().remove("ranks");
+//		getSession().remove("startDate");
+//		getSession().remove("endDate");
+		
 		return LIST;
 	}
 
