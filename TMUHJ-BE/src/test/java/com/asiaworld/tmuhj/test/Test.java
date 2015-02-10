@@ -144,5 +144,8 @@ String issn=" ";
 	map.clear();
 	System.out.println(map.get("Number"));
 		
+	long maxL=Long.MAX_VALUE;
+	int maxI=Integer.MAX_VALUE;
+	System.out.println(maxI+","+maxL);
 	}
 }

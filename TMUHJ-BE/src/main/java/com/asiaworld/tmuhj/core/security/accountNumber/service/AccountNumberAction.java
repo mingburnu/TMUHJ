@@ -675,7 +675,6 @@ public class AccountNumberAction extends GenericCRUDActionFull<AccountNumber> {
 			}
 
 			getRequest().setAttribute("successCount", importList.size());
-			removeSessionObj();
 			return VIEW;
 		} else {
 			paginate();
@@ -683,15 +682,6 @@ public class AccountNumberAction extends GenericCRUDActionFull<AccountNumber> {
 		}
 	}
 	
-	public void removeSessionObj() {
-		getSession().remove("cellNames");
-		getSession().remove("importList");
-		getSession().remove("total");
-		getSession().remove("normal");
-		getSession().remove("abnormal");
-		getSession().remove("checkItemMap");
-	}
-
 	public String exports() throws Exception {
 		reportFile = "account_sample.xlsx";
 

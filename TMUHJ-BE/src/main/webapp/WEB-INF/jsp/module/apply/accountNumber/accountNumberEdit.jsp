@@ -104,8 +104,7 @@
 					closeLoading();
 				}
 			});
-			e.preventDefault();
-			e.unbind();
+			
 		} else //for olden browsers
 		{
 			//generate a random id

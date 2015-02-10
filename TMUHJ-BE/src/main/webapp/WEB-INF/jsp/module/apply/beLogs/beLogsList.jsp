@@ -9,9 +9,25 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title></title>
 <script type="text/javascript">
+$(document).ready(function(){
+	formSetCSS();
+	state_hover();
+	initAutoComplete("<%=request.getContextPath()%>/crud/apply.customer.json.action",'#customerSerno','#customerName');
+});
+	
 function goSearch(){
-    goMain("<%=request.getContextPath()%>/crud/apply.beLogs.list.action",
-			"#apply_beLogs_list", "");
+	if($("input#customerSerno").attr("checked")){
+	var customerSerno=$("input#customerSerno").val();
+	if(customerSerno!=null&&customerSerno>0){
+		goMain("<%=request.getContextPath()%>/crud/apply.beLogs.list.action",
+				"#apply_beLogs_list", "");
+	}else{
+		goAlert("訊息", "請正確填寫機構名稱");
+	}
+	}else{
+		goMain("<%=request.getContextPath()%>/crud/apply.beLogs.list.action",
+				"#apply_beLogs_list", "");	
+	}
 }
 
 //GoPage
@@ -27,24 +43,35 @@ function gotoPage(page){
         page=totalPage;
         offset=parseInt(recordPerPage)*(parseInt(page)-1);
     }
-    goMain('<c:url value = '/'/>crud/apply.beLogs.paginate.action','#apply_beLogs_list','&pager.offset='+offset+'&pager.currentPage='+page);
+    goMain('<c:url value = '/'/>crud/apply.beLogs.list.action','#apply_beLogs_list','&pager.offset='+offset+'&pager.currentPage='+page);
 }
 
 //變更顯示筆數
 function changePageSize(recordPerPage,recordPoint){
-        goMain('<c:url value = '/'/>crud/apply.beLogs.paginate.action','#apply_beLogs_list','&recordPerPage='+recordPerPage+'&recordPoint='+recordPoint);
+        goMain('<c:url value = '/'/>crud/apply.beLogs.list.action','#apply_beLogs_list','&recordPerPage='+recordPerPage+'&recordPoint='+recordPoint);
 }
 
 //匯出
 function goExport(){
 	var data=$("#apply_beLogs_list").serialize();
 	var url='<%=request.getContextPath()%>/crud/apply.beLogs.exports.action?'+ data;
-	window.open(url, "_top");
+	
+	if($("input#customerSerno").attr("checked")){
+	var customerSerno=$("input#customerSerno").val();
+	if(customerSerno!=null && customerSerno>0){
+		window.open(url, "iframe1"); 
+	}else{
+		goAlert("訊息", "請正確填寫機構名稱");
+	}
+	}else{
+		window.open(url, "iframe1"); 
+	}
 }
+
 </script>
 </head>
 <body>
-<jsp:include page="/WEB-INF/jsp/layout/getUrl.jsp" />
+
 	<s:form action="apply.beLogs.list" namespace="/crud" method="post"
 		onsubmit="return false;">
 		<div class="tabs-box">
@@ -55,23 +82,57 @@ function goExport(){
 			</div>
 			<div id="TabsContain_A" class="tabs-contain">
 				<table cellspacing="4" cellpadding="0" border="0">
-					<c:set var="customer">
-					</c:set>
 					<tbody>
 						<tr>
 							<th align="right">查詢統計範圍：</th>
 							<td align="left"><input type="date" name="start"
-								class="input_text" value="${startDate }"> 至&nbsp;&nbsp<input
-								type="date" name="end" class="input_text" value="${endDate }"></td>
+								class="input_text"
+								value="<%if (request.getAttribute("startDate") != null) {
+					out.print(request.getAttribute("startDate").toString());
+				}%>">
+								至&nbsp;&nbsp;<input type="date" name="end" class="input_text"
+								value="<%if (request.getAttribute("endDate") != null) {
+					out.print(request.getAttribute("endDate").toString());
+				}%>"></td>
+						</tr>
+						<tr>
+							<th align="right">全部：</th>
+							<td><c:choose>
+									<c:when test="${0 eq cusSerNo}">
+										<input type="radio" name="cusSerNo" value="0" checked>
+									</c:when>
+									<c:otherwise>
+										<input type="radio" name="cusSerNo" value="0">
+									</c:otherwise>
+								</c:choose></td>
 						</tr>
 						<tr>
 							<th align="right">用戶名稱：</th>
-							<td><input type="text" class="input_text" name="customer"
-								value="<%if (request.getParameter("customer") != null) {
-					out.print(request.getParameter("customer"));
+							<td><c:choose>
+									<c:when test="${0 eq cusSerNo}">
+										<input type="radio" name="cusSerNo" id="customerSerno"
+											value="<%if (request.getAttribute("cusSerNo") != null) {
+							out.print(request.getAttribute("cusSerNo")
+									.toString());
+						}%>" />
+									</c:when>
+									<c:otherwise>
+
+										<input type="radio" name="cusSerNo" id="customerSerno"
+											value="<%if (request.getAttribute("cusSerNo") != null) {
+							out.print(request.getAttribute("cusSerNo")
+									.toString());
+						}%>"
+											checked />
+									</c:otherwise>
+								</c:choose> <input type="text" id="customerName" class="input_text"
+								name="customer"
+								value="<%if (request.getAttribute("customer") != null) {
+					out.print(request.getAttribute("customer").toString());
 				}%>">
 								<a class="state-default" onclick="goSearch()">查詢</a></td>
 						</tr>
+
 					</tbody>
 				</table>
 			</div>
@@ -106,7 +167,7 @@ function goExport(){
 					</tr>
 					<c:forEach var="item" items="${ds.results}" varStatus="status">
 						<tr>
-							<td>${startDate }~${endDate }</td>
+							<td><%=request.getAttribute("startDate").toString()%>~<%=request.getAttribute("endDate").toString()%></td>
 							<td align="center">${item.rank }</td>
 							<td>${item.accountNumber.userId }</td>
 							<td align="center">${item.accountNumber.userName }</td>
@@ -126,7 +187,7 @@ function goExport(){
 							<tr>
 								<td><jsp:include page="/WEB-INF/jsp/layout/pagination.jsp">
 										<jsp:param name="namespace" value="/crud" />
-										<jsp:param name="action" value="apply.beLogs.paginate" />
+										<jsp:param name="action" value="apply.beLogs.list" />
 										<jsp:param name="pager" value="${ds.pager}" />
 										<jsp:param name="recordPerPage"
 											value="${ds.pager.recordPerPage}" />
@@ -179,6 +240,6 @@ function goExport(){
 			goAlert('訊息', msg);
 		</script>
 	</s:if>
-	<iframe name="iframe1" style="display: none;"></iframe>
+	<iframe name="iframe" style="display: none;"></iframe>
 </body>
 </html>

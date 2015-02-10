@@ -105,7 +105,7 @@ public class AuthorizationAction extends GenericWebActionFull<AccountNumber> {
 	 */
 	public String logout() throws Exception {
 		if (getSession().get(LOGIN) != null) {
-			getSession().put(LOGIN, null);
+			getSession().clear();
 		}
 
 		return LOGIN;
