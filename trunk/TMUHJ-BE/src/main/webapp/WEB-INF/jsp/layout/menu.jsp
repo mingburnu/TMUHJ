@@ -50,10 +50,10 @@
 		</div>
 		<div id="menu_items_5" style="display: none;">
 			<div class="menu-items">
-				<a onclick="goURL('<%=request.getContextPath()%>/crud/apply.beLogs.direct.action');">登入次數統計</a>
+				<a onclick="goURL('<%=request.getContextPath()%>/beLogs.action');">登入次數統計</a>
 			</div>
 			<div class="menu-items">
-				<a onclick="goURL('<%=request.getContextPath()%>/crud/apply.feLogs.direct.action');">關鍵字檢索統計</a>
+				<a onclick="goURL('<%=request.getContextPath()%>/feLogs.action');">關鍵字檢索統計</a>
 			</div>
 		</div>
 

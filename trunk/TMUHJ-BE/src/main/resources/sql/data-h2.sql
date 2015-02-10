@@ -185,3 +185,4 @@ insert into FE_Logs(serNo, cDTime, actionType, keyword, cus_SerNo, acc_SerNo, da
 insert into FE_Logs(serNo, cDTime, actionType, keyword, cus_SerNo, acc_SerNo, dat_SerNo, ebk_SerNo, jou_SerNo) values(14, sysdate(), '綜合查詢', 'jsp', 1,1,0,0,0);
 insert into FE_Logs(serNo, cDTime, actionType, keyword, cus_SerNo, acc_SerNo, dat_SerNo, ebk_SerNo, jou_SerNo) values(15, sysdate(), '綜合查詢', 'objective-c', 1,1,0,0,0);
 insert into FE_Logs(serNo, cDTime, actionType, keyword, cus_SerNo, acc_SerNo, dat_SerNo, ebk_SerNo, jou_SerNo) values(16, sysdate(), '綜合查詢', 'java', 1,1,0,0,0);
+insert into FE_Logs(serNo, cDTime, actionType, keyword, cus_SerNo, acc_SerNo, dat_SerNo, ebk_SerNo, jou_SerNo) values(17, sysdate(), '綜合查詢', 'java', 2,2,0,0,0);

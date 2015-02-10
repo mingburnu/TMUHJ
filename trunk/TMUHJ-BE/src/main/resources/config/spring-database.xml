@@ -24,14 +24,14 @@
 	<!-- <bean id="dataSource" class="com.jolbox.bonecp.BoneCPDataSource destroy-method="close" -->
 	<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource"
 		destroy-method="close">
-		 <property name="driverClassName" value="${dataSource.driverClassName}" 
+		 <!--<property name="driverClassName" value="${dataSource.driverClassName}" 
 			/> <property name="url" value="${dataSource.url}" /> <property name="username" 
 			value="${dataSource.username}" /> <property name="password" value="${dataSource.password}" 
-			/>
-		<!--<property name="driverClassName" value="com.mysql.jdbc.Driver" />
+			/>-->
+		<property name="driverClassName" value="com.mysql.jdbc.Driver" />
 		<property name="url" value="jdbc:mysql://192.168.20.71:3306/tmuhjdb?characterEncoding=UTF-8" />
 		<property name="username" value="java_dev_admin" />
-		<property name="password" value="7UJM9OL." />-->
+		<property name="password" value="7UJM9OL." />
 		
 	</bean>
 
@@ -64,8 +64,8 @@
 				<prop key="hibernate.connection.release_mode">auto</prop>
 				<prop key="hibernate.autoReconnect">true</prop>
 				<prop key="hibernate.cglib.use_reflection_optimizer">true</prop>
-				<prop key="hibernate.dialect">${hibernate.dialect}</prop>
-				<!--<prop key="hibernate.dialect">org.hibernate.dialect.MySQLDialect</prop>-->
+				<!--<prop key="hibernate.dialect">${hibernate.dialect}</prop>-->
+				<prop key="hibernate.dialect">org.hibernate.dialect.MySQLDialect</prop>
 				<prop key="hibernate.show_sql">true</prop>
 				<prop key="hibernate.format_sql">true</prop>
 				<prop key="hibernate.use_sql_comments">false</prop>

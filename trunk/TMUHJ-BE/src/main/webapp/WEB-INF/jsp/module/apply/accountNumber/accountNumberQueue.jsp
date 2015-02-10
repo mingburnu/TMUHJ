@@ -43,7 +43,7 @@ function allRow(action) {
 		var importSerNos = "";
 		$(".checkbox.queue:visible").each(
 				function() {
-					$(this).prop("checked", "checked");
+					$(this).attr("checked", "checked");
 					importSerNos = importSerNos + "importSerNos="
 							+ $(this).val() + "&";
 				});
@@ -105,17 +105,11 @@ function clearCheckedItem() {
 			});
 }
 
-function closeDetail() {
-	 $("#div_Detail").hide();
-    UI_Resize();
-    $.ajax({url: "<c:url value = '/'/>crud/apply.accountNumber.removeSessionObj.action", success: function(result){
-	}
-	});
-}
 </script>
 </head>
 <body>
-	<s:form namespace="/crud" action="apply.accountNumber.importData">
+	<s:form namespace="/crud" action="apply.accountNumber.importData"
+		method="post" onsubmit="return false;">
 		<table cellspacing="1" class="list-table queue">
 			<tbody>
 				<tr>

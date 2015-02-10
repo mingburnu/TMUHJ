@@ -30,7 +30,7 @@
 			<artifactId>slf4j-api</artifactId>
 			<version>1.7.6</version>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-log4j12</artifactId>
@@ -62,7 +62,19 @@
 			<artifactId>struts2-spring-plugin</artifactId>
 			<version>${struts-version}</version>
 		</dependency>
+		<dependency>
+			<groupId>org.apache.struts</groupId>
+			<artifactId>struts2-json-plugin</artifactId>
+			<version>${struts-version}</version>
+		</dependency>
 		<!-- Struts2 Dependency End -->
+
+		<!-- json -->
+		<dependency>
+			<groupId>org.kohsuke.stapler</groupId>
+			<artifactId>json-lib</artifactId>
+			<version>2.1-rev6</version>
+		</dependency>
 
 		<!-- dom4j -->
 		<dependency>
@@ -245,8 +257,8 @@
 		</dependency>
 
 		<!-- Maria Driver -->
-		<!--<dependency> <groupId>org.jumpmind.symmetric.jdbc</groupId> <artifactId>mariadb-java-client</artifactId> 
-			<version>1.1.1</version> </dependency> -->
+		<!--<dependency> <groupId>org.mariadb.jdbc</groupId> <artifactId>mariadb-java-client</artifactId> 
+			<version>1.1.8</version> </dependency> -->
 
 		<!-- MySql Driver -->
 		<dependency>
@@ -313,13 +325,6 @@
 			<groupId>jsptags</groupId>
 			<artifactId>pager-taglib</artifactId>
 			<version>2.0</version>
-		</dependency>
-
-		<!-- struts2-json-plugin -->
-		<dependency>
-			<groupId>org.apache.struts</groupId>
-			<artifactId>struts2-json-plugin</artifactId>
-			<version>2.3.16.3</version>
 		</dependency>
 
 		<!--POI -->

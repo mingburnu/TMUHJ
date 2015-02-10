@@ -43,7 +43,7 @@ function allRow(action) {
 		var importSerNos = "";
 		$(".checkbox.queue:visible").each(
 				function() {
-					$(this).prop("checked", "checked");
+					$(this).attr("checked", "checked");
 					importSerNos = importSerNos + "importSerNos="
 							+ $(this).val() + "&";
 				});
@@ -115,7 +115,8 @@ function closeDetail() {
 </script>
 </head>
 <body>
-	<s:form namespace="/crud" action="apply.database.importData">
+	<s:form namespace="/crud" action="apply.database.importData"
+		method="post" onsubmit="return false;">
 		<table cellspacing="1" class="list-table queue">
 			<tbody>
 				<tr>

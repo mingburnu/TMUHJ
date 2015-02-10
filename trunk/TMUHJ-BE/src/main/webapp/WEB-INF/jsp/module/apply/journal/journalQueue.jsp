@@ -27,6 +27,7 @@ function gotoPage_detail(page) {
 		page = totalPage;
 		offset=parseInt(recordPerPage)*(parseInt(page)-1);
 	}
+
 	goDetail_Main('<c:url value = '/'/>crud/apply.journal.paginate.action',
 			'#apply_journal_importData', '&pager.offset='+offset+'&pager.currentPage='+page);
 }
@@ -42,7 +43,7 @@ function allRow(action) {
 		var importSerNos = "";
 		$(".checkbox.queue:visible").each(
 				function() {
-					$(this).prop("checked", "checked");
+					$(this).attr("checked", "checked");
 					importSerNos = importSerNos + "importSerNos="
 							+ $(this).val() + "&";
 				});
@@ -114,7 +115,8 @@ function closeDetail() {
 </script>
 </head>
 <body>
-	<s:form namespace="/crud" action="apply.journal.importData">
+	<s:form namespace="/crud" action="apply.journal.importData"
+		method="post" onsubmit="return false;">
 		<table cellspacing="1" class="list-table queue">
 			<tbody>
 				<tr>

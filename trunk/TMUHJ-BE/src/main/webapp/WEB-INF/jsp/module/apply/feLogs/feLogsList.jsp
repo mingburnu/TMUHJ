@@ -9,9 +9,25 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title></title>
 <script type="text/javascript">
+$(document).ready(function(){
+	formSetCSS();
+	state_hover();
+	initAutoComplete("<%=request.getContextPath()%>/crud/apply.customer.json.action",'#customerSerno','#customerName');
+});
+	
 function goSearch(){
-    goMain("<%=request.getContextPath()%>/crud/apply.feLogs.list.action",
-			"#apply_feLogs_list", "");
+	if($("input#customerSerno").attr("checked")){
+	var customerSerno=$("input#customerSerno").val();
+	if(customerSerno!=null&&customerSerno>0){
+		goMain("<%=request.getContextPath()%>/crud/apply.feLogs.list.action",
+				"#apply_feLogs_list", "");
+	}else{
+		goAlert("訊息", "請正確填寫機構名稱");
+	}
+	}else{
+		goMain("<%=request.getContextPath()%>/crud/apply.feLogs.list.action",
+				"#apply_feLogs_list", "");
+		}
 }
 
 //GoPage
@@ -27,19 +43,29 @@ function gotoPage(page){
         page=totalPage;
         offset=parseInt(recordPerPage)*(parseInt(page)-1);
     }
-    goMain('<c:url value = '/'/>crud/apply.feLogs.paginate.action','#apply_feLogs_list','&pager.offset='+offset+'&pager.currentPage='+page);
+    goMain('<c:url value = '/'/>crud/apply.feLogs.list.action','#apply_feLogs_list','&pager.offset='+offset+'&pager.currentPage='+page);
 }
 
 //變更顯示筆數
 function chagePageSize(recordPerPage,recordPoint){
-        goMain('<c:url value = '/'/>crud/apply.feLogs.paginate.action','#apply_feLogs_list','&recordPerPage='+recordPerPage+'&recordPoint='+recordPoint);
+        goMain('<c:url value = '/'/>crud/apply.feLogs.list.action','#apply_feLogs_list','&recordPerPage='+recordPerPage+'&recordPoint='+recordPoint);
 }
 
 //匯出
 function goExport(){
 	var data=$("#apply_feLogs_list").serialize();
 	var url='<%=request.getContextPath()%>/crud/apply.feLogs.exports.action?'+ data;
-	window.open(url, "_top");
+	
+	if($("input#customerSerno").attr("checked")){
+	var customerSerno=$("input#customerSerno").val();
+	if(customerSerno!=null && customerSerno>0){
+		window.open(url, "iframe1"); 
+	}else{
+		goAlert("訊息", "請正確填寫機構名稱");
+	}
+	}else{
+		window.open(url, "iframe1"); 
+	}
 }
 </script>
 </head>
@@ -54,20 +80,57 @@ function goExport(){
 			</div>
 			<div id="TabsContain_A" class="tabs-contain">
 				<table cellspacing="4" cellpadding="0" border="0">
-					<c:set var="customer">
-					</c:set>
 					<tbody>
 						<tr>
 							<th align="right">查詢統計範圍：</th>
 							<td align="left"><input type="date" name="start"
-								class="input_text" value="${startDate }"> 至&nbsp;&nbsp<input
-								type="date" name="end" class="input_text" value="${endDate }"></td>
+								class="input_text"
+								value="<%if (request.getAttribute("startDate") != null) {
+					out.print(request.getAttribute("startDate").toString());
+				}%>">
+								至&nbsp;&nbsp;<input type="date" name="end" class="input_text"
+								value="<%if (request.getAttribute("endDate") != null) {
+					out.print(request.getAttribute("endDate").toString());
+				}%>"></td>
 						</tr>
 						<tr>
-							<th align="right">關鍵字：</th>
-							<td><input type="text" class="input_text" name="entity.keyword" value="${entity.keyword }">
+							<th align="right">全部：</th>
+							<td><c:choose>
+									<c:when test="${0 eq cusSerNo}">
+										<input type="radio" name="cusSerNo" value="0" checked>
+									</c:when>
+									<c:otherwise>
+										<input type="radio" name="cusSerNo" value="0">
+									</c:otherwise>
+								</c:choose></td>
+						</tr>
+						<tr>
+							<th align="right">用戶名稱：</th>
+							<td><c:choose>
+									<c:when test="${0 eq cusSerNo}">
+										<input type="radio" name="cusSerNo" id="customerSerno"
+											value="<%if (request.getAttribute("cusSerNo") != null) {
+							out.print(request.getAttribute("cusSerNo")
+									.toString());
+						}%>" />
+									</c:when>
+									<c:otherwise>
+
+										<input type="radio" name="cusSerNo" id="customerSerno"
+											value="<%if (request.getAttribute("cusSerNo") != null) {
+							out.print(request.getAttribute("cusSerNo")
+									.toString());
+						}%>"
+											checked />
+									</c:otherwise>
+								</c:choose> <input type="text" id="customerName" class="input_text"
+								name="customer"
+								value="<%if (request.getAttribute("customer") != null) {
+					out.print(request.getAttribute("customer").toString());
+				}%>">
 								<a class="state-default" onclick="goSearch()">查詢</a></td>
 						</tr>
+
 					</tbody>
 				</table>
 			</div>
@@ -95,13 +158,15 @@ function goExport(){
 						<th>名次</th>
 						<th>關鍵字</th>
 						<th>次數</th>
+						<th>客戶名稱</th>
 					</tr>
 					<c:forEach var="item" items="${ds.results}" varStatus="status">
 						<tr>
-							<td>${startDate }~${endDate }</td>
+							<td><%=request.getAttribute("startDate").toString()%>~<%=request.getAttribute("endDate").toString()%></td>
 							<td align="center">${item.rank }</td>
 							<td>${item.keyword }</td>
 							<td>${item.count }</td>
+							<td>${item.customer.name }</td>
 						</tr>
 					</c:forEach>
 				</tbody>

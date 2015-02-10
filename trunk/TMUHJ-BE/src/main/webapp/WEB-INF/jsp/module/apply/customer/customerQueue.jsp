@@ -43,7 +43,7 @@ function changePageSize_detail(recordPerPage,recordPoint) {
 			var importSerNos = "";
 			$(".checkbox.queue:visible").each(
 					function() {
-						$(this).prop("checked", "checked");
+						$(this).attr("checked", "checked");
 						importSerNos = importSerNos + "importSerNos="
 								+ $(this).val() + "&";
 					});
@@ -115,8 +115,8 @@ function changePageSize_detail(recordPerPage,recordPoint) {
 </script>
 </head>
 <body>
-	<input type="hidden" value="0" id="recordPoint" />
-	<s:form namespace="/crud" action="apply.customer.importData">
+	<s:form namespace="/crud" action="apply.customer.importData"
+		method="post" onsubmit="return false;">
 		<table cellspacing="1" class="list-table queue">
 			<tbody>
 				<tr>

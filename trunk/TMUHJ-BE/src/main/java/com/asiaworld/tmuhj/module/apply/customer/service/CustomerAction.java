@@ -16,6 +16,8 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.regex.Pattern;
 
+import net.sf.json.JSONObject;
+
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
@@ -73,6 +75,8 @@ public class CustomerAction extends GenericCRUDActionFull<Customer> {
 	private InputStream inputStream;
 
 	private String reportFile;
+
+	private String jsonString;
 
 	@Override
 	public void validateSave() throws Exception {
@@ -276,6 +280,25 @@ public class CustomerAction extends GenericCRUDActionFull<Customer> {
 		return AJAX;
 	}
 
+	public String json() {
+		List<Customer> customers=customerService.getAllCustomers();
+		List<JSONObject> objArray=new ArrayList<JSONObject>();
+
+		int i=0;
+		while(i < customers.size()){
+			JSONObject obj = new JSONObject();
+			customer=customers.get(i);
+			obj.put("name", customer.getName());
+			obj.put("value", customer.getSerNo());
+			objArray.add(obj);
+			i++;
+		}
+
+		jsonString=objArray.toString();
+		
+		return JSON;
+	}
+
 	public String queue() throws Exception {
 		if (file == null || !file.isFile()) {
 			addActionError("請選擇檔案");
@@ -425,7 +448,7 @@ public class CustomerAction extends GenericCRUDActionFull<Customer> {
 			}
 
 			Iterator<Customer> setIterator = originalData.iterator();
-			
+
 			int normal = 0;
 			while (setIterator.hasNext()) {
 				customer = setIterator.next();
@@ -434,35 +457,37 @@ public class CustomerAction extends GenericCRUDActionFull<Customer> {
 					normal = normal + 1;
 				}
 			}
-			
+
 			DataSet<Customer> ds = initDataSet();
-			List<Customer> results=ds.getResults();
-			
-			ds.getPager().setTotalRecord((long)excelWorkSheet.getData().size());
+			List<Customer> results = ds.getResults();
+
+			ds.getPager()
+					.setTotalRecord((long) excelWorkSheet.getData().size());
 			ds.getPager().setRecordPoint(0);
-			
-			if(excelWorkSheet.getData().size() < ds.getPager().getRecordPerPage()){
-				int i=0;
-				while(i < excelWorkSheet.getData().size()){
+
+			if (excelWorkSheet.getData().size() < ds.getPager()
+					.getRecordPerPage()) {
+				int i = 0;
+				while (i < excelWorkSheet.getData().size()) {
 					results.add(excelWorkSheet.getData().get(i));
 					i++;
 				}
 			} else {
-				int i=0;
-				while(i < ds.getPager().getRecordPerPage()){
+				int i = 0;
+				while (i < ds.getPager().getRecordPerPage()) {
 					results.add(excelWorkSheet.getData().get(i));
 					i++;
 				}
 			}
-			
+
 			ds.setResults(results);
-			
+
 			getSession().put("importList", excelWorkSheet.getData());
 			getSession().put("total", excelWorkSheet.getData().size());
 			getSession().put("normal", normal);
 			getSession().put("abnormal",
 					excelWorkSheet.getData().size() - normal);
-			
+
 			setDs(ds);
 			return QUEUE;
 		} else {
@@ -470,13 +495,14 @@ public class CustomerAction extends GenericCRUDActionFull<Customer> {
 			return EDIT;
 		}
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	public String paginate() throws Exception {
 		clearCheckedItem();
-		
-		List<Customer> importList = (List<Customer>) getSession().get("importList");
-		
+
+		List<Customer> importList = (List<Customer>) getSession().get(
+				"importList");
+
 		DataSet<Customer> ds = initDataSet();
 		ds.setPager(Pager.getChangedPager(
 				getRequest().getParameter("recordPerPage"), getRequest()
@@ -558,9 +584,9 @@ public class CustomerAction extends GenericCRUDActionFull<Customer> {
 			}
 
 			for (int i = 0; i < importList.size(); i++) {
-				
-				if(importList.get(i).getExistStatus().equals("正常")){
-				customerService.save(importList.get(i), getLoginUser());
+
+				if (importList.get(i).getExistStatus().equals("正常")) {
+					customerService.save(importList.get(i), getLoginUser());
 				}
 			}
 
@@ -571,15 +597,6 @@ public class CustomerAction extends GenericCRUDActionFull<Customer> {
 			paginate();
 			return QUEUE;
 		}
-	}
-	
-	public void removeSessionObj() {
-		getSession().remove("cellNames");
-		getSession().remove("importList");
-		getSession().remove("total");
-		getSession().remove("normal");
-		getSession().remove("abnormal");
-		getSession().remove("checkItemMap");
 	}
 
 	public String exports() throws Exception {
@@ -763,6 +780,20 @@ public class CustomerAction extends GenericCRUDActionFull<Customer> {
 	 */
 	public void setReportFile(String reportFile) {
 		this.reportFile = reportFile;
+	}
+
+	/**
+	 * @return the jsonString
+	 */
+	public String getJsonString() {
+		return jsonString;
+	}
+
+	/**
+	 * @param jsonString the jsonString to set
+	 */
+	public void setJsonString(String jsonString) {
+		this.jsonString = jsonString;
 	}
 
 }

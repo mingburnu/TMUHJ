@@ -9,11 +9,9 @@
 <link href="<%=request.getContextPath()%>/resources/css/air-ui-cms.css"
 	rel="stylesheet" type="text/css">
 <script language="javascript" type="text/javascript"
-	src="<c:url value = '/'/>resources/js/jquery-1.3.2.js"></script>
-<script language="javascript" type="text/javascript"
-	src="<c:url value = '/'/>resources/js/jquery-ui-1.7.2.custom.min.js"></script>
-<script language="javascript" type="text/javascript"
-	src="<c:url value = '/'/>resources/js/jquery.bgiframe.pack.js"></script>
+	src="<%=request.getContextPath()%>/resources/js/jquery-1.5.2.js">
+	
+</script>
 <script language="javascript" type="text/javascript">
 $(document).ready(function(){
     formSetCSS();

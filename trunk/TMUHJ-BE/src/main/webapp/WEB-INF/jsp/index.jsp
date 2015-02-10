@@ -12,23 +12,11 @@
 <meta http-equiv="Expires" content="0" />
 <link href="<%=request.getContextPath()%>/resources/css/air-ui-cms.css"
 	rel="stylesheet" type="text/css" />
-<link href="<%=request.getContextPath()%>/resources/css/jquery.autocomplete.css"
-	rel="stylesheet" type="text/css" />
 <link
-	href="<%=request.getContextPath()%>/resources/css/smoothness/jquery-ui-1.7.2.custom.css"
-	rel="stylesheet" type="text/css" />
-<link href="<%=request.getContextPath()%>/resources/css/jquery.datepick.css"
+	href="<%=request.getContextPath()%>/resources/css/jquery.autocomplete.css"
 	rel="stylesheet" type="text/css" />
 <script language="javascript" type="text/javascript"
-	src="<%=request.getContextPath()%>/resources/js/jquery-1.3.2.js">
-	
-</script>
-<script language="javascript" type="text/javascript"
-	src="<c:url value = '/'/>resources/js/jquery-ui-1.7.2.custom.min.js">
-	
-</script>
-<script language="javascript" type="text/javascript"
-	src="<c:url value = '/'/>resources/js/jquery.bgiframe.pack.js">
+	src="<%=request.getContextPath()%>/resources/js/jquery-1.5.2.js">
 	
 </script>
 <script language="javascript" type="text/javascript"
@@ -36,49 +24,44 @@
 	
 </script>
 <script language="javascript" type="text/javascript"
-	src="<c:url value = '/'/>resources/js/jquery.form.js">
-	
-</script>
-<script language="javascript" type="text/javascript"
 	src="<c:url value = '/'/>resources/js/jquery.autocomplete.js">
-	
-</script>
-<script language="javascript" type="text/javascript"
-	src="<c:url value = '/'/>resources/js/jquery.datepick.js">
-	
-</script>
-<script language="javascript" type="text/javascript"
-	src="<c:url value = '/'/>resources/js/jquery.min.js">
 	
 </script>
 <script type="text/javascript">
 	$(document).ready(function() {
 		showMenuItems('1');
 	});
-	
-	 //打開Alert畫面之函式
-    function goAlert(argTitle,argMsg,argBtnFunc){
-        $("#div_Alert").show();
-        UI_Resize();
-        $(window).scrollTop(0);
-        $("#div_Alert .content > .header > .title").html(argTitle);
-        $("#div_Alert .content > .contain").html(argMsg);
-        $("#div_Alert .content > .func-button").empty();
-        if(argBtnFunc){
-            if(argBtnFunc.trueText && argBtnFunc.trueFunc){
-                $("#div_Alert .content > .func-button").append('<a id="true_btn" class="state-default" onclick="closeAlert();">'+argBtnFunc.trueText+'</a>&nbsp;&nbsp;');
-                $("#div_Alert .content > .func-button > #true_btn").bind('click',argBtnFunc.trueFunc);
-            }
-            if(argBtnFunc.falseText && argBtnFunc.falseFunc){
-                $("#div_Alert .content > .func-button").append('<a id="false_btn" class="state-default" onclick="closeAlert();">'+argBtnFunc.falseText+'</a>&nbsp;&nbsp;');
-                $("#div_Alert .content > .func-button > #false_btn").bind('click',argBtnFunc.falseFunc);
-    }
-        }else{
-            $("#div_Alert .content > .func-button").append('<a class="state-default" onclick="closeAlert();">關閉</a>');
-        }
-    }
-	 
-  //全選之函式
+
+	//打開Alert畫面之函式
+	function goAlert(argTitle, argMsg, argBtnFunc) {
+		$("#div_Alert").show();
+		UI_Resize();
+		$(window).scrollTop(0);
+		$("#div_Alert .content > .header > .title").html(argTitle);
+		$("#div_Alert .content > .contain").html(argMsg);
+		$("#div_Alert .content > .func-button").empty();
+		if (argBtnFunc) {
+			if (argBtnFunc.trueText && argBtnFunc.trueFunc) {
+				$("#div_Alert .content > .func-button").append(
+						'<a id="true_btn" class="state-default" onclick="closeAlert();">'
+								+ argBtnFunc.trueText + '</a>&nbsp;&nbsp;');
+				$("#div_Alert .content > .func-button > #true_btn").bind(
+						'click', argBtnFunc.trueFunc);
+			}
+			if (argBtnFunc.falseText && argBtnFunc.falseFunc) {
+				$("#div_Alert .content > .func-button").append(
+						'<a id="false_btn" class="state-default" onclick="closeAlert();">'
+								+ argBtnFunc.falseText + '</a>&nbsp;&nbsp;');
+				$("#div_Alert .content > .func-button > #false_btn").bind(
+						'click', argBtnFunc.falseFunc);
+			}
+		} else {
+			$("#div_Alert .content > .func-button").append(
+					'<a class="state-default" onclick="closeAlert();">關閉</a>');
+		}
+	}
+
+	//全選之函式
 	function allSelect(action) {
 		$(document).ready(function() {
 			for (var i = 0; i < $(".checkbox").length; i++) {
