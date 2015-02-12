@@ -9,8 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.asiaworld.tmuhj.core.GenericTest;
 import com.asiaworld.tmuhj.core.dao.DsRestrictions;
 import com.asiaworld.tmuhj.core.util.DsBeanFactory;
-import com.asiaworld.tmuhj.module.apply.resourcesUnion.entity.ResourcesUnion;
-import com.asiaworld.tmuhj.module.apply.resourcesUnion.entity.ResourcesUnionDao;
+import com.asiaworld.tmuhj.module.apply.resourcesUnion.ResourcesUnion;
+import com.asiaworld.tmuhj.module.apply.resourcesUnion.ResourcesUnionDao;
 
 /**
  * ResourcesUnionDaoTest

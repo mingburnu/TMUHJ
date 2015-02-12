@@ -21,7 +21,7 @@ import org.joda.time.LocalDateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.asiaworld.tmuhj.core.security.accountNumber.entity.AccountNumber;
+import com.asiaworld.tmuhj.core.apply.accountNumber.AccountNumber;
 
 /**
  * @author Roderick

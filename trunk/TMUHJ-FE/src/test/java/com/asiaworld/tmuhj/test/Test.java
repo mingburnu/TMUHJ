@@ -1,15 +1,17 @@
 package com.asiaworld.tmuhj.test;
 
-import java.io.UnsupportedEncodingException;
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.asiaworld.tmuhj.core.security.accountNumber.entity.AccountNumber;
+import com.asiaworld.tmuhj.core.apply.accountNumber.AccountNumber;
 import com.asiaworld.tmuhj.core.util.EncryptorUtil;
 
 public class Test {
 
-	public static void main(String[] args) throws UnsupportedEncodingException {
+	public static void main(String[] args) throws IOException {
 
 		String[] sql = {
 				"	INSERT INTO ip_range(serNo, cDTime, cUid, uDTime, uUid, ipRangeEnd, ipRangeStart, cusSerNo) VALUES	(	1	,	sysdate()	,	'admin'	,	sysdate()	,	'admin'	,	'	59.120.245.198	'	,	'	59.120.245.193	'	,	9	);	",
@@ -103,6 +105,12 @@ public class Test {
 
 		String encryptedPassword = EncryptorUtil.encrypt("MOHW");
 		System.out.println(encryptedPassword);
-
+		
+		URL u = new URL ( "http://tw.ner.com");
+		HttpURLConnection huc =  ( HttpURLConnection )  u.openConnection (); 
+		huc.setRequestMethod ("HEAD");  //OR  huc.setRequestMethod ("HEAD"); 
+		huc.connect () ; 
+		int code = huc.getResponseCode() ;
+		System.out.println(code);
 	}
 }

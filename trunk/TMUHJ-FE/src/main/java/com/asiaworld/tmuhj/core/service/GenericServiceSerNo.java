@@ -5,10 +5,10 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;
 
+import com.asiaworld.tmuhj.core.apply.accountNumber.AccountNumber;
+import com.asiaworld.tmuhj.core.apply.accountNumber.AccountNumberDao;
 import com.asiaworld.tmuhj.core.dao.GenericDaoSerNo;
 import com.asiaworld.tmuhj.core.entity.GenericEntitySerNo;
-import com.asiaworld.tmuhj.core.security.accountNumber.entity.AccountNumber;
-import com.asiaworld.tmuhj.core.security.accountNumber.entity.AccountNumberDao;
 
 /**
  * GenericService

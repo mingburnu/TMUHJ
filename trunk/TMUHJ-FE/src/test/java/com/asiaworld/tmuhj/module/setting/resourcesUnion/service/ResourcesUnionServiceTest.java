@@ -7,11 +7,11 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.asiaworld.tmuhj.core.GenericTest;
+import com.asiaworld.tmuhj.core.apply.accountNumber.AccountNumber;
+import com.asiaworld.tmuhj.core.apply.accountNumber.AccountNumberService;
 import com.asiaworld.tmuhj.core.model.DataSet;
-import com.asiaworld.tmuhj.core.security.accountNumber.entity.AccountNumber;
-import com.asiaworld.tmuhj.core.security.accountNumber.service.AccountNumberService;
-import com.asiaworld.tmuhj.module.apply.resourcesUnion.entity.ResourcesUnion;
-import com.asiaworld.tmuhj.module.apply.resourcesUnion.service.ResourcesUnionService;
+import com.asiaworld.tmuhj.module.apply.resourcesUnion.ResourcesUnion;
+import com.asiaworld.tmuhj.module.apply.resourcesUnion.ResourcesUnionService;
 
 /**
  * ResourcesUnionServiceTest

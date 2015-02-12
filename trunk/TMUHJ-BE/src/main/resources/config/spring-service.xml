@@ -29,8 +29,8 @@
 	<aop:aspectj-autoproxy proxy-target-class="true" />
 
 	<tx:advice id="txAdvice" transaction-manager="transactionManager">
-		 <tx:attributes>
-            <tx:method name="save*" propagation="REQUIRED" read-only="false" />
+		<tx:attributes>
+			<tx:method name="save*" propagation="REQUIRED" read-only="false" />
 			<tx:method name="add*" propagation="REQUIRED" read-only="false" />
 			<tx:method name="create*" propagation="REQUIRED" read-only="false" />
 			<tx:method name="insert*" propagation="REQUIRED" read-only="false" />
@@ -48,13 +48,13 @@
 			<tx:method name="count*" propagation="REQUIRED" read-only="true" />
 			<tx:method name="list*" propagation="REQUIRED" read-only="true" />
 			<tx:method name="*" propagation="REQUIRED" read-only="false" />
-        </tx:attributes>
+		</tx:attributes>
 	</tx:advice>
 
 	<aop:config expose-proxy="true">
-		<!-- <aop:pointcut id="serviceOperation" expression="bean(*Service)" /> -->
-		<aop:pointcut id="serviceOperation"
-			expression="execution(* com.asiaworld.tmuhj..*.service..*.*(..))" />
+		<!--<aop:pointcut id="serviceOperation" expression="execution(* com.asiaworld.tmuhj..*.service..*.*(..))" 
+			/> -->
+		<aop:pointcut id="serviceOperation" expression="bean(*Service)" />
 		<aop:advisor pointcut-ref="serviceOperation" advice-ref="txAdvice" />
 	</aop:config>
 

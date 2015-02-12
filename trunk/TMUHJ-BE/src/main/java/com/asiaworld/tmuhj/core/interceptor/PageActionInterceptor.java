@@ -3,6 +3,7 @@ package com.asiaworld.tmuhj.core.interceptor;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.struts2.ServletActionContext;
+
 import com.opensymphony.xwork2.ActionInvocation;
 import com.opensymphony.xwork2.interceptor.AbstractInterceptor;
 
@@ -17,9 +18,8 @@ public class PageActionInterceptor extends AbstractInterceptor {
 
 	@Override
 	public String intercept(ActionInvocation invocation) throws Exception {
-
 		HttpServletRequest request = ServletActionContext.getRequest();
-
+		
 		if (request.getSession().getAttribute("importList") != null) {
 			request.getSession().removeAttribute("cellNames");
 			request.getSession().removeAttribute("importList");
@@ -31,5 +31,4 @@ public class PageActionInterceptor extends AbstractInterceptor {
 
 		return invocation.invoke();
 	}
-
 }

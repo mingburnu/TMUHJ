@@ -6,10 +6,10 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.asiaworld.tmuhj.core.security.accountNumber.entity.AccountNumber;
-import com.asiaworld.tmuhj.module.apply.beLogs.entity.BeLogs;
-import com.asiaworld.tmuhj.module.apply.beLogs.service.BeLogsService;
-import com.asiaworld.tmuhj.module.enums.Act;
+import com.asiaworld.tmuhj.core.apply.accountNumber.AccountNumber;
+import com.asiaworld.tmuhj.core.apply.beLogs.BeLogs;
+import com.asiaworld.tmuhj.core.apply.beLogs.BeLogsService;
+import com.asiaworld.tmuhj.core.enums.Act;
 import com.opensymphony.xwork2.ActionContext;
 import com.opensymphony.xwork2.ActionInvocation;
 import com.opensymphony.xwork2.interceptor.AbstractInterceptor;
