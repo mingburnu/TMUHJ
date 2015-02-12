@@ -7,9 +7,9 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.asiaworld.tmuhj.core.GenericTest;
+import com.asiaworld.tmuhj.core.apply.accountNumber.AccountNumber;
+import com.asiaworld.tmuhj.core.apply.accountNumber.AccountNumberDao;
 import com.asiaworld.tmuhj.core.dao.DsRestrictions;
-import com.asiaworld.tmuhj.core.security.accountNumber.entity.AccountNumber;
-import com.asiaworld.tmuhj.core.security.accountNumber.entity.AccountNumberDao;
 import com.asiaworld.tmuhj.core.util.DsBeanFactory;
 
 /**

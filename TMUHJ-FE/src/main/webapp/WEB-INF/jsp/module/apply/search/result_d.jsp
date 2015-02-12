@@ -29,7 +29,7 @@
 										<td align="left" class="p_01">共 <strong>${ds.pager.totalRecord}</strong>
 											筆記錄， 每頁顯示筆數 <select name="recordPerPage"
 											id="apply_customer_query_action_recordPerPage"
-											onchange="changeSize(this.value);">
+											onchange="upperChangeSize(this.value);">
 												<option value="${ds.pager.recordPerPage}">${ds.pager.recordPerPage}</option>
 												<option value="5">5</option>
 												<option value="10">10</option>
@@ -154,7 +154,7 @@
 										<td align="left" class="p_01">共 <strong>${ds.pager.totalRecord}</strong>
 											筆記錄， 每頁顯示筆數 <select name="recordPerPage"
 											id="apply_customer_query_action_recordPerPage"
-											onchange="changeSize(this.value);">
+											onchange="bottomChangeSize(this.value);">
 												<option value="${ds.pager.recordPerPage}">${ds.pager.recordPerPage}</option>
 												<option value="5">5</option>
 												<option value="10">10</option>

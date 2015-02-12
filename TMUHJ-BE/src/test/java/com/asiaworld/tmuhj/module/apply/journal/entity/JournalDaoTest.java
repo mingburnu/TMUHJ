@@ -9,6 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.asiaworld.tmuhj.core.GenericTest;
 import com.asiaworld.tmuhj.core.dao.DsRestrictions;
 import com.asiaworld.tmuhj.core.util.DsBeanFactory;
+import com.asiaworld.tmuhj.module.apply.journal.Journal;
+import com.asiaworld.tmuhj.module.apply.journal.JournalDao;
 
 /**
  * JournalDaoTest

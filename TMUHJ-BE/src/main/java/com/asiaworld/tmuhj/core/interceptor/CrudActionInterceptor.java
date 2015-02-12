@@ -20,12 +20,12 @@ public class CrudActionInterceptor extends AbstractInterceptor {
 
 	@Override
 	public String intercept(ActionInvocation invocation) throws Exception {
+		HttpServletRequest request = ServletActionContext.getRequest();
 
 		if (!invocation.getAction().toString().contains("beLogs")
 				&& !invocation.getAction().toString().contains("feLogs")) {
 
 			String method = invocation.getProxy().getMethod();
-			HttpServletRequest request = ServletActionContext.getRequest();
 
 			List<String> methods = Arrays.asList("queue", "paginate",
 					"getCheckedItem", "allCheckedItem", "clearCheckedItem",

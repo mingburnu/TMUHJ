@@ -18,12 +18,6 @@
 </head>
 
 <body>
-	<c:if test="${empty login.userId}">
-		<%
-			response.sendRedirect(request.getContextPath()
-						+ "/authorization/userEntry.action");
-		%>
-	</c:if>
 	<div id="wrapper">
 		<jsp:include page="/WEB-INF/jsp/layout/menu.jsp" />
 		<div id="container">

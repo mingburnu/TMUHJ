@@ -41,7 +41,7 @@
 		<property name="dataSource">
 			<ref bean="dataSource" />
 		</property>
-		<property name="packagesToScan" value="com.asiaworld.tmuhj.**.entity" />
+		<property name="packagesToScan" value="com.asiaworld.tmuhj.**" />
 		<!-- <property name="configLocation"> <value>classpath:config/hibernate.cfg.xml</value> 
 			</property> -->
 		<!-- for Hibernate3 use -->
