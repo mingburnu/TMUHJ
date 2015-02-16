@@ -15,6 +15,8 @@
 <link
 	href="<%=request.getContextPath()%>/resources/css/jquery.autocomplete.css"
 	rel="stylesheet" type="text/css" />
+<link href="<%=request.getContextPath()%>/resources/css/calendar-win2k-cold-1.css"
+	rel="stylesheet" type="text/css">
 <script language="javascript" type="text/javascript"
 	src="<%=request.getContextPath()%>/resources/js/jquery-1.5.2.js">
 	
@@ -27,6 +29,23 @@
 	src="<c:url value = '/'/>resources/js/jquery.autocomplete.js">
 	
 </script>
+<script language="javascript" type="text/javascript"
+	src="<c:url value = '/'/>resources/js/calendar.js">
+	
+</script>
+<script language="javascript" type="text/javascript"
+	src="<c:url value = '/'/>resources/js/calendar-setup.js">
+	
+</script>
+<script language="javascript" type="text/javascript"
+	src="<c:url value = '/'/>resources/js/calendar-en.js">
+	
+</script>
+<script language="javascript" type="text/javascript"
+	src="<c:url value = '/'/>resources/js/calendar-big5-utf8.js">
+	
+</script>
+
 <script type="text/javascript">
 	$(document).ready(function() {
 		showMenuItems('1');

@@ -15,6 +15,12 @@
 		value="${pageFactor+(1-(pageFactor%1))%1}" />
 </c:set>
 <script type="text/javascript">
+//IE press Enter GoPage
+$(document).ready(function() {
+	$("input#listForm_currentPageHeader:(1)").keyup(function(e){
+		if(e.keyCode == 13){gotoPage_detail($(this).val());}
+	});
+});
 
 function gotoPage_detail(page) {
 	var totalPage = "${totalPage}";

@@ -4,12 +4,7 @@ $(document).ready(function() {
 	menu_hover();
 
 	showMenuItems('1');
-	//
-	// 解決 IE6 z-index 浮動區塊問題
-	// $('#div_Detail > .overlay').bgiframe();
-	// $('#div_Detail_2 > .overlay').bgiframe();
-	// $('#div_Customers > .overlay').bgiframe();
-	// $('#div_Alert > .overlay').bgiframe();
+
 });
 // css
 function formSetCSS() {

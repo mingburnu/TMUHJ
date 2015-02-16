@@ -40,36 +40,62 @@ public class SearchActionInterceptor extends AbstractInterceptor {
 	@Override
 	public String intercept(ActionInvocation invocation) throws Exception {
 		String method = invocation.getProxy().getMethod();
+
+		if (method.equals("query")) {
+			HttpServletRequest request = ServletActionContext.getRequest();
+			if (request.getParameter("keywords") == null
+					|| request.getParameter("keywords").trim().equals("")) {
+				return "search";
+			}
+		}
+
+		if (method.equals("focus")) {
+			HttpServletRequest request = ServletActionContext.getRequest();
+			if (request.getParameter("keywords") == null
+					|| request.getParameter("keywords").trim().equals("")) {
+				return "query";
+			}
+		}
+
 		String result = invocation.invoke();
 
 		if (method.equals("query")) {
+			HttpServletRequest request = ServletActionContext.getRequest();
+			if (request.getParameter("keywords") == null
+					|| request.getParameter("keywords").trim().equals("")) {
+				return "search";
+			}
 
 			Map<String, Object> session = ActionContext.getContext()
 					.getSession();
-			HttpServletRequest request = ServletActionContext.getRequest();
 			accountNumber = (AccountNumber) session.get("login");
 
 			if (request.getParameter("recordPerPage") == null
 					&& request.getParameter("recordPoint") == null) {
-				feLogsService.save(new FeLogs(Act.綜合查詢, request.getParameter("keywords"),
-						accountNumber.getCusSerNo(), accountNumber.getSerNo(),
-						0, 0, 0), accountNumber);
+				feLogsService.save(
+						new FeLogs(Act.綜合查詢, request.getParameter("keywords"),
+								accountNumber.getCusSerNo(), accountNumber
+										.getSerNo(), 0, 0, 0), accountNumber);
 			}
 		}
-		
 
 		if (method.equals("focus")) {
+			HttpServletRequest request = ServletActionContext.getRequest();
+			if (request.getParameter("keywords") == null
+					|| request.getParameter("keywords").trim().equals("")) {
+				return "query";
+			}
 
 			Map<String, Object> session = ActionContext.getContext()
 					.getSession();
-			HttpServletRequest request = ServletActionContext.getRequest();
 			accountNumber = (AccountNumber) session.get("login");
 
 			if (request.getParameter("recordPerPage") == null
 					&& request.getParameter("recordPoint") == null) {
-				feLogsService.save(new FeLogs(Act.項目查詢, request.getParameter("keywords"),
-						accountNumber.getCusSerNo(), accountNumber.getSerNo(),
-						0, 0, 0), accountNumber);
+				feLogsService.save(
+						new FeLogs(Act.項目查詢, request.getParameter("keywords"),
+								accountNumber.getCusSerNo(), accountNumber
+										.getSerNo(), 0, 0, 0), accountNumber);
 			}
 		}
 

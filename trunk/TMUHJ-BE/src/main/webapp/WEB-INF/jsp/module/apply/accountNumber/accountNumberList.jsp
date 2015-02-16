@@ -9,6 +9,13 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title></title>
 <script type="text/javascript">
+//IE press Enter GoPage
+$(document).ready(function() {
+	$("input#listForm_currentPageHeader").keyup(function(e){
+		if(e.keyCode == 13){gotoPage($(this).val());}
+	});
+});
+
 function goSearch(){
     goMain("<%=request.getContextPath()%>/crud/apply.accountNumber.list.action",
 			"#apply_accountNumber_list", "");

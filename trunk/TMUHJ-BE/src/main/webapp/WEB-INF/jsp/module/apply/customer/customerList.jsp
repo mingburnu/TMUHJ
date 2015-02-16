@@ -16,6 +16,13 @@ $(document).ready(function() {
 	});
 });
 
+//IE press Enter GoPage
+$(document).ready(function() {
+	$("input#listForm_currentPageHeader").keyup(function(e){
+		if(e.keyCode == 13){gotoPage($(this).val());}
+	});
+});
+
 //刪除後引導頁面
 $(document).ready(function() {
 	if($("table.list-table:eq(0) tbody tr").length==2&&$("form#apply_customer_list input#listForm_currentPageHeader").val()>1){
@@ -259,7 +266,6 @@ $(document).ready(function() {
 											onclick="goIpRangeManager(${item.serNo});">IP Range管理</a>
 									</c:otherwise>
 								</c:choose></td>
-						</tr>
 					</c:forEach>
 				</tbody>
 			</table>
@@ -312,9 +318,7 @@ $(document).ready(function() {
 	<s:if test="hasActionMessages()">
 		<script language="javascript" type="text/javascript">
             var msg = "";
-            <s:iterator value="actionMessages">
-                msg += '<s:property escape="false"/><br>';
-            </s:iterator>;
+            <s:iterator value="actionMessages">msg += '<s:property escape="false"/><br>';</s:iterator>;
             goAlert('訊息', msg);
         </script>
 	</s:if>
