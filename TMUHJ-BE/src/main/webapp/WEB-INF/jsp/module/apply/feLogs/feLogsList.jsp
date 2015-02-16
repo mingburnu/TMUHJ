@@ -14,6 +14,13 @@ $(document).ready(function(){
 	state_hover();
 	initAutoComplete("<%=request.getContextPath()%>/crud/apply.customer.json.action",'#customerSerno','#customerName');
 });
+
+//IE press Enter GoPage
+$(document).ready(function() {
+	$("input#listForm_currentPageHeader").keyup(function(e){
+		if(e.keyCode == 13){gotoPage($(this).val());}
+	});
+});
 	
 function goSearch(){
 	if($("input#customerSerno").attr("checked")){
@@ -83,15 +90,23 @@ function goExport(){
 					<tbody>
 						<tr>
 							<th align="right">查詢統計範圍：</th>
-							<td align="left"><input type="date" name="start"
-								class="input_text"
+							<td align="left"><input type="text" name="start"
+								class="input_text" id="cal-field1"
 								value="<%if (request.getAttribute("startDate") != null) {
 					out.print(request.getAttribute("startDate").toString());
 				}%>">
-								至&nbsp;&nbsp;<input type="date" name="end" class="input_text"
+								<script type="text/javascript">
+	 Calendar.setup({
+         inputField    : "cal-field1"
+       });</script> 至&nbsp;&nbsp;<input type="text" name="end" class="input_text"
+								id="cal-field2"
 								value="<%if (request.getAttribute("endDate") != null) {
 					out.print(request.getAttribute("endDate").toString());
-				}%>"></td>
+				}%>">
+								<script type="text/javascript">
+	 Calendar.setup({
+         inputField    : "cal-field2"
+       });</script></td>
 						</tr>
 						<tr>
 							<th align="right">全部：</th>

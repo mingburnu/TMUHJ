@@ -16,6 +16,13 @@ $(document).ready(function() {
 	});
 });
 
+//IE press Enter GoPage
+$(document).ready(function() {
+	$("input#listForm_currentPageHeader").keyup(function(e){
+		if(e.keyCode == 13){gotoPage($(this).val());}
+	});
+});
+
 function goSearch(){
     goMain("<%=request.getContextPath()%>/crud/apply.ebook.list.action",
 			"#apply_ebook_list", "");
@@ -97,6 +104,7 @@ function chagePageSize(recordPerPage,recordPoint){
 function goImport(){
 	goDetail('<%=request.getContextPath()%>/crud/apply.ebook.query.action?'+'goQueue=yes','電子書-匯入');
 }
+
 </script>
 </head>
 <body>
@@ -135,9 +143,8 @@ function goImport(){
 							</select></td>
 							<c:choose>
 								<c:when test="${option=='entity.bookName' }">
-									<td align="left"><input type="text"
-										name="entity.bookName" maxlength="20" id="search"
-										class="input_text"
+									<td align="left"><input type="text" name="entity.bookName"
+										maxlength="20" id="search" class="input_text"
 										value="<%if (request
 								.getParameter(request.getParameter("option")) != null) {
 							out.print(request.getParameter(request
@@ -155,9 +162,8 @@ function goImport(){
 						}%>"></td>
 								</c:when>
 								<c:otherwise>
-									<td align="left"><input type="text"
-										name="entity.bookName" maxlength="20" id="search"
-										class="input_text"></td>
+									<td align="left"><input type="text" name="entity.bookName"
+										maxlength="20" id="search" class="input_text"></td>
 								</c:otherwise>
 							</c:choose>
 							<td align="left"><a class="state-default"

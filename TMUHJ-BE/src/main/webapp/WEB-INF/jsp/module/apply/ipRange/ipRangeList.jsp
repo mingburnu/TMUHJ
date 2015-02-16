@@ -15,6 +15,13 @@ $(document).ready(function() {
 		 gotoPage_detail($("form#apply_ipRange_list input#listForm_currentPageHeader").val()-1);
 	};
 });
+
+//IE press Enter GoPage
+$(document).ready(function() {
+	$("input#listForm_currentPageHeader:(1)").keyup(function(e){
+		if(e.keyCode == 13){gotoPage_detail($(this).val());}
+	});
+});
 	
 	//新增IP Range
 	function goAdd_detail() {

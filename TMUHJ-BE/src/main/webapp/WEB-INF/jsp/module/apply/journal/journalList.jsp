@@ -16,6 +16,13 @@ $(document).ready(function() {
 	});
 });
 
+//IE press Enter GoPage
+$(document).ready(function() {
+	$("input#listForm_currentPageHeader").keyup(function(e){
+		if(e.keyCode == 13){gotoPage($(this).val());}
+	});
+});
+
 function goSearch(){
     goMain("<%=request.getContextPath()%>/crud/apply.journal.list.action",
 			"#apply_journal_list", "");

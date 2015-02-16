@@ -30,13 +30,18 @@
 	}
 	function form_sumbit() {
 		var msg = "";
-		if ($(".v_keyword").val() == "") {
+		if ($(".v_keyword").val().trim() == "") {
 			msg += "．請輸入關鍵字。";
 		}
 		if (msg != "") {
+			$(".v_keyword").val("");
 			alert(msg);
 		} else {
-			$("form").submit();
+			//$("form").submit();
+			var url=$("form").attr("action")+"?"+$("form").serialize();
+			$.ajax({url: url, success: function(result){
+		            $("#container").html(result);
+		        }});
 		}
 	}
 </script>
