@@ -1,4 +1,4 @@
-package com.asiaworld.tmuhj.module.enums;
+package com.asiaworld.tmuhj.module.apply.enums;
 
 /**
  * 資源類別
@@ -12,9 +12,12 @@ public enum Category {
 
 	/** 租貸. */
 	租貸("租貸"),
-	
+
 	/** 未註明. */
-	未註明("未註明");
+	未註明("未註明"),
+
+	/** 不明. */
+	不明("不明");
 
 	private String category;
 

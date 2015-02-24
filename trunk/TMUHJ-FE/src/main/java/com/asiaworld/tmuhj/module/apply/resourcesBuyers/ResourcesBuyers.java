@@ -9,9 +9,9 @@ import javax.persistence.Table;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 
+import com.asiaworld.tmuhj.core.apply.enums.Type;
 import com.asiaworld.tmuhj.core.entity.GenericEntityFull;
-import com.asiaworld.tmuhj.core.enums.Type;
-import com.asiaworld.tmuhj.module.enums.Category;
+import com.asiaworld.tmuhj.module.apply.enums.Category;
 
 @Entity
 @Table(name = "resourcesBuyers")

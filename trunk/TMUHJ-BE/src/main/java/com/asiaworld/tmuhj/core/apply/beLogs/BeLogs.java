@@ -13,8 +13,8 @@ import org.springframework.context.annotation.Scope;
 
 import com.asiaworld.tmuhj.core.apply.accountNumber.AccountNumber;
 import com.asiaworld.tmuhj.core.apply.customer.Customer;
+import com.asiaworld.tmuhj.core.apply.enums.Act;
 import com.asiaworld.tmuhj.core.entity.GenericEntityLog;
-import com.asiaworld.tmuhj.core.enums.Act;
 
 /**
  * BE_Logs

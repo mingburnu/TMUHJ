@@ -1,4 +1,4 @@
-package com.asiaworld.tmuhj.core.enums;
+package com.asiaworld.tmuhj.core.apply.enums;
 
 /**
  * 

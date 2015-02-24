@@ -2,19 +2,16 @@
 	pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="s" uri="/struts-tags"%>
-<jsp:include page="/WEB-INF/jsp/layout/css.jsp" />
-<!DOCTYPE HTML>
-<html>
-<head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<title>跨司署電子資料庫索引查詢平台</title>
-</head>
-
-<body>
-	<div id="wrapper">
-
-		<jsp:include page="/WEB-INF/jsp/layout/menu.jsp" />
-		<div id="container">
+<script type="text/javascript">
+function goBack(){
+	var url="${backURL}";
+	console.log(url);
+	$.ajax({url: url, success: function(result){
+        $("#container").html(result);
+    }
+	});
+}
+</script>
 			<div id="main_b_box">
 				<!-- 內容開始 -->
 				<div class="detail">
@@ -102,16 +99,9 @@
 					</table>
 
 					<div align="center">
-						<a class="btn_01" href="javascript:history.go(-1);">回 上 一 頁</a>
+						<a class="btn_01" href="javascript:goBack();">回 上 一 頁</a>
 					</div>
 
 				</div>
 				<!-- 內容結束 -->
 			</div>
-		</div>
-
-		<jsp:include page="/WEB-INF/jsp/layout/footer.jsp" />
-
-	</div>
-</body>
-</html>

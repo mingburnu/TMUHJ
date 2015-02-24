@@ -107,7 +107,9 @@ public class DatabaseAction extends GenericCRUDActionFull<Database> {
 			ResourcesUnion datResourcesUnion = (ResourcesUnion) iterator.next();
 			customer = customerService.getBySerNo(datResourcesUnion
 					.getCusSerNo());
+			if(customer!=null){
 			ownerNameList.add(customer.getName());
+			}
 		}
 
 		String ownerNames = ownerNameList.toString().replace("[", "")
@@ -116,6 +118,7 @@ public class DatabaseAction extends GenericCRUDActionFull<Database> {
 		getRequest().setAttribute("database", database);
 		getRequest().setAttribute("resourcesBuyers", resourcesBuyers);
 		getRequest().setAttribute("ownerNames", ownerNames);
+		getRequest().setAttribute("backURL", getRequest().getParameter("currentURL").replace("@@@", "?").replace("^^^", "&"));
 		return "d-detail";
 	}
 

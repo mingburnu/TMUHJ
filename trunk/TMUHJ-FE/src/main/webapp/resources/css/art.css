@@ -483,9 +483,11 @@ select{
 	color:#e1510b;
 	text-decoration:none;
 	padding:0 5px;
+	cursor: pointer;
 }
 .pager .p:hover{
 	color:#f6783a;
+	cursor: pointer;
 }
 .pager .n{
 	background:url(../images/btn_02.png) -100px 0 no-repeat;
