@@ -107,7 +107,9 @@ public class JournalAction extends GenericCRUDActionFull<Journal> {
 			ResourcesUnion jouResourcesUnion = (ResourcesUnion) iterator.next();
 			customer = customerService.getBySerNo(jouResourcesUnion
 					.getCusSerNo());
+			if(customer!=null){
 			ownerNameList.add(customer.getName());
+			}
 		}
 
 		String ownerNames = ownerNameList.toString().replace("[", "")
@@ -116,6 +118,7 @@ public class JournalAction extends GenericCRUDActionFull<Journal> {
 		getRequest().setAttribute("journal", journal);
 		getRequest().setAttribute("resourcesBuyers", resourcesBuyers);
 		getRequest().setAttribute("ownerNames", ownerNames);
+		getRequest().setAttribute("backURL", getRequest().getParameter("currentURL").replace("@@@", "?").replace("^^^", "&"));
 		return "j-detail";
 	}
 

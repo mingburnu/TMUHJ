@@ -62,7 +62,7 @@
 		<url-pattern>/*</url-pattern>
 	</filter-mapping>
 
-	<servlet>
+	<!--<servlet>
 		<servlet-name>H2Console</servlet-name>
 		<servlet-class>org.h2.server.web.WebServlet</servlet-class>
 		<init-param>
@@ -73,7 +73,7 @@
 	<servlet-mapping>
 		<servlet-name>H2Console</servlet-name>
 		<url-pattern>/admin/h2/*</url-pattern>
-	</servlet-mapping>
+	</servlet-mapping>-->
 	<session-config>
 		<session-timeout>10080</session-timeout>
 	</session-config>

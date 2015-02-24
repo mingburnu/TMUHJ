@@ -12,9 +12,9 @@ import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 
 import com.asiaworld.tmuhj.core.apply.customer.Customer;
+import com.asiaworld.tmuhj.core.apply.enums.Role;
+import com.asiaworld.tmuhj.core.apply.enums.Status;
 import com.asiaworld.tmuhj.core.entity.GenericEntityFull;
-import com.asiaworld.tmuhj.core.enums.Role;
-import com.asiaworld.tmuhj.core.enums.Status;
 
 /**
  * 使用者

@@ -2,11 +2,11 @@
 	pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <div id="side_box">
-	<a href="<c:url value = '/'/>about.jsp"><img
+	<a onclick="goURL('<c:url value = '/'/>about.jsp')"><img
 		src="<c:url value = '/'/>resources/images/about.png"></a> <a
-		href="<c:url value = '/'/>contact.jsp"><img
+		onclick="goURL('<c:url value = '/'/>contact.jsp')"><img
 		src="<c:url value = '/'/>resources/images/contact.png"></a> <a
-		href="<c:url value = '/'/>help.jsp"><img
+		onclick="goURL('<c:url value = '/'/>help.jsp')"><img
 		src="<c:url value = '/'/>resources/images/help.png"></a>
 </div>
 <div id="ad_box">

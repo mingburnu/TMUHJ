@@ -9,8 +9,8 @@ import javax.persistence.Table;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 
+import com.asiaworld.tmuhj.core.apply.enums.Act;
 import com.asiaworld.tmuhj.core.entity.GenericEntityLog;
-import com.asiaworld.tmuhj.core.enums.Act;
 
 /**
  * FE_Logs

@@ -89,13 +89,16 @@ public class EbookAction extends GenericCRUDActionFull<Ebook> {
 			ResourcesUnion datResourcesUnion = (ResourcesUnion) iterator.next();
 			customer = customerService.getBySerNo(datResourcesUnion
 					.getCusSerNo());
+			if(customer!=null){
 			ownerNameList.add(customer.getName());
+			}
 		}
 
 		String ownerNames = ownerNameList.toString().replace("[", "")
 				.replace("]", "");
 		getRequest().setAttribute("ebook", ebook);
 		getRequest().setAttribute("ownerNames", ownerNames);
+		getRequest().setAttribute("backURL", getRequest().getParameter("currentURL").replace("@@@", "?").replace("^^^", "&"));
 		return "e-detail";
 	}
 

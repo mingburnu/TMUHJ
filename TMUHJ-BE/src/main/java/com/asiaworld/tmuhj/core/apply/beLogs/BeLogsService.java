@@ -15,8 +15,8 @@ import org.springframework.util.Assert;
 
 import com.asiaworld.tmuhj.core.apply.accountNumber.AccountNumberService;
 import com.asiaworld.tmuhj.core.apply.customer.CustomerService;
+import com.asiaworld.tmuhj.core.apply.enums.Act;
 import com.asiaworld.tmuhj.core.dao.GenericDaoLog;
-import com.asiaworld.tmuhj.core.enums.Act;
 import com.asiaworld.tmuhj.core.model.DataSet;
 import com.asiaworld.tmuhj.core.service.GenericServiceLog;
 
@@ -81,11 +81,8 @@ public class BeLogsService extends GenericServiceLog<BeLogs> {
 					+ "' group by fk_account_serNo) as countTotal";
 
 			if (entity.getCusSerNo() == 0) {
-				listSql = listSql.replace(
-								"' and fk_customer_serNo ='"
-										+ entity.getCusSerNo(), "");
-				countSql = countSql.replace("' and fk_customer_serNo ='"
-						+ entity.getCusSerNo(), "");
+				listSql = listSql.replace("' and fk_customer_serNo ='" + entity.getCusSerNo(), "");
+				countSql = countSql.replace("' and fk_customer_serNo ='" + entity.getCusSerNo(), "");
 			}
 
 			sqlQuery = session.createSQLQuery(listSql);
@@ -104,11 +101,8 @@ public class BeLogsService extends GenericServiceLog<BeLogs> {
 					+ "' group by fk_account_serNo) as countTotal";
 
 			if (entity.getCusSerNo() == 0) {
-				listSql = listSql.replace(
-								"' and fk_customer_serNo ='"
-										+ entity.getCusSerNo(), "");
-				countSql = countSql.replace("' and fk_customer_serNo ='"
-						+ entity.getCusSerNo(), "");
+				listSql = listSql.replace("' and fk_customer_serNo ='" + entity.getCusSerNo(), "");
+				countSql = countSql.replace("' and fk_customer_serNo ='" + entity.getCusSerNo(), "");
 			}
 
 			sqlQuery = session.createSQLQuery(listSql);
@@ -131,25 +125,19 @@ public class BeLogsService extends GenericServiceLog<BeLogs> {
 
 			// 資料庫不同，寫法不一樣
 			if (row.get("actionType") != null) {
-				beLogs = new BeLogs(Act.valueOf(row.get("actionType")
-						.toString()), Long.parseLong(row
-						.get("fk_account_serNo").toString()),
+				beLogs = new BeLogs(Act.valueOf(row.get("actionType").toString()), 
+						Long.parseLong(row.get("fk_account_serNo").toString()),
 						Long.parseLong(row.get("fk_customer_serNo").toString()));
 				beLogs.setCount(Integer.parseInt(row.get("amount").toString()));
-				beLogs.setCustomer(customerService.getBySerNo(beLogs
-						.getCusSerNo()));
-				beLogs.setAccountNumber(accountNumberService.getBySerNo(beLogs
-						.getUserSerNo()));
+				beLogs.setCustomer(customerService.getBySerNo(beLogs.getCusSerNo()));
+				beLogs.setAccountNumber(accountNumberService.getBySerNo(beLogs.getUserSerNo()));
 			} else {
-				beLogs = new BeLogs(Act.valueOf(row.get("ACTIONTYPE")
-						.toString()), Long.parseLong(row
-						.get("FK_ACCOUNT_SERNO").toString()),
+				beLogs = new BeLogs(Act.valueOf(row.get("ACTIONTYPE").toString()), 
+						Long.parseLong(row.get("FK_ACCOUNT_SERNO").toString()),
 						Long.parseLong(row.get("FK_CUSTOMER_SERNO").toString()));
 				beLogs.setCount(Integer.parseInt(row.get("AMOUNT").toString()));
-				beLogs.setCustomer(customerService.getBySerNo(beLogs
-						.getCusSerNo()));
-				beLogs.setAccountNumber(accountNumberService.getBySerNo(beLogs
-						.getUserSerNo()));
+				beLogs.setCustomer(customerService.getBySerNo(beLogs.getCusSerNo()));
+				beLogs.setAccountNumber(accountNumberService.getBySerNo(beLogs.getUserSerNo()));
 			}
 
 			beLogs.setRank(i);

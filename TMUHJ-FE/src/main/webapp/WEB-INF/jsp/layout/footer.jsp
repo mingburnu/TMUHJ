@@ -12,8 +12,8 @@
 						<div>「103年推動全國實證醫學科技交流與建置電子資源知識共享及時應用計畫」</div>
 						<div>
 							衛生福利部地址：11558 台北市南港區忠孝東路6段488號 <a
-								href="<c:url value = '/'/>security.jsp">資訊安全</a> 與 <a
-								href="<c:url value = '/'/>privacy.jsp">隱私權政策</a>
+								onclick="goURL('<c:url value = '/'/>security.jsp')">資訊安全</a> 與 <a
+								onclick="goURL('<c:url value = '/'/>privacy.jsp')">隱私權政策</a>
 						</div>
 					</td>
 				</tr>

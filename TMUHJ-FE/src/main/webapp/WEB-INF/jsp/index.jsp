@@ -2,12 +2,12 @@
 	pageEncoding="UTF-8"%>
 <%@ taglib prefix="s" uri="/struts-tags"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-<jsp:include page="/WEB-INF/jsp/layout/css.jsp" />
 <!DOCTYPE HTML>
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>跨司署電子資料庫索引查詢平台</title>
+<jsp:include page="/WEB-INF/jsp/layout/css.jsp" />
 <script type="text/javascript"
 	src="<c:url value = '/'/>resources/js/jquery-1.7.2.min.js"></script>
 <script type="text/javascript">
@@ -43,6 +43,10 @@
 		            $("#container").html(result);
 		        }});
 		}
+	}	
+	
+	function goTop(){
+		alert("Hello");
 	}
 </script>
 </head>
@@ -57,7 +61,7 @@
 						<div id="main_box">
 							<!-- 內容開始 -->
 							<s:form action="apply.database.query" namespace="/crud"
-								method="post">
+								method="post" onsubmit="return false;">
 								<table width="100%" border="0" cellpadding="0" cellspacing="0"
 									class="table_02">
 									<tr valign="middle">

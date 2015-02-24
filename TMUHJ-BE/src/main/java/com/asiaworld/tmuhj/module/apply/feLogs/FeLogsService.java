@@ -14,8 +14,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
 import com.asiaworld.tmuhj.core.apply.customer.CustomerService;
+import com.asiaworld.tmuhj.core.apply.enums.Act;
 import com.asiaworld.tmuhj.core.dao.GenericDaoLog;
-import com.asiaworld.tmuhj.core.enums.Act;
 import com.asiaworld.tmuhj.core.model.DataSet;
 import com.asiaworld.tmuhj.core.service.GenericServiceLog;
 
@@ -82,10 +82,8 @@ public class FeLogsService extends GenericServiceLog<FeLogs> {
 					+ "' group by cus_SerNo, keyword) as countTotal";
 
 			if (entity.getCusSerNo() == 0) {
-				listSql = listSql.replace(
-						"' and cus_SerNo ='" + entity.getCusSerNo(), "");
-				countSql = countSql.replace(
-						"' and cus_SerNo ='" + entity.getCusSerNo(), "");
+				listSql = listSql.replace("' and cus_SerNo ='" + entity.getCusSerNo(), "");
+				countSql = countSql.replace("' and cus_SerNo ='" + entity.getCusSerNo(), "");
 			}
 
 			sqlQuery = session.createSQLQuery(listSql);
@@ -103,10 +101,8 @@ public class FeLogsService extends GenericServiceLog<FeLogs> {
 					+ "' group by cus_SerNo, keyword) as countTotal";
 
 			if (entity.getCusSerNo() == 0) {
-				listSql = listSql.replace(
-						"' and cus_SerNo ='" + entity.getCusSerNo(), "");
-				countSql = countSql.replace(
-						"' and cus_SerNo ='" + entity.getCusSerNo(), "");
+				listSql = listSql.replace("' and cus_SerNo ='" + entity.getCusSerNo(), "");
+				countSql = countSql.replace("' and cus_SerNo ='" + entity.getCusSerNo(), "");
 			}
 
 			sqlQuery = session.createSQLQuery(listSql);
@@ -133,15 +129,13 @@ public class FeLogsService extends GenericServiceLog<FeLogs> {
 						Integer.parseInt(row.get("cus_SerNo").toString()), 0,
 						0, 0, 0);
 				feLogs.setCount(Integer.parseInt(row.get("amount").toString()));
-				feLogs.setCustomer(customerService.getBySerNo(feLogs
-						.getCusSerNo()));
+				feLogs.setCustomer(customerService.getBySerNo(feLogs.getCusSerNo()));
 			} else {
 				feLogs = new FeLogs(Act.綜合查詢, row.get("KEYWORD").toString(),
 						Integer.parseInt(row.get("CUS_SERNO").toString()), 0,
 						0, 0, 0);
 				feLogs.setCount(Integer.parseInt(row.get("AMOUNT").toString()));
-				feLogs.setCustomer(customerService.getBySerNo(feLogs
-						.getCusSerNo()));
+				feLogs.setCustomer(customerService.getBySerNo(feLogs.getCusSerNo()));
 			}
 			feLogs.setRank(i);
 			ranks.add(feLogs);

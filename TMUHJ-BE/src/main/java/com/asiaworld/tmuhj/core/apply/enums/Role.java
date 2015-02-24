@@ -1,4 +1,4 @@
-package com.asiaworld.tmuhj.module.enums;
+package com.asiaworld.tmuhj.core.apply.enums;
 
 /**
  * Role
@@ -26,7 +26,9 @@ public enum Role {
 	/**
 	 * 使用者
 	 */
-	使用者("使用者");
+	使用者("使用者"),
+
+	不明("不明");
 
 	private String role;
 
