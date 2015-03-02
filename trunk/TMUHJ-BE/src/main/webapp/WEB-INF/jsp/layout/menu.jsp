@@ -5,7 +5,7 @@
 <div id="div-menu">
 	<div id="div-menu-top"></div>
 	<div id="div-menu-contain">
-
+	<c:if test="${login.role.role != '管理員'}">
 		<div id="menu-titles_1" class="menu-titles">
 			<a onclick="showMenuItems('1');"><span
 				class="menu-icon menu-icon-site">客戶管理</span></a>
@@ -14,7 +14,7 @@
 			<div class="menu-items">
 				<a onclick="goURL('<%=request.getContextPath()%>/customer.action');">基本設定</a>
 			</div>
-		</div>
+		</div></c:if>
 
 
 		<div id="menu-titles_2" class="menu-titles">

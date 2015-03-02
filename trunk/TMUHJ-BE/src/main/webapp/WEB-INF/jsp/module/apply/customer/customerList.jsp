@@ -3,6 +3,9 @@
 <%@ taglib prefix="s" uri="/struts-tags"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
+<c:if test="${login.role.role == '管理員'}">
+<% response.setStatus(HttpServletResponse.SC_FORBIDDEN);%>
+</c:if>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
@@ -239,7 +242,7 @@ $(document).ready(function() {
 					<c:forEach var="item" items="${ds.results}" varStatus="status">
 						<tr>
 							<td align="center" class="td_first" nowrap><c:choose>
-									<c:when test="${1 eq  item.serNo }"></c:when>
+									<c:when test="${9 eq  item.serNo }"></c:when>
 									<c:otherwise>
 										<input type="checkbox" class="checkbox" name="checkItem"
 											value="${item.serNo}">
@@ -249,7 +252,7 @@ $(document).ready(function() {
 							<td align="center">${item.tel }</td>
 							<td>${item.address }</td>
 							<td align="center"><c:choose>
-									<c:when test="${1 eq  item.serNo }">
+									<c:when test="${9 eq  item.serNo }">
 										<a class="state-default2" onclick="goView(${item.serNo });"><span
 											class="icon-default icon-view"></span>檢視</a>
 										<a class="state-default2" onclick="goUpdate(${item.serNo});"><span

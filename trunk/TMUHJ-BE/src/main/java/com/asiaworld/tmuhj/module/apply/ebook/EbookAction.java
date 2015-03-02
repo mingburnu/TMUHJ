@@ -95,7 +95,7 @@ public class EbookAction extends GenericCRUDActionFull<Ebook> {
 	public void validateSave() throws Exception {
 		// TODO Auto-generated method stub
 	}
-
+	
 	@Override
 	public void validateUpdate() throws Exception {
 		// TODO Auto-generated method stub
@@ -130,6 +130,7 @@ public class EbookAction extends GenericCRUDActionFull<Ebook> {
 					.getBySerNo(resourcesBuyersSerNo);
 			ebook.setCustomers(customers);
 			setEntity(ebook);
+			log.debug(resourcesBuyers);
 		} else if (getRequest().getParameter("goQueue") != null
 				&& getRequest().getParameter("goQueue").equals("yes")) {
 			getRequest().setAttribute("goQueue",
@@ -197,17 +198,25 @@ public class EbookAction extends GenericCRUDActionFull<Ebook> {
 			}
 		}
 
-		if (getRequest().getParameter("resourcesBuyers.rCategory") == null
-				|| getRequest().getParameter("resourcesBuyers.rCategory")
-						.equals("")) {
-			addActionError("請選擇資源類型");
-		}
-
-		if (getRequest().getParameter("resourcesBuyers.rType") == null
-				|| getRequest().getParameter("resourcesBuyers.rType")
-						.equals("")) {
-			addActionError("請選擇資源種類");
-		}
+		if (getRequest().getParameter("resourcesBuyers.rCategory")!=null){
+			if (!getRequest().getParameter("resourcesBuyers.rCategory").equals("買斷")
+					&& !getRequest().getParameter("resourcesBuyers.rCategory").equals("租貸")
+					&& !getRequest().getParameter("resourcesBuyers.rCategory").equals("未註明")){
+				addActionError("資源類型錯誤");
+				}
+			} else {
+				addActionError("資源類型錯誤");
+			}
+		
+		if (getRequest().getParameter("resourcesBuyers.rCategory")!=null){
+			if (!getRequest().getParameter("resourcesBuyers.rType").equals("電子書")
+					&& !getRequest().getParameter("resourcesBuyers.rType").equals("期刊")
+					&& !getRequest().getParameter("resourcesBuyers.rType").equals("資料庫")) {
+				addActionError("資源種類錯誤");
+				} 
+			} else {
+				addActionError("資源種類錯誤");			
+			}
 
 		if (!hasActionErrors()) {
 			ebook = ebookService.save(getEntity(), getLoginUser());
@@ -315,17 +324,25 @@ public class EbookAction extends GenericCRUDActionFull<Ebook> {
 			}
 		}
 
-		if (getRequest().getParameter("resourcesBuyers.rCategory") == null
-				|| getRequest().getParameter("resourcesBuyers.rCategory")
-						.equals("")) {
-			addActionError("請選擇資源類型");
-		}
-
-		if (getRequest().getParameter("resourcesBuyers.rType") == null
-				|| getRequest().getParameter("resourcesBuyers.rType")
-						.equals("")) {
-			addActionError("請選擇資源種類");
-		}
+		if (getRequest().getParameter("resourcesBuyers.rCategory")!=null){
+			if (!getRequest().getParameter("resourcesBuyers.rCategory").equals("買斷")
+					&& !getRequest().getParameter("resourcesBuyers.rCategory").equals("租貸")
+					&& !getRequest().getParameter("resourcesBuyers.rCategory").equals("未註明")){
+				addActionError("資源類型錯誤");
+				}
+			} else {
+				addActionError("資源類型錯誤");
+			}
+		
+		if (getRequest().getParameter("resourcesBuyers.rCategory")!=null){
+			if (!getRequest().getParameter("resourcesBuyers.rType").equals("電子書")
+					&& !getRequest().getParameter("resourcesBuyers.rType").equals("期刊")
+					&& !getRequest().getParameter("resourcesBuyers.rType").equals("資料庫")) {
+				addActionError("資源種類錯誤");
+				} 
+			} else {
+				addActionError("資源種類錯誤");			
+			}
 
 		if (!hasActionErrors()) {
 			ebook = ebookService.update(getEntity(), getLoginUser());
@@ -460,6 +477,7 @@ public class EbookAction extends GenericCRUDActionFull<Ebook> {
 
 		ebook.setCustomers(customers);
 		setEntity(ebook);
+		getRequest().setAttribute("viewSerNo", getRequest().getParameter("viewSerNo"));
 		return VIEW;
 	}
 
@@ -852,7 +870,7 @@ public class EbookAction extends GenericCRUDActionFull<Ebook> {
 
 	@SuppressWarnings("unchecked")
 	public String importData() throws Exception {
-		List<Ebook> ebooks = (List<Ebook>) getSession().get("importList");
+		List<Ebook> importList = (List<Ebook>) getSession().get("importList");
 
 		Map<String, Object> checkItemMap = (TreeMap<String, Object>) getSession()
 				.get("checkItemMap");
@@ -863,22 +881,27 @@ public class EbookAction extends GenericCRUDActionFull<Ebook> {
 
 		if (!hasActionErrors()) {
 			Iterator<?> it = checkItemMap.values().iterator();
-			List<Ebook> importList = new ArrayList<Ebook>();
+			List<Ebook> importIndexs = new ArrayList<Ebook>();
 			while (it.hasNext()) {
 				String index = it.next().toString();
-				importList.add(ebooks.get(Integer.parseInt(index)));
+				
+				if(NumberUtils.isDigits(index)){
+					if(Integer.parseInt(index) >=0 && Integer.parseInt(index) < importList.size()){
+						importIndexs.add(importList.get(Integer.parseInt(index)));
+				}
+					}
 			}
 
-			for (int i = 0; i < importList.size(); i++) {
-				long ebkSerNo = ebookService.getEbkSerNoByIsbn(importList
+			for (int i = 0; i < importIndexs.size(); i++) {
+				long ebkSerNo = ebookService.getEbkSerNoByIsbn(importIndexs
 						.get(i).getIsbn());
-				long cusSerNo = customerService.getCusSerNoByName(importList
+				long cusSerNo = customerService.getCusSerNoByName(importIndexs
 						.get(i).getCustomers().get(0).getName());
 
 				if (ebkSerNo == 0) {
-					resourcesBuyers = resourcesBuyersService.save(importList
+					resourcesBuyers = resourcesBuyersService.save(importIndexs
 							.get(i).getResourcesBuyers(), getLoginUser());
-					ebook = ebookService.save(importList.get(i), getLoginUser());
+					ebook = ebookService.save(importIndexs.get(i), getLoginUser());
 
 					resourcesUnionService.save(new ResourcesUnion(cusSerNo, resourcesBuyers
 									.getSerNo(), ebook.getSerNo(), 0, 0),
@@ -894,7 +917,7 @@ public class EbookAction extends GenericCRUDActionFull<Ebook> {
 			}
 
 			clearCheckedItem();
-			getRequest().setAttribute("successCount", importList.size());
+			getRequest().setAttribute("successCount", importIndexs.size());
 			return VIEW;
 		} else {
 			paginate();
@@ -1036,20 +1059,20 @@ public class EbookAction extends GenericCRUDActionFull<Ebook> {
 		this.cusSerNo = cusSerNo;
 	}
 
-	/**
-	 * @return the resourcesBuyers
-	 */
-	public ResourcesBuyers getResourcesBuyers() {
-		return resourcesBuyers;
-	}
-
-	/**
-	 * @param resourcesBuyers
-	 *            the resourcesBuyers to set
-	 */
-	public void setResourcesBuyers(ResourcesBuyers resourcesBuyers) {
-		this.resourcesBuyers = resourcesBuyers;
-	}
+//	/**
+//	 * @return the resourcesBuyers
+//	 */
+//	public ResourcesBuyers getResourcesBuyers() {
+//		return resourcesBuyers;
+//	}
+//
+//	/**
+//	 * @param resourcesBuyers
+//	 *            the resourcesBuyers to set
+//	 */
+//	public void setResourcesBuyers(ResourcesBuyers resourcesBuyers) {
+//		this.resourcesBuyers = resourcesBuyers;
+//	}
 
 	/**
 	 * @return the file

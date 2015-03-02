@@ -49,7 +49,7 @@
 	});
 
 	//全選之函式
-	function allSelect_detail_2(action) {
+	function allSelect_customers(action) {
 		$(document).ready(function() {
 			for (var i = 0; i < $("input#customer_unit").length; i++) {
 				if (action == 1) {
@@ -100,9 +100,9 @@
 	</c:forEach>
 	<div class="button_box">
 		<div class="detail-func-button">
-			<a class="state-default" onclick="allSelect_detail_2(0);checkData();">清除</a>&nbsp;
-			<a class="state-default" onclick="allSelect_detail_2(1);checkData();">全選</a>&nbsp;
-			<a class="state-default" onclick="closeDetail_2();">確認</a>
+			<a class="state-default" onclick="allSelect_customers(0);checkData();">清除</a>&nbsp;
+			<a class="state-default" onclick="allSelect_customers(1);checkData();">全選</a>&nbsp;
+			<a class="state-default" onclick="closeCustomers();">確認</a>
 		</div>
 	</div>
 </body>

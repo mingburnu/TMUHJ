@@ -13,6 +13,14 @@
 		$("#div_Detail_2").hide();
 		UI_Resize();
 		gotoPage_detail($("form#apply_ipRange_list input#listForm_currentPageHeader").val());
+		resetCloseDetail_2();
+	}
+	
+	function closeDetail_2() {
+		$("#div_Detail_2").hide();
+		UI_Resize();
+		gotoPage_detail($("form#apply_ipRange_list input#listForm_currentPageHeader").val());
+		resetCloseDetail_2();
 	}
 </script>
 </head>

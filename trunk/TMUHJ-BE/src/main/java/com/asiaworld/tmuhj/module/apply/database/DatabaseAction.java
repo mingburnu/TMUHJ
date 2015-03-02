@@ -199,17 +199,25 @@ public class DatabaseAction extends GenericCRUDActionFull<Database> {
 			}
 		}
 
-		if (getRequest().getParameter("resourcesBuyers.rCategory") == null
-				|| getRequest().getParameter("resourcesBuyers.rCategory")
-						.equals("")) {
-			addActionError("請選擇資源類型");
-		}
-
-		if (getRequest().getParameter("resourcesBuyers.rType") == null
-				|| getRequest().getParameter("resourcesBuyers.rType")
-						.equals("")) {
-			addActionError("請選擇資源種類");
-		}
+		if (getRequest().getParameter("resourcesBuyers.rCategory")!=null){
+			if (!getRequest().getParameter("resourcesBuyers.rCategory").equals("買斷")
+					&& !getRequest().getParameter("resourcesBuyers.rCategory").equals("租貸")
+					&& !getRequest().getParameter("resourcesBuyers.rCategory").equals("未註明")){
+				addActionError("資源類型錯誤");
+				}
+			} else {
+				addActionError("資源類型錯誤");
+			}
+		
+		if (getRequest().getParameter("resourcesBuyers.rCategory")!=null){
+			if (!getRequest().getParameter("resourcesBuyers.rType").equals("電子書")
+					&& !getRequest().getParameter("resourcesBuyers.rType").equals("期刊")
+					&& !getRequest().getParameter("resourcesBuyers.rType").equals("資料庫")) {
+				addActionError("資源種類錯誤");
+				} 
+			} else {
+				addActionError("資源種類錯誤");			
+			}
 
 		if (!hasActionErrors()) {
 			database = databaseService.save(getEntity(), getLoginUser());
@@ -314,17 +322,26 @@ public class DatabaseAction extends GenericCRUDActionFull<Database> {
 			}
 		}
 
-		if (getRequest().getParameter("resourcesBuyers.rCategory") == null
-				|| getRequest().getParameter("resourcesBuyers.rCategory")
-						.equals("")) {
-			addActionError("請選擇資源類型");
-		}
-
-		if (getRequest().getParameter("resourcesBuyers.rType") == null
-				|| getRequest().getParameter("resourcesBuyers.rType")
-						.equals("")) {
-			addActionError("請選擇資源種類");
-		}
+		if (getRequest().getParameter("resourcesBuyers.rCategory")!=null){
+			if (!getRequest().getParameter("resourcesBuyers.rCategory").equals("買斷")
+					&& !getRequest().getParameter("resourcesBuyers.rCategory").equals("租貸")
+					&& !getRequest().getParameter("resourcesBuyers.rCategory").equals("未註明")){
+				addActionError("資源類型錯誤");
+				}
+			} else {
+				addActionError("資源類型錯誤");
+			}
+		
+		if (getRequest().getParameter("resourcesBuyers.rCategory")!=null){
+			if (!getRequest().getParameter("resourcesBuyers.rType").equals("電子書")
+					&& !getRequest().getParameter("resourcesBuyers.rType").equals("期刊")
+					&& !getRequest().getParameter("resourcesBuyers.rType").equals("資料庫")) {
+				addActionError("資源種類錯誤");
+				} 
+			} else {
+				addActionError("資源種類錯誤");			
+			}
+		
 		if (cusSerNo == null || cusSerNo.length == 0) {
 			addActionError("至少選擇一筆以上購買單位");
 		} else {
@@ -468,6 +485,7 @@ public class DatabaseAction extends GenericCRUDActionFull<Database> {
 
 		database.setCustomers(customers);
 		setEntity(database);
+		getRequest().setAttribute("viewSerNo", getRequest().getParameter("viewSerNo"));
 		return VIEW;
 	}
 
@@ -841,7 +859,7 @@ public class DatabaseAction extends GenericCRUDActionFull<Database> {
 
 	@SuppressWarnings("unchecked")
 	public String importData() throws Exception {
-		List<Database> databases = (List<Database>) getSession().get(
+		List<Database> importList = (List<Database>) getSession().get(
 				"importList");
 
 		Map<String, Object> checkItemMap = (TreeMap<String, Object>) getSession()
@@ -853,23 +871,28 @@ public class DatabaseAction extends GenericCRUDActionFull<Database> {
 
 		if (!hasActionErrors()) {
 			Iterator<?> it = checkItemMap.values().iterator();
-			List<Database> importList = new ArrayList<Database>();
+			List<Database> importIndexs = new ArrayList<Database>();
 			while (it.hasNext()) {
 				String index = it.next().toString();
-				importList.add(databases.get(Integer.parseInt(index)));
+				
+				if(NumberUtils.isDigits(index)){
+					if(Integer.parseInt(index) >=0 && Integer.parseInt(index) < importList.size()){
+						importIndexs.add(importList.get(Integer.parseInt(index)));
+				}
+					}
 			}
-
-			for (int i = 0; i < importList.size(); i++) {
-				long datSerNo = databaseService.getDatSerNoByName(importList
-						.get(i).getDbChtTitle(), importList.get(i)
+			
+			for (int i = 0; i < importIndexs.size(); i++) {
+				long datSerNo = databaseService.getDatSerNoByName(importIndexs
+						.get(i).getDbChtTitle(), importIndexs.get(i)
 						.getDbEngTitle());
-				long cusSerNo = customerService.getCusSerNoByName(importList
+				long cusSerNo = customerService.getCusSerNoByName(importIndexs
 						.get(i).getCustomers().get(0).getName());
 
 				if (datSerNo == 0) {
-					resourcesBuyers = resourcesBuyersService.save(importList
+					resourcesBuyers = resourcesBuyersService.save(importIndexs
 							.get(i).getResourcesBuyers(), getLoginUser());
-					database = databaseService.save(importList.get(i),
+					database = databaseService.save(importIndexs.get(i),
 							getLoginUser());
 
 					resourcesUnionService.save(new ResourcesUnion(cusSerNo,
@@ -886,7 +909,7 @@ public class DatabaseAction extends GenericCRUDActionFull<Database> {
 			}
 
 			clearCheckedItem();
-			getRequest().setAttribute("successCount", importList.size());
+			getRequest().setAttribute("successCount", importIndexs.size());
 			return VIEW;
 		} else {
 			paginate();
