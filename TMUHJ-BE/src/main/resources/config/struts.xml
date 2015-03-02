@@ -88,14 +88,14 @@
 
 	<package name="crudAction" namespace="/crud" extends="global">
 		<interceptors>
-			<interceptor name="loginSessionInterceptor"
+			 <interceptor name="loginSessionInterceptor"
 				class="com.asiaworld.tmuhj.core.interceptor.LoginSessionInterceptor" />
-			<interceptor name="SearchActionInterceptor"
+			<interceptor name="crudActionInterceptor"
 				class="com.asiaworld.tmuhj.core.interceptor.CrudActionInterceptor" />
 
-			<interceptor-stack name="defaultInterceptor">
+			    <interceptor-stack name="defaultInterceptor">
 				<interceptor-ref name="loginSessionInterceptor" />
-				<interceptor-ref name="SearchActionInterceptor" />
+				<interceptor-ref name="crudActionInterceptor" />
 				<interceptor-ref name="defaultStack" />
 			</interceptor-stack>
 		</interceptors>

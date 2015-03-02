@@ -382,3 +382,19 @@ function initAutoComplete(url, serNoId, nameId) {
 		}
 	});
 }
+
+function resetCloseDetail() {
+	$("#div_Detail .content .header .title").html("");
+	$("#div_Detail .content .contain").html(
+			"<" + "script>"
+					+ "function closeDetail(){$('#div_Detail').hide();UI_Resize();}"
+					+ "</" + "script>");
+}
+
+function resetCloseDetail_2() {
+	$("#div_Detail_2 .content .header .title").html("");
+	$("#div_Detail_2 .content .contain").html(
+			"<" + "script>"
+					+ "function closeDetail_2(){$('#div_Detail_2').hide();UI_Resize();}"
+					+ "</" + "script>");
+}

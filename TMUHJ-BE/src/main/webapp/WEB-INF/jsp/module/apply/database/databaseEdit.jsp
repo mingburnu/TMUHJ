@@ -18,13 +18,11 @@
 		importForm = $("form#apply_database_queue").html();
 	});
 
-	$(document)
-			.ready(
-					function() {
-						$("#div_Detail .content .header .close")
-								.html(
-										'<a href="#" onclick="clearDetail_2();closeDetail();">關閉</a>');
-					});
+	$(document).ready(
+			function() {
+				$("#div_Detail .content .header .close").html(
+						'<a href="#" onclick="clearCustomers();closeDetail();">關閉</a>');
+			});
 
 	$(document).ready(function() {
 		$("img#minus").click(function() {
@@ -51,7 +49,7 @@
 	//遞交表單
 	function submitData() {
 		closeDetail();
-		clearDetail_2();
+		clearCustomers();
 		var data = "";
 		if ($("form#apply_database_save").length != 0) {
 			data = $('#apply_database_save').serialize();
@@ -67,7 +65,7 @@
 	function addCustomer() {
 		var contain = $("#div_Detail_2 .content .header .title").html();
 		if (contain != '單位-新增') {
-			goDetail_2("<c:url value = '/'/>crud/apply.customer.ajax.action",
+			goCustomers("<c:url value = '/'/>crud/apply.customer.ajax.action",
 					'單位-新增');
 		}
 
@@ -77,8 +75,9 @@
 		closeLoading();
 	}
 
-	function clearDetail_2() {
-		$("#div_Detail_2 .content .header .title").html(" ");
+	function clearCustomers() {
+		$("#div_Customers .content .header .title").html("");
+		$("#div_Customers .content .contain").html("");
 	}
 	
 	//Excel列表
@@ -394,21 +393,18 @@ input#customer_name {
 
 		<c:otherwise>
 			<%
-				ArrayList<?> allCustomers = (ArrayList<?>) request
-				.getAttribute("allCustomers");
-				ArrayList<?> entityCustomers = (ArrayList<?>) request
-				.getAttribute("entity.customers");
-				if (entityCustomers.size() > 0) {
-					for (int j = 0; j < entityCustomers.size(); j++) {
-				for (int i = 0; i < allCustomers.size(); i++) {
-
-					if (entityCustomers.get(j).equals(allCustomers.get(i))) {
-				allCustomers.remove(entityCustomers.get(j));
-					}
-				}
-					}
-				}
-				request.setAttribute("allCustomers", allCustomers);
+				ArrayList<?> allCustomers = (ArrayList<?>) request.getAttribute("allCustomers");
+					ArrayList<?> entityCustomers = (ArrayList<?>) request.getAttribute("entity.customers");
+					Object[] allCustomerArray=allCustomers.toArray();
+					if (entityCustomers.size() > 0) {
+						for (int j = 0; j < entityCustomers.size(); j++) {
+								if (allCustomers.contains(entityCustomers.get(j))) {
+									allCustomers.remove(entityCustomers.get(j));
+									}
+							}
+						}
+					
+					request.setAttribute("allCustomers", allCustomers);
 			%>
 			<s:form namespace="/crud" action="apply.database.update">
 				<s:hidden name="entity.serNo" />
@@ -563,7 +559,7 @@ input#customer_name {
 				</table>
 				<div class="button_box">
 					<div class="detail-func-button">
-						<a class="state-default" onclick="clearDetail_2();closeDetail();">取消</a>
+						<a class="state-default" onclick="clearCustomers();closeDetail();">取消</a>
 						&nbsp;<a class="state-default" onclick="resetData();">重設</a>&nbsp;
 						<a class="state-default" onclick="submitData();">確認</a>
 					</div>

@@ -3,7 +3,9 @@ package com.asiaworld.tmuhj.core.interceptor;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.struts2.ServletActionContext;
+import org.springframework.beans.factory.annotation.Autowired;
 
+import com.asiaworld.tmuhj.core.apply.accountNumber.AccountNumber;
 import com.opensymphony.xwork2.ActionInvocation;
 import com.opensymphony.xwork2.interceptor.AbstractInterceptor;
 
@@ -15,6 +17,8 @@ import com.opensymphony.xwork2.interceptor.AbstractInterceptor;
  */
 @SuppressWarnings("serial")
 public class PageActionInterceptor extends AbstractInterceptor {
+	@Autowired
+	private AccountNumber accountNumber;
 
 	@Override
 	public String intercept(ActionInvocation invocation) throws Exception {
@@ -28,7 +32,7 @@ public class PageActionInterceptor extends AbstractInterceptor {
 			request.getSession().removeAttribute("abnormal");
 			request.getSession().removeAttribute("checkItemMap");
 		}
-
+		
 		return invocation.invoke();
 	}
 }

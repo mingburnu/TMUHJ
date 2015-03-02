@@ -7,6 +7,8 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title></title>
+<c:choose>
+<c:when test="${empty viewSerNo}">
 <script type="text/javascript">
 	//關閉並更新上一層資料
 	function closeDetail_ToQuery() {
@@ -17,11 +19,37 @@
 			gotoPage($(
 					"form#apply_database_list input#listForm_currentPageHeader")
 					.val());
+			resetCloseDetail();
 		} else {
 			goSearch();
+			resetCloseDetail();
+		}
+	}
+	
+	function closeDetail() {
+		$("#div_Detail").hide();
+		UI_Resize();
+		if ($("form#apply_database_list input#listForm_currentPageHeader")
+				.val() != null) {
+			gotoPage($(
+					"form#apply_database_list input#listForm_currentPageHeader")
+					.val());
+			resetCloseDetail();
+		} else {
+			goSearch();
+			resetCloseDetail();
 		}
 	}
 </script>
+</c:when>
+<c:otherwise>
+<script type="text/javascript">
+	function closeDetail_ToQuery() {
+		closeDetail();
+	}
+</script>	
+</c:otherwise>
+</c:choose>
 </head>
 <body>
 	<c:choose>

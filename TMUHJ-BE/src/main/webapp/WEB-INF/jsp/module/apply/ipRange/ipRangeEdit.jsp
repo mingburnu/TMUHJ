@@ -8,21 +8,28 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title></title>
 <script type="text/javascript">
+var saveForm = "";
+var updateForm = "";
+$(document).ready(function() {
+	saveForm = $("form#apply_ipRange_save").html();
+	updateForm = $("form#apply_ipRange_update").html();
+});
+
 	//重設所有欄位(清空)
 	function resetData() {
-		$("form#apply_ipRange_save > table.detail-table tr td input").val("");
+		$("form#apply_ipRange_save").html(saveForm);
+		$("form#apply_ipRange_update").html(updateForm);
 	}
 
 	//遞交表單
 	function submitData() {
 		closeDetail_2();
-		var data = "";
 		if ($("form#apply_ipRange_save").length != 0) {
-			data = $('#apply_ipRange_save').serialize();
+			var data = $('form#apply_ipRange_save').serialize();
 			goDetail_2("<c:url value = '/'/>crud/apply.ipRange.save.action",
 					'客戶-IP Range新增', data);
 		} else {
-			data = $('#apply_ipRange_update').serialize();
+			var data = $('form#apply_ipRange_update').serialize();
 			goDetail_2("<c:url value = '/'/>crud/apply.ipRange.update.action",
 					'客戶-IP Range修改', data);
 		}

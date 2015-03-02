@@ -75,6 +75,13 @@ $(document).ready(function() {
 		goDetail_Main('<c:url value = '/'/>crud/apply.ipRange.list.action',
 				'#apply_ipRange_list', '&recordPerPage='+recordPerPage+'&recordPoint='+recordPoint);
 	}
+	
+	function closeDetail() {
+		$("#div_Detail").hide();
+		UI_Resize();
+		$("#div_Detail .content > .header > .title").empty();
+		$("#div_Detail .content > .contain").empty();
+	}
 </script>
 </head>
 <body>

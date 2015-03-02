@@ -8,7 +8,7 @@ import com.opensymphony.xwork2.interceptor.AbstractInterceptor;
 
 /**
  * 檢查登入session
- * @author David Hsu
+ * @author Roderick
  * @version 2014/3/26
  */
 @SuppressWarnings("serial")

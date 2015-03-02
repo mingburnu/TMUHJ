@@ -138,7 +138,7 @@ public class CustomerAction extends GenericCRUDActionFull<Customer> {
 		}
 
 		if (getEntity().getEmail() != null
-				|| !getEntity().getEmail().equals("")) {
+				&& !getEntity().getEmail().trim().equals("")) {
 			if (!Pattern.compile(emailPattern).matcher(getEntity().getEmail())
 					.matches()) {
 				addActionError("email格式不正確");
@@ -146,12 +146,14 @@ public class CustomerAction extends GenericCRUDActionFull<Customer> {
 		}
 
 		if (!hasActionErrors()) {
+			getEntity().setName(getEntity().getName().trim());
 			customer = customerService.save(getEntity(), getLoginUser());
 			setEntity(customer);
 
 			addActionMessage("新增成功");
 			return VIEW;
 		} else {
+			setEntity(getEntity());
 			return EDIT;
 		}
 	}
@@ -162,7 +164,7 @@ public class CustomerAction extends GenericCRUDActionFull<Customer> {
 				+ "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
 
 		if (getEntity().getEmail() != null
-				|| !getEntity().getEmail().equals("")) {
+				&& !getEntity().getEmail().trim().equals("")) {
 			if (!Pattern.compile(emailPattern).matcher(getEntity().getEmail())
 					.matches()) {
 				addActionError("email格式不正確");
@@ -176,13 +178,15 @@ public class CustomerAction extends GenericCRUDActionFull<Customer> {
 			addActionMessage("修改成功");
 			return VIEW;
 		} else {
+			getEntity().setName(customerService.getBySerNo(getEntity().getSerNo()).getName());
+			setEntity(getEntity());
 			return EDIT;
 		}
 	}
 
 	@Override
 	public String delete() throws Exception {
-		if (getEntity().getSerNo() <= 0) {
+		if (getEntity().getSerNo() <= 0 || getEntity().getSerNo() == 9) {
 			addActionError("流水號不正確");
 		} else if (customerService.getBySerNo(getEntity().getSerNo()) == null) {
 			addActionError("沒有這個物件");
@@ -226,7 +230,7 @@ public class CustomerAction extends GenericCRUDActionFull<Customer> {
 			int i = 0;
 			while (i < checkItem.length) {
 				if (!NumberUtils.isDigits(String.valueOf(checkItem[i]))
-						|| Long.parseLong(checkItem[i]) < 1) {
+						|| Long.parseLong(checkItem[i]) < 1 || Long.parseLong(checkItem[i]) == 9) {
 					addActionError(checkItem[i] + "為不可利用的流水號");
 				}
 				i++;
@@ -270,6 +274,7 @@ public class CustomerAction extends GenericCRUDActionFull<Customer> {
 		customer = customerService.getBySerNo(Long.parseLong(getRequest()
 				.getParameter("viewSerNo")));
 		setEntity(customer);
+		getRequest().setAttribute("viewSerNo", getRequest().getParameter("viewSerNo"));
 		return VIEW;
 	}
 
@@ -564,7 +569,7 @@ public class CustomerAction extends GenericCRUDActionFull<Customer> {
 
 	@SuppressWarnings("unchecked")
 	public String importData() throws Exception {
-		List<Customer> customers = (List<Customer>) getSession().get(
+		List<Customer> importList = (List<Customer>) getSession().get(
 				"importList");
 
 		Map<String, Object> checkItemMap = (TreeMap<String, Object>) getSession()
@@ -576,21 +581,26 @@ public class CustomerAction extends GenericCRUDActionFull<Customer> {
 
 		if (!hasActionErrors()) {
 			Iterator<?> it = checkItemMap.values().iterator();
-			List<Customer> importList = new ArrayList<Customer>();
+			List<Customer> importIndexs = new ArrayList<Customer>();
 			while (it.hasNext()) {
 				String index = it.next().toString();
-				importList.add(customers.get(Integer.parseInt(index)));
+				
+				if(NumberUtils.isDigits(index)){
+					if(Integer.parseInt(index) >=0 && Integer.parseInt(index) < importList.size()){
+						importIndexs.add(importList.get(Integer.parseInt(index)));
+				}
+					}
 			}
 
-			for (int i = 0; i < importList.size(); i++) {
+			for (int i = 0; i < importIndexs.size(); i++) {
 
-				if (importList.get(i).getExistStatus().equals("正常")) {
-					customerService.save(importList.get(i), getLoginUser());
+				if (importIndexs.get(i).getExistStatus().equals("正常")) {
+					customerService.save(importIndexs.get(i), getLoginUser());
 				}
 			}
 
 			clearCheckedItem();
-			getRequest().setAttribute("successCount", importList.size());
+			getRequest().setAttribute("successCount", importIndexs.size());
 			return VIEW;
 		} else {
 			paginate();

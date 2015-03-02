@@ -11,18 +11,18 @@
 <script type="text/javascript">
 	var saveForm = "";
 	var updateForm = "";
+	var importForm = "";
 	$(document).ready(function() {
 		saveForm = $("form#apply_ebook_save").html();
 		updateForm = $("form#apply_ebook_update").html();
+		importForm = $("form#apply_ebook_queue").html();
 	});
 
-	$(document)
-			.ready(
-					function() {
-						$("#div_Detail .content .header .close")
-								.html(
-										'<a href="#" onclick="clearDetail_2();closeDetail();">關閉</a>');
-					});
+	$(document).ready(
+			function() {
+				$("#div_Detail .content .header .close").html(
+						'<a href="#" onclick="clearCustomers();closeDetail();">關閉</a>');
+			});
 
 	$(document).ready(function() {
 		$("img#minus").click(function() {
@@ -40,15 +40,16 @@
 
 	//重設所有欄位(清空)
 	function resetData() {
-		clearDetail_2();
+		clearCustomers();
 		$("form#apply_ebook_save").html(saveForm);
 		$("form#apply_ebook_update").html(updateForm);
+		$("form#apply_ebook_queue").html(importForm);
 	}
 
 	//遞交表單
 	function submitData() {
 		closeDetail();
-		clearDetail_2();
+		clearCustomers();
 		var data = "";
 		if ($("form#apply_ebook_save").length != 0) {
 			data = $('#apply_ebook_save').serialize();
@@ -62,20 +63,21 @@
 	}
 
 	function addCustomer() {
-		var contain = $("#div_Detail_2 .content .header .title").html();
+		var contain = $("#div_Customers .content .header .title").html();
 		if (contain != '單位-新增') {
-			goDetail_2("<c:url value = '/'/>crud/apply.customer.ajax.action",
+			goCustomers("<c:url value = '/'/>crud/apply.customer.ajax.action",
 					'單位-新增');
 		}
 
-		$("#div_Detail_2").show();
+		$("#div_Customers").show();
 		UI_Resize();
 		$(window).scrollTop(0);
 		closeLoading();
 	}
 
-	function clearDetail_2() {
-		$("#div_Detail_2 .content .header .title").html(" ");
+	function clearCustomers() {
+		$("#div_Customers .content .header .title").html("");
+		$("#div_Customers .content .contain").html("");
 	}
 	
 	//Excel列表
@@ -137,7 +139,8 @@
 					closeLoading();
 				}
 			});
-			
+			e.preventDefault();
+			e.unbind();
 		} else //for olden browsers
 		{
 			//generate a random id
@@ -203,12 +206,7 @@ input#customer_name {
 					</tr>
 					<tr>
 						<th width="130">ISBN<span class="required">(&#8226;)</span></th>
-						<td><input type="text" name="entity.isbn"
-							id="apply_ebook_save_entity_isbn" class="input_text"
-							value='<%if (request.getParameter("entity.isbn") != null) {
-							out.print(request.getParameter("entity.isbn"));
-						}%>'>
-						</td>
+						<td><s:textfield name="entity.isbn" cssClass="input_text" /></td>
 					</tr>
 					<tr>
 						<th width="130">出版社</th>
@@ -413,20 +411,17 @@ input#customer_name {
 		</c:when>
 		<c:otherwise>
 			<%
-				ArrayList<?> allCustomers = (ArrayList<?>) request
-					.getAttribute("allCustomers");
-					ArrayList<?> entityCustomers = (ArrayList<?>) request
-					.getAttribute("entity.customers");
+				ArrayList<?> allCustomers = (ArrayList<?>) request.getAttribute("allCustomers");
+					ArrayList<?> entityCustomers = (ArrayList<?>) request.getAttribute("entity.customers");
+					Object[] allCustomerArray=allCustomers.toArray();
 					if (entityCustomers.size() > 0) {
-				for (int j = 0; j < entityCustomers.size(); j++) {
-					for (int i = 0; i < allCustomers.size(); i++) {
-
-				if (entityCustomers.get(j).equals(allCustomers.get(i))) {
-					allCustomers.remove(entityCustomers.get(j));
-				}
-					}
-				}
-					}
+						for (int j = 0; j < entityCustomers.size(); j++) {
+								if (allCustomers.contains(entityCustomers.get(j))) {
+									allCustomers.remove(entityCustomers.get(j));
+									}
+							}
+						}
+					
 					request.setAttribute("allCustomers", allCustomers);
 			%>
 			<s:form namespace="/crud" action="apply.ebook.update">
@@ -438,12 +433,7 @@ input#customer_name {
 					</tr>
 					<tr>
 						<th width="130">ISBN<span class="required">(&#8226;)</span></th>
-						<td><input type="text" name="entity.isbn"
-							id="apply_ebook_update_entity_isbn" class="input_text"
-							value='<%if (request.getParameter("entity.isbn") != null) {
-							out.print(request.getParameter("entity.isbn"));
-						}%>'>
-						</td>
+						<td><s:textfield name="entity.isbn" cssClass="input_text" /></td>
 					</tr>
 					<tr>
 						<th width="130">出版社</th>
@@ -605,7 +595,7 @@ input#customer_name {
 				</table>
 				<div class="button_box">
 					<div class="detail-func-button">
-						<a class="state-default" onclick="clearDetail_2();closeDetail();">取消</a>
+						<a class="state-default" onclick="clearCustomers();closeDetail();">取消</a>
 						&nbsp;<a class="state-default" onclick="resetData();">重設</a>&nbsp;
 						<a class="state-default" onclick="submitData();">確認</a>
 					</div>

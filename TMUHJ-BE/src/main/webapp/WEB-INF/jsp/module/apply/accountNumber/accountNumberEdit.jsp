@@ -21,8 +21,7 @@
 
 	//重設所有欄位(清空)
 	function resetData() {
-		$("form#apply_accountNumber_save > table.detail-table tr td input")
-				.val("");
+		$("form#apply_accountNumber_save").html(saveForm);
 		$("form#apply_accountNumber_update").html(updateForm);
 		$("form#apply_accountNumber_queue").html(importForm);
 	}
@@ -40,7 +39,7 @@
 			data = $('#apply_accountNumber_update').serialize();
 			goDetail(
 					"<c:url value = '/'/>crud/apply.accountNumber.update.action",
-					'帳戶-新增', data);
+					'帳戶-修改', data);
 		}
 	}
 
@@ -180,7 +179,7 @@
 					<tr>
 						<th width="130">狀態</th>
 						<td><s:select name="entity.status" cssClass="input_text"
-								list="@com.asiaworld.tmuhj.core.enums.Status@values()"
+								list="@com.asiaworld.tmuhj.core.apply.enums.Status@values()"
 								listValue="status" /></td>
 					</tr>
 				</table>
@@ -295,7 +294,7 @@
 					<tr>
 						<th width="130">狀態</th>
 						<td><s:select name="entity.status" cssClass="input_text"
-								list="@com.asiaworld.tmuhj.core.enums.Status@values()"
+								list="@com.asiaworld.tmuhj.core.apply.enums.Status@values()"
 								listValue="status" /></td>
 					</tr>
 				</table>

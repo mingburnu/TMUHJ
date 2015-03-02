@@ -58,19 +58,19 @@ public class AccountNumberAction extends GenericCRUDActionFull<AccountNumber> {
 	private String fileContentType;
 
 	@Autowired
-	AccountNumber accountNumber;
+	private AccountNumber accountNumber;
 
 	@Autowired
-	AccountNumberService accountNumberService;
+	private AccountNumberService accountNumberService;
 
 	@Autowired
-	Customer customer;
+	private Customer customer;
 
 	@Autowired
-	CustomerService customerService;
+	private CustomerService customerService;
 
 	@Autowired
-	DataSet<Customer> dsCustomer;
+	private DataSet<Customer> dsCustomer;
 
 	private ExcelWorkSheet<AccountNumber> excelWorkSheet;
 
@@ -184,6 +184,9 @@ public class AccountNumberAction extends GenericCRUDActionFull<AccountNumber> {
 			setEntity(accountNumber);
 			return VIEW;
 		} else {
+			setEntity(getEntity());
+			dsCustomer.setEntity(customer);
+			dsCustomer = customerService.getByRestrictions(dsCustomer);
 			return EDIT;
 		}
 	}
@@ -212,6 +215,10 @@ public class AccountNumberAction extends GenericCRUDActionFull<AccountNumber> {
 			addActionMessage("修改成功");
 			return VIEW;
 		} else {
+			getEntity().setSerNo(getEntity().getSerNo());
+			getEntity().setUserId(accountNumberService.getBySerNo(getEntity().getSerNo()).getUserId());
+			dsCustomer.setEntity(customer);
+			dsCustomer = customerService.getByRestrictions(dsCustomer);
 			return EDIT;
 		}
 	}
@@ -361,6 +368,7 @@ public class AccountNumberAction extends GenericCRUDActionFull<AccountNumber> {
 		accountNumber.setCustomer(customerService.getBySerNo(accountNumber
 				.getCusSerNo()));
 		setEntity(accountNumber);
+		getRequest().setAttribute("viewSerNo", getRequest().getParameter("viewSerNo"));
 		return VIEW;
 	}
 
@@ -649,7 +657,7 @@ public class AccountNumberAction extends GenericCRUDActionFull<AccountNumber> {
 
 	@SuppressWarnings("unchecked")
 	public String importData() throws Exception {
-		List<AccountNumber> accountNumbers = (List<AccountNumber>) getSession()
+		List<AccountNumber> importList = (List<AccountNumber>) getSession()
 				.get("importList");
 
 		Map<String, Object> checkItemMap = (TreeMap<String, Object>) getSession()
@@ -661,15 +669,21 @@ public class AccountNumberAction extends GenericCRUDActionFull<AccountNumber> {
 
 		if (!hasActionErrors()) {
 			Iterator<?> it = checkItemMap.values().iterator();
-			List<AccountNumber> importList = new ArrayList<AccountNumber>();
+			List<AccountNumber> importIndexs = new ArrayList<AccountNumber>();
 			while (it.hasNext()) {
 				String index = it.next().toString();
-				importList.add(accountNumbers.get(Integer.parseInt(index)));
+				
+				if(NumberUtils.isDigits(index)){
+					if(Integer.parseInt(index) >=0 && Integer.parseInt(index) < importList.size()){
+						importIndexs.add(importList.get(Integer.parseInt(index)));
+				}
+					}
 			}
 
-			for (int i = 0; i < importList.size(); i++) {
-				if(importList.get(i).getExistStatus().equals("正常")){
-				accountNumberService.save(importList.get(i), getLoginUser());
+			for (int i = 0; i < importIndexs.size(); i++) {
+				
+				if (importIndexs.get(i).getExistStatus().equals("正常")) {
+				accountNumberService.save(importIndexs.get(i), getLoginUser());
 				}
 			}
 

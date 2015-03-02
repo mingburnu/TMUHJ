@@ -108,43 +108,59 @@ function goExport(){
          inputField    : "cal-field2"
        });</script></td>
 						</tr>
-						<tr>
-							<th align="right">全部：</th>
-							<td><c:choose>
-									<c:when test="${0 eq cusSerNo}">
-										<input type="radio" name="cusSerNo" value="0" checked>
-									</c:when>
-									<c:otherwise>
-										<input type="radio" name="cusSerNo" value="0">
-									</c:otherwise>
-								</c:choose></td>
-						</tr>
-						<tr>
-							<th align="right">用戶名稱：</th>
-							<td><c:choose>
-									<c:when test="${0 eq cusSerNo}">
-										<input type="radio" name="cusSerNo" id="customerSerno"
-											value="<%if (request.getAttribute("cusSerNo") != null) {
+						<c:if test="${login.role.role != '管理員'}">
+							<tr>
+								<th align="right">全部：</th>
+								<td><c:choose>
+										<c:when test="${0 eq cusSerNo}">
+											<input type="radio" name="cusSerNo" value="0" checked>
+										</c:when>
+										<c:otherwise>
+											<input type="radio" name="cusSerNo" value="0">
+										</c:otherwise>
+									</c:choose></td>
+							</tr>
+						</c:if>
+						<c:choose>
+							<c:when test="${login.role.role != '管理員'}">
+								<tr>
+									<th align="right">用戶名稱：</th>
+									<td><c:choose>
+											<c:when test="${0 eq cusSerNo}">
+												<input type="radio" name="cusSerNo" id="customerSerno"
+													value="<%if (request.getAttribute("cusSerNo") != null) {
 							out.print(request.getAttribute("cusSerNo")
 									.toString());
 						}%>" />
-									</c:when>
-									<c:otherwise>
+											</c:when>
+											<c:otherwise>
 
-										<input type="radio" name="cusSerNo" id="customerSerno"
-											value="<%if (request.getAttribute("cusSerNo") != null) {
+												<input type="radio" name="cusSerNo" id="customerSerno"
+													value="<%if (request.getAttribute("cusSerNo") != null) {
 							out.print(request.getAttribute("cusSerNo")
 									.toString());
 						}%>"
-											checked />
-									</c:otherwise>
-								</c:choose> <input type="text" id="customerName" class="input_text"
-								name="customer"
-								value="<%if (request.getAttribute("customer") != null) {
+													checked />
+											</c:otherwise>
+										</c:choose> <input type="text" id="customerName" class="input_text"
+										name="customer"
+										value="<%if (request.getAttribute("customer") != null) {
 					out.print(request.getAttribute("customer").toString());
 				}%>">
-								<a class="state-default" onclick="goSearch()">查詢</a></td>
-						</tr>
+										<a class="state-default" onclick="goSearch()">查詢</a></td>
+								</tr>
+							</c:when>
+							<c:otherwise>
+								<tr>
+									<th align="right">用戶名稱：</th>
+									<td><input type="radio" name="cusSerNo" id="customerSerno"
+										value="${login.customer.serNo}" checked> <input
+										type="text" id="customerName" class="input_text"
+										value="${login.customer.name}" readonly> <a
+										class="state-default" onclick="goSearch()">查詢</a></td>
+								</tr>
+							</c:otherwise>
+						</c:choose>
 
 					</tbody>
 				</table>

@@ -23,7 +23,7 @@ function goSearch(){
 
 //新增
 function goAdd(){
-        goDetail('<%=request.getContextPath()%>/crud/apply.accountNumber.query.action','帳戶-新增');
+    goDetail('<%=request.getContextPath()%>/crud/apply.accountNumber.query.action','帳戶-新增');
 }
 
 //失效多筆資料之函式

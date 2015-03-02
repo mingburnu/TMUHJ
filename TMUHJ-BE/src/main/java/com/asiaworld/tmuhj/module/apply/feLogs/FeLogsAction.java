@@ -22,6 +22,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 
 import com.asiaworld.tmuhj.core.apply.customer.CustomerService;
+import com.asiaworld.tmuhj.core.apply.enums.Role;
 import com.asiaworld.tmuhj.core.model.DataSet;
 import com.asiaworld.tmuhj.core.model.Pager;
 import com.asiaworld.tmuhj.core.web.GenericCRUDActionLog;
@@ -73,8 +74,12 @@ public class FeLogsAction extends GenericCRUDActionLog<FeLogs> {
 		String startDate = getRequest().getParameter("start");
 		String endDate = getRequest().getParameter("end");
 		String customerName = getRequest().getParameter("customer");
+		
 		String cusSerNo = getRequest().getParameter("cusSerNo");
-
+		if(getLoginUser().getRole().equals(Role.管理員)){
+			cusSerNo=String.valueOf(getLoginUser().getCusSerNo());
+		}
+		
 		if (cusSerNo == null || !NumberUtils.isDigits(cusSerNo)) {
 			addActionError("請正確填寫機構名稱");
 		}
@@ -146,7 +151,11 @@ public class FeLogsAction extends GenericCRUDActionLog<FeLogs> {
 		String startDate = getRequest().getParameter("start");
 		String endDate = getRequest().getParameter("end");
 		String customerName = getRequest().getParameter("customer");
+		
 		String cusSerNo = getRequest().getParameter("cusSerNo");
+		if(getLoginUser().getRole().equals(Role.管理員)){
+			cusSerNo=String.valueOf(getLoginUser().getCusSerNo());
+		}
 
 		if (cusSerNo == null || !NumberUtils.isDigits(cusSerNo)
 				|| Long.parseLong(cusSerNo) == 0) {
