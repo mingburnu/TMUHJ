@@ -43,23 +43,23 @@ public class FeLogs extends GenericEntityLog {
 
 	// 用戶流水號
 	@Column(name = "cus_SerNo")
-	private long cusSerNo;
+	private Long cusSerNo;
 
 	// 帳戶流水號
 	@Column(name = "acc_SerNo")
-	private long accSerNo;
+	private Long accSerNo;
 
 	// 資料庫流水號
 	@Column(name = "dat_SerNo")
-	private long datSerNo;
+	private Long datSerNo;
 
 	// 電子書流水號
 	@Column(name = "ebk_SerNo")
-	private long ebkSerNo;
+	private Long ebkSerNo;
 
 	// 期刊流水號
 	@Column(name = "jou_SerNo")
-	private long jouSerNo;
+	private Long jouSerNo;
 
 	@Transient
 	private AccountNumber accountNumber;
@@ -112,7 +112,7 @@ public class FeLogs extends GenericEntityLog {
 	/**
 	 * @return the cusSerNo
 	 */
-	public long getCusSerNo() {
+	public Long getCusSerNo() {
 		return cusSerNo;
 	}
 
@@ -120,14 +120,14 @@ public class FeLogs extends GenericEntityLog {
 	 * @param cusSerNo
 	 *            the cusSerNo to set
 	 */
-	public void setCusSerNo(long cusSerNo) {
+	public void setCusSerNo(Long cusSerNo) {
 		this.cusSerNo = cusSerNo;
 	}
 
 	/**
 	 * @return the accSerNo
 	 */
-	public long getAccSerNo() {
+	public Long getAccSerNo() {
 		return accSerNo;
 	}
 
@@ -135,14 +135,14 @@ public class FeLogs extends GenericEntityLog {
 	 * @param accSerNo
 	 *            the accSerNo to set
 	 */
-	public void setAccSerNo(long accSerNo) {
+	public void setAccSerNo(Long accSerNo) {
 		this.accSerNo = accSerNo;
 	}
 
 	/**
 	 * @return the datSerNo
 	 */
-	public long getDatSerNo() {
+	public Long getDatSerNo() {
 		return datSerNo;
 	}
 
@@ -150,14 +150,14 @@ public class FeLogs extends GenericEntityLog {
 	 * @param datSerNo
 	 *            the datSerNo to set
 	 */
-	public void setDatSerNo(long datSerNo) {
+	public void setDatSerNo(Long datSerNo) {
 		this.datSerNo = datSerNo;
 	}
 
 	/**
 	 * @return the ebkSerNo
 	 */
-	public long getEbkSerNo() {
+	public Long getEbkSerNo() {
 		return ebkSerNo;
 	}
 
@@ -165,14 +165,14 @@ public class FeLogs extends GenericEntityLog {
 	 * @param ebkSerNo
 	 *            the ebkSerNo to set
 	 */
-	public void setEbkSerNo(long ebkSerNo) {
+	public void setEbkSerNo(Long ebkSerNo) {
 		this.ebkSerNo = ebkSerNo;
 	}
 
 	/**
 	 * @return the jouSerNo
 	 */
-	public long getJouSerNo() {
+	public Long getJouSerNo() {
 		return jouSerNo;
 	}
 
@@ -180,7 +180,7 @@ public class FeLogs extends GenericEntityLog {
 	 * @param jouSerNo
 	 *            the jouSerNo to set
 	 */
-	public void setJouSerNo(long jouSerNo) {
+	public void setJouSerNo(Long jouSerNo) {
 		this.jouSerNo = jouSerNo;
 	}
 
@@ -279,8 +279,8 @@ public class FeLogs extends GenericEntityLog {
 		// TODO Auto-generated constructor stub
 	}
 
-	public FeLogs(Act actionType, String keyword, long cusSerNo, long accSerNo,
-			long datSerNo, long ebkSerNo, long jouSerNo) {
+	public FeLogs(Act actionType, String keyword, Long cusSerNo, Long accSerNo,
+			Long datSerNo, Long ebkSerNo, Long jouSerNo) {
 		super();
 		this.actionType = actionType;
 		this.keyword = keyword;

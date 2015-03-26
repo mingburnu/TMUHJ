@@ -127,29 +127,43 @@ function goEffect(){
 
 //資料檢視
 function goView(serNo){
+	var isNum = /^\d+$/.test(serNo);
+	if (isNum && parseInt(serNo) > 0){
         var url = "<c:url value = '/'/>crud/apply.accountNumber.view.action";
         var data = 'viewSerNo='+serNo;
         goDetail(url,'帳戶-檢視',data);
+	}
 }
 
 //更新資料
 function goUpdate(serNo) {
+	var isNum = /^\d+$/.test(serNo);
+	if (isNum && parseInt(serNo) > 0){
 	goDetail('<%=request.getContextPath()%>/crud/apply.accountNumber.query.action?'+'entity.serNo='+serNo,'帳戶-修改');
+	}
 }
 
 //GoPage
 function gotoPage(page){
+	var isNum = /^\d+$/.test(page);
 	var totalPage = $("span.totalNum:eq(0)").html();
-    var recordPerPage="${ds.pager.recordPerPage}";
-    var offset=parseInt(recordPerPage)*(parseInt(page)-1);
-    if(parseInt(page) < 1){
-        page=1;
-        offset=parseInt(recordPerPage)*(parseInt(page)-1);
-    }
-    else if(parseInt(page)>parseInt(totalPage)){
-        page=totalPage;
-        offset=parseInt(recordPerPage)*(parseInt(page)-1);
-    }
+	var recordPerPage="${ds.pager.recordPerPage}";
+	var offset=parseInt(recordPerPage)*(parseInt(page)-1);
+	
+	if(!isNum){
+		page="${ds.pager.currentPage}";
+		offset=parseInt(recordPerPage)*(parseInt(page)-1);
+	} else {
+		if (parseInt(page) < 1){
+			page=1;
+			offset=parseInt(recordPerPage)*(parseInt(page)-1);
+			}		
+		
+		if (parseInt(page) > parseInt(totalPage)){
+			page=totalPage;
+			offset=parseInt(recordPerPage)*(parseInt(page)-1);
+			} 
+		}
     goMain('<c:url value = '/'/>crud/apply.accountNumber.list.action','#apply_accountNumber_list','&pager.offset='+offset+'&pager.currentPage='+page);
 }
 
@@ -183,9 +197,25 @@ function goImport(){
 						</tr>
 						<tr>
 							<td align="left"><input type="text" name="entity.userId"
-								maxlength="20" id="search" class="input_text">&nbsp;<input
-								type="text" name="entity.customer.name" maxlength="20"
-								id="search" class="input_text"></td>
+								maxlength="20" id="search" class="input_text"
+								value="<%if (request.getParameter("entity.userId") != null) {
+					out.print(request.getParameter("entity.userId"));
+				}%>">&nbsp;
+								<c:choose>
+									<c:when test="${login.role.role != '管理員' }">
+										<input type="text" name="entity.customer.name" maxlength="20"
+											id="search" class="input_text"
+											value="<%if (request.getParameter("entity.customer.name") != null) {
+							out.print(request
+									.getParameter("entity.customer.name"));
+						}%>">
+									</c:when>
+									<c:otherwise>
+										<input type="text" maxlength="20" id="search"
+											class="input_text" disabled="disabled"
+											value="${login.customer.name }">
+									</c:otherwise>
+								</c:choose></td>
 							<td align="left"><a class="state-default"
 								onclick="goSearch();">查詢</a></td>
 						</tr>
@@ -231,9 +261,13 @@ function goImport(){
 					</tr>
 					<c:forEach var="item" items="${ds.results}" varStatus="status">
 						<tr>
-							<td align="center" class="td_first" nowrap><input
-								type="checkbox" class="checkbox" name="checkItem"
-								value="${item.serNo}"></td>
+							<td align="center" class="td_first" nowrap><c:choose>
+									<c:when test="${9 eq  item.serNo }"></c:when>
+									<c:otherwise>
+										<input type="checkbox" class="checkbox" name="checkItem"
+											value="${item.serNo}">
+									</c:otherwise>
+								</c:choose></td>
 							<td>${item.userId }</td>
 							<td align="center">${item.userName }</td>
 							<td>${item.customer.name }</td>
@@ -287,9 +321,9 @@ function goImport(){
 			<div class="detail_note">
 				<div class="detail_note_title">Note</div>
 				<div class="detail_note_content">
-                <c:if test="${0 eq ds.pager.totalRecord}">
-				<span>查無資料</span>
-				</c:if>
+					<c:if test="${0 eq ds.pager.totalRecord}">
+						<span>查無資料</span>
+					</c:if>
 				</div>
 			</div>
 		</div>

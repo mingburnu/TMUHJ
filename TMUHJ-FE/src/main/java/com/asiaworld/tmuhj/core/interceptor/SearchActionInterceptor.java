@@ -75,7 +75,7 @@ public class SearchActionInterceptor extends AbstractInterceptor {
 				feLogsService.save(
 						new FeLogs(Act.綜合查詢, request.getParameter("keywords"),
 								accountNumber.getCusSerNo(), accountNumber
-										.getSerNo(), 0, 0, 0), accountNumber);
+										.getSerNo(), 0L, 0L, 0L), accountNumber);
 			}
 		}
 
@@ -95,7 +95,7 @@ public class SearchActionInterceptor extends AbstractInterceptor {
 				feLogsService.save(
 						new FeLogs(Act.項目查詢, request.getParameter("keywords"),
 								accountNumber.getCusSerNo(), accountNumber
-										.getSerNo(), 0, 0, 0), accountNumber);
+										.getSerNo(), 0L, 0L, 0L), accountNumber);
 			}
 		}
 

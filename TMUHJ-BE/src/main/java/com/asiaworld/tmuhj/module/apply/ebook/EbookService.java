@@ -39,7 +39,7 @@ public class EbookService extends GenericServiceFull<Ebook> {
 			restrictions.likeIgnoreCase("bookName", entity.getBookName(),
 					MatchMode.ANYWHERE);
 		}
-		if (entity.getIsbn() > 0) {
+		if (entity.getIsbn() != null) {
 			restrictions.eq("isbn", entity.getIsbn());
 		}
 

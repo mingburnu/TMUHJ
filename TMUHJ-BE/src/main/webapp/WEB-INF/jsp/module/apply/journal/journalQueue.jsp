@@ -23,17 +23,24 @@ $(document).ready(function() {
 });
 
 function gotoPage_detail(page) {
+	var isNum = /^\d+$/.test(page);
 	var totalPage = "${totalPage}";
 	var recordPerPage = "${ds.pager.recordPerPage}";
 	var offset = parseInt(recordPerPage) * (parseInt(page) - 1);
-	if (parseInt(page) < 1) {
-		page = 1;
+	if(!isNum){
+		page="${ds.pager.currentPage}";
 		offset=parseInt(recordPerPage)*(parseInt(page)-1);
-	} else if (parseInt(page) > parseInt(totalPage)) {
-		page = totalPage;
-		offset=parseInt(recordPerPage)*(parseInt(page)-1);
-	}
-
+	} else {
+		if (parseInt(page) < 1){
+			page=1;
+			offset=parseInt(recordPerPage)*(parseInt(page)-1);
+			}		
+		
+		if (parseInt(page) > parseInt(totalPage)){
+			page=totalPage;
+			offset=parseInt(recordPerPage)*(parseInt(page)-1);
+			} 
+		}
 	goDetail_Main('<c:url value = '/'/>crud/apply.journal.paginate.action',
 			'#apply_journal_importData', '&pager.offset='+offset+'&pager.currentPage='+page);
 }

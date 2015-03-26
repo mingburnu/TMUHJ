@@ -1,6 +1,10 @@
 package com.asiaworld.tmuhj.test;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.regex.Matcher;
@@ -9,6 +13,8 @@ import java.util.regex.Pattern;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.joda.time.LocalDateTime;
+
+import com.asiaworld.tmuhj.core.apply.enums.Role;
 
 public class Test {
 
@@ -141,12 +147,38 @@ String issn=" ";
 		System.out.println(matcher.matches());
 		
 	
-	map.clear();
+//	map.remove("Number");
 	System.out.println(map.get("Number"));
 		
 	long maxL=Long.MAX_VALUE;
 	int maxI=Integer.MAX_VALUE;
 	System.out.println(maxI+","+maxL);
+	System.out.println(NumberUtils.isDigits("000"));
 	
+	System.out.println(NumberUtils.isDigits(" 789".trim()));
+	System.out.println(StringUtils.isBlank(null));
+	System.out.println(StringUtils.isEmpty(null));
+	System.out.println(StringUtils.isBlank(""));
+	System.out.println(StringUtils.isEmpty(""));
+	System.out.println(StringUtils.isBlank(" "));
+	System.out.println(StringUtils.isEmpty(" "));
+	System.out.println(StringUtils.isBlank("　　"));
+	System.out.println(StringUtils.isEmpty("　　"));
+	System.out.println(StringUtils.isBlank(" \t \n"));
+	System.out.println(StringUtils.isEmpty(" \t \n"));
+	
+//	System.out.println(StringUtils.isNotBlank(null));
+//	System.out.println(StringUtils.isNotEmpty(null));
+//	System.out.println(StringUtils.isNotBlank(""));
+//	System.out.println(StringUtils.isNotEmpty(""));
+//	System.out.println(StringUtils.isNotBlank(" "));
+//	System.out.println(StringUtils.isNotEmpty(" "));
+//	System.out.println(StringUtils.isNotBlank("　　"));
+//	System.out.println(StringUtils.isNotEmpty("　　"));
+	List<Role> li = Arrays.asList(Role.values());
+	li.remove(0);
+	List<Role> roleList= new ArrayList<Role>(Arrays.asList(Role.values()));
+	roleList.remove(0);
+	System.out.println(roleList);
 	}
 }

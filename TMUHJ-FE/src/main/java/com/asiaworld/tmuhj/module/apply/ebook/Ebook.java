@@ -25,7 +25,7 @@ public class Ebook extends GenericEntityFull {
 
 	// ISBN
 	@Column(name = "ISBN")
-	private long isbn;
+	private Long isbn;
 
 	// 出版社
 	@Column(name = "publishname")
@@ -53,7 +53,7 @@ public class Ebook extends GenericEntityFull {
 
 	// 版本
 	@Column(name = "Version")
-	private int version;
+	private Integer version;
 
 	// 中國圖書分類碼
 	@Column(name = "cnclassbzstr")
@@ -99,7 +99,7 @@ public class Ebook extends GenericEntityFull {
 	/**
 	 * @return the isbn
 	 */
-	public long getIsbn() {
+	public Long getIsbn() {
 		return isbn;
 	}
 
@@ -107,7 +107,7 @@ public class Ebook extends GenericEntityFull {
 	 * @param issn
 	 *            the issn to set
 	 */
-	public void setIsbn(long isbn) {
+	public void setIsbn(Long isbn) {
 		this.isbn = isbn;
 	}
 
@@ -204,7 +204,7 @@ public class Ebook extends GenericEntityFull {
 	/**
 	 * @return the version
 	 */
-	public int getVersion() {
+	public Integer getVersion() {
 		return version;
 	}
 
@@ -212,7 +212,7 @@ public class Ebook extends GenericEntityFull {
 	 * @param version
 	 *            the version to set
 	 */
-	public void setVersion(int version) {
+	public void setVersion(Integer version) {
 		this.version = version;
 	}
 

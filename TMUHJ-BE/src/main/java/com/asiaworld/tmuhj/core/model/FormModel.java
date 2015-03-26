@@ -4,7 +4,7 @@ import java.io.Serializable;
 
 /**
  * 頁面控制
- * @author David Hsu
+ * @author Roderick
  * @version 2014/3/25
  */
 public class FormModel implements Serializable {

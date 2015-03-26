@@ -64,8 +64,7 @@ function goDetail(argURL, argTitle, argData) {
 		async : true,
 		cache : false,
 		error : function(XMLHttpRequest, textStatus, errorThrown) {
-			// $("#div_Detail .content > .contain").html('<div
-			// class="message">連結失敗!</div>');
+			//$("#div_Detail .content > .contain").html('<div class="message">連結失敗!</div>');
 			goAlert("結果", XMLHttpRequest.responseText);
 			closeLoading();
 		},
@@ -178,7 +177,6 @@ function goCustomers(argURL, argTitle) {
 		},
 		success : function(msg) {
 			$("#div_Customers").show();
-			UI_Resize();
 			$(window).scrollTop(0);
 			$("#div_Customers .content > .contain").html(msg);
 			closeLoading();

@@ -7,6 +7,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -14,6 +15,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
+
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -81,7 +84,7 @@ public class AccountNumberAction extends GenericCRUDActionFull<AccountNumber> {
 	private InputStream inputStream;
 
 	private String reportFile;
-
+	
 	@Override
 	public void validateSave() throws Exception {
 		// TODO Auto-generated method stub
@@ -102,20 +105,61 @@ public class AccountNumberAction extends GenericCRUDActionFull<AccountNumber> {
 
 	@Override
 	public String query() throws Exception {
-		if (getEntity().getSerNo() != null) {
-			dsCustomer.setEntity(customer);
-			dsCustomer = customerService.getByRestrictions(dsCustomer);
+		List<Role> roleList= new ArrayList<Role>(Arrays.asList(Role.values()));
+		List<Role> tempList= new ArrayList<Role>();
+		roleList.remove(roleList.size()-1);
 
-			accountNumber = accountNumberService.getBySerNo(getEntity()
-					.getSerNo());
-			setEntity(accountNumber);
+		int roleCode=roleList.indexOf(getLoginUser().getRole());
+				
+		for (int i = 0; i < roleCode; i++){
+		tempList.add(roleList.get(i));
+		}
+		
+		roleList.removeAll(tempList);
+		
+		getRequest().setAttribute("roleList", roleList);
+		
+		List<Status> statusList=new ArrayList<Status>(Arrays.asList(Status.values()));
+		getRequest().setAttribute("statusList", statusList);
+		
+		if (getLoginUser().getRole().equals(Role.管理員)){
+			customer.setSerNo(getLoginUser().getCusSerNo());
+
+		}
+		
+		dsCustomer.setEntity(customer);
+		dsCustomer = customerService.getByRestrictions(dsCustomer);
+		
+		if (getEntity().getSerNo() != null) {
+			boolean isLegalRole=false;
+			accountNumber = accountNumberService.getBySerNo(getEntity().getSerNo());
+			if(accountNumber != null){
+					if(roleList.contains(accountNumber.getRole())){
+						isLegalRole=true;
+						}
+					}
+			
+			if(isLegalRole){
+				if (getLoginUser().getRole().equals(Role.管理員)){
+					if (accountNumber.getCusSerNo().equals(getLoginUser().getCusSerNo())){
+						setEntity(accountNumber);
+						} else {
+							getResponse().setStatus(HttpServletResponse.SC_FORBIDDEN);
+							return null;
+						}
+					} else {
+						setEntity(accountNumber);
+						}
+				
+			} else {
+				getResponse().setStatus(HttpServletResponse.SC_FORBIDDEN);
+				return null;
+			}
 		} else if (getRequest().getParameter("goQueue") != null
 				&& getRequest().getParameter("goQueue").equals("yes")) {
 			getRequest().setAttribute("goQueue",
 					getRequest().getParameter("goQueue"));
-		} else {
-			dsCustomer.setEntity(customer);
-			dsCustomer = customerService.getByRestrictions(dsCustomer);
+			
 		}
 
 		return EDIT;
@@ -127,8 +171,8 @@ public class AccountNumberAction extends GenericCRUDActionFull<AccountNumber> {
 		ds.setPager(Pager.getChangedPager(
 				getRequest().getParameter("recordPerPage"), getRequest()
 						.getParameter("recordPoint"), ds.getPager()));
-		ds = accountNumberService.getByRestrictions(ds);
-
+				
+		ds = accountNumberService.getByRestrictions(ds, getLoginUser());
 		List<AccountNumber> results = ds.getResults();
 
 		int i = 0;
@@ -146,61 +190,182 @@ public class AccountNumberAction extends GenericCRUDActionFull<AccountNumber> {
 
 	@Override
 	public String save() throws Exception {
+		List<Role> roleList= new ArrayList<Role>(Arrays.asList(Role.values()));
+		List<Role> tempList= new ArrayList<Role>();
+		roleList.remove(roleList.size()-1);
+
+		int roleCode=roleList.indexOf(getLoginUser().getRole());
+				
+		for (int i = 0; i < roleCode; i++){
+		tempList.add(roleList.get(i));
+		}
+		
+		roleList.removeAll(tempList);
+		
+		boolean isLegalRole=false;
+		for (int i=0; i < roleList.size(); i++){
+			if(getRequest().getParameter("role") != null 
+					&& getRequest().getParameter("role").equals(roleList.get(i).getRole())){
+				isLegalRole=true;
+			}
+		}
+		
+		List<Status> statusList=new ArrayList<Status>(Arrays.asList(Status.values()));
+		
+		boolean isLegalStatus=false;
+		for (int i=0; i < statusList.size(); i++){
+			if(getRequest().getParameter("status") != null
+					&& getRequest().getParameter("status").equals(statusList.get(i).getStatus())){
+				isLegalStatus=true;
+			}
+		}
+		
+		if(isLegalRole){
+			getEntity().setRole(Role.valueOf(getRequest().getParameter("role")));
+		} else {
+			addActionError("角色錯誤");
+		}
+		
+		if(isLegalStatus){
+			getEntity().setStatus(Status.valueOf(getRequest().getParameter("status")));
+		} else {
+			addActionError("狀態錯誤");
+		}
+				
 		if (getEntity().getUserId() == null
 				|| getEntity().getUserId().trim().equals("")) {
 			addActionError("用戶代碼不得空白");
-		}
-
+			}
+			
 		if (getEntity().getUserPw() == null
 				|| getEntity().getUserPw().trim().equals("")) {
 			addActionError("用戶密碼不得空白");
-		}
-
+			}
+			
 		if (getEntity().getUserName() == null
 				|| getEntity().getUserName().trim().equals("")) {
 			addActionError("用戶姓名不得空白");
-		}
+			}
 
-		if (getEntity().getCusSerNo() < 1) {
+		if (getRequest().getParameter("cusSerNo") == null
+				|| !NumberUtils.isDigits(getRequest().getParameter("cusSerNo"))
+				|| Long.parseLong(getRequest().getParameter("cusSerNo")) < 1
+				|| customerService.getBySerNo(Long.parseLong(getRequest().getParameter("cusSerNo"))) == null){
 			addActionError("用戶名稱必選");
-		}
+			} else {
+				getEntity().setCusSerNo(Long.parseLong(getRequest().getParameter("cusSerNo")));
+				
+				if(getLoginUser().getRole().equals(Role.管理員)){
+					if (getLoginUser().getCusSerNo() != getEntity().getCusSerNo()){
+						addActionError("用戶名稱不正確");
+					}
+				}
+			}
 
 		if (getEntity().getUserId() != null
 				&& !getEntity().getUserId().trim().equals("")) {
 			if (accountNumberService.userIdIsExist(getEntity())) {
 				addActionError("用戶代碼已存在");
-			}
+				}
 
 			if (getEntity().getUserId().trim().equals("guest")) {
 				addActionError("不可使用guest作為用戶代碼");
+				}
 			}
-		}
 
 		if (!hasActionErrors()) {
 			accountNumber = accountNumberService.save(getEntity(),
 					getLoginUser());
-			accountNumber.setCustomer(customerService.getBySerNo(accountNumber
-					.getCusSerNo()));
+			accountNumber.setCustomer(customerService.getBySerNo(accountNumber.getCusSerNo()));
 			setEntity(accountNumber);
 			return VIEW;
 		} else {
+			getRequest().setAttribute("roleList", roleList);
+			getRequest().setAttribute("statusList", statusList);
 			setEntity(getEntity());
+			if (getLoginUser().getRole().equals(Role.管理員)){
+				customer.setSerNo(getLoginUser().getCusSerNo());
+				
+			}
+			
 			dsCustomer.setEntity(customer);
 			dsCustomer = customerService.getByRestrictions(dsCustomer);
+			setEntity(getEntity());
 			return EDIT;
 		}
 	}
 
 	@Override
 	public String update() throws Exception {
+		List<Status> statusList=new ArrayList<Status>(Arrays.asList(Status.values()));
+		List<Role> roleList= new ArrayList<Role>(Arrays.asList(Role.values()));
+		List<Role> tempList= new ArrayList<Role>();
+		roleList.remove(roleList.size()-1);
+
+		int roleCode=roleList.indexOf(getLoginUser().getRole());
+				
+		for (int i = 0; i < roleCode; i++){
+		tempList.add(roleList.get(i));
+		}
+		
+		roleList.removeAll(tempList);
+		
+		if (!roleList.contains(accountNumberService.getBySerNo(getEntity().getSerNo()).getRole())){
+			addActionError("權限不足");
+		}
+		
+		if (!hasActionErrors()) {
+		boolean isLegalRole=false;
+		for (int i=0; i < roleList.size(); i++){
+			if(getRequest().getParameter("role") != null 
+					&& getRequest().getParameter("role").equals(roleList.get(i).getRole())){
+				isLegalRole=true;
+			}
+		}
+		
+		
+		
+		boolean isLegalStatus=false;
+		for (int i=0; i < statusList.size(); i++){
+			if(getRequest().getParameter("status") != null
+					&& getRequest().getParameter("status").equals(statusList.get(i).getStatus())){
+				isLegalStatus=true;
+			}
+		}
+		
+		if(isLegalRole){
+			getEntity().setRole(Role.valueOf(getRequest().getParameter("role")));
+		} else {
+			addActionError("角色錯誤");
+		}
+		
+		if(isLegalStatus){
+			getEntity().setStatus(Status.valueOf(getRequest().getParameter("status")));
+		} else {
+			addActionError("狀態錯誤");
+		}
+		
 		if (getEntity().getUserName() == null
 				|| getEntity().getUserName().trim().equals("")) {
 			addActionError("用戶姓名不得空白");
 		}
 
-		if (getEntity().getCusSerNo() < 1) {
+		if (getRequest().getParameter("cusSerNo") == null
+				|| !NumberUtils.isDigits(getRequest().getParameter("cusSerNo"))
+				|| Long.parseLong(getRequest().getParameter("cusSerNo")) < 1
+				|| customerService.getBySerNo(Long.parseLong(getRequest().getParameter("cusSerNo"))) == null){
 			addActionError("用戶名稱必選");
+			} else {
+				getEntity().setCusSerNo(Long.parseLong(getRequest().getParameter("cusSerNo")));
+				
+				if(getLoginUser().getRole().equals(Role.管理員)){
+					if (getLoginUser().getCusSerNo() != getEntity().getCusSerNo()){
+						addActionError("用戶名稱不正確");
+					}
+				}
+			}
 		}
+		
 		if (!hasActionErrors()) {
 			if (getEntity().getUserPw() == null
 					|| getEntity().getUserPw().trim().equals("")) {
@@ -215,8 +380,16 @@ public class AccountNumberAction extends GenericCRUDActionFull<AccountNumber> {
 			addActionMessage("修改成功");
 			return VIEW;
 		} else {
+			getRequest().setAttribute("roleList", roleList);
+			getRequest().setAttribute("statusList", statusList);
 			getEntity().setSerNo(getEntity().getSerNo());
 			getEntity().setUserId(accountNumberService.getBySerNo(getEntity().getSerNo()).getUserId());
+			
+			if (getLoginUser().getRole().equals(Role.管理員)){
+				customer.setSerNo(getLoginUser().getCusSerNo());
+				
+			}
+			
 			dsCustomer.setEntity(customer);
 			dsCustomer = customerService.getByRestrictions(dsCustomer);
 			return EDIT;
@@ -242,6 +415,35 @@ public class AccountNumberAction extends GenericCRUDActionFull<AccountNumber> {
 				i++;
 			}
 		}
+		
+		if(!hasActionErrors()) {
+			List<Role> roleList=new ArrayList<Role>(Arrays.asList(Role.values()));
+			List<Role> tempList= new ArrayList<Role>();
+
+			roleList.remove(roleList.size()-1);
+
+			int roleCode=roleList.indexOf(getLoginUser().getRole());
+					
+			for (int i = 0; i < roleCode; i++){
+			tempList.add(roleList.get(i));
+			}
+			
+			roleList.removeAll(tempList);
+			
+			for(int j = 0; j < checkItem.length; j++){
+				boolean isLegalRole= false;
+				accountNumber=accountNumberService.getBySerNo(Long.parseLong(checkItem[j]));
+				if(accountNumber != null 
+						&& roleList.contains(accountNumber.getRole())){
+					isLegalRole = true;
+					}
+				
+				if(!isLegalRole){
+					addActionError(checkItem[j] + "權限不可變更");
+				}
+				
+			}
+		}
 
 		if (!hasActionErrors()) {
 			int j = 0;
@@ -251,9 +453,7 @@ public class AccountNumberAction extends GenericCRUDActionFull<AccountNumber> {
 					accountNumber = accountNumberService.getBySerNo(Long
 							.parseLong(checkItem[j]));
 					accountNumber.setStatus(Status.不生效);
-					accountNumberService.update(accountNumberService
-							.getBySerNo(Long.parseLong(checkItem[j])),
-							accountNumber);
+					accountNumberService.update(accountNumber, getLoginUser());
 				}
 				j++;
 			}
@@ -276,7 +476,7 @@ public class AccountNumberAction extends GenericCRUDActionFull<AccountNumber> {
 			return LIST;
 		} else {
 			DataSet<AccountNumber> ds = accountNumberService
-					.getByRestrictions(initDataSet());
+					.getByRestrictions(initDataSet(), getLoginUser());
 			List<AccountNumber> results = ds.getResults();
 
 			int i = 0;
@@ -307,6 +507,35 @@ public class AccountNumberAction extends GenericCRUDActionFull<AccountNumber> {
 				i++;
 			}
 		}
+		
+		if(!hasActionErrors()) {
+			List<Role> roleList=new ArrayList<Role>(Arrays.asList(Role.values()));
+			List<Role> tempList= new ArrayList<Role>();
+
+			roleList.remove(roleList.size()-1);
+
+			int roleCode=roleList.indexOf(getLoginUser().getRole());
+					
+			for (int i = 0; i < roleCode; i++){
+			tempList.add(roleList.get(i));
+			}
+			
+			roleList.removeAll(tempList);
+			
+			for(int j = 0; j < checkItem.length; j++){
+				boolean isLegalRole= false;
+				accountNumber=accountNumberService.getBySerNo(Long.parseLong(checkItem[j]));
+				if(accountNumber != null 
+						&& roleList.contains(accountNumber.getRole())){
+					isLegalRole = true;
+					}
+				
+				if(!isLegalRole){
+					addActionError(checkItem[j] + "權限不可變更");
+				}
+				
+			}
+		}
 
 		if (!hasActionErrors()) {
 			int j = 0;
@@ -316,9 +545,7 @@ public class AccountNumberAction extends GenericCRUDActionFull<AccountNumber> {
 					accountNumber = accountNumberService.getBySerNo(Long
 							.parseLong(checkItem[j]));
 					accountNumber.setStatus(Status.生效);
-					accountNumberService.update(accountNumberService
-							.getBySerNo(Long.parseLong(checkItem[j])),
-							accountNumber);
+					accountNumberService.update(accountNumber, getLoginUser());
 				}
 				j++;
 			}
@@ -344,7 +571,7 @@ public class AccountNumberAction extends GenericCRUDActionFull<AccountNumber> {
 			return LIST;
 		} else {
 			DataSet<AccountNumber> ds = accountNumberService
-					.getByRestrictions(initDataSet());
+					.getByRestrictions(initDataSet(), getLoginUser());
 			List<AccountNumber> results = ds.getResults();
 
 			int i = 0;
@@ -363,14 +590,19 @@ public class AccountNumberAction extends GenericCRUDActionFull<AccountNumber> {
 	}
 
 	public String view() throws Exception {
-		accountNumber = accountNumberService.getBySerNo(Long
-				.parseLong(getRequest().getParameter("viewSerNo")));
-		accountNumber.setCustomer(customerService.getBySerNo(accountNumber
-				.getCusSerNo()));
-		setEntity(accountNumber);
-		getRequest().setAttribute("viewSerNo", getRequest().getParameter("viewSerNo"));
+		getRequest().setAttribute("viewSerNo", getRequest().getParameter("viewSerNo"));	
+		
+		if (getRequest().getParameter("viewSerNo") != null
+				&& NumberUtils.isDigits(getRequest().getParameter("viewSerNo"))){
+		
+			accountNumber = accountNumberService.getBySerNo(Long.parseLong(getRequest().getParameter("viewSerNo")));
+			if (accountNumber != null){
+				accountNumber.setCustomer(customerService.getBySerNo(accountNumber.getCusSerNo()));
+				setEntity(accountNumber);
+				}
+			}
 		return VIEW;
-	}
+		}
 
 	public String queue() throws Exception {
 		if (file == null || !file.isFile()) {
@@ -392,7 +624,7 @@ public class AccountNumberAction extends GenericCRUDActionFull<AccountNumber> {
 
 			// 保存列名
 			List<String> cellNames = new ArrayList<String>();
-			String[] rowTitles = new String[5];
+			String[] rowTitles = new String[6];
 			int n = 0;
 			while (n < rowTitles.length) {
 				if (firstRow.getCell(n) == null) {
@@ -446,7 +678,7 @@ public class AccountNumberAction extends GenericCRUDActionFull<AccountNumber> {
 			for (int i = 1; i <= sheet.getLastRowNum(); i++) {
 				Row row = sheet.getRow(i);
 
-				String[] rowValues = new String[5];
+				String[] rowValues = new String[6];
 				int k = 0;
 				while (k < rowValues.length) {
 					if (row.getCell(k) == null) {
@@ -495,24 +727,50 @@ public class AccountNumberAction extends GenericCRUDActionFull<AccountNumber> {
 				}
 
 				String role = "";
-				if (rowValues[4].trim().equals("")) {
-					role = "不明";
-				} else if (rowValues[4].trim().equals("系統管理員")) {
-					role = "系統管理員";
-				} else if (rowValues[4].trim().equals("維護人員")) {
-					role = "維護人員";
-				} else if (rowValues[4].trim().equals("管理員")) {
-					role = "管理員";
-				} else if (rowValues[4].trim().equals("使用者")) {
-					role = "使用者";
-				} else {
-					role = "不明";
+				List<Role> roleList=new ArrayList<Role>(Arrays.asList(Role.values()));
+				List<Role> tempList= new ArrayList<Role>();
+				for (int j=0; j < roleList.size(); j++){
+					if (rowValues[4].trim().equals(roleList.get(j).getRole())){
+						role = roleList.get(j).getRole();
+					}
 				}
 
+				if (role.equals("")){
+					role = Role.不明.getRole();
+				}
+				
+				int roleCode=roleList.indexOf(getLoginUser().getRole());
+				
+				for (int j = 0; j < roleCode; j++){
+				tempList.add(roleList.get(j));
+				}
+				
+				roleList.removeAll(tempList);
+				
+				boolean isLegalRole=false;
+				roleList.remove(roleList.size()-1);
+				for (int j=0; j < roleList.size(); j++){
+					if(role.equals(roleList.get(j).getRole())){
+						isLegalRole=true;
+					}
+				}
+
+				List<Status> statusList=new ArrayList<Status>(Arrays.asList(Status.values()));
+				String status="";
+				for (int j=0; j < statusList.size(); j++){
+					if(rowValues[5].trim().equals(statusList.get(j).getStatus())){
+						status = statusList.get(j).getStatus();
+					}
+				}
+				
+				if(status.equals("")){
+					status = Status.審核中.getStatus();
+				}
+				
 				accountNumber = new AccountNumber(
 						customerService.getCusSerNoByName(rowValues[3].trim()),
 						rowValues[0].trim(), rowValues[1].trim(),
-						rowValues[2].trim(), Role.valueOf(role), Status.審核中,
+						rowValues[2].trim(), Role.valueOf(role), Status.valueOf(status),
 						null, "");
 
 				long serNo = accountNumberService
@@ -522,22 +780,42 @@ public class AccountNumberAction extends GenericCRUDActionFull<AccountNumber> {
 					customer.setName(rowValues[3].trim());
 					accountNumber.setCustomer(customer);
 					accountNumber.setExistStatus("已存在");
-				} else {
-					if (accountNumber.getUserId().isEmpty()
-							|| accountNumber.getUserPw().isEmpty()
-							|| accountNumber.getCusSerNo() == 0
-							|| accountNumber.getRole().equals(Role.不明)) {
-						customer = new Customer();
-						customer.setName(rowValues[3].trim());
-						accountNumber.setCustomer(customer);
-						accountNumber.setExistStatus("資料錯誤");
+				} else {						
+					if(getLoginUser().getRole().equals(Role.管理員)){
+						if (accountNumber.getUserId().isEmpty()
+								|| accountNumber.getUserPw().isEmpty()
+								|| accountNumber.getCusSerNo() == 0
+								|| !isLegalRole
+								|| !getLoginUser().getCusSerNo().equals(accountNumber.getCusSerNo())) {
+							customer = new Customer();
+							customer.setName(rowValues[3].trim());
+							accountNumber.setCustomer(customer);
+							accountNumber.setExistStatus("資料錯誤");
+							} else {
+								customer = new Customer();
+								customer.setName(rowValues[3].trim());
+								accountNumber.setCustomer(customer);
+								accountNumber.setExistStatus("正常");			
+								
+							}
 					} else {
-						customer = new Customer();
-						customer.setName(rowValues[3].trim());
-						accountNumber.setCustomer(customer);
-						accountNumber.setExistStatus("正常");
+						if (accountNumber.getUserId().isEmpty()
+								|| accountNumber.getUserPw().isEmpty()
+								|| accountNumber.getCusSerNo() == 0
+								|| !isLegalRole) {
+							customer = new Customer();
+							customer.setName(rowValues[3].trim());
+							accountNumber.setCustomer(customer);
+							accountNumber.setExistStatus("資料錯誤");
+							} else {
+								customer = new Customer();
+								customer.setName(rowValues[3].trim());
+								accountNumber.setCustomer(customer);
+								accountNumber.setExistStatus("正常");			
+								
+							}
+						}
 					}
-				}
 
 				originalData.add(accountNumber);
 
@@ -600,7 +878,13 @@ public class AccountNumberAction extends GenericCRUDActionFull<AccountNumber> {
 				getRequest().getParameter("recordPerPage"), getRequest()
 						.getParameter("recordPoint"), ds.getPager()));
 
-		ds.getPager().setTotalRecord((long) importList.size());
+		if (importList == null){
+			return null;
+		} else {
+			ds.getPager().setTotalRecord((long) importList.size());
+			
+		}
+		
 		int first = ds.getPager().getRecordPerPage()
 				* (ds.getPager().getCurrentPage() - 1);
 		int last = first + ds.getPager().getRecordPerPage();
@@ -707,10 +991,10 @@ public class AccountNumberAction extends GenericCRUDActionFull<AccountNumber> {
 		// This data needs to be written (Object[])
 		Map<String, Object[]> empinfo = new LinkedHashMap<String, Object[]>();
 		empinfo.put("1", new Object[] { "userID/使用者", "userPW/使用者密碼",
-				"userName/姓名", "role/角色", "fk_name/用戶名稱", "status/狀態" });
+				"userName/姓名", "fk_name/用戶名稱", "role/角色", "status/狀態" });
 
-		empinfo.put("2", new Object[] { "ndmc", "ndmc", "國防醫學中心", "管理員",
-				"國防醫學中心", "生效" });
+		empinfo.put("2", new Object[] { "cdc", "cdc", "XXX","疾病管制局", "管理員",
+				 "生效" });
 
 		// Iterate over data and write to sheet
 		Set<String> keyid = empinfo.keySet();
@@ -892,5 +1176,4 @@ public class AccountNumberAction extends GenericCRUDActionFull<AccountNumber> {
 	public void setReportFile(String reportFile) {
 		this.reportFile = reportFile;
 	}
-
 }

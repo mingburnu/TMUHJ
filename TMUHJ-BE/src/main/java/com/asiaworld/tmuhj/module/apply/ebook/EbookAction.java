@@ -7,6 +7,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -15,6 +16,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
@@ -108,10 +110,19 @@ public class EbookAction extends GenericCRUDActionFull<Ebook> {
 
 	@Override
 	public String query() throws Exception {
+		List<Category> categoryList=new ArrayList<Category>(Arrays.asList(Category.values()));
+		categoryList.remove(categoryList.size()-1);
+		getRequest().setAttribute("categoryList", categoryList);
+		
+		List<Type> typeList=new ArrayList<Type>(Arrays.asList(Type.values()));
+		getRequest().setAttribute("typeList", typeList);
+		
 		getRequest().setAttribute("allCustomers",
 				customerService.getAllCustomers());
 		if (getEntity().getSerNo() != null) {
 			ebook = ebookService.getBySerNo(getEntity().getSerNo());
+			
+			if(ebook != null){
 			Iterator<?> iterator = resourcesUnionService
 					.getResourcesUnionsByObj(getEntity(), Ebook.class)
 					.iterator();
@@ -121,16 +132,18 @@ public class EbookAction extends GenericCRUDActionFull<Ebook> {
 			long resourcesBuyersSerNo = 0;
 			while (iterator.hasNext()) {
 				resourcesUnion = (ResourcesUnion) iterator.next();
-				customers.add(customerService.getBySerNo(resourcesUnion
-						.getCusSerNo()));
+				customer = customerService.getBySerNo(resourcesUnion.getCusSerNo());
+				if (customer != null){
+				customers.add(customer);
+				}
 				resourcesBuyersSerNo = resourcesUnion.getResSerNo();
 			}
 
 			resourcesBuyers = resourcesBuyersService
 					.getBySerNo(resourcesBuyersSerNo);
 			ebook.setCustomers(customers);
+			}
 			setEntity(ebook);
-			log.debug(resourcesBuyers);
 		} else if (getRequest().getParameter("goQueue") != null
 				&& getRequest().getParameter("goQueue").equals("yes")) {
 			getRequest().setAttribute("goQueue",
@@ -148,6 +161,16 @@ public class EbookAction extends GenericCRUDActionFull<Ebook> {
 		getRequest()
 				.setAttribute("option", getRequest().getParameter("option"));
 
+		if(getRequest().getParameter("isbn") != null 
+				&& !getRequest().getParameter("isbn").trim().equals("")){
+			if(!NumberUtils.isDigits(getRequest().getParameter("isbn"))){
+				log.info(getRequest().getParameter("isbn"));
+				getEntity().setIsbn(0L);
+				} else {
+				getEntity().setIsbn(Long.parseLong(getRequest().getParameter("isbn")));
+				}
+		}
+		
 		DataSet<Ebook> ds = initDataSet();
 		ds.setPager(Pager.getChangedPager(
 				getRequest().getParameter("recordPerPage"), getRequest()
@@ -168,21 +191,47 @@ public class EbookAction extends GenericCRUDActionFull<Ebook> {
 		ds.setResults(results);
 		setDs(ds);
 		return LIST;
-	}
+		}
 
 	@Override
 	public String save() throws Exception {
-		if (getEntity().getBookName().trim().equals("")
-				|| getEntity().getBookName() == null) {
+		List<Category> categoryList=new ArrayList<Category>(Arrays.asList(Category.values()));
+		categoryList.remove(categoryList.size()-1);
+				
+		List<Type> typeList=new ArrayList<Type>(Arrays.asList(Type.values()));
+		
+		if (StringUtils.isBlank(getEntity().getBookName())) {
 			addActionError("書名不得空白");
 		}
 
-		if (getEntity().getIsbn() <= 0) {
-			addActionError("ISBN必須填寫");
+		if (StringUtils.isBlank(getRequest().getParameter("isbn")) || 
+				!NumberUtils.isDigits(getRequest().getParameter("isbn").trim())) {
+			addActionError("ISBN必須填寫數字");
 		} else {
+			getEntity().setIsbn(Long.parseLong(getRequest().getParameter("isbn").trim()));
 			if (!isIsbn(getEntity().getIsbn())) {
 				addActionError("ISBN不正確");
+			} else {
+				if (ebookService.getEbkSerNoByIsbn(getEntity().getIsbn()) != 0){
+					addActionError("ISBN不可重複");
+				}
+				
 			}
+			
+		}
+		
+		if (StringUtils.isNotBlank(getEntity().getCnClassBzStr())){
+			if(!NumberUtils.isDigits(getEntity().getCnClassBzStr()) 
+					|| getEntity().getCnClassBzStr().length() != 3){
+				addActionError("中國圖書分類碼不正確");
+			}			
+		}
+		
+		if (StringUtils.isNotBlank(getEntity().getBookInfoIntegral())){
+			if(!NumberUtils.isDigits(getEntity().getBookInfoIntegral()) 
+					|| getEntity().getBookInfoIntegral().length() != 3){
+				addActionError("美國國家圖書館類碼不正確");
+			}			
 		}
 
 		if (cusSerNo == null || cusSerNo.length == 0) {
@@ -191,32 +240,41 @@ public class EbookAction extends GenericCRUDActionFull<Ebook> {
 			int i = 0;
 			while (i < cusSerNo.length) {
 				if (!NumberUtils.isDigits(String.valueOf(cusSerNo[i]))
-						|| Long.parseLong(cusSerNo[i]) < 1) {
+						|| Long.parseLong(cusSerNo[i]) < 1
+						|| customerService.getBySerNo(Long.parseLong(cusSerNo[i])) == null) {
 					addActionError(cusSerNo[i] + "為不可利用的流水號");
 				}
 				i++;
 			}
 		}
 
-		if (getRequest().getParameter("resourcesBuyers.rCategory")!=null){
-			if (!getRequest().getParameter("resourcesBuyers.rCategory").equals("買斷")
-					&& !getRequest().getParameter("resourcesBuyers.rCategory").equals("租貸")
-					&& !getRequest().getParameter("resourcesBuyers.rCategory").equals("未註明")){
-				addActionError("資源類型錯誤");
-				}
-			} else {
-				addActionError("資源類型錯誤");
+		boolean isLegalCategory=false;
+		for (int i=0; i < categoryList.size(); i++){
+			if(getRequest().getParameter("resourcesBuyers.rCategory") != null
+					&& getRequest().getParameter("resourcesBuyers.rCategory").equals(categoryList.get(i).getCategory())){
+				isLegalCategory=true;
 			}
+		}
 		
-		if (getRequest().getParameter("resourcesBuyers.rCategory")!=null){
-			if (!getRequest().getParameter("resourcesBuyers.rType").equals("電子書")
-					&& !getRequest().getParameter("resourcesBuyers.rType").equals("期刊")
-					&& !getRequest().getParameter("resourcesBuyers.rType").equals("資料庫")) {
-				addActionError("資源種類錯誤");
-				} 
-			} else {
-				addActionError("資源種類錯誤");			
+		if(isLegalCategory){
+			getRequest().setAttribute("rCategory", getRequest().getParameter("resourcesBuyers.rCategory"));
+		} else {
+			addActionError("資源類型錯誤");
+		}
+		
+		boolean isLegalType=false;
+		for (int i=0; i < categoryList.size(); i++){
+			if(getRequest().getParameter("resourcesBuyers.rType") != null
+					&& getRequest().getParameter("resourcesBuyers.rType").equals(typeList.get(i).getType())){
+				isLegalType=true;
 			}
+		}
+		
+		if(isLegalType){
+			getRequest().setAttribute("rType", getRequest().getParameter("resourcesBuyers.rType"));
+		} else {
+			addActionError("資源種類錯誤");
+		}
 
 		if (!hasActionErrors()) {
 			ebook = ebookService.save(getEntity(), getLoginUser());
@@ -237,7 +295,7 @@ public class EbookAction extends GenericCRUDActionFull<Ebook> {
 			while (i < cusSerNo.length) {
 				resourcesUnionService.save(new ResourcesUnion(Long.parseLong(cusSerNo[i]),
 								resourcesBuyers.getSerNo(), ebook.getSerNo(),
-								0, 0), getLoginUser());
+								0L, 0L), getLoginUser());
 
 				i++;
 			}
@@ -262,22 +320,12 @@ public class EbookAction extends GenericCRUDActionFull<Ebook> {
 			setEntity(ebook);
 			return VIEW;
 		} else {
+			getRequest().setAttribute("categoryList", categoryList);
+			getRequest().setAttribute("typeList", typeList);
 			getRequest().setAttribute("allCustomers",
 					customerService.getAllCustomers());
-
-			if (getRequest().getParameter("resourcesBuyers.rCategory") != null
-					|| !getRequest().getParameter("resourcesBuyers.rCategory")
-							.equals("")) {
-				getRequest().setAttribute("rCategory",
-						getRequest().getParameter("resourcesBuyers.rCategory"));
-			}
-
-			if (getRequest().getParameter("resourcesBuyers.rType") != null
-					|| !getRequest().getParameter("resourcesBuyers.rCategory")
-							.equals("")) {
-				getRequest().setAttribute("rType",
-						getRequest().getParameter("resourcesBuyers.rType"));
-			}
+			
+			getRequest().setAttribute("isbn", getRequest().getParameter("isbn"));
 
 			List<Customer> customers = new ArrayList<Customer>();
 			if (cusSerNo != null && cusSerNo.length != 0) {
@@ -298,17 +346,42 @@ public class EbookAction extends GenericCRUDActionFull<Ebook> {
 
 	@Override
 	public String update() throws Exception {
-		if (getEntity().getBookName().trim().equals("")
-				|| getEntity().getBookName() == null) {
+		List<Category> categoryList=new ArrayList<Category>(Arrays.asList(Category.values()));
+		categoryList.remove(categoryList.size()-1);
+				
+		List<Type> typeList=new ArrayList<Type>(Arrays.asList(Type.values()));
+		
+		if (StringUtils.isBlank(getEntity().getBookName())) {
 			addActionError("書名不得空白");
 		}
 
-		if (getEntity().getIsbn() <= 0) {
-			addActionError("ISBN必須填寫");
+		if (StringUtils.isBlank(getRequest().getParameter("isbn")) || 
+				!NumberUtils.isDigits(getRequest().getParameter("isbn").trim())) {
+			addActionError("ISBN必須填寫數字");
 		} else {
+			getEntity().setIsbn(Long.parseLong(getRequest().getParameter("isbn").trim()));
 			if (!isIsbn(getEntity().getIsbn())) {
 				addActionError("ISBN不正確");
+			} else {
+				long ebkSerNo = ebookService.getEbkSerNoByIsbn(getEntity().getIsbn());
+				if (ebkSerNo != 0 && ebkSerNo != getEntity().getSerNo()){
+					addActionError("ISBN不可重複");
+				}
 			}
+		}
+		
+		if (StringUtils.isNotBlank(getEntity().getCnClassBzStr())){
+			if(!NumberUtils.isDigits(getEntity().getCnClassBzStr()) 
+					|| getEntity().getCnClassBzStr().length() != 3){
+				addActionError("中國圖書分類碼不正確");
+			}			
+		}
+		
+		if (StringUtils.isNotBlank(getEntity().getBookInfoIntegral())){
+			if(!NumberUtils.isDigits(getEntity().getBookInfoIntegral()) 
+					|| getEntity().getBookInfoIntegral().length() != 3){
+				addActionError("美國國家圖書館類碼不正確");
+			}			
 		}
 
 		if (cusSerNo == null || cusSerNo.length == 0) {
@@ -317,32 +390,41 @@ public class EbookAction extends GenericCRUDActionFull<Ebook> {
 			int i = 0;
 			while (i < cusSerNo.length) {
 				if (!NumberUtils.isDigits(String.valueOf(cusSerNo[i]))
-						|| Long.parseLong(cusSerNo[i]) < 1) {
+						|| Long.parseLong(cusSerNo[i]) < 1
+						|| customerService.getBySerNo(Long.parseLong(cusSerNo[i])) == null) {
 					addActionError(cusSerNo[i] + "為不可利用的流水號");
 				}
 				i++;
 			}
 		}
 
-		if (getRequest().getParameter("resourcesBuyers.rCategory")!=null){
-			if (!getRequest().getParameter("resourcesBuyers.rCategory").equals("買斷")
-					&& !getRequest().getParameter("resourcesBuyers.rCategory").equals("租貸")
-					&& !getRequest().getParameter("resourcesBuyers.rCategory").equals("未註明")){
-				addActionError("資源類型錯誤");
-				}
-			} else {
-				addActionError("資源類型錯誤");
+		boolean isLegalCategory=false;
+		for (int i=0; i < categoryList.size(); i++){
+			if(getRequest().getParameter("resourcesBuyers.rCategory") != null
+					&& getRequest().getParameter("resourcesBuyers.rCategory").equals(categoryList.get(i).getCategory())){
+				isLegalCategory=true;
 			}
+		}
 		
-		if (getRequest().getParameter("resourcesBuyers.rCategory")!=null){
-			if (!getRequest().getParameter("resourcesBuyers.rType").equals("電子書")
-					&& !getRequest().getParameter("resourcesBuyers.rType").equals("期刊")
-					&& !getRequest().getParameter("resourcesBuyers.rType").equals("資料庫")) {
-				addActionError("資源種類錯誤");
-				} 
-			} else {
-				addActionError("資源種類錯誤");			
+		if(isLegalCategory){
+			getRequest().setAttribute("rCategory", getRequest().getParameter("resourcesBuyers.rCategory"));
+		} else {
+			addActionError("資源類型錯誤");
+		}
+		
+		boolean isLegalType=false;
+		for (int i=0; i < categoryList.size(); i++){
+			if(getRequest().getParameter("resourcesBuyers.rType") != null
+					&& getRequest().getParameter("resourcesBuyers.rType").equals(typeList.get(i).getType())){
+				isLegalType=true;
 			}
+		}
+		
+		if(isLegalType){
+			getRequest().setAttribute("rType", getRequest().getParameter("resourcesBuyers.rType"));
+		} else {
+			addActionError("資源種類錯誤");
+		}
 
 		if (!hasActionErrors()) {
 			ebook = ebookService.update(getEntity(), getLoginUser());
@@ -389,7 +471,7 @@ public class EbookAction extends GenericCRUDActionFull<Ebook> {
 						Long.parseLong(cusSerNo[i]))) {
 					resourcesUnionService.save(new ResourcesUnion(Long.parseLong(cusSerNo[i]),
 									resourcesBuyers.getSerNo(), ebook
-											.getSerNo(), 0, 0), getLoginUser());
+											.getSerNo(), 0L, 0L), getLoginUser());
 				}
 
 				i++;
@@ -415,22 +497,12 @@ public class EbookAction extends GenericCRUDActionFull<Ebook> {
 			setEntity(ebook);
 			return VIEW;
 		} else {
+			getRequest().setAttribute("typeList", typeList);
+			getRequest().setAttribute("categoryList", categoryList);
 			getRequest().setAttribute("allCustomers",
 					customerService.getAllCustomers());
-
-			if (getRequest().getParameter("resourcesBuyers.rCategory") != null
-					|| !getRequest().getParameter("resourcesBuyers.rCategory")
-							.equals("")) {
-				getRequest().setAttribute("rCategory",
-						getRequest().getParameter("resourcesBuyers.rCategory"));
-			}
-
-			if (getRequest().getParameter("resourcesBuyers.rType") != null
-					|| !getRequest().getParameter("resourcesBuyers.rCategory")
-							.equals("")) {
-				getRequest().setAttribute("rType",
-						getRequest().getParameter("resourcesBuyers.rType"));
-			}
+			
+			getRequest().setAttribute("isbn", getRequest().getParameter("isbn"));
 
 			List<Customer> customers = new ArrayList<Customer>();
 			if (cusSerNo != null && cusSerNo.length != 0) {
@@ -457,10 +529,23 @@ public class EbookAction extends GenericCRUDActionFull<Ebook> {
 	}
 
 	public String view() throws NumberFormatException, Exception {
-		ebook = ebookService.getBySerNo(Long.parseLong(getRequest()
-				.getParameter("viewSerNo")));
-		resourcesUnion = resourcesUnionService.getByObjSerNo(ebook.getSerNo(),
-				Ebook.class);
+		getRequest().setAttribute("viewSerNo", getRequest().getParameter("viewSerNo"));
+		
+		if (getRequest().getParameter("viewSerNo") == null 
+				|| !NumberUtils.isDigits(getRequest().getParameter("viewSerNo"))){
+			addActionError("流水號不正確");
+		} else {
+			ebook = ebookService.getBySerNo(Long.parseLong(getRequest()
+					.getParameter("viewSerNo")));
+			if(ebook == null){
+				addActionError("電子書不存在");
+				} else {
+					resourcesUnion = resourcesUnionService.getByObjSerNo(
+							ebook.getSerNo(), Ebook.class);
+					}
+			}
+		
+		if(!hasActionErrors()){
 		ebook.setResourcesBuyers(resourcesBuyersService
 				.getBySerNo(resourcesUnion.getResSerNo()));
 
@@ -477,7 +562,7 @@ public class EbookAction extends GenericCRUDActionFull<Ebook> {
 
 		ebook.setCustomers(customers);
 		setEntity(ebook);
-		getRequest().setAttribute("viewSerNo", getRequest().getParameter("viewSerNo"));
+		}
 		return VIEW;
 	}
 
@@ -678,44 +763,80 @@ public class EbookAction extends GenericCRUDActionFull<Ebook> {
 					k++;
 				}
 
+				List<Category> categoryList=new ArrayList<Category>(Arrays.asList(Category.values()));
+				categoryList.remove(categoryList.size()-1);
+				
 				String category = "";
-				if (rowValues[11].equals("")) {
-					category = "未註明";
-				} else if (rowValues[11].equals("買斷")
-						|| rowValues[11].contains("買斷")) {
-					category = "買斷";
-				} else if (rowValues[11].equals("租貸")
-						|| rowValues[11].contains("租")) {
-					category = "租貸";
+				if(rowValues[13] == null ||
+						rowValues[13].trim().equals("")){
+					category = Category.未註明.getCategory();
 				} else {
-					category = "不明";
+					boolean isLegalCategory=false;
+					for (int j=0; j < categoryList.size(); j++){
+						if(rowValues[13].trim().equals(categoryList.get(j).getCategory())){
+							category = categoryList.get(j).getCategory();
+							isLegalCategory=true;
+						}
+					}
+					
+					if (!isLegalCategory){
+						category = Category.不明.getCategory(); 
+					}	
 				}
+				
+				List<Type> typeList=new ArrayList<Type>(Arrays.asList(Type.values()));
+				String type = "";
+				if(rowValues[14] == null ||
+						rowValues[14].trim().equals("")){
+					type = Type.電子書.getType();
+				} else {
+					boolean isLegalType=false;
+					for (int j=0; j < typeList.size(); j++){
+						if(rowValues[14].trim().equals(typeList.get(j).getType())){
+							type = typeList.get(j).getType();
+							isLegalType=true;
+						}
+					}
+					
+					if (!isLegalType){
+						type = Type.電子書.getType();
+					}	
+				}				
 
 				resourcesBuyers = new ResourcesBuyers(rowValues[11],
-						rowValues[12], Category.valueOf(category), Type.電子書,
+						rowValues[12], Category.valueOf(category), Type.valueOf(type),
 						rowValues[15], rowValues[16]);
 
 				String isbn = rowValues[1].trim().toUpperCase();
 				String[] isbnSplit = isbn.split("-");
 
-				isbn = "";
+				StringBuilder stringBuilder= new StringBuilder("");
 				int j = 0;
 				while (j < isbnSplit.length) {
-					isbn = isbn + isbnSplit[j];
+					stringBuilder.append(isbnSplit[j]);
 					j++;
 				}
+				
+				isbn = stringBuilder.toString();
 
-				int version = 0;
+				Integer version = null;
 				if (NumberUtils.isNumber(rowValues[8])) {
 					double d = Double.parseDouble(rowValues[8]);
 					version = (int) d;
 				}
 
-				ebook = new Ebook(rowValues[0], Long.parseLong(isbn),
-						rowValues[2], rowValues[3], rowValues[4], rowValues[5],
-						rowValues[6], rowValues[7], version, rowValues[9],
-						rowValues[10], "", "", "", resourcesBuyers, null, "");
-
+				if (NumberUtils.isDigits(isbn)){
+					ebook = new Ebook(rowValues[0], Long.parseLong(isbn),
+							rowValues[2], rowValues[3], rowValues[4], rowValues[5],
+							rowValues[6], rowValues[7], version, rowValues[9],
+							rowValues[10], "", "", "", resourcesBuyers, null, "");
+					} else {
+					ebook = new Ebook(rowValues[0], null,
+							rowValues[2], rowValues[3], rowValues[4], rowValues[5],
+							rowValues[6], rowValues[7], version, rowValues[9],
+							rowValues[10], "", "", "", resourcesBuyers, null, "");	
+					}
+				
 				customer = new Customer();
 				customer.setName(rowValues[17].trim());
 				customer.setEngName(rowValues[18].trim());
@@ -723,37 +844,53 @@ public class EbookAction extends GenericCRUDActionFull<Ebook> {
 				List<Customer> customers = new ArrayList<Customer>();
 				customers.add(customer);
 				ebook.setCustomers(customers);
-
-				if (isIsbn(Long.parseLong(isbn))) {
-					long ebkSerNo = ebookService.getEbkSerNoByIsbn(Long
-							.parseLong(isbn));
-
-					long cusSerNo = customerService
-							.getCusSerNoByName(rowValues[17].trim());
-					if (cusSerNo != 0) {
-						if (ebkSerNo != 0) {
-							if (resourcesUnionService.isExist(
-									ebookService.getBySerNo(ebkSerNo),
-									Ebook.class, cusSerNo)) {
-
-								ebook.setExistStatus("已存在");
+				
+				if (ebook.getIsbn() != null){
+					if (isIsbn(Long.parseLong(isbn))) {
+						long ebkSerNo = ebookService.getEbkSerNoByIsbn(Long.parseLong(isbn));
+						
+						long cusSerNo = customerService
+								.getCusSerNoByName(rowValues[17].trim());
+						if (cusSerNo != 0) {
+							if (ebkSerNo != 0) {
+								if (resourcesUnionService.isExist(
+										ebookService.getBySerNo(ebkSerNo),
+										Ebook.class, cusSerNo)) {
+									ebook.setExistStatus("已存在");
+									} else {
+										ebook.setExistStatus("正常");
+										}
+								} else {
+									if (ebook.getResourcesBuyers().getrCategory()
+											.equals(Category.不明)) {
+										ebook.setExistStatus("資源類型不明");
+										} else {
+											if (!ebook.getCnClassBzStr().equals("")){
+												if (!NumberUtils.isDigits(ebook.getCnClassBzStr()) 
+														|| ebook.getCnClassBzStr().length() != 3){
+													ebook.setCnClassBzStr("");
+													}
+												} 
+											
+											if (!ebook.getBookInfoIntegral().equals("")){
+												if (!NumberUtils.isDigits(ebook.getBookInfoIntegral()) 
+														|| ebook.getBookInfoIntegral().length() != 3){
+													ebook.setBookInfoIntegral("");
+													}
+												}
+											ebook.setExistStatus("正常");
+											}
+									}
 							} else {
-								ebook.setExistStatus("正常");
-							}
+								ebook.setExistStatus("無此客戶");
+								}
 						} else {
-							if (ebook.getResourcesBuyers().getrCategory()
-									.equals(Category.不明)) {
-								ebook.setExistStatus("資源類型不明");
-							} else {
-								ebook.setExistStatus("正常");
+							ebook.setExistStatus("ISBN異常");
 							}
-						}
 					} else {
-						ebook.setExistStatus("無此客戶");
-					}
-				} else {
-					ebook.setExistStatus("ISBN異常");
-				}
+						ebook.setExistStatus("ISBN異常");
+						}
+				
 				originalData.add(ebook);
 			}
 			
@@ -812,7 +949,13 @@ public class EbookAction extends GenericCRUDActionFull<Ebook> {
 				getRequest().getParameter("recordPerPage"), getRequest()
 						.getParameter("recordPoint"), ds.getPager()));
 
-		ds.getPager().setTotalRecord((long) importList.size());
+		if (importList == null){
+			return null;
+		} else {
+			ds.getPager().setTotalRecord((long) importList.size());
+			
+		}
+		
 		int first = ds.getPager().getRecordPerPage()
 				* (ds.getPager().getCurrentPage() - 1);
 		int last = first + ds.getPager().getRecordPerPage();
@@ -865,7 +1008,6 @@ public class EbookAction extends GenericCRUDActionFull<Ebook> {
 	public void clearCheckedItem() {
 		Map<String, Object> checkItemMap = new TreeMap<String, Object>();
 		getSession().put("checkItemMap", checkItemMap);
-		System.out.println(checkItemMap);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -893,29 +1035,28 @@ public class EbookAction extends GenericCRUDActionFull<Ebook> {
 			}
 
 			for (int i = 0; i < importIndexs.size(); i++) {
-				long ebkSerNo = ebookService.getEbkSerNoByIsbn(importIndexs
-						.get(i).getIsbn());
-				long cusSerNo = customerService.getCusSerNoByName(importIndexs
-						.get(i).getCustomers().get(0).getName());
-
-				if (ebkSerNo == 0) {
-					resourcesBuyers = resourcesBuyersService.save(importIndexs
-							.get(i).getResourcesBuyers(), getLoginUser());
-					ebook = ebookService.save(importIndexs.get(i), getLoginUser());
-
-					resourcesUnionService.save(new ResourcesUnion(cusSerNo, resourcesBuyers
-									.getSerNo(), ebook.getSerNo(), 0, 0),
-							getLoginUser());
-				} else {
-					resourcesUnion = resourcesUnionService.getByObjSerNo(
-							ebkSerNo, Ebook.class);
-					resourcesUnionService.save(new ResourcesUnion(cusSerNo,
-							resourcesUnion.getResSerNo(), ebkSerNo, 0, 0),
-							getLoginUser());
-
+				if(importIndexs.get(i).getExistStatus().equals("正常")){
+					long ebkSerNo = ebookService.getEbkSerNoByIsbn(importIndexs.get(i)
+							.getIsbn());
+					long cusSerNo = customerService.getCusSerNoByName(importIndexs.get(i).getCustomers()
+							.get(0).getName());
+					
+					if (ebkSerNo == 0) {
+						resourcesBuyers = resourcesBuyersService.save(importIndexs
+								.get(i).getResourcesBuyers(), getLoginUser());
+						ebook = ebookService.save(importIndexs.get(i), getLoginUser());
+						resourcesUnionService.save(new ResourcesUnion(cusSerNo, resourcesBuyers
+								.getSerNo(), ebook.getSerNo(), 0L, 0L),
+								getLoginUser());
+						} else {
+							resourcesUnion = resourcesUnionService.getByObjSerNo(
+									ebkSerNo, Ebook.class);
+							resourcesUnionService.save(new ResourcesUnion(cusSerNo,
+									resourcesUnion.getResSerNo(), ebkSerNo, 0L, 0L),
+									getLoginUser());
+							}
+					}
 				}
-			}
-
 			clearCheckedItem();
 			getRequest().setAttribute("successCount", importIndexs.size());
 			return VIEW;
@@ -990,12 +1131,12 @@ public class EbookAction extends GenericCRUDActionFull<Ebook> {
 		empinfo.put("2", new Object[] { "Ophthalmic Clinical Procedures",
 				"9780080449784", "Elsevier(ClinicalKey)",
 				"Frank Eperjesi & Hannah Bartlett & Mark Dunne", "", "",
-				"2008/2/7", "eng", "", "", "N/A", "", "", "", "電子書", "", "",
+				"2008/2/7", "eng", "", "001", "001", "", "", "", "電子書", "", "",
 				"衛生福利部基隆醫院", "" });
 		empinfo.put("3", new Object[] { "Ophthalmic Clinical Procedures",
 				"9780080449784", "Elsevier(ClinicalKey)",
 				"Frank Eperjesi & Hannah Bartlett & Mark Dunne", "", "",
-				"2008/2/7", "eng", "", "", "N/A", "", "", "", "電子書", "", "",
+				"2008/2/7", "eng", "", "011", "011", "", "", "", "電子書", "", "",
 				"衛生福利部臺北醫院", "" });
 
 		// Iterate over data and write to sheet
@@ -1058,21 +1199,6 @@ public class EbookAction extends GenericCRUDActionFull<Ebook> {
 	public void setCusSerNo(String[] cusSerNo) {
 		this.cusSerNo = cusSerNo;
 	}
-
-//	/**
-//	 * @return the resourcesBuyers
-//	 */
-//	public ResourcesBuyers getResourcesBuyers() {
-//		return resourcesBuyers;
-//	}
-//
-//	/**
-//	 * @param resourcesBuyers
-//	 *            the resourcesBuyers to set
-//	 */
-//	public void setResourcesBuyers(ResourcesBuyers resourcesBuyers) {
-//		this.resourcesBuyers = resourcesBuyers;
-//	}
 
 	/**
 	 * @return the file

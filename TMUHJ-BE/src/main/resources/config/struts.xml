@@ -67,7 +67,7 @@
 			<interceptor name="loginSessionInterceptor"
 				class="com.asiaworld.tmuhj.core.interceptor.LoginSessionInterceptor" />
 			<interceptor name="SearchActionInterceptor"
-				class="com.asiaworld.tmuhj.core.interceptor.PageActionInterceptor" />
+				class="com.asiaworld.tmuhj.core.interceptor.PageInterceptor" />
 
 			<interceptor-stack name="defaultInterceptor">
 				<interceptor-ref name="loginSessionInterceptor" />

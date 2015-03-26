@@ -23,16 +23,24 @@ $(document).ready(function() {
 });
 
 function gotoPage_detail(page) {
+	var isNum = /^\d+$/.test(page);
 	var totalPage = "${totalPage}";
 	var recordPerPage = "${ds.pager.recordPerPage}";
 	var offset = parseInt(recordPerPage) * (parseInt(page) - 1);
-	if (parseInt(page) < 1) {
-		page = 1;
+	if(!isNum){
+		page="${ds.pager.currentPage}";
 		offset=parseInt(recordPerPage)*(parseInt(page)-1);
-	} else if (parseInt(page) > parseInt(totalPage)) {
-		page = totalPage;
-		offset=parseInt(recordPerPage)*(parseInt(page)-1);
-	}
+	} else {
+		if (parseInt(page) < 1){
+			page=1;
+			offset=parseInt(recordPerPage)*(parseInt(page)-1);
+			}		
+		
+		if (parseInt(page) > parseInt(totalPage)){
+			page=totalPage;
+			offset=parseInt(recordPerPage)*(parseInt(page)-1);
+			} 
+		}
 	goDetail_Main('<c:url value = '/'/>crud/apply.database.paginate.action',
 			'#apply_database_importData', '&pager.offset='+offset+'&pager.currentPage='+page);
 }
@@ -129,7 +137,7 @@ function closeDetail() {
 					<th></th>
 					<c:forEach var="item" items="${cellNames}" varStatus="status">
 						<c:if
-							test="${(0 eq status.index) || (1 eq status.index)||(6 eq status.index)||(9 eq status.index)||(11 eq status.index)}">
+							test="${(0 eq status.index) || (1 eq status.index)||(6 eq status.index)||(9 eq status.index)||(10 eq status.index)||(11 eq status.index)}">
 							<th>${item}</th>
 						</c:if>
 					</c:forEach>
@@ -151,6 +159,7 @@ function closeDetail() {
 						<td>${item.dbEngTitle }</td>
 						<td>${item.url }</td>
 						<td>${item.resourcesBuyers.rCategory.category }</td>
+						<td>${item.resourcesBuyers.rType.type }</td>
 						<td align="center"><c:forEach var="customer"
 								items="${item.customers}" varStatus="status">
 				${customer.name }

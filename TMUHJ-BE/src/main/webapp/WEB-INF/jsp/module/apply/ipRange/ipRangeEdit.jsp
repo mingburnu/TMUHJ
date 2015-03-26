@@ -26,11 +26,11 @@ $(document).ready(function() {
 		closeDetail_2();
 		if ($("form#apply_ipRange_save").length != 0) {
 			var data = $('form#apply_ipRange_save').serialize();
-			goDetail_2("<c:url value = '/'/>crud/apply.ipRange.save.action",
+			goDetail_2("<c:url value = '/'/>crud/apply.ipRange.save.action?entity.cusSerNo=${entity.cusSerNo}",
 					'客戶-IP Range新增', data);
 		} else {
 			var data = $('form#apply_ipRange_update').serialize();
-			goDetail_2("<c:url value = '/'/>crud/apply.ipRange.update.action",
+			goDetail_2("<c:url value = '/'/>crud/apply.ipRange.update.action?entity.serNo=${entity.serNo}&entity.cusSerNo=${entity.cusSerNo}&entity.listNo=${entity.listNo}",
 					'客戶-IP Range修改', data);
 		}
 	}
@@ -41,8 +41,6 @@ $(document).ready(function() {
 	<c:choose>
 		<c:when test="${empty entity.serNo }">
 			<s:form namespace="/crud" action="apply.ipRange.save">
-				<s:hidden name="entity.serNo" />
-				<s:hidden name="entity.cusSerNo" />
 				<table cellspacing="1" class="detail-table">
 					<tr>
 						<th width="130">用戶名稱<span class="required">(&#8226;)</span></th>
@@ -69,9 +67,6 @@ $(document).ready(function() {
 		</c:when>
 		<c:otherwise>
 			<s:form namespace="/crud" action="apply.ipRange.update">
-				<s:hidden name="entity.serNo" />
-				<s:hidden name="entity.cusSerNo" />
-				<s:hidden name="entity.listNo" />
 				<table cellspacing="1" class="detail-table">
 					<tr>
 						<th width="130">ID</th>

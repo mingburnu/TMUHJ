@@ -18,7 +18,45 @@
 		updateForm = $("form#apply_accountNumber_update").html();
 		importForm = $("form#apply_accountNumber_queue").html();
 	});
-
+	
+	$(document).ready(function() {
+		$("select#apply_accountNumber_save_cusSerNo").children().each(function(){
+		    if ($(this).val()=="${entity.cusSerNo}"){
+		        this.selected = true; 
+		    }
+		});
+		
+		$("select#apply_accountNumber_save_role").children().each(function(){
+		    if ($(this).text()=="${entity.role.role}"){
+		        this.selected = true; 
+		    }
+		});
+		
+		$("select#apply_accountNumber_save_status").children().each(function(){
+		    if ($(this).text()=="${entity.status.status}"){
+		        this.selected = true; 
+		    }
+		});
+		
+		$("select#apply_accountNumber_update_cusSerNo").children().each(function(){
+		    if ($(this).val()=="${entity.cusSerNo}"){
+		        this.selected = true; 
+		    }
+		});
+		
+		$("select#apply_accountNumber_update_role").children().each(function(){
+		    if ($(this).text()=="${entity.role.role}"){
+		        this.selected = true; 
+		    }
+		});
+		
+		$("select#apply_accountNumber_update_status").children().each(function(){
+		    if ($(this).text()=="${entity.status.status}"){
+		        this.selected = true; 
+		    }
+		});
+	});
+	
 	//重設所有欄位(清空)
 	function resetData() {
 		$("form#apply_accountNumber_save").html(saveForm);
@@ -38,7 +76,7 @@
 		} else {
 			data = $('#apply_accountNumber_update').serialize();
 			goDetail(
-					"<c:url value = '/'/>crud/apply.accountNumber.update.action",
+					"<c:url value = '/'/>crud/apply.accountNumber.update.action?entity.serNo=${entity.serNo}",
 					'帳戶-修改', data);
 		}
 	}
@@ -146,7 +184,6 @@
 	<c:choose>
 		<c:when test="${(empty entity.serNo) && (empty goQueue) }">
 			<s:form namespace="/crud" action="apply.accountNumber.save">
-				<s:hidden name="entity.serNo" />
 				<table cellspacing="1" class="detail-table">
 					<tr>
 						<th width="130">用戶代碼<span class="required">(&#8226;)</span></th>
@@ -162,25 +199,35 @@
 					</tr>
 					<tr>
 						<th width="130">用戶名稱<span class="required">(&#8226;)</span></th>
-						<td><s:select headerValue="--用戶名稱--" headerKey="0"
-								name="entity.cusSerNo" cssClass="input_text"
-								list="dsCustomer.results" listKey="serNo" listValue="name" /></td>
+						<td><c:choose>
+								<c:when test="${login.role.role == '管理員' }">
+									<s:select name="cusSerNo" cssClass="input_text"
+										list="dsCustomer.results" listKey="serNo" listValue="name" />
+								</c:when>
+								<c:otherwise>
+									<s:select headerValue="--用戶名稱--" headerKey="0" name="cusSerNo"
+										cssClass="input_text" list="dsCustomer.results"
+										listKey="serNo" listValue="name" />
+								</c:otherwise>
+							</c:choose></td>
 					</tr>
 					<tr>
 						<th width="130">帳戶角色</th>
-						<td><select name="entity.role"
-							id="apply_accountNumber_save_entity_role" class="input_text">
-								<option value="系統管理員">系統管理員</option>
-								<option value="維護人員">維護人員</option>
-								<option value="管理員">管理員</option>
-								<option value="使用者" selected="selected">使用者</option>
+						<td><select name="role" id="apply_accountNumber_save_role"
+							class="input_text">
+								<c:forEach var="item" items="${roleList}" varStatus="status">
+									<option value="${item.role }">${item.role }</option>
+								</c:forEach>
 						</select></td>
 					</tr>
 					<tr>
 						<th width="130">狀態</th>
-						<td><s:select name="entity.status" cssClass="input_text"
-								list="@com.asiaworld.tmuhj.core.apply.enums.Status@values()"
-								listValue="status" /></td>
+						<td><select name="status"
+							id="apply_accountNumber_save_status" class="input_text">
+								<c:forEach var="item" items="${statusList}" varStatus="status">
+									<option value="${item.status }">${item.status }</option>
+								</c:forEach>
+						</select></td>
 					</tr>
 				</table>
 				<div class="button_box">
@@ -230,7 +277,6 @@
 
 		<c:otherwise>
 			<s:form namespace="/crud" action="apply.accountNumber.update">
-				<s:hidden name="entity.serNo" />
 				<table cellspacing="1" class="detail-table">
 					<tr>
 						<th width="130">用戶代碼<span class="required">(&#8226;)</span></th>
@@ -245,57 +291,36 @@
 						<td><s:textfield name="entity.userName" cssClass="input_text" /></td>
 					</tr>
 					<tr>
-						<th width="130">用戶名稱</th>
-						<td><s:select headerValue="--用戶名稱--" headerKey="0"
-								name="entity.cusSerNo" cssClass="input_text"
-								list="dsCustomer.results" listKey="serNo" listValue="name" /></td>
-					</tr>
-					<tr>
-						<th width="130">帳戶角色</th>
+						<th width="130">用戶名稱<span class="required">(&#8226;)</span></th>
 						<td><c:choose>
-								<c:when test="${entity.role.role=='系統管理員' }">
-									<select name="entity.role"
-										id="apply_accountNumber_update_entity_role" class="input_text">
-										<option value="系統管理員" selected="selected">系統管理員</option>
-										<option value="維護人員">維護人員</option>
-										<option value="管理員">管理員</option>
-										<option value="使用者">使用者</option>
-									</select>
-								</c:when>
-								<c:when test="${entity.role.role=='維護人員' }">
-									<select name="entity.role"
-										id="apply_accountNumber_update_entity_role" class="input_text">
-										<option value="系統管理員">系統管理員</option>
-										<option value="維護人員" selected="selected">維護人員</option>
-										<option value="管理員">管理員</option>
-										<option value="使用者">使用者</option>
-									</select>
-								</c:when>
-								<c:when test="${entity.role.role=='管理員' }">
-									<select name="entity.role"
-										id="apply_accountNumber_update_entity_role" class="input_text">
-										<option value="系統管理員">系統管理員</option>
-										<option value="維護人員">維護人員</option>
-										<option value="管理員" selected="selected">管理員</option>
-										<option value="使用者">使用者</option>
-									</select>
+								<c:when test="${login.role.role == '管理員' }">
+									<s:select name="cusSerNo" cssClass="input_text"
+										list="dsCustomer.results" listKey="serNo" listValue="name" />
 								</c:when>
 								<c:otherwise>
-									<select name="entity.role"
-										id="apply_accountNumber_update_entity_role" class="input_text">
-										<option value="系統管理員">系統管理員</option>
-										<option value="維護人員">維護人員</option>
-										<option value="管理員">管理員</option>
-										<option value="使用者" selected="selected">使用者</option>
-									</select>
+									<s:select headerValue="--用戶名稱--" headerKey="0" name="cusSerNo"
+										cssClass="input_text" list="dsCustomer.results"
+										listKey="serNo" listValue="name" />
 								</c:otherwise>
 							</c:choose></td>
 					</tr>
 					<tr>
+						<th width="130">帳戶角色</th>
+						<td><select name="role" id="apply_accountNumber_save_role"
+							class="input_text">
+								<c:forEach var="item" items="${roleList}" varStatus="status">
+									<option value="${item.role }">${item.role }</option>
+								</c:forEach>
+						</select></td>
+					</tr>
+					<tr>
 						<th width="130">狀態</th>
-						<td><s:select name="entity.status" cssClass="input_text"
-								list="@com.asiaworld.tmuhj.core.apply.enums.Status@values()"
-								listValue="status" /></td>
+						<td><select name="status"
+							id="apply_accountNumber_save_status" class="input_text">
+								<c:forEach var="item" items="${statusList}" varStatus="status">
+									<option value="${item.status }">${item.status }</option>
+								</c:forEach>
+						</select></td>
 					</tr>
 				</table>
 				<div class="button_box">

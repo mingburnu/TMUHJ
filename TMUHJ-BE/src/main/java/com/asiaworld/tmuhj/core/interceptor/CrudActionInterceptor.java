@@ -51,12 +51,13 @@ public class CrudActionInterceptor extends AbstractInterceptor {
 			}
 		}
 		
-		if(invocation.getAction().toString().contains("customer")){
+		if (invocation.getAction().toString().contains("customer") 
+				|| invocation.getAction().toString().contains("ipRange")){
 			Map<String, Object> session = ActionContext.getContext()
 					.getSession();
 			accountNumber = (AccountNumber) session.get("login");
 			
-			if(accountNumber.getRole().getRole().equals("管理員")){
+			if (accountNumber.getRole().getRole().equals("管理員")){
 				HttpServletResponse response=ServletActionContext.getResponse();
 				response.setStatus(HttpServletResponse.SC_FORBIDDEN);
 				return null;

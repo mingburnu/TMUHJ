@@ -36,7 +36,7 @@ public class AccountNumber extends GenericEntityFull {
 	 * 用戶流水號
 	 */
 	@Column(name = "cus_serNo")
-	private long cusSerNo;
+	private Long cusSerNo;
 
 	/**
 	 * 使用者代號
@@ -79,7 +79,7 @@ public class AccountNumber extends GenericEntityFull {
 	/**
 	 * @return the cusSerNo
 	 */
-	public long getCusSerNo() {
+	public Long getCusSerNo() {
 		return cusSerNo;
 	}
 
@@ -87,7 +87,7 @@ public class AccountNumber extends GenericEntityFull {
 	 * @param cusSerNo
 	 *            the cusSerNo to set
 	 */
-	public void setCusSerNo(long cusSerNo) {
+	public void setCusSerNo(Long cusSerNo) {
 		this.cusSerNo = cusSerNo;
 	}
 
@@ -193,7 +193,7 @@ public class AccountNumber extends GenericEntityFull {
 		// TODO Auto-generated constructor stub
 	}
 
-	public AccountNumber(long cusSerNo, String userId, String userPw,
+	public AccountNumber(Long cusSerNo, String userId, String userPw,
 			String userName, Role role, Status status, Customer customer,
 			String existStatus) {
 		super();

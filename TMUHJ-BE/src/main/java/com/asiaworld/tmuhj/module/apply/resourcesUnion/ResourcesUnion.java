@@ -20,24 +20,24 @@ public class ResourcesUnion extends GenericEntitySerNo {
 	private static final long serialVersionUID = 4506632636578324717L;
 
 	@Column(name = "cus_SerNo")
-	private long cusSerNo;
+	private Long cusSerNo;
 
 	@Column(name = "res_SerNo")
-	private long resSerNo;
+	private Long resSerNo;
 
 	@Column(name = "ebk_SerNo")
-	private long ebkSerNo;
+	private Long ebkSerNo;
 
 	@Column(name = "dat_SerNo")
-	private long datSerNo;
+	private Long datSerNo;
 
 	@Column(name = "jou_SerNo")
-	private long jouSerNo;
+	private Long jouSerNo;
 
 	/**
 	 * @return the cusSerNo
 	 */
-	public long getCusSerNo() {
+	public Long getCusSerNo() {
 		return cusSerNo;
 	}
 
@@ -45,14 +45,14 @@ public class ResourcesUnion extends GenericEntitySerNo {
 	 * @param cusSerNo
 	 *            the cusSerNo to set
 	 */
-	public void setCusSerNo(long cusSerNo) {
+	public void setCusSerNo(Long cusSerNo) {
 		this.cusSerNo = cusSerNo;
 	}
 
 	/**
 	 * @return the resSerNo
 	 */
-	public long getResSerNo() {
+	public Long getResSerNo() {
 		return resSerNo;
 	}
 
@@ -60,14 +60,14 @@ public class ResourcesUnion extends GenericEntitySerNo {
 	 * @param resSerNo
 	 *            the resSerNo to set
 	 */
-	public void setResSerNo(long resSerNo) {
+	public void setResSerNo(Long resSerNo) {
 		this.resSerNo = resSerNo;
 	}
 
 	/**
 	 * @return the ebkSerNo
 	 */
-	public long getEbkSerNo() {
+	public Long getEbkSerNo() {
 		return ebkSerNo;
 	}
 
@@ -75,14 +75,14 @@ public class ResourcesUnion extends GenericEntitySerNo {
 	 * @param ebkSerNo
 	 *            the ebkSerNo to set
 	 */
-	public void setEbkSerNo(long ebkSerNo) {
+	public void setEbkSerNo(Long ebkSerNo) {
 		this.ebkSerNo = ebkSerNo;
 	}
 
 	/**
 	 * @return the datSerNo
 	 */
-	public long getDatSerNo() {
+	public Long getDatSerNo() {
 		return datSerNo;
 	}
 
@@ -90,14 +90,14 @@ public class ResourcesUnion extends GenericEntitySerNo {
 	 * @param datSerNo
 	 *            the datSerNo to set
 	 */
-	public void setDatSerNo(long datSerNo) {
+	public void setDatSerNo(Long datSerNo) {
 		this.datSerNo = datSerNo;
 	}
 
 	/**
 	 * @return the jouSerNo
 	 */
-	public long getJouSerNo() {
+	public Long getJouSerNo() {
 		return jouSerNo;
 	}
 
@@ -105,7 +105,7 @@ public class ResourcesUnion extends GenericEntitySerNo {
 	 * @param jouSerNo
 	 *            the jouSerNo to set
 	 */
-	public void setJouSerNo(long jouSerNo) {
+	public void setJouSerNo(Long jouSerNo) {
 		this.jouSerNo = jouSerNo;
 	}
 
@@ -114,8 +114,8 @@ public class ResourcesUnion extends GenericEntitySerNo {
 		// TODO Auto-generated constructor stub
 	}
 
-	public ResourcesUnion(long cusSerNo, long resSerNo, long ebkSerNo,
-			long datSerNo, long jouSerNo) {
+	public ResourcesUnion(Long cusSerNo, Long resSerNo, Long ebkSerNo,
+			Long datSerNo, Long jouSerNo) {
 		super();
 		this.cusSerNo = cusSerNo;
 		this.resSerNo = resSerNo;

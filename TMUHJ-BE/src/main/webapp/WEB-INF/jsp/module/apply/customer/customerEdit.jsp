@@ -34,7 +34,7 @@
 					'客戶-新增', data);
 		} else {
 			data = $('#apply_customer_update').serialize();
-			goDetail("<c:url value = '/'/>crud/apply.customer.update.action",
+			goDetail("<c:url value = '/'/>crud/apply.customer.update.action?entity.serNo=${entity.serNo}",
 					'客戶-新增', data);
 		}
 	}
@@ -142,7 +142,6 @@
 	<c:choose>
 		<c:when test="${(empty entity.serNo) && (empty goQueue) }">
 			<s:form namespace="/crud" action="apply.customer.save">
-				<s:hidden name="entity.serNo" />
 				<table cellspacing="1" class="detail-table">
 					<tr>
 						<th width="130">用戶名稱<span class="required">(&#8226;)</span></th>
@@ -217,7 +216,6 @@
 
 		<c:otherwise>
 			<s:form namespace="/crud" action="apply.customer.update">
-				<s:hidden name="entity.serNo" />
 				<table cellspacing="1" class="detail-table">
 					<tr>
 						<th width="130">用戶名稱<span class="required">(&#8226;)</span></th>

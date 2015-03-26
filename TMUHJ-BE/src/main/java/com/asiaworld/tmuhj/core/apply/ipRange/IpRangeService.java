@@ -1,4 +1,4 @@
-package com.asiaworld.tmuhj.module.apply.ipRange;
+package com.asiaworld.tmuhj.core.apply.ipRange;
 
 import java.util.ArrayList;
 import java.util.Iterator;

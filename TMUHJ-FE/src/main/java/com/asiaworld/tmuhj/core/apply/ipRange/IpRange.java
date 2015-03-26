@@ -16,11 +16,11 @@ public class IpRange extends GenericEntityFull {
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = -1606674601447344379L;
+	private static final long serialVersionUID = 4902778417302612288L;
 
 	// 用戶流水號
 	@Column(name="cus_serNo")
-	private long cusSerNo;
+	private Long cusSerNo;
 
 	// IP開始
 	@Column(name="ipRangeStart")
@@ -33,7 +33,7 @@ public class IpRange extends GenericEntityFull {
 	/**
 	 * @return the cusSerNo
 	 */
-	public long getCusSerNo() {
+	public Long getCusSerNo() {
 		return cusSerNo;
 	}
 
@@ -41,7 +41,7 @@ public class IpRange extends GenericEntityFull {
 	 * @param cusSerNo
 	 *            the cusSerNo to set
 	 */
-	public void setCusSerNo(long cusSerNo) {
+	public void setCusSerNo(Long cusSerNo) {
 		this.cusSerNo = cusSerNo;
 	}
 

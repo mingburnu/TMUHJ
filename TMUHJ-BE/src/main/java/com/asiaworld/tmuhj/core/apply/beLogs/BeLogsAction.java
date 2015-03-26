@@ -10,6 +10,7 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.xssf.usermodel.XSSFRow;
@@ -97,7 +98,7 @@ public class BeLogsAction extends GenericCRUDActionLog<BeLogs> {
 		}
 
 		if (!hasActionErrors()) {
-			if (startDate != null && !startDate.isEmpty() && isDate(startDate)) {
+			if (StringUtils.isNotBlank(startDate) && isDate(startDate)) {
 				getEntity().setStart(LocalDateTime.parse(startDate));
 				getRequest().setAttribute("startDate", startDate);
 			} else {
@@ -105,7 +106,7 @@ public class BeLogsAction extends GenericCRUDActionLog<BeLogs> {
 				getRequest().setAttribute("startDate", "2015-01-01");
 			}
 
-			if (endDate != null && !endDate.isEmpty() && isDate(endDate)) {
+			if (StringUtils.isNotBlank(endDate) && isDate(endDate)) {
 				getEntity().setEnd(LocalDateTime.parse(endDate));
 			}
 
@@ -172,13 +173,13 @@ public class BeLogsAction extends GenericCRUDActionLog<BeLogs> {
 		}
 
 		if (!hasActionErrors()) {
-			if (startDate != null && !startDate.isEmpty() && isDate(startDate)) {
+			if (StringUtils.isNotBlank(startDate) && isDate(startDate)) {
 				getEntity().setStart(LocalDateTime.parse(startDate));
 			} else {
 				getEntity().setStart(LocalDateTime.parse("2015-01-01"));
 			}
 
-			if (endDate != null && !endDate.isEmpty() && isDate(endDate)) {
+			if (StringUtils.isNotBlank(endDate) && isDate(endDate)) {
 				getEntity().setEnd(LocalDateTime.parse(endDate));
 			}
 

@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.Criteria;
+import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.MatchMode;
@@ -44,6 +45,10 @@ public class CustomerService extends GenericServiceFull<Customer> {
 				&& StringUtils.isNotBlank(entity.getName())) {
 			restrictions.likeIgnoreCase("name", entity.getName(),
 					MatchMode.ANYWHERE);
+		} 
+		
+		if (entity.getSerNo() != null && entity.getSerNo() > 0){
+			restrictions.eq("serNo", entity.getSerNo());
 		}
 
 		restrictions.addOrderAsc("serNo");
@@ -104,5 +109,30 @@ public class CustomerService extends GenericServiceFull<Customer> {
 		}
 
 		return customers;
+	}
+	
+	public void deleteOwnerObj(long cusSerNo){
+		Session session = sessionFactory.getCurrentSession();
+		
+//		Query delResourcesUnion = session.createQuery("DELETE FROM ResourcesUnion WHERE cusSerNo=:cus_SerNo");
+//		delResourcesUnion.setParameter("cus_SerNo", cusSerNo);
+//		delResourcesUnion.executeUpdate();
+
+		Query delBeLogs = session.createQuery("DELETE FROM BeLogs WHERE cusSerNo=:cus_SerNo");
+		delBeLogs.setParameter("cus_SerNo", cusSerNo);
+		delBeLogs.executeUpdate();
+
+		Query delFeLogs = session.createQuery("DELETE FROM FeLogs WHERE cusSerNo=:cus_SerNo");		
+		delFeLogs.setParameter("cus_SerNo", cusSerNo);
+		delFeLogs.executeUpdate();
+		
+		Query delAccountNumber = session.createQuery("DELETE FROM AccountNumber WHERE cusSerNo=:cus_SerNo");
+		delAccountNumber.setParameter("cus_SerNo", cusSerNo);		
+		delAccountNumber.executeUpdate();
+		
+		Query delIpRange = session.createQuery("DELETE FROM IpRange WHERE cusSerNo=:cus_SerNo");
+		delIpRange.setParameter("cus_SerNo", cusSerNo);
+		delIpRange.executeUpdate();
+		
 	}
 }

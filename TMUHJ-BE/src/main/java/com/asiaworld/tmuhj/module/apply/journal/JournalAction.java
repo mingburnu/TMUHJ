@@ -7,6 +7,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -17,6 +18,7 @@ import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
@@ -113,10 +115,19 @@ public class JournalAction extends GenericCRUDActionFull<Journal> {
 
 	@Override
 	public String query() throws Exception {
+		List<Category> categoryList=new ArrayList<Category>(Arrays.asList(Category.values()));
+		categoryList.remove(categoryList.size()-1);
+		getRequest().setAttribute("categoryList", categoryList);
+		
+		List<Type> typeList=new ArrayList<Type>(Arrays.asList(Type.values()));
+		getRequest().setAttribute("typeList", typeList);
+		
 		getRequest().setAttribute("allCustomers",
 				customerService.getAllCustomers());
 		if (getEntity().getSerNo() != null) {
 			journal = journalService.getBySerNo(getEntity().getSerNo());
+			
+			if (journal != null){
 			Iterator<?> iterator = resourcesUnionService
 					.getResourcesUnionsByObj(getEntity(), Journal.class)
 					.iterator();
@@ -126,15 +137,22 @@ public class JournalAction extends GenericCRUDActionFull<Journal> {
 			long resourcesBuyersSerNo = 0;
 			while (iterator.hasNext()) {
 				resourcesUnion = (ResourcesUnion) iterator.next();
-				customers.add(customerService.getBySerNo(resourcesUnion
-						.getCusSerNo()));
+				customer = customerService.getBySerNo(resourcesUnion.getCusSerNo());
+				if (customer != null){
+				customers.add(customer);
+				}
 				resourcesBuyersSerNo = resourcesUnion.getResSerNo();
 			}
 
 			resourcesBuyers = resourcesBuyersService
 					.getBySerNo(resourcesBuyersSerNo);
+			getRequest().setAttribute("rCategory", resourcesBuyers.getrCategory().getCategory());
+			getRequest().setAttribute("rType", resourcesBuyers.getrType().getType());
 			journal.setCustomers(customers);
+			
+			}
 			setEntity(journal);
+			
 		} else if (getRequest().getParameter("goQueue") != null
 				&& getRequest().getParameter("goQueue").equals("yes")) {
 			getRequest().setAttribute("goQueue",
@@ -176,17 +194,24 @@ public class JournalAction extends GenericCRUDActionFull<Journal> {
 
 	@Override
 	public String save() throws Exception {
-		if (getEntity().getEnglishTitle() == null
-				|| getEntity().getEnglishTitle().trim().equals("")) {
+		List<Category> categoryList=new ArrayList<Category>(Arrays.asList(Category.values()));
+		categoryList.remove(categoryList.size()-1);
+				
+		List<Type> typeList=new ArrayList<Type>(Arrays.asList(Type.values()));
+						
+		if (StringUtils.isBlank(getEntity().getEnglishTitle())) {
 			addActionError("英文刊名不得空白");
 		}
 
-		if (getEntity().getIssn() == null
-				|| getEntity().getIssn().trim().equals("")) {
+		if (StringUtils.isBlank(getEntity().getIssn())) {
 			addActionError("ISSN不得空白");
 		} else {
 			if (!isIssn(getEntity().getIssn())) {
 				addActionError("ISSN不正確");
+			} else {
+				if (journalService.getJouSerNoByIssn(getEntity().getIssn()) != 0 ){
+					addActionError("ISSN不可重複");
+				}
 			}
 		}
 
@@ -196,33 +221,42 @@ public class JournalAction extends GenericCRUDActionFull<Journal> {
 			int i = 0;
 			while (i < cusSerNo.length) {
 				if (!NumberUtils.isDigits(String.valueOf(cusSerNo[i]))
-						|| Long.parseLong(cusSerNo[i]) < 1) {
+						|| Long.parseLong(cusSerNo[i]) < 1
+						|| customerService.getBySerNo(Long.parseLong(cusSerNo[i])) == null) {
 					addActionError(cusSerNo[i] + "為不可利用的流水號");
 				}
 				i++;
 			}
 		}
 
-		if (getRequest().getParameter("resourcesBuyers.rCategory")!=null){
-			if (!getRequest().getParameter("resourcesBuyers.rCategory").equals("買斷")
-					&& !getRequest().getParameter("resourcesBuyers.rCategory").equals("租貸")
-					&& !getRequest().getParameter("resourcesBuyers.rCategory").equals("未註明")){
-				addActionError("資源類型錯誤");
-				}
-			} else {
-				addActionError("資源類型錯誤");
+		boolean isLegalCategory=false;
+		for (int i=0; i < categoryList.size(); i++){
+			if(getRequest().getParameter("resourcesBuyers.rCategory") != null
+					&& getRequest().getParameter("resourcesBuyers.rCategory").equals(categoryList.get(i).getCategory())){
+				isLegalCategory=true;
 			}
+		}
 		
-		if (getRequest().getParameter("resourcesBuyers.rCategory")!=null){
-			if (!getRequest().getParameter("resourcesBuyers.rType").equals("電子書")
-					&& !getRequest().getParameter("resourcesBuyers.rType").equals("期刊")
-					&& !getRequest().getParameter("resourcesBuyers.rType").equals("資料庫")) {
-				addActionError("資源種類錯誤");
-				} 
-			} else {
-				addActionError("資源種類錯誤");			
+		if(isLegalCategory){
+			getRequest().setAttribute("rCategory", getRequest().getParameter("resourcesBuyers.rCategory"));
+		} else {
+			addActionError("資源類型錯誤");
+		}
+		
+		boolean isLegalType=false;
+		for (int i=0; i < categoryList.size(); i++){
+			if(getRequest().getParameter("resourcesBuyers.rType") != null
+					&& getRequest().getParameter("resourcesBuyers.rType").equals(typeList.get(i).getType())){
+				isLegalType=true;
 			}
-
+		}
+		
+		if(isLegalType){
+			getRequest().setAttribute("rType", getRequest().getParameter("resourcesBuyers.rType"));
+		} else {
+			addActionError("資源種類錯誤");
+		}
+				
 		if (!hasActionErrors()) {
 			journal = getEntity();
 			journal.setIssn(getEntity().getIssn().toUpperCase());
@@ -243,7 +277,7 @@ public class JournalAction extends GenericCRUDActionFull<Journal> {
 			int i = 0;
 			while (i < cusSerNo.length) {
 				resourcesUnionService.save(new ResourcesUnion(Long.parseLong(cusSerNo[i]),
-								resourcesBuyers.getSerNo(), 0, 0, journal
+								resourcesBuyers.getSerNo(), 0L, 0L, journal
 										.getSerNo()), getLoginUser());
 
 				i++;
@@ -270,29 +304,22 @@ public class JournalAction extends GenericCRUDActionFull<Journal> {
 			addActionMessage("新增成功");
 			return VIEW;
 		} else {
+			getRequest().setAttribute("categoryList", categoryList);
+			getRequest().setAttribute("typeList", typeList);
 			getRequest().setAttribute("allCustomers",
 					customerService.getAllCustomers());
-
-			if (getRequest().getParameter("resourcesBuyers.rCategory") != null
-					|| !getRequest().getParameter("resourcesBuyers.rCategory")
-							.equals("")) {
-				getRequest().setAttribute("rCategory",
-						getRequest().getParameter("resourcesBuyers.rCategory"));
-			}
-
-			if (getRequest().getParameter("resourcesBuyers.rType") != null
-					|| !getRequest().getParameter("resourcesBuyers.rCategory")
-							.equals("")) {
-				getRequest().setAttribute("rType",
-						getRequest().getParameter("resourcesBuyers.rType"));
-			}
 
 			List<Customer> customers = new ArrayList<Customer>();
 			if (cusSerNo != null && cusSerNo.length != 0) {
 				int i = 0;
 				while (i < cusSerNo.length) {
-					customers.add(customerService.getBySerNo(Long
-							.parseLong(cusSerNo[i])));
+					if (cusSerNo[i] != null 
+							&& NumberUtils.isDigits(cusSerNo[i])){
+						if(customerService.getBySerNo(Long.parseLong(cusSerNo[i])) != null){
+							customers.add(customerService.getBySerNo(Long
+									.parseLong(cusSerNo[i])));
+						}
+					}
 					i++;
 				}
 			}
@@ -306,17 +333,25 @@ public class JournalAction extends GenericCRUDActionFull<Journal> {
 
 	@Override
 	public String update() throws Exception {
-		if (getEntity().getEnglishTitle() == null
-				|| getEntity().getEnglishTitle().trim().equals("")) {
+		List<Category> categoryList=new ArrayList<Category>(Arrays.asList(Category.values()));
+		categoryList.remove(categoryList.size()-1);
+				
+		List<Type> typeList=new ArrayList<Type>(Arrays.asList(Type.values()));
+		
+		if (StringUtils.isBlank(getEntity().getEnglishTitle())) {
 			addActionError("英文刊名不得空白");
 		}
 
-		if (getEntity().getIssn() == null
-				|| getEntity().getIssn().trim().equals("")) {
+		if (StringUtils.isBlank(getEntity().getIssn())) {
 			addActionError("ISSN不得空白");
 		} else {
 			if (!isIssn(getEntity().getIssn())) {
 				addActionError("ISSN不正確");
+			} else {
+				long jouSerNo = journalService.getJouSerNoByIssn(getEntity().getIssn());
+				if (jouSerNo != 0 && jouSerNo != getEntity().getSerNo()){
+					addActionError("ISSN不可重複");
+				}
 			}
 		}
 
@@ -326,32 +361,41 @@ public class JournalAction extends GenericCRUDActionFull<Journal> {
 			int i = 0;
 			while (i < cusSerNo.length) {
 				if (!NumberUtils.isDigits(String.valueOf(cusSerNo[i]))
-						|| Long.parseLong(cusSerNo[i]) < 1) {
+						|| Long.parseLong(cusSerNo[i]) < 1
+						|| customerService.getBySerNo(Long.parseLong(cusSerNo[i])) == null) {
 					addActionError(cusSerNo[i] + "為不可利用的流水號");
 				}
 				i++;
 			}
 		}
 
-		if (getRequest().getParameter("resourcesBuyers.rCategory")!=null){
-			if (!getRequest().getParameter("resourcesBuyers.rCategory").equals("買斷")
-					&& !getRequest().getParameter("resourcesBuyers.rCategory").equals("租貸")
-					&& !getRequest().getParameter("resourcesBuyers.rCategory").equals("未註明")){
-				addActionError("資源類型錯誤");
-				}
-			} else {
-				addActionError("資源類型錯誤");
+		boolean isLegalCategory=false;
+		for (int i=0; i < categoryList.size(); i++){
+			if(getRequest().getParameter("resourcesBuyers.rCategory") != null
+					&& getRequest().getParameter("resourcesBuyers.rCategory").equals(categoryList.get(i).getCategory())){
+				isLegalCategory=true;
 			}
+		}
 		
-		if (getRequest().getParameter("resourcesBuyers.rCategory")!=null){
-			if (!getRequest().getParameter("resourcesBuyers.rType").equals("電子書")
-					&& !getRequest().getParameter("resourcesBuyers.rType").equals("期刊")
-					&& !getRequest().getParameter("resourcesBuyers.rType").equals("資料庫")) {
-				addActionError("資源種類錯誤");
-				} 
-			} else {
-				addActionError("資源種類錯誤");			
+		if(isLegalCategory){
+			getRequest().setAttribute("rCategory", getRequest().getParameter("resourcesBuyers.rCategory"));
+		} else {
+			addActionError("資源類型錯誤");
+		}
+		
+		boolean isLegalType=false;
+		for (int i=0; i < categoryList.size(); i++){
+			if(getRequest().getParameter("resourcesBuyers.rType") != null
+					&& getRequest().getParameter("resourcesBuyers.rType").equals(typeList.get(i).getType())){
+				isLegalType=true;
 			}
+		}
+		
+		if(isLegalType){
+			getRequest().setAttribute("rType", getRequest().getParameter("resourcesBuyers.rType"));
+		} else {
+			addActionError("資源種類錯誤");
+		}
 
 		if (!hasActionErrors()) {
 			journal = getEntity();
@@ -399,7 +443,7 @@ public class JournalAction extends GenericCRUDActionFull<Journal> {
 				if (!resourcesUnionService.isExist(journal, Journal.class,
 						Long.parseLong(cusSerNo[i]))) {
 					resourcesUnionService.save(new ResourcesUnion(Long.parseLong(cusSerNo[i]),
-									resourcesBuyers.getSerNo(), 0, 0, journal
+									resourcesBuyers.getSerNo(), 0L, 0L, journal
 											.getSerNo()), getLoginUser());
 				}
 
@@ -427,22 +471,10 @@ public class JournalAction extends GenericCRUDActionFull<Journal> {
 			addActionMessage("修改成功");
 			return VIEW;
 		} else {
+			getRequest().setAttribute("typeList", typeList);
+			getRequest().setAttribute("categoryList", categoryList);
 			getRequest().setAttribute("allCustomers",
 					customerService.getAllCustomers());
-
-			if (getRequest().getParameter("resourcesBuyers.rCategory") != null
-					|| !getRequest().getParameter("resourcesBuyers.rCategory")
-							.equals("")) {
-				getRequest().setAttribute("rCategory",
-						getRequest().getParameter("resourcesBuyers.rCategory"));
-			}
-
-			if (getRequest().getParameter("resourcesBuyers.rType") != null
-					|| !getRequest().getParameter("resourcesBuyers.rCategory")
-							.equals("")) {
-				getRequest().setAttribute("rType",
-						getRequest().getParameter("resourcesBuyers.rType"));
-			}
 
 			List<Customer> customers = new ArrayList<Customer>();
 			if (cusSerNo != null && cusSerNo.length != 0) {
@@ -469,10 +501,24 @@ public class JournalAction extends GenericCRUDActionFull<Journal> {
 	}
 
 	public String view() throws NumberFormatException, Exception {
-		journal = journalService.getBySerNo(Long.parseLong(getRequest()
-				.getParameter("viewSerNo")));
-		resourcesUnion = resourcesUnionService.getByObjSerNo(
-				journal.getSerNo(), Journal.class);
+		getRequest().setAttribute("viewSerNo", getRequest().getParameter("viewSerNo"));
+		
+		if (getRequest().getParameter("viewSerNo") == null 
+				|| !NumberUtils.isDigits(getRequest().getParameter("viewSerNo"))){
+			addActionError("流水號不正確");
+		} else {
+			journal = journalService.getBySerNo(Long.parseLong(getRequest()
+					.getParameter("viewSerNo")));
+			if (journal == null){
+				addActionError("期刊不存在");
+				} else {
+					resourcesUnion = resourcesUnionService.getByObjSerNo(
+							journal.getSerNo(), Journal.class);
+					}
+			}
+		
+		if(!hasActionErrors()){
+		
 		journal.setResourcesBuyers(resourcesBuyersService
 				.getBySerNo(resourcesUnion.getResSerNo()));
 
@@ -486,10 +532,10 @@ public class JournalAction extends GenericCRUDActionFull<Journal> {
 			customers.add(customerService.getBySerNo(resourcesUnion
 					.getCusSerNo()));
 		}
-
+		
 		journal.setCustomers(customers);
 		setEntity(journal);
-		getRequest().setAttribute("viewSerNo", getRequest().getParameter("viewSerNo"));
+		}
 		return VIEW;
 	}
 
@@ -531,8 +577,7 @@ public class JournalAction extends GenericCRUDActionFull<Journal> {
 				j++;
 			}
 
-			DataSet<Journal> ds = journalService
-					.getByRestrictions(initDataSet());
+			DataSet<Journal> ds = journalService.getByRestrictions(initDataSet());
 			List<Journal> results = ds.getResults();
 
 			int i = 0;
@@ -548,8 +593,7 @@ public class JournalAction extends GenericCRUDActionFull<Journal> {
 			addActionMessage("刪除成功");
 			return LIST;
 		} else {
-			DataSet<Journal> ds = journalService
-					.getByRestrictions(initDataSet());
+			DataSet<Journal> ds = journalService.getByRestrictions(initDataSet());
 			List<Journal> results = ds.getResults();
 
 			int i = 0;
@@ -693,36 +737,65 @@ public class JournalAction extends GenericCRUDActionFull<Journal> {
 					k++;
 				}
 
+				List<Category> categoryList=new ArrayList<Category>(Arrays.asList(Category.values()));
+				categoryList.remove(categoryList.size()-1);
+				
 				String category = "";
-				if (rowValues[11].equals("")) {
-					category = "未註明";
-				} else if (rowValues[11].equals("買斷")
-						|| rowValues[11].contains("買斷")) {
-					category = "買斷";
-				} else if (rowValues[11].equals("租貸")
-						|| rowValues[11].contains("租")) {
-					category = "租貸";
+				if(rowValues[11] == null ||
+						rowValues[11].trim().equals("")){
+					category = Category.未註明.getCategory();
 				} else {
-					category = "不明";
+					boolean isLegalCategory=false;
+					for (int j=0; j < categoryList.size(); j++){
+						if(rowValues[11].trim().equals(categoryList.get(j).getCategory())){
+							category = categoryList.get(j).getCategory();
+							isLegalCategory=true;
+						}
+					}
+					
+					if (!isLegalCategory){
+						category = Category.不明.getCategory();
+					}	
 				}
+				
+				List<Type> typeList=new ArrayList<Type>(Arrays.asList(Type.values()));
+				String type = "";
+				if(rowValues[12] == null ||
+						rowValues[12].trim().equals("")){
+					type = Type.期刊.getType();
+				} else {
+					boolean isLegalType=false;
+					for (int j=0; j < typeList.size(); j++){
+						if(rowValues[12].trim().equals(typeList.get(j).getType())){
+							type = typeList.get(j).getType();
+							isLegalType=true;
+						}
+					}
+					
+					if (!isLegalType){
+						type = Type.期刊.getType();
+					}	
+				}				
 
 				resourcesBuyers = new ResourcesBuyers(rowValues[9],
-						rowValues[10], Category.valueOf(category), Type.期刊,
+						rowValues[10], Category.valueOf(category), Type.valueOf(type),
 						rowValues[13], rowValues[14]);
 
 				String issn = rowValues[3].trim().toUpperCase();
 				String[] issnSplit = issn.split("-");
 
-				issn = "";
+				StringBuilder stringBuilder= new StringBuilder("");
 				int j = 0;
 				while (j < issnSplit.length) {
-					issn = issn + issnSplit[j];
+					stringBuilder.append(issnSplit[j]);
 					j++;
 				}
+				
+				issn = stringBuilder.toString();
 
 				journal = new Journal(rowValues[0], rowValues[1], rowValues[2],
 						"", issn, rowValues[4], rowValues[5], rowValues[6], "",
-						"", "", rowValues[7], rowValues[8], 0, resourcesBuyers,
+						"", "", rowValues[7], rowValues[8], null, resourcesBuyers,
 						null, "");
 
 				customer = new Customer();
@@ -821,7 +894,13 @@ public class JournalAction extends GenericCRUDActionFull<Journal> {
 				getRequest().getParameter("recordPerPage"), getRequest()
 						.getParameter("recordPoint"), ds.getPager()));
 
-		ds.getPager().setTotalRecord((long) importList.size());
+		if (importList == null){
+			return null;
+		} else {
+			ds.getPager().setTotalRecord((long) importList.size());
+			
+		}
+		
 		int first = ds.getPager().getRecordPerPage()
 				* (ds.getPager().getCurrentPage() - 1);
 		int last = first + ds.getPager().getRecordPerPage();
@@ -913,13 +992,13 @@ public class JournalAction extends GenericCRUDActionFull<Journal> {
 							getLoginUser());
 
 					resourcesUnionService.save(new ResourcesUnion(cusSerNo, resourcesBuyers
-									.getSerNo(), 0, 0, journal.getSerNo()),
+									.getSerNo(), 0L, 0L, journal.getSerNo()),
 							getLoginUser());
 				} else {
 					resourcesUnion = resourcesUnionService.getByObjSerNo(
 							jouSerNo, Journal.class);
 					resourcesUnionService.save(new ResourcesUnion(cusSerNo,
-							resourcesUnion.getResSerNo(), 0, 0, jouSerNo),
+							resourcesUnion.getResSerNo(), 0L, 0L, jouSerNo),
 							getLoginUser());
 
 				}
@@ -1001,11 +1080,11 @@ public class JournalAction extends GenericCRUDActionFull<Journal> {
 
 		empinfo.put("2", new Object[] { "N/A",
 				"The New England Journal of Medicine", "", "15334406", "eng",
-				"NEJM", "1812", "weekly", "N/A", "N/A", "N/A", "租用", "期刊", "",
+				"NEJM", "1812", "weekly", "N/A", "N/A", "N/A", "租貸", "期刊", "",
 				"", "衛生福利部台北醫院", "" });
 		empinfo.put("3", new Object[] { "N/A",
 				"The New England Journal of Medicine", "", "15334406", "eng",
-				"NEJM", "1812", "weekly", "N/A", "N/A", "N/A", "租用", "期刊", "",
+				"NEJM", "1812", "weekly", "N/A", "N/A", "N/A", "租貸", "期刊", "",
 				"", "衛生福利部桃園醫院", "" });
 
 		// Iterate over data and write to sheet

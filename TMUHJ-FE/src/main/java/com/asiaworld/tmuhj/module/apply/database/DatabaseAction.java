@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
@@ -86,6 +87,16 @@ public class DatabaseAction extends GenericCRUDActionFull<Database> {
 
 	@Override
 	public String list() throws Exception {
+		if (StringUtils.isBlank(getRequest().getParameter("serNo")) 
+				|| !NumberUtils.isDigits(getRequest().getParameter("serNo"))){
+			addActionError("serNo Error");
+		} else {
+			if (databaseService.getBySerNo(Long.parseLong(getRequest().getParameter("serNo"))) == null) {
+				addActionError("Object Null");	
+			}
+		}
+		
+		if (!hasActionErrors()){
 		database = databaseService.getBySerNo(Long.parseLong(getRequest()
 				.getParameter("serNo")));
 
@@ -118,7 +129,11 @@ public class DatabaseAction extends GenericCRUDActionFull<Database> {
 		getRequest().setAttribute("database", database);
 		getRequest().setAttribute("resourcesBuyers", resourcesBuyers);
 		getRequest().setAttribute("ownerNames", ownerNames);
-		getRequest().setAttribute("backURL", getRequest().getParameter("currentURL").replace("@@@", "?").replace("^^^", "&"));
+		
+		if (StringUtils.isNotBlank(getRequest().getParameter("currentURL"))){
+			getRequest().setAttribute("backURL", getRequest().getParameter("currentURL").replace("@@@", "?").replace("^^^", "&"));
+			}
+		}
 		return "d-detail";
 	}
 
