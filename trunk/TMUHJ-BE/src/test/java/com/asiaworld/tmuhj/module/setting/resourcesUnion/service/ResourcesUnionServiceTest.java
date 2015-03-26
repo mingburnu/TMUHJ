@@ -32,17 +32,17 @@ public class ResourcesUnionServiceTest extends GenericTest {
 	@Test
 	public void testCRUD() throws Exception {
 
-		final long cusSerNo1 = 123;
-		final long cusSerNo2 = 456;
+		final Long cusSerNo1 = 123L;
+		final Long cusSerNo2 = 456L;
 		AccountNumber user = userService.getBySerNo(1L);
 
 		// Save resourcesUnion1
 		ResourcesUnion resourcesUnion1 = new ResourcesUnion();
 		resourcesUnion1.setCusSerNo(cusSerNo1);
-		resourcesUnion1.setDatSerNo(1);
-		resourcesUnion1.setEbkSerNo(1);
-		resourcesUnion1.setJouSerNo(1);
-		resourcesUnion1.setResSerNo(1);
+		resourcesUnion1.setDatSerNo(1L);
+		resourcesUnion1.setEbkSerNo(1L);
+		resourcesUnion1.setJouSerNo(1L);
+		resourcesUnion1.setResSerNo(1L);
 
 		ResourcesUnion dbResourcesUnion1 = service.save(resourcesUnion1, user);
 		final Long dbResourcesUnion1SerNo = dbResourcesUnion1.getSerNo();
@@ -51,10 +51,10 @@ public class ResourcesUnionServiceTest extends GenericTest {
 		// Save dbResourcesUnion2
 		ResourcesUnion resourcesUnion2 = new ResourcesUnion();
 		resourcesUnion2.setCusSerNo(cusSerNo2);
-		resourcesUnion2.setDatSerNo(1);
-		resourcesUnion2.setEbkSerNo(1);
-		resourcesUnion2.setJouSerNo(1);
-		resourcesUnion2.setResSerNo(1);
+		resourcesUnion2.setDatSerNo(1L);
+		resourcesUnion2.setEbkSerNo(1L);
+		resourcesUnion2.setJouSerNo(1L);
+		resourcesUnion2.setResSerNo(1L);
 
 		ResourcesUnion dbResourcesUnion2 = service.save(resourcesUnion2, user);
 		final Long dbResourcesUnion2SerNo = dbResourcesUnion2.getSerNo();
@@ -65,7 +65,7 @@ public class ResourcesUnionServiceTest extends GenericTest {
 		Assert.assertEquals(cusSerNo1, dbResourcesUnion1.getCusSerNo());
 
 		// update
-		final long dbResourcesUnion1UpdNum = 789;
+		final Long dbResourcesUnion1UpdNum = 789L;
 		dbResourcesUnion1.setCusSerNo(dbResourcesUnion1UpdNum);
 		dbResourcesUnion1 = service.update(dbResourcesUnion1, user);
 		Assert.assertEquals(dbResourcesUnion1UpdNum,
@@ -78,8 +78,9 @@ public class ResourcesUnionServiceTest extends GenericTest {
 		ds = service.getByRestrictions(ds);
 		List<ResourcesUnion> resourcesUnions = ds.getResults();
 		Assert.assertEquals(33, resourcesUnions.size());
-		Assert.assertEquals(3, resourcesUnions.get(0)
-				.getCusSerNo());
+		
+		Long assertNum=3L;
+		Assert.assertEquals(assertNum, resourcesUnions.get(0).getCusSerNo());
 
 		// delete by id
 		boolean deleted = true;

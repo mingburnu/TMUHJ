@@ -25,8 +25,8 @@ public class ResourcesUnionDaoTest extends GenericTest {
 	@Test
 	public void testCRUD() throws Exception {
 
-		final long cusSerNo1 = 123;
-		final long cusSerNo2 = 456;
+		final Long cusSerNo1 = 123L;
+		final Long cusSerNo2 = 456L;
 
 		// Save dbResourcesUnion1
 		ResourcesUnion resourcesUnion1 = new ResourcesUnion();
@@ -49,7 +49,7 @@ public class ResourcesUnionDaoTest extends GenericTest {
 		Assert.assertEquals(cusSerNo1, dbResourcesUnion1.getCusSerNo());
 
 		// update
-		final long dbResourcesUnion1UpdNum = 789;
+		final Long dbResourcesUnion1UpdNum = 789L;
 		dbResourcesUnion1.setCusSerNo(dbResourcesUnion1UpdNum);
 		boolean updated = true;
 		try {

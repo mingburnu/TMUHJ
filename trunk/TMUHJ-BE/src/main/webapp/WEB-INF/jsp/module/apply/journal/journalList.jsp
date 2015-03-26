@@ -16,6 +16,10 @@ $(document).ready(function() {
 	});
 });
 
+$(document).ready(function() {
+	$("select#listForm_searchCondition").val('<%=request.getParameter("option")%>');
+});
+
 //IE press Enter GoPage
 $(document).ready(function() {
 	$("input#listForm_currentPageHeader").keyup(function(e){
@@ -81,17 +85,25 @@ function goUpdate(serNo) {
 
 //GoPage
 function gotoPage(page){
+	var isNum = /^\d+$/.test(page);
 	var totalPage = $("span.totalNum:eq(0)").html();
-    var recordPerPage="${ds.pager.recordPerPage}";
-    var offset=parseInt(recordPerPage)*(parseInt(page)-1);
-    if(parseInt(page) < 1){
-        page=1;
-        offset=parseInt(recordPerPage)*(parseInt(page)-1);
-    }
-    else if(parseInt(page)>parseInt(totalPage)){
-        page=totalPage;
-        offset=parseInt(recordPerPage)*(parseInt(page)-1);
-    }
+	var recordPerPage="${ds.pager.recordPerPage}";
+	var offset=parseInt(recordPerPage)*(parseInt(page)-1);
+	
+	if(!isNum){
+		page="${ds.pager.currentPage}";
+		offset=parseInt(recordPerPage)*(parseInt(page)-1);
+	} else {
+		if (parseInt(page) < 1){
+			page=1;
+			offset=parseInt(recordPerPage)*(parseInt(page)-1);
+			}		
+		
+		if (parseInt(page) > parseInt(totalPage)){
+			page=totalPage;
+			offset=parseInt(recordPerPage)*(parseInt(page)-1);
+			} 
+		}
     goMain('<c:url value = '/'/>crud/apply.journal.list.action','#apply_journal_list','&pager.offset='+offset+'&pager.currentPage='+page);
 }
 
@@ -123,62 +135,23 @@ function goImport(){
 						<tr>
 							<td align="left"><select name="option"
 								id="listForm_searchCondition">
-									<c:set var="option">
-										<%=request.getParameter("option")%>
-									</c:set>
-									<c:choose>
-										<c:when test="${option=='entity.chineseTitle' }">
-											<option value="entity.chineseTitle" selected="selected">中文刊名</option>
-											<option value="entity.englishTitle">英文刊名</option>
-											<option value="entity.issn">ISSN</option>
-										</c:when>
-										<c:when test="${option=='entity.englishTitle' }">
-											<option value="entity.chineseTitle">中文刊名</option>
-											<option value="entity.englishTitle" selected="selected">英文刊名</option>
-											<option value="entity.issn">ISSN</option>
-										</c:when>
-										<c:when test="${option=='entity.issn' }">
-											<option value="entity.chineseTitle">中文刊名</option>
-											<option value="entity.englishTitle">英文刊名</option>
-											<option value="entity.issn" selected="selected">ISSN</option>
-										</c:when>
-										<c:otherwise>
-											<option value="entity.chineseTitle">中文刊名</option>
-											<option value="entity.englishTitle">英文刊名</option>
-											<option value="entity.issn">ISSN</option>
-										</c:otherwise>
-									</c:choose>
+									<option value="entity.chineseTitle">中文刊名</option>
+									<option value="entity.englishTitle">英文刊名</option>
+									<option value="entity.issn">ISSN</option>
 							</select></td>
+							<c:set var="option">
+								<%=request.getParameter("option")%>
+							</c:set>
 							<c:choose>
-								<c:when test="${option=='entity.chineseTitle' }">
-									<td align="left"><input type="text"
-										name="entity.chineseTitle" maxlength="20" id="search"
-										class="input_text"
+								<c:when test="${not empty option }">
+									<td align="left"><input type="text" name="${option }"
+										maxlength="20" id="search" class="input_text"
 										value="<%if (request
 								.getParameter(request.getParameter("option")) != null) {
 							out.print(request.getParameter(request
 									.getParameter("option")));
 						}%>">
 									</td>
-								</c:when>
-								<c:when test="${option=='entity.englishTitle' }">
-									<td align="left"><input type="text"
-										name="entity.englishTitle" maxlength="20" id="search"
-										class="input_text"
-										value="<%if (request
-								.getParameter(request.getParameter("option")) != null) {
-							out.print(request.getParameter(request
-									.getParameter("option")));
-						}%>"></td>
-								</c:when>
-								<c:when test="${option=='entity.issn' }">
-									<td align="left"><input type="text" name="entity.issn"
-										maxlength="20" id="search" class="input_text"
-										value="<%if (request
-								.getParameter(request.getParameter("option")) != null) {
-							out.print(request.getParameter(request
-									.getParameter("option")));
-						}%>"></td>
 								</c:when>
 								<c:otherwise>
 									<td align="left"><input type="text"

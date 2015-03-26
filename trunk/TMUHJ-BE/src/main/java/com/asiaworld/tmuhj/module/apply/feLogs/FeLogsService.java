@@ -3,9 +3,7 @@ package com.asiaworld.tmuhj.module.apply.feLogs;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
-
-import org.hibernate.Criteria;
+import org.hibernate.Query;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -63,16 +61,16 @@ public class FeLogsService extends GenericServiceLog<FeLogs> {
 
 		Session session = sessionFactory.getCurrentSession();
 
-		SQLQuery sqlQuery = null;
+		Query listQuery= null;
 		SQLQuery totalQuery = null;
 		if (entity.getEnd() != null) {
-			String listSql = "SELECT cus_SerNo, keyword, count(keyword) as amount FROM FE_Logs WHERE cDTime >'"
+			String listHql = "SELECT F.cusSerNo, F.keyword, count(F.keyword) FROM FeLogs F WHERE F.cDTime >'"
 					+ start
-					+ "' and cDTime <'"
+					+ "' and F.cDTime <'"
 					+ end
-					+ "' and cus_SerNo ='"
+					+ "' and F.cusSerNo ='"
 					+ entity.getCusSerNo()
-					+ "' group by cus_SerNo, keyword Order by amount desc";
+					+ "' GROUP BY F.cusSerNo, F.keyword ORDER BY count(F.keyword) DESC";
 			String countSql = "SELECT count(*) as total FROM (SELECT count(keyword) FROM FE_Logs WHERE cDTime >'"
 					+ start
 					+ "' and cDTime <'"
@@ -82,18 +80,18 @@ public class FeLogsService extends GenericServiceLog<FeLogs> {
 					+ "' group by cus_SerNo, keyword) as countTotal";
 
 			if (entity.getCusSerNo() == 0) {
-				listSql = listSql.replace("' and cus_SerNo ='" + entity.getCusSerNo(), "");
+				listHql = listHql.replace("' and F.cusSerNo ='" + entity.getCusSerNo(), "");
 				countSql = countSql.replace("' and cus_SerNo ='" + entity.getCusSerNo(), "");
 			}
 
-			sqlQuery = session.createSQLQuery(listSql);
+			listQuery = session.createQuery(listHql);
 			totalQuery = session.createSQLQuery(countSql);
 		} else {
-			String listSql = "SELECT cus_SerNo, keyword, count(keyword) as amount FROM FE_Logs WHERE cDTime >'"
+			String listHql = "SELECT F.cusSerNo, F.keyword, count(F.keyword) FROM FeLogs F WHERE F.cDTime >'"
 					+ start
-					+ "' and cus_SerNo ='"
+					+ "' and F.cusSerNo ='"
 					+ entity.getCusSerNo()
-					+ "' group by cus_SerNo, keyword Order by amount desc";
+					+ "' GROUP BY F.cusSerNo, F.keyword ORDER BY count(F.keyword) DESC";
 			String countSql = "SELECT count(*) as total FROM (SELECT count(keyword) FROM FE_Logs WHERE cDTime >'"
 					+ start
 					+ "' and cus_SerNo ='"
@@ -101,43 +99,32 @@ public class FeLogsService extends GenericServiceLog<FeLogs> {
 					+ "' group by cus_SerNo, keyword) as countTotal";
 
 			if (entity.getCusSerNo() == 0) {
-				listSql = listSql.replace("' and cus_SerNo ='" + entity.getCusSerNo(), "");
+				listHql = listHql.replace("' and F.cusSerNo ='" + entity.getCusSerNo(), "");
 				countSql = countSql.replace("' and cus_SerNo ='" + entity.getCusSerNo(), "");
 			}
 
-			sqlQuery = session.createSQLQuery(listSql);
+			listQuery = session.createQuery(listHql);
 			totalQuery = session.createSQLQuery(countSql);
 		}
 
-		sqlQuery.setFirstResult(ds.getPager().getOffset());
-		sqlQuery.setMaxResults(ds.getPager().getRecordPerPage());
-
-		sqlQuery.setResultTransformer(Criteria.ALIAS_TO_ENTITY_MAP);
-
-		List<?> data = sqlQuery.list();
+		listQuery.setFirstResult(ds.getPager().getOffset());
+		listQuery.setMaxResults(ds.getPager().getRecordPerPage());
+		
+		List<?> data = listQuery.list();
 		List<?> total = totalQuery.list();
-
 		Iterator<?> iterator = data.iterator();
 		List<FeLogs> ranks = new ArrayList<FeLogs>();
+		
 		int i = ds.getPager().getOffset() + 1;
 		while (iterator.hasNext()) {
-			Map<?, ?> row = (Map<?, ?>) iterator.next();
-
-			// 資料庫不同，寫法不一樣
-			if (row.get("keyword") != null) {
-				feLogs = new FeLogs(Act.綜合查詢, row.get("keyword").toString(),
-						Integer.parseInt(row.get("cus_SerNo").toString()), 0,
-						0, 0, 0);
-				feLogs.setCount(Integer.parseInt(row.get("amount").toString()));
-				feLogs.setCustomer(customerService.getBySerNo(feLogs.getCusSerNo()));
-			} else {
-				feLogs = new FeLogs(Act.綜合查詢, row.get("KEYWORD").toString(),
-						Integer.parseInt(row.get("CUS_SERNO").toString()), 0,
-						0, 0, 0);
-				feLogs.setCount(Integer.parseInt(row.get("AMOUNT").toString()));
-				feLogs.setCustomer(customerService.getBySerNo(feLogs.getCusSerNo()));
-			}
+			Object[] row = (Object[])iterator.next();
+			feLogs = new FeLogs(Act.綜合查詢, row[1].toString(),
+					Long.parseLong(row[0].toString()), 0L,
+					0L, 0L, 0L);
+			feLogs.setCount(Integer.parseInt(row[2].toString()));
+			feLogs.setCustomer(customerService.getBySerNo(feLogs.getCusSerNo()));
 			feLogs.setRank(i);
+			
 			ranks.add(feLogs);
 			i++;
 		}

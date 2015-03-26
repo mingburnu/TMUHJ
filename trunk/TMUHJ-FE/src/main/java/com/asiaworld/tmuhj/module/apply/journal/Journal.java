@@ -74,7 +74,7 @@ public class Journal extends GenericEntityFull {
 
 	// 版本
 	@Column(name = "version")
-	private int version;
+	private Integer version;
 	
 	@Transient
 	private String option;
@@ -280,7 +280,7 @@ public class Journal extends GenericEntityFull {
 	/**
 	 * @return the version
 	 */
-	public int getVersion() {
+	public Integer getVersion() {
 		return version;
 	}
 
@@ -288,7 +288,7 @@ public class Journal extends GenericEntityFull {
 	 * @param version
 	 *            the version to set
 	 */
-	public void setVersion(int version) {
+	public void setVersion(Integer version) {
 		this.version = version;
 	}
 

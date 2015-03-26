@@ -18,6 +18,7 @@ import java.util.regex.Pattern;
 
 import net.sf.json.JSONObject;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
@@ -32,12 +33,14 @@ import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 
+import com.asiaworld.tmuhj.core.apply.accountNumber.AccountNumberService;
+import com.asiaworld.tmuhj.core.apply.enums.Role;
+import com.asiaworld.tmuhj.core.apply.ipRange.IpRange;
+import com.asiaworld.tmuhj.core.apply.ipRange.IpRangeService;
 import com.asiaworld.tmuhj.core.model.DataSet;
 import com.asiaworld.tmuhj.core.model.ExcelWorkSheet;
 import com.asiaworld.tmuhj.core.model.Pager;
 import com.asiaworld.tmuhj.core.web.GenericCRUDActionFull;
-import com.asiaworld.tmuhj.module.apply.ipRange.IpRange;
-import com.asiaworld.tmuhj.module.apply.ipRange.IpRangeService;
 
 @Controller
 @SuppressWarnings("serial")
@@ -52,6 +55,9 @@ public class CustomerAction extends GenericCRUDActionFull<Customer> {
 
 	private String fileContentType;
 
+	@Autowired
+	private AccountNumberService accountNumberService;
+	
 	@Autowired
 	private Customer customer;
 
@@ -117,7 +123,7 @@ public class CustomerAction extends GenericCRUDActionFull<Customer> {
 		DataSet<Customer> ds = initDataSet();
 		ds.setPager(Pager.getChangedPager(
 				getRequest().getParameter("recordPerPage"), getRequest()
-						.getParameter("recordPoint"), ds.getPager()));
+				.getParameter("recordPoint"), ds.getPager()));
 		ds = customerService.getByRestrictions(ds);
 
 		setDs(ds);
@@ -128,17 +134,15 @@ public class CustomerAction extends GenericCRUDActionFull<Customer> {
 	public String save() throws Exception {
 		String emailPattern = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@"
 				+ "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
-		if (getEntity().getName().trim().equals("")
-				|| getEntity().getName() == null) {
+		if (StringUtils.isBlank(getEntity().getName())) {
 			addActionError("用戶名稱不可空白");
 		}
 
-		if (customerService.nameIsExist(getEntity())) {
+		if(customerService.getCusSerNoByName(getEntity().getName()) != 0){
 			addActionError("用戶名稱已存在");
 		}
 
-		if (getEntity().getEmail() != null
-				&& !getEntity().getEmail().trim().equals("")) {
+		if (StringUtils.isNotBlank(getEntity().getEmail())) {
 			if (!Pattern.compile(emailPattern).matcher(getEntity().getEmail())
 					.matches()) {
 				addActionError("email格式不正確");
@@ -163,8 +167,7 @@ public class CustomerAction extends GenericCRUDActionFull<Customer> {
 		String emailPattern = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@"
 				+ "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
 
-		if (getEntity().getEmail() != null
-				&& !getEntity().getEmail().trim().equals("")) {
+		if (StringUtils.isNotBlank(getEntity().getEmail())) {
 			if (!Pattern.compile(emailPattern).matcher(getEntity().getEmail())
 					.matches()) {
 				addActionError("email格式不正確");
@@ -186,20 +189,21 @@ public class CustomerAction extends GenericCRUDActionFull<Customer> {
 
 	@Override
 	public String delete() throws Exception {
-		if (getEntity().getSerNo() <= 0 || getEntity().getSerNo() == 9) {
-			addActionError("流水號不正確");
-		} else if (customerService.getBySerNo(getEntity().getSerNo()) == null) {
-			addActionError("沒有這個物件");
-		}
-
-		if (!hasActionErrors()) {
-			Iterator<?> iterator = ipRangeService.getOwnerIpRangeByCusSerNo(
-					getEntity().getSerNo()).iterator();
-			while (iterator.hasNext()) {
-				ipRange = (IpRange) iterator.next();
-				ipRangeService.deleteBySerNo(ipRange.getSerNo());
+		if(getLoginUser().getRole().equals(Role.系統管理員)){
+			if (getRequest().getParameter("entity.serNo") == null
+					|| getRequest().getParameter("entity.serNo").trim().equals("")) {
+				addActionError("沒有流水號");
+				} else {
+					if (getEntity().getSerNo() <= 0 || getEntity().getSerNo() == 9) {
+						addActionError("流水號不正確");
+						}
+					}
+			} else {
+				addActionError("權限不足");
 			}
 
+		if (!hasActionErrors()) {
+			customerService.deleteOwnerObj(getEntity().getSerNo());
 			customerService.deleteBySerNo(getEntity().getSerNo());
 
 			DataSet<Customer> ds = initDataSet();
@@ -224,18 +228,22 @@ public class CustomerAction extends GenericCRUDActionFull<Customer> {
 	}
 
 	public String deleteChecked() throws Exception {
-		if (checkItem == null || checkItem.length == 0) {
-			addActionError("請選擇一筆或一筆以上的資料");
-		} else {
-			int i = 0;
-			while (i < checkItem.length) {
-				if (!NumberUtils.isDigits(String.valueOf(checkItem[i]))
-						|| Long.parseLong(checkItem[i]) < 1 || Long.parseLong(checkItem[i]) == 9) {
-					addActionError(checkItem[i] + "為不可利用的流水號");
-				}
-				i++;
+		if(getLoginUser().getRole().equals(Role.系統管理員)){
+			if (checkItem == null || checkItem.length == 0) {
+				addActionError("請選擇一筆或一筆以上的資料");
+				} else {
+					int i = 0;
+					while (i < checkItem.length) {
+						if (!NumberUtils.isDigits(String.valueOf(checkItem[i]))
+								|| Long.parseLong(checkItem[i]) < 1 || Long.parseLong(checkItem[i]) == 9) {
+							addActionError(checkItem[i] + "為不可利用的流水號");
+							}
+						i++;
+						}
+					}
+			} else {
+				addActionError("權限不足");
 			}
-		}
 
 		if (!hasActionErrors()) {
 			int i = 0;
@@ -249,6 +257,7 @@ public class CustomerAction extends GenericCRUDActionFull<Customer> {
 						ipRangeService.deleteBySerNo(ipRange.getSerNo());
 					}
 
+					customerService.deleteOwnerObj(Long.parseLong(checkItem[i]));
 					customerService.deleteBySerNo(Long.parseLong(checkItem[i]));
 				}
 				i++;
@@ -271,12 +280,16 @@ public class CustomerAction extends GenericCRUDActionFull<Customer> {
 	}
 
 	public String view() throws Exception {
-		customer = customerService.getBySerNo(Long.parseLong(getRequest()
-				.getParameter("viewSerNo")));
+		if (NumberUtils.isDigits(getRequest().getParameter("viewSerNo")) 
+				&& Long.parseLong(getRequest().getParameter("viewSerNo")) != 0){
+			customer = customerService.getBySerNo(Long.parseLong(getRequest()
+					.getParameter("viewSerNo")));
+			} 
+		
 		setEntity(customer);
 		getRequest().setAttribute("viewSerNo", getRequest().getParameter("viewSerNo"));
 		return VIEW;
-	}
+		}
 
 	public String ajax() throws Exception {
 		getRequest().setAttribute("customerUnits",
@@ -512,7 +525,13 @@ public class CustomerAction extends GenericCRUDActionFull<Customer> {
 				getRequest().getParameter("recordPerPage"), getRequest()
 						.getParameter("recordPoint"), ds.getPager()));
 
-		ds.getPager().setTotalRecord((long) importList.size());
+		if (importList == null){
+			return null;
+		} else {
+			ds.getPager().setTotalRecord((long) importList.size());
+			
+		}
+		
 		int first = ds.getPager().getRecordPerPage()
 				* (ds.getPager().getCurrentPage() - 1);
 		int last = first + ds.getPager().getRecordPerPage();

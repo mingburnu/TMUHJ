@@ -62,7 +62,7 @@ public class ResourcesUnionService extends GenericServiceSerNo<ResourcesUnion> {
 		} else {
 			criteria.add(Restrictions.eq("datSerNo", objSerNo));
 		}
-
+		
 		ResourcesUnion resourcesUnion = (ResourcesUnion) criteria.list().get(0);
 
 		return resourcesUnion;

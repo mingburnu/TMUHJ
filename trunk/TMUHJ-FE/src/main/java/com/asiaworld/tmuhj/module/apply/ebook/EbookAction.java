@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
@@ -74,6 +75,16 @@ public class EbookAction extends GenericCRUDActionFull<Ebook> {
 
 	@Override
 	public String list() throws Exception {
+		if (StringUtils.isBlank(getRequest().getParameter("serNo")) 
+				|| !NumberUtils.isDigits(getRequest().getParameter("serNo"))){
+			addActionError("serNo Error");
+		} else {
+			if (ebookService.getBySerNo(Long.parseLong(getRequest().getParameter("serNo"))) == null) {
+				addActionError("Object Null");	
+			}
+		}
+		
+		if (!hasActionErrors()){
 		ebook = ebookService.getBySerNo(Long.parseLong(getRequest()
 				.getParameter("serNo")));
 
@@ -98,7 +109,11 @@ public class EbookAction extends GenericCRUDActionFull<Ebook> {
 				.replace("]", "");
 		getRequest().setAttribute("ebook", ebook);
 		getRequest().setAttribute("ownerNames", ownerNames);
-		getRequest().setAttribute("backURL", getRequest().getParameter("currentURL").replace("@@@", "?").replace("^^^", "&"));
+		
+		if (StringUtils.isNotBlank(getRequest().getParameter("currentURL"))){
+			getRequest().setAttribute("backURL", getRequest().getParameter("currentURL").replace("@@@", "?").replace("^^^", "&"));
+			}
+		}
 		return "e-detail";
 	}
 

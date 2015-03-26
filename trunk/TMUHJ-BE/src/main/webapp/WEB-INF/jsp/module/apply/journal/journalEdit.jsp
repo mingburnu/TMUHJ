@@ -37,10 +37,50 @@
 			});
 		});
 	});
+	
+	$(document).ready(function() {
+		$("input#apply_journal_save_resourcesBuyers_rCategory").each(function(){
+			if ($(this).val()=="未註明"){
+		        this.checked = true;
+		    }
+		});
+		
+		$("input#apply_journal_save_resourcesBuyers_rType").each(function(){
+			if ($(this).val()=="期刊"){
+		        this.checked = true;
+		    }
+		});
+	});
+	
+	$(document).ready(function() {
+		$("input#apply_journal_save_resourcesBuyers_rCategory").each(function(){
+			if ($(this).val()=="${rCategory}"){
+		        this.checked = true;
+		    }
+		});
+		
+		$("input#apply_journal_save_resourcesBuyers_rType").each(function(){
+			if ($(this).val()=="${rType}"){
+		        this.checked = true;
+		    }
+		});
+		
+		$("input#apply_journal_update_resourcesBuyers_rCategory").each(function(){
+			if ($(this).val()=="${rCategory}"){
+		        this.checked = true;
+		    }
+		});
+		
+		$("input#apply_journal_update_resourcesBuyers_rType").each(function(){
+			if ($(this).val()=="${rType}"){
+		        this.checked = true;
+		    }
+		});
+	});
 
 	//重設所有欄位(清空)
 	function resetData() {
-		clearDetail_2();
+		clearCustomers();
 		$("form#apply_journal_save").html(saveForm);
 		$("form#apply_journal_update").html(updateForm);
 		$("form#apply_journal_queue").html(importForm);
@@ -57,8 +97,8 @@
 					'期刊-新增', data);
 		} else {
 			data = $('#apply_journal_update').serialize();
-			goDetail("<c:url value = '/'/>crud/apply.journal.update.action",
-					'期刊-新增', data);
+			goDetail("<c:url value = '/'/>crud/apply.journal.update.action?entity.serNo=${entity.serNo}",
+					'期刊-修改', data);
 		}
 	}
 
@@ -69,7 +109,7 @@
 					'單位-新增');
 		}
 
-		$("#div_Detail_2").show();
+		$("#div_Customers").show();
 		UI_Resize();
 		$(window).scrollTop(0);
 		closeLoading();
@@ -174,7 +214,7 @@
 	
 	//匯出範本
 	function goExport(){
-		var url='<%=request.getContextPath()%>/crud/apply.journal.exports.action';
+		var url="<%=request.getContextPath()%>/crud/apply.journal.exports.action";
 		window.open(url, "_top");
 	}
 </script>
@@ -198,7 +238,6 @@ input#customer_name {
 	<c:choose>
 		<c:when test="${(empty entity.serNo) && (empty goQueue) }">
 			<s:form namespace="/crud" action="apply.journal.save">
-				<s:hidden name="entity.serNo" />
 				<table cellspacing="1" class="detail-table">
 					<tr>
 						<th width="130">中文刊名</th>
@@ -256,85 +295,23 @@ input#customer_name {
 					</tr>
 					<tr>
 						<th width="130">資源類型</th>
-						<td><c:choose>
-								<c:when test="${(not empty rCategory)&& (rCategory == '買斷') }">
-									<input type="radio" name="resourcesBuyers.rCategory"
-										id="apply_journal_save_resourcesBuyers_rCategory" value="買斷"
-										checked="checked">
-									<label for="apply_journal_save_resourcesBuyers_rCategory">買斷</label>
-									<input type="radio" name="resourcesBuyers.rCategory"
-										id="apply_journal_save_resourcesBuyers_rCategory" value="租貸">
-									<label for="apply_journal_save_resourcesBuyers_rCategory">租貸</label>
-									<input type="radio" name="resourcesBuyers.rCategory"
-										id="apply_journal_save_resourcesBuyers_rCategory" value="未註明">
-									<label for="apply_journal_save_resourcesBuyers_rCategory">未註明</label>
-								</c:when>
-								<c:when test="${(not empty rCategory)&& (rCategory == '租貸') }">
-									<input type="radio" name="resourcesBuyers.rCategory"
-										id="apply_journal_save_resourcesBuyers_rCategory" value="買斷">
-									<label for="apply_journal_save_resourcesBuyers_rCategory">買斷</label>
-									<input type="radio" name="resourcesBuyers.rCategory"
-										id="apply_journal_save_resourcesBuyers_rCategory" value="租貸"
-										checked="checked">
-									<label for="apply_journal_save_resourcesBuyers_rCategory">租貸</label>
-									<input type="radio" name="resourcesBuyers.rCategory"
-										id="apply_journal_save_resourcesBuyers_rCategory" value="未註明">
-									<label for="apply_journal_save_resourcesBuyers_rCategory">未註明</label>
-								</c:when>
-								<c:otherwise>
-									<input type="radio" name="resourcesBuyers.rCategory"
-										id="apply_journal_save_resourcesBuyers_rCategory" value="買斷">
-									<label for="apply_journal_save_resourcesBuyers_rCategory">買斷</label>
-									<input type="radio" name="resourcesBuyers.rCategory"
-										id="apply_journal_save_resourcesBuyers_rCategory" value="租貸">
-									<label for="apply_journal_save_resourcesBuyers_rCategory">租貸</label>
-									<input type="radio" name="resourcesBuyers.rCategory"
-										id="apply_journal_save_resourcesBuyers_rCategory" value="未註明"
-										checked="checked">
-									<label for="apply_journal_save_resourcesBuyers_rCategory">未註明</label>
-								</c:otherwise>
-							</c:choose></td>
+						<td>
+						<c:forEach var="item" items="${categoryList}" varStatus="status">						
+						<input type="radio" name="resourcesBuyers.rCategory"
+							id="apply_journal_save_resourcesBuyers_rCategory" value="${item.category }"> <label
+							for="apply_journal_save_resourcesBuyers_rCategory">${item.category }</label>
+						</c:forEach>
+						</td>
 					</tr>
 					<tr>
 						<th width="130">資源種類</th>
-						<td><c:choose>
-								<c:when test="${(not empty rType)&& (rType == '電子書') }">
-									<input type="radio" name="resourcesBuyers.rType"
-										id="apply_journal_save_resourcesBuyers_rType" value="電子書"
-										checked="checked">
-									<label for="apply_journal_save_resourcesBuyers_rType">電子書</label>
-									<input type="radio" name="resourcesBuyers.rType"
-										id="apply_journal_save_resourcesBuyers_rType" value="期刊">
-									<label for="apply_journal_save_resourcesBuyers_rType">期刊</label>
-									<input type="radio" name="resourcesBuyers.rType"
-										id="apply_journal_save_resourcesBuyers_rType" value="資料庫">
-									<label for="apply_journal_save_resourcesBuyers_rType">資料庫</label>
-								</c:when>
-								<c:when test="${(not empty rType)&& (rType == '資料庫') }">
-									<input type="radio" name="resourcesBuyers.rType"
-										id="apply_journal_save_resourcesBuyers_rType" value="電子書">
-									<label for="apply_journal_save_resourcesBuyers_rType">電子書</label>
-									<input type="radio" name="resourcesBuyers.rType"
-										id="apply_journal_save_resourcesBuyers_rType" value="期刊">
-									<label for="apply_journal_save_resourcesBuyers_rType">期刊</label>
-									<input type="radio" name="resourcesBuyers.rType"
-										id="apply_journal_save_resourcesBuyers_rType" value="資料庫"
-										checked="checked">
-									<label for="apply_journal_save_resourcesBuyers_rType">資料庫</label>
-								</c:when>
-								<c:otherwise>
-									<input type="radio" name="resourcesBuyers.rType"
-										id="apply_journal_save_resourcesBuyers_rType" value="電子書">
-									<label for="apply_journal_save_resourcesBuyers_rType">電子書</label>
-									<input type="radio" name="resourcesBuyers.rType"
-										id="apply_journal_save_resourcesBuyers_rType" value="期刊"
-										checked="checked">
-									<label for="apply_journal_save_resourcesBuyers_rType">期刊</label>
-									<input type="radio" name="resourcesBuyers.rType"
-										id="apply_journal_save_resourcesBuyers_rType" value="資料庫">
-									<label for="apply_journal_save_resourcesBuyers_rType">資料庫</label>
-								</c:otherwise>
-							</c:choose></td>
+						<td>
+						<c:forEach var="item" items="${typeList}" varStatus="status">
+						<input type="radio" name="resourcesBuyers.rType"
+							id="apply_journal_save_resourcesBuyers_rType" value="${item.type }"> <label
+							for="apply_journal_save_resourcesBuyers_rType">${item.type }</label> 
+						</c:forEach>
+						</td>
 					</tr>
 					<tr>
 						<th width="130">資料庫中文題名</th>
@@ -371,7 +348,7 @@ input#customer_name {
 				</table>
 				<div class="button_box">
 					<div class="detail-func-button">
-						<a class="state-default" onclick="clearDetail_2();closeDetail();">取消</a>
+						<a class="state-default" onclick="clearCustomers();closeDetail();">取消</a>
 						&nbsp;<a class="state-default" onclick="resetData();">重設</a>&nbsp;
 						<a class="state-default" onclick="submitData();">確認</a>
 					</div>
@@ -398,7 +375,7 @@ input#customer_name {
 				</table>
 				<div class="button_box">
 					<div class="detail-func-button">
-						<a class="state-default" onclick="clearDetail_2();closeDetail();">取消</a>
+						<a class="state-default" onclick="clearCustomers();closeDetail();">取消</a>
 						&nbsp;<a class="state-default" onclick="resetData();">重置</a>&nbsp;<a
 							id="ports" class="state-default" onclick="goQueue();">下一步</a>
 					</div>
@@ -416,20 +393,19 @@ input#customer_name {
 		<c:otherwise>
 			<%
 				ArrayList<?> allCustomers = (ArrayList<?>) request.getAttribute("allCustomers");
-							ArrayList<?> entityCustomers = (ArrayList<?>) request.getAttribute("entity.customers");
-							Object[] allCustomerArray=allCustomers.toArray();
-							if (entityCustomers.size() > 0) {
-								for (int j = 0; j < entityCustomers.size(); j++) {
-										if (allCustomers.contains(entityCustomers.get(j))) {
-											allCustomers.remove(entityCustomers.get(j));
+										ArrayList<?> entityCustomers = (ArrayList<?>) request.getAttribute("entity.customers");
+										Object[] allCustomerArray=allCustomers.toArray();
+										if (entityCustomers.size() > 0) {
+											for (int j = 0; j < entityCustomers.size(); j++) {
+													if (allCustomers.contains(entityCustomers.get(j))) {
+														allCustomers.remove(entityCustomers.get(j));
+														}
+												}
 											}
-									}
-								}
-							
-							request.setAttribute("allCustomers", allCustomers);
+										
+										request.setAttribute("allCustomers", allCustomers);
 			%>
 			<s:form namespace="/crud" action="apply.journal.update">
-				<s:hidden name="entity.serNo" />
 				<table cellspacing="1" class="detail-table">
 					<tr>
 						<th width="130">中文刊名</th>
@@ -487,85 +463,23 @@ input#customer_name {
 					</tr>
 					<tr>
 						<th width="130">資源類型</th>
-						<td><c:choose>
-								<c:when test="${(not empty rCategory)&& (rCategory == '買斷') }">
-									<input type="radio" name="resourcesBuyers.rCategory"
-										id="apply_journal_save_resourcesBuyers_rCategory" value="買斷"
-										checked="checked">
-									<label for="apply_journal_save_resourcesBuyers_rCategory">買斷</label>
-									<input type="radio" name="resourcesBuyers.rCategory"
-										id="apply_journal_save_resourcesBuyers_rCategory" value="租貸">
-									<label for="apply_journal_save_resourcesBuyers_rCategory">租貸</label>
-									<input type="radio" name="resourcesBuyers.rCategory"
-										id="apply_journal_save_resourcesBuyers_rCategory" value="未註明">
-									<label for="apply_journal_save_resourcesBuyers_rCategory">未註明</label>
-								</c:when>
-								<c:when test="${(not empty rCategory)&& (rCategory == '租貸') }">
-									<input type="radio" name="resourcesBuyers.rCategory"
-										id="apply_journal_save_resourcesBuyers_rCategory" value="買斷">
-									<label for="apply_journal_save_resourcesBuyers_rCategory">買斷</label>
-									<input type="radio" name="resourcesBuyers.rCategory"
-										id="apply_journal_save_resourcesBuyers_rCategory" value="租貸"
-										checked="checked">
-									<label for="apply_journal_save_resourcesBuyers_rCategory">租貸</label>
-									<input type="radio" name="resourcesBuyers.rCategory"
-										id="apply_journal_save_resourcesBuyers_rCategory" value="未註明">
-									<label for="apply_journal_save_resourcesBuyers_rCategory">未註明</label>
-								</c:when>
-								<c:otherwise>
-									<input type="radio" name="resourcesBuyers.rCategory"
-										id="apply_journal_save_resourcesBuyers_rCategory" value="買斷">
-									<label for="apply_journal_save_resourcesBuyers_rCategory">買斷</label>
-									<input type="radio" name="resourcesBuyers.rCategory"
-										id="apply_journal_save_resourcesBuyers_rCategory" value="租貸">
-									<label for="apply_journal_save_resourcesBuyers_rCategory">租貸</label>
-									<input type="radio" name="resourcesBuyers.rCategory"
-										id="apply_journal_save_resourcesBuyers_rCategory" value="未註明"
-										checked="checked">
-									<label for="apply_journal_save_resourcesBuyers_rCategory">未註明</label>
-								</c:otherwise>
-							</c:choose></td>
+						<td>
+						<c:forEach var="item" items="${categoryList}" varStatus="status">						
+						<input type="radio" name="resourcesBuyers.rCategory"
+							id="apply_journal_update_resourcesBuyers_rCategory" value="${item.category }"> <label
+							for="apply_journal_update_resourcesBuyers_rCategory">${item.category }</label>
+						</c:forEach>
+						</td>
 					</tr>
 					<tr>
 						<th width="130">資源種類</th>
-						<td><c:choose>
-								<c:when test="${(not empty rType)&& (rType == '電子書') }">
-									<input type="radio" name="resourcesBuyers.rType"
-										id="apply_journal_save_resourcesBuyers_rType" value="電子書"
-										checked="checked">
-									<label for="apply_journal_save_resourcesBuyers_rType">電子書</label>
-									<input type="radio" name="resourcesBuyers.rType"
-										id="apply_journal_save_resourcesBuyers_rType" value="期刊">
-									<label for="apply_journal_save_resourcesBuyers_rType">期刊</label>
-									<input type="radio" name="resourcesBuyers.rType"
-										id="apply_journal_save_resourcesBuyers_rType" value="資料庫">
-									<label for="apply_journal_save_resourcesBuyers_rType">資料庫</label>
-								</c:when>
-								<c:when test="${(not empty rType)&& (rType == '資料庫') }">
-									<input type="radio" name="resourcesBuyers.rType"
-										id="apply_journal_save_resourcesBuyers_rType" value="電子書">
-									<label for="apply_journal_save_resourcesBuyers_rType">電子書</label>
-									<input type="radio" name="resourcesBuyers.rType"
-										id="apply_journal_save_resourcesBuyers_rType" value="期刊">
-									<label for="apply_journal_save_resourcesBuyers_rType">期刊</label>
-									<input type="radio" name="resourcesBuyers.rType"
-										id="apply_journal_save_resourcesBuyers_rType" value="資料庫"
-										checked="checked">
-									<label for="apply_journal_save_resourcesBuyers_rType">資料庫</label>
-								</c:when>
-								<c:otherwise>
-									<input type="radio" name="resourcesBuyers.rType"
-										id="apply_journal_save_resourcesBuyers_rType" value="電子書">
-									<label for="apply_journal_save_resourcesBuyers_rType">電子書</label>
-									<input type="radio" name="resourcesBuyers.rType"
-										id="apply_journal_save_resourcesBuyers_rType" value="期刊"
-										checked="checked">
-									<label for="apply_journal_save_resourcesBuyers_rType">期刊</label>
-									<input type="radio" name="resourcesBuyers.rType"
-										id="apply_journal_save_resourcesBuyers_rType" value="資料庫">
-									<label for="apply_journal_save_resourcesBuyers_rType">資料庫</label>
-								</c:otherwise>
-							</c:choose></td>
+						<td>
+						<c:forEach var="item" items="${typeList}" varStatus="status">
+						<input type="radio" name="resourcesBuyers.rType"
+							id="apply_journal_update_resourcesBuyers_rType" value="${item.type }"> <label
+							for="apply_journal_update_resourcesBuyers_rType">${item.type }</label> 
+						</c:forEach>
+						</td>
 					</tr>
 					<tr>
 						<th width="130">資料庫中文題名</th>

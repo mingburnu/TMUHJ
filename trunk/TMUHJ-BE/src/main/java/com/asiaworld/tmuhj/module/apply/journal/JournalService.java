@@ -52,13 +52,14 @@ public class JournalService extends GenericServiceFull<Journal> {
 
 			String[] issnSpilt = entity.getIssn().split("-");
 
-			String issn = "";
+			StringBuilder issn = new StringBuilder(""); 
 			int i = 0;
 			while (i < issnSpilt.length) {
-				issn = issn + issnSpilt[i];
+				issn.append(issnSpilt[i]);
+				i++;
 			}
 
-			restrictions.likeIgnoreCase("issn", issn);
+			restrictions.likeIgnoreCase("issn", issn.toString());
 		}
 
 		return dao.findByRestrictions(restrictions, ds);

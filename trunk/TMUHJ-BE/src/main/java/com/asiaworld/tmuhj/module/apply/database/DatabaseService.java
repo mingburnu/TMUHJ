@@ -54,13 +54,49 @@ public class DatabaseService extends GenericServiceFull<Database> {
 		return dao;
 	}
 
-	public long getDatSerNoByName(String dbChtTitle, String dbEngTitle)
+	public long getDatSerNoByBothName(String dbChtTitle, String dbEngTitle)
 			throws Exception {
 		Session session = sessionFactory.getCurrentSession();
 		Criteria criteria = session.createCriteria(Database.class);
 		criteria.add(Restrictions.and(
 				Restrictions.ilike("dbChtTitle", dbChtTitle, MatchMode.EXACT),
 				Restrictions.ilike("dbEngTitle", dbEngTitle, MatchMode.EXACT)));
+		if (criteria.list().size() > 0) {
+			return ((Database) criteria.list().get(0)).getSerNo();
+		} else {
+			return 0;
+		}
+	}
+
+	public long getDatSerNoByChtName(String dbChtTitle) throws Exception {
+		Session session = sessionFactory.getCurrentSession();
+		Criteria criteria = session.createCriteria(Database.class);
+
+		if (StringUtils.isNotBlank(dbChtTitle)) {
+			criteria.add(Restrictions.ilike("dbChtTitle", dbChtTitle,
+					MatchMode.EXACT));
+		} else {
+			return 0;
+		}
+
+		if (criteria.list().size() > 0) {
+			return ((Database) criteria.list().get(0)).getSerNo();
+		} else {
+			return 0;
+		}
+	}
+
+	public long getDatSerNoByEngName(String dbEngTitle) throws Exception {
+		Session session = sessionFactory.getCurrentSession();
+		Criteria criteria = session.createCriteria(Database.class);
+		
+		if (StringUtils.isNotBlank(dbEngTitle)) {
+			criteria.add(Restrictions.ilike("dbEngTitle", dbEngTitle,
+					MatchMode.EXACT));
+		} else {
+			return 0;
+		}
+		
 		if (criteria.list().size() > 0) {
 			return ((Database) criteria.list().get(0)).getSerNo();
 		} else {

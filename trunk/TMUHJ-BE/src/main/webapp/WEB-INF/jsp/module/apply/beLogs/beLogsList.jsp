@@ -39,17 +39,24 @@ function goSearch(){
 
 //GoPage
 function gotoPage(page){
+	var isNum = /^\d+$/.test(page);
 	var totalPage = $("span.totalNum:eq(0)").html();
     var recordPerPage="${ds.pager.recordPerPage}";
     var offset=parseInt(recordPerPage)*(parseInt(page)-1);
-    if(parseInt(page) < 1){
-        page=1;
-        offset=parseInt(recordPerPage)*(parseInt(page)-1);
-    }
-    else if(parseInt(page)>parseInt(totalPage)){
-        page=totalPage;
-        offset=parseInt(recordPerPage)*(parseInt(page)-1);
-    }
+    if(!isNum){
+		page="${ds.pager.currentPage}";
+		offset=parseInt(recordPerPage)*(parseInt(page)-1);
+	} else {
+		if (parseInt(page) < 1){
+			page=1;
+			offset=parseInt(recordPerPage)*(parseInt(page)-1);
+			}		
+		
+		if (parseInt(page) > parseInt(totalPage)){
+			page=totalPage;
+			offset=parseInt(recordPerPage)*(parseInt(page)-1);
+			} 
+		}
     goMain('<c:url value = '/'/>crud/apply.beLogs.list.action','#apply_beLogs_list','&pager.offset='+offset+'&pager.currentPage='+page);
 }
 

@@ -29,7 +29,7 @@ public class Ebook extends GenericEntityFull {
 
 	// ISBN
 	@Column(name = "ISBN")
-	private long isbn;
+	private Long isbn;
 
 	// 出版社
 	@Column(name = "publishname")
@@ -57,14 +57,14 @@ public class Ebook extends GenericEntityFull {
 
 	// 版本
 	@Column(name = "Version")
-	private int version;
+	private Integer version;
 
 	// 中國圖書分類碼
 	@Column(name = "cnclassbzstr")
 	private String cnClassBzStr;
 
 	// 美國國家圖書館類碼
-	@Column(name = "bookinfointegral")
+	@Column(name = "bookinfoIntegeregral")
 	private String bookInfoIntegral;
 
 	// URL
@@ -106,7 +106,7 @@ public class Ebook extends GenericEntityFull {
 	/**
 	 * @return the isbn
 	 */
-	public long getIsbn() {
+	public Long getIsbn() {
 		return isbn;
 	}
 
@@ -114,7 +114,7 @@ public class Ebook extends GenericEntityFull {
 	 * @param issn
 	 *            the issn to set
 	 */
-	public void setIsbn(long isbn) {
+	public void setIsbn(Long isbn) {
 		this.isbn = isbn;
 	}
 
@@ -211,7 +211,7 @@ public class Ebook extends GenericEntityFull {
 	/**
 	 * @return the version
 	 */
-	public int getVersion() {
+	public Integer getVersion() {
 		return version;
 	}
 
@@ -219,7 +219,7 @@ public class Ebook extends GenericEntityFull {
 	 * @param version
 	 *            the version to set
 	 */
-	public void setVersion(int version) {
+	public void setVersion(Integer version) {
 		this.version = version;
 	}
 
@@ -365,9 +365,9 @@ public class Ebook extends GenericEntityFull {
 		// TODO Auto-generated constructor stub
 	}
 
-	public Ebook(String bookName, long isbn, String publishName,
+	public Ebook(String bookName, Long isbn, String publishName,
 			String autherName, String authers, String uppeName, String pubDate,
-			String languages, int version, String cnClassBzStr,
+			String languages, Integer version, String cnClassBzStr,
 			String bookInfoIntegral, String url, String style,
 			String publication, ResourcesBuyers resourcesBuyers,
 			List<Customer> customers, String existStatus) {

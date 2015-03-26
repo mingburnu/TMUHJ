@@ -16,6 +16,10 @@ $(document).ready(function() {
 	});
 });
 
+$(document).ready(function() {
+	$("select#listForm_searchCondition").val('<%=request.getParameter("option")%>');
+});
+
 //IE press Enter GoPage
 $(document).ready(function() {
 	$("input#listForm_currentPageHeader").keyup(function(e){
@@ -69,29 +73,43 @@ function goDelete() {
 
 //資料檢視
 function goView(serNo){
+	var isNum = /^\d+$/.test(serNo);
+	if (isNum && parseInt(serNo) > 0){
         var url = "<c:url value = '/'/>crud/apply.database.view.action";
         var data = 'viewSerNo='+serNo;
         goDetail(url,'資料庫-檢視',data);
+        }        
 }
 
 //更新資料
 function goUpdate(serNo) {
+	var isNum = /^\d+$/.test(serNo);
+	if (isNum && parseInt(serNo) > 0){
 	goDetail('<%=request.getContextPath()%>/crud/apply.database.query.action?'+'entity.serNo='+serNo,'資料庫-修改');
+	}
 }
 
 //GoPage
 function gotoPage(page){
+	var isNum = /^\d+$/.test(page);
 	var totalPage = $("span.totalNum:eq(0)").html();
-    var recordPerPage="${ds.pager.recordPerPage}";
-    var offset=parseInt(recordPerPage)*(parseInt(page)-1);
-    if(parseInt(page) < 1){
-        page=1;
-        offset=parseInt(recordPerPage)*(parseInt(page)-1);
-    }
-    else if(parseInt(page)>parseInt(totalPage)){
-        page=totalPage;
-        offset=parseInt(recordPerPage)*(parseInt(page)-1);
-    }
+	var recordPerPage="${ds.pager.recordPerPage}";
+	var offset=parseInt(recordPerPage)*(parseInt(page)-1);
+	
+	if(!isNum){
+		page="${ds.pager.currentPage}";
+		offset=parseInt(recordPerPage)*(parseInt(page)-1);
+	} else {
+		if (parseInt(page) < 1){
+			page=1;
+			offset=parseInt(recordPerPage)*(parseInt(page)-1);
+			}		
+		
+		if (parseInt(page) > parseInt(totalPage)){
+			page=totalPage;
+			offset=parseInt(recordPerPage)*(parseInt(page)-1);
+			} 
+		}
     goMain('<c:url value = '/'/>crud/apply.database.list.action','#apply_database_list','&pager.offset='+offset+'&pager.currentPage='+page);
 }
 
@@ -122,45 +140,22 @@ function goImport(){
 						<tr>
 							<td align="left"><select name="option"
 								id="listForm_searchCondition">
-									<c:set var="option">
-										<%=request.getParameter("option")%>
-									</c:set>
-									<c:choose>
-										<c:when test="${option=='entity.dbChtTitle' }">
-											<option value="entity.dbChtTitle" selected="selected">資料庫中文題名</option>
-											<option value="entity.dbEngTitle">資料庫英文題名</option>
-										</c:when>
-										<c:when test="${option=='entity.dbEngTitle' }">
-											<option value="entity.dbChtTitle">資料庫中文題名</option>
-											<option value="entity.dbEngTitle" selected="selected">資料庫英文題名</option>
-										</c:when>
-										<c:otherwise>
-											<option value="entity.dbChtTitle">資料庫中文題名</option>
-											<option value="entity.dbEngTitle">資料庫英文題名</option>
-										</c:otherwise>
-									</c:choose>
+									<option value="entity.dbChtTitle">資料庫中文題名</option>
+									<option value="entity.dbEngTitle">資料庫英文題名</option>
 							</select></td>
+							<c:set var="option">
+								<%=request.getParameter("option")%>
+							</c:set>
 							<c:choose>
-								<c:when test="${option=='entity.dbChtTitle' }">
-									<td align="left"><input type="text"
-										name="entity.dbChtTitle" maxlength="20" id="search"
-										class="input_text"
+								<c:when test="${not empty option }">
+									<td align="left"><input type="text" name="${option }"
+										maxlength="20" id="search" class="input_text"
 										value="<%if (request
 								.getParameter(request.getParameter("option")) != null) {
 							out.print(request.getParameter(request
 									.getParameter("option")));
 						}%>">
 									</td>
-								</c:when>
-								<c:when test="${option=='entity.dbEngTitle' }">
-									<td align="left"><input type="text"
-										name="entity.dbEngTitle" maxlength="20" id="search"
-										class="input_text"
-										value="<%if (request
-								.getParameter(request.getParameter("option")) != null) {
-							out.print(request.getParameter(request
-									.getParameter("option")));
-						}%>"></td>
 								</c:when>
 								<c:otherwise>
 									<td align="left"><input type="text"
@@ -286,8 +281,7 @@ function goImport(){
 	<s:if test="hasActionErrors()">
 		<script language="javascript" type="text/javascript">
 			var msg = "";
-			<s:iterator value="actionErrors">
-			msg += '<s:property escape="false"/><br>';
+			<s:iterator value="actionErrors">msg += '<s:property escape="false"/><br>';
 			</s:iterator>;
 			goAlert('訊息', msg);
 		</script>

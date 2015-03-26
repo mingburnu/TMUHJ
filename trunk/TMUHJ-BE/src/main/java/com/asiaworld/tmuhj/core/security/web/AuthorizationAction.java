@@ -83,17 +83,18 @@ public class AuthorizationAction extends GenericWebActionFull<AccountNumber> {
 		try {
 			ds.setEntity(user);
 			ds = userService.getByRestrictions(ds);
-
 		} catch (Exception e) {
 			log.error(ExceptionUtils.getStackTrace(e));
 			throw new Exception(e);
 		}
 
-		AccountNumber loginUser = ds.getResults().get(0);
-		loginUser.setCustomer(customerService.getBySerNo(loginUser
-				.getCusSerNo()));
+		ds.getResults()
+				.get(0)
+				.setCustomer(
+						customerService.getBySerNo(ds.getResults().get(0)
+								.getCusSerNo()));
 
-		getSession().put(LOGIN, loginUser);
+		getSession().put(LOGIN, ds.getResults().get(0));
 		return INDEX;
 	}
 

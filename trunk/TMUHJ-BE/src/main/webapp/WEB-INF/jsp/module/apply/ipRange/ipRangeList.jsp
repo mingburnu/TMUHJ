@@ -32,9 +32,13 @@ $(document).ready(function() {
 
 	//IP Range編輯
 	function goUpdate_detail(listNo,serNo) {
+		var isNum = /^\d+$/.test(serNo);
+		var islistNo = /^\d+$/.test(listNo);
+		if (isNum && islistNo &&parseInt(serNo) > 0){
 		var url = "<c:url value = '/'/>crud/apply.ipRange.query.action";
 		var data = 'entity.serNo=' + serNo +'&entity.listNo='+listNo;
-		goDetail_2(url, 'IP Range管理-修改', data);
+		goDetail_2(url, 'IP Range管理-修改', data); 
+		}
 	}
 
 	//單筆刪除
@@ -51,21 +55,35 @@ $(document).ready(function() {
 			            //不進行刪除...
 			        }
 			    };
-		goAlert('提醒', '確定要刪除此筆資料嗎?', f);
-	}
+
+		 var isNum = /^\d+$/.test(serNo);
+		 if (isNum && parseInt(serNo) > 0){
+			 goAlert('提醒','確定要刪除此筆資料嗎?',f);
+			 } else {
+				 goAlert('提醒','錯誤','');
+			 }
+		 }
 
 	//GoPage
 	function gotoPage_detail(page) {
+		var isNum = /^\d+$/.test(page);
 		var totalPage = $("span.totalNum:eq(1)").html();
 		var recordPerPage = "${ds.pager.recordPerPage}";
 		var offset = parseInt(recordPerPage) * (parseInt(page) - 1);
-		if (parseInt(page) < 1) {
-			page = 1;
+		if(!isNum){
+			page="${ds.pager.currentPage}";
 			offset=parseInt(recordPerPage)*(parseInt(page)-1);
-		} else if (parseInt(page) > parseInt(totalPage)) {
-			page = totalPage;
-			offset=parseInt(recordPerPage)*(parseInt(page)-1);
-		}
+		} else {
+			if (parseInt(page) < 1){
+				page=1;
+				offset=parseInt(recordPerPage)*(parseInt(page)-1);
+				}		
+			
+			if (parseInt(page) > parseInt(totalPage)){
+				page=totalPage;
+				offset=parseInt(recordPerPage)*(parseInt(page)-1);
+				} 
+			}
 		goDetail_Main('<c:url value = '/'/>crud/apply.ipRange.list.action',
 				'#apply_ipRange_list', '&pager.offset='+offset+'&pager.currentPage='+page);
 	}

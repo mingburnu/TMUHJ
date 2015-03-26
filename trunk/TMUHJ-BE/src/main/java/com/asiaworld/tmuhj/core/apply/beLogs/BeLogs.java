@@ -39,11 +39,11 @@ public class BeLogs extends GenericEntityLog {
 
 	// 帳戶流水號
 	@Column(name = "fk_account_serNo")
-	private long userSerNo;
+	private Long userSerNo;
 
 	// 用戶流水號
 	@Column(name = "fk_customer_serNo")
-	private long cusSerNo;
+	private Long cusSerNo;
 
 	@Transient
 	private AccountNumber accountNumber;
@@ -58,10 +58,10 @@ public class BeLogs extends GenericEntityLog {
 	private LocalDateTime end;
 	
 	@Transient
-	private int count;
+	private Integer count;
 	
 	@Transient
-	private int rank;
+	private Integer rank;
 
 	/**
 	 * @return the actionType
@@ -81,7 +81,7 @@ public class BeLogs extends GenericEntityLog {
 	/**
 	 * @return the userSerNo
 	 */
-	public long getUserSerNo() {
+	public Long getUserSerNo() {
 		return userSerNo;
 	}
 
@@ -89,14 +89,14 @@ public class BeLogs extends GenericEntityLog {
 	 * @param userSerNo
 	 *            the userSerNo to set
 	 */
-	public void setUserSerNo(long userSerNo) {
+	public void setUserSerNo(Long userSerNo) {
 		this.userSerNo = userSerNo;
 	}
 
 	/**
 	 * @return the cusSerNo
 	 */
-	public long getCusSerNo() {
+	public Long getCusSerNo() {
 		return cusSerNo;
 	}
 
@@ -104,7 +104,7 @@ public class BeLogs extends GenericEntityLog {
 	 * @param cusSerNo
 	 *            the cusSerNo to set
 	 */
-	public void setCusSerNo(long cusSerNo) {
+	public void setCusSerNo(Long cusSerNo) {
 		this.cusSerNo = cusSerNo;
 	}
 
@@ -169,28 +169,28 @@ public class BeLogs extends GenericEntityLog {
 	/**
 	 * @return the count
 	 */
-	public int getCount() {
+	public Integer getCount() {
 		return count;
 	}
 
 	/**
 	 * @param count the count to set
 	 */
-	public void setCount(int count) {
+	public void setCount(Integer count) {
 		this.count = count;
 	}
 
 	/**
 	 * @return the rank
 	 */
-	public int getRank() {
+	public Integer getRank() {
 		return rank;
 	}
 
 	/**
 	 * @param rank the rank to set
 	 */
-	public void setRank(int rank) {
+	public void setRank(Integer rank) {
 		this.rank = rank;
 	}
 
@@ -210,7 +210,7 @@ public class BeLogs extends GenericEntityLog {
 		// TODO Auto-generated constructor stub
 	}
 
-	public BeLogs(Act actionType, long userSerNo, long cusSerNo) {
+	public BeLogs(Act actionType, Long userSerNo, Long cusSerNo) {
 		super();
 		this.actionType = actionType;
 		this.userSerNo = userSerNo;

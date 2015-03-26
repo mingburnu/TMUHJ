@@ -4,7 +4,9 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <c:if test="${login.role.role == '管理員'}">
-<% response.setStatus(HttpServletResponse.SC_FORBIDDEN);%>
+	<%
+		response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+	%>
 </c:if>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
@@ -17,6 +19,10 @@ $(document).ready(function() {
 	$("select#listForm_searchCondition").change(function() {
 		$("input#search").attr("name", $(this).val());
 	});
+});
+
+$(document).ready(function() {
+	$("select#listForm_searchCondition").val('<%=request.getParameter("option")%>');
 });
 
 //IE press Enter GoPage
@@ -42,6 +48,7 @@ $(document).ready(function() {
 	function goAdd(){
 	        goDetail('<%=request.getContextPath()%>/crud/apply.customer.query.action','客戶-新增');
 	}
+	
 	
 	//刪除多筆資料之函式
 	function goDelete() {
@@ -79,14 +86,20 @@ $(document).ready(function() {
 	
 	//資料檢視
 	function goView(serNo){
+		var isNum = /^\d+$/.test(serNo);
+		if (isNum && parseInt(serNo) > 0){
 	        var url = "<c:url value = '/'/>crud/apply.customer.view.action";
 	        var data = 'viewSerNo='+serNo;
 	        goDetail(url,'用戶-檢視',data);
+		}
 	}
 	
 	//更新資料
 	function goUpdate(serNo) {
-		goDetail('<%=request.getContextPath()%>/crud/apply.customer.query.action?'+'entity.serNo='+serNo,'客戶-修改');
+		var isNum = /^\d+$/.test(serNo);
+		if (isNum && parseInt(serNo) > 0){
+			goDetail('<%=request.getContextPath()%>/crud/apply.customer.query.action?'+'entity.serNo='+serNo,'客戶-修改');
+		}
 	}
 	
 	//單筆刪除
@@ -95,7 +108,7 @@ $(document).ready(function() {
 			trueText:'是',
 			trueFunc:function(){
 	                        var url = '<c:url value = '/'/>crud/apply.customer.delete.action';
-	                        var data =$('#apply_customer_list').serialize()+'&entity.serNo='+serNo+'&pager.offset='+'${ds.pager.offset}'+'&pager.currentPage='+'${ds.pager.currentPage}'+'&pager.offsetPoint'+'${ds.pager.offset}';
+	                        var data =$('#apply_customer_list').serialize()+'&pager.offset='+'${ds.pager.offset}'+'&pager.currentPage='+'${ds.pager.currentPage}'+'&pager.offsetPoint'+'${ds.pager.offset}'+'&entity.serNo='+serNo;
 	                        goMain(url,'',data);
 			},
 			falseText:'否',
@@ -103,31 +116,48 @@ $(document).ready(function() {
 				//不進行刪除...
 			}
 		};
-		goAlert('提醒','確定要刪除此筆資料嗎?',f);
+		
+		var isNum = /^\d+$/.test(serNo);
+		if (isNum && parseInt(serNo) > 0){
+			goAlert('提醒','確定要刪除此筆資料嗎?',f);
+		} else {
+			goAlert('提醒','錯誤','');	
+		}
 	}
 	
 	//IP Range管理
 	function goIpRangeManager(serNo){
-	    var url = '<c:url value = '/'/>crud/apply.ipRange.list.action';
-	    var data = 'entity.cusSerNo='+serNo;
-	    goDetail(url,'客戶-IP Range管理',data);
-	}
+		var isNum = /^\d+$/.test(serNo);
+		if (isNum && parseInt(serNo) > 0){	  
+			var url = '<c:url value = '/'/>crud/apply.ipRange.list.action';
+			var data = 'entity.cusSerNo='+serNo;
+			goDetail(url,'客戶-IP Range管理',data);
+			}
+		}
 	
 	//GoPage
 	function gotoPage(page){
+		var isNum = /^\d+$/.test(page);
 		var totalPage = $("span.totalNum:eq(0)").html();
-	    var recordPerPage="${ds.pager.recordPerPage}";
-	    var offset=parseInt(recordPerPage)*(parseInt(page)-1);
-	    if(parseInt(page) < 1){
-	        page=1;
-	        offset=parseInt(recordPerPage)*(parseInt(page)-1);
-	    }
-	    else if(parseInt(page)>parseInt(totalPage)){
-	        page=totalPage;
-	        offset=parseInt(recordPerPage)*(parseInt(page)-1);
-	    }
-	    goMain('<c:url value = '/'/>crud/apply.customer.list.action','#apply_customer_list','&pager.offset='+offset+'&pager.currentPage='+page);
-	}
+		var recordPerPage="${ds.pager.recordPerPage}";
+		var offset=parseInt(recordPerPage)*(parseInt(page)-1);
+		
+		if(!isNum){
+			page="${ds.pager.currentPage}";
+			offset=parseInt(recordPerPage)*(parseInt(page)-1);
+		} else {
+			if (parseInt(page) < 1){
+				page=1;
+				offset=parseInt(recordPerPage)*(parseInt(page)-1);
+				}		
+			
+			if (parseInt(page) > parseInt(totalPage)){
+				page=totalPage;
+				offset=parseInt(recordPerPage)*(parseInt(page)-1);
+				} 
+			}
+		goMain('<c:url value = '/'/>crud/apply.customer.list.action','#apply_customer_list','&pager.offset='+offset+'&pager.currentPage='+page);
+		}
 	
 	//變更顯示筆數
     function chagePageSize(recordPerPage,recordPoint){
@@ -157,27 +187,15 @@ $(document).ready(function() {
 						<tr>
 							<td align="left"><select name="option"
 								id="listForm_searchCondition">
-									<c:set var="option">
-										<%=request.getParameter("option")%>
-									</c:set>
-									<c:choose>
-										<c:when test="${option=='entity.name' }">
-											<option value="entity.name" selected="selected">用戶名稱</option>
-											<option value="entity.engName">英文名稱</option>
-										</c:when>
-										<c:when test="${option=='entity.engName' }">
-											<option value="entity.name">用戶名稱</option>
-											<option value="entity.engName" selected="selected">英文名稱</option>
-										</c:when>
-										<c:otherwise>
-											<option value="entity.name">用戶名稱</option>
-											<option value="entity.engName">英文名稱</option>
-										</c:otherwise>
-									</c:choose>
+									<option value="entity.name">用戶名稱</option>
+									<option value="entity.engName">英文名稱</option>
 							</select></td>
+							<c:set var="option">
+								<%=request.getParameter("option")%>
+							</c:set>
 							<c:choose>
-								<c:when test="${option=='entity.name' }">
-									<td align="left"><input type="text" name="entity.name"
+								<c:when test="${not empty option }">
+									<td align="left"><input type="text" name="${option }"
 										maxlength="20" id="search" class="input_text"
 										value="<%if (request
 								.getParameter(request.getParameter("option")) != null) {
@@ -186,19 +204,9 @@ $(document).ready(function() {
 						}%>">
 									</td>
 								</c:when>
-								<c:when test="${option=='entity.engName' }">
-									<td align="left"><input type="text" name="entity.engName"
-										maxlength="20" id="search" class="input_text"
-										value="<%if (request
-								.getParameter(request.getParameter("option")) != null) {
-							out.print(request.getParameter(request
-									.getParameter("option")));
-						}%>"></td>
-								</c:when>
 								<c:otherwise>
 									<td align="left"><input type="text" name="entity.name"
-										maxlength="20" id="search" class="input_text">
-									</td>
+										maxlength="20" id="search" class="input_text"></td>
 								</c:otherwise>
 							</c:choose>
 							<td align="left"><a class="state-default"
@@ -214,11 +222,16 @@ $(document).ready(function() {
 		<div class="list-box">
 			<div class="list-buttons">
 				<c:choose>
-					<c:when test="${(not empty ds.pager.totalRecord)&& (0 ne ds.pager.totalRecord) }">
-						<a class="state-default" onclick="allSelect(1);">全選</a>
-						<a class="state-default" onclick="allSelect(0);">取消</a>
+					<c:when
+						test="${(not empty ds.pager.totalRecord)&& (0 ne ds.pager.totalRecord) }">
+						<c:if test="${login.role =='系統管理員'}">
+							<a class="state-default" onclick="allSelect(1);">全選</a>
+							<a class="state-default" onclick="allSelect(0);">取消</a>
+						</c:if>
 						<a class="state-default" onclick="goAdd();">新增</a>
-						<a class="state-default" onclick="goDelete();">刪除</a>
+						<c:if test="${login.role =='系統管理員'}">
+							<a class="state-default" onclick="goDelete();">刪除</a>
+						</c:if>
 						<a class="state-default" onclick="goImport()">匯入</a>
 					</c:when>
 					<c:otherwise>
@@ -241,13 +254,16 @@ $(document).ready(function() {
 					</tr>
 					<c:forEach var="item" items="${ds.results}" varStatus="status">
 						<tr>
-							<td align="center" class="td_first" nowrap><c:choose>
-									<c:when test="${9 eq  item.serNo }"></c:when>
-									<c:otherwise>
-										<input type="checkbox" class="checkbox" name="checkItem"
-											value="${item.serNo}">
-									</c:otherwise>
-								</c:choose></td>
+							<td align="center" class="td_first" nowrap><c:if
+									test="${login.role =='系統管理員'}">
+									<c:choose>
+										<c:when test="${9 eq  item.serNo }"></c:when>
+										<c:otherwise>
+											<input type="checkbox" class="checkbox" name="checkItem"
+												value="${item.serNo}">
+										</c:otherwise>
+									</c:choose>
+								</c:if></td>
 							<td>${item.name }</td>
 							<td align="center">${item.tel }</td>
 							<td>${item.address }</td>
@@ -263,8 +279,10 @@ $(document).ready(function() {
 											class="icon-default icon-view"></span>檢視</a>
 										<a class="state-default2" onclick="goUpdate(${item.serNo});"><span
 											class="icon-default icon-edit"></span>修改</a>
-										<a class="state-default2" onclick="goDel(${item.serNo});"><span
-											class="icon-default icon-delete"></span>刪除</a>
+										<c:if test="${login.role =='系統管理員'}">
+											<a class="state-default2" onclick="goDel(${item.serNo});"><span
+												class="icon-default icon-delete"></span>刪除</a>
+										</c:if>
 										<a class="state-default2"
 											onclick="goIpRangeManager(${item.serNo});">IP Range管理</a>
 									</c:otherwise>
@@ -310,9 +328,9 @@ $(document).ready(function() {
 			<div class="detail_note">
 				<div class="detail_note_title">Note</div>
 				<div class="detail_note_content">
-				<c:if test="${0 eq ds.pager.totalRecord}">
-				<span>查無資料</span>
-				</c:if>
+					<c:if test="${0 eq ds.pager.totalRecord}">
+						<span>查無資料</span>
+					</c:if>
 				</div>
 			</div>
 		</div>
@@ -328,8 +346,7 @@ $(document).ready(function() {
 	<s:if test="hasActionErrors()">
 		<script language="javascript" type="text/javascript">
 			var msg = "";
-			<s:iterator value="actionErrors">
-			msg += '<s:property escape="false"/><br>';
+			<s:iterator value="actionErrors">msg += '<s:property escape="false"/><br>';
 			</s:iterator>;
 			goAlert('訊息', msg);
 		</script>

@@ -20,87 +20,87 @@ public class ResourcesUnion extends GenericEntitySerNo {
 	private static final long serialVersionUID = 4506632636578324717L;
 
 	@Column(name = "cus_SerNo")
-	private long cusSerNo;
+	private Long cusSerNo;
 
 	@Column(name = "res_SerNo")
-	private long resSerNo;
+	private Long resSerNo;
 
 	@Column(name = "ebk_SerNo")
-	private long ebkSerNo;
+	private Long ebkSerNo;
 
 	@Column(name = "dat_SerNo")
-	private long datSerNo;
+	private Long datSerNo;
 
 	@Column(name = "jou_SerNo")
-	private long jouSerNo;
+	private Long jouSerNo;
 
 	/**
 	 * @return the cusSerNo
 	 */
-	public long getCusSerNo() {
+	public Long getCusSerNo() {
 		return cusSerNo;
 	}
 
 	/**
 	 * @param cusSerNo the cusSerNo to set
 	 */
-	public void setCusSerNo(long cusSerNo) {
+	public void setCusSerNo(Long cusSerNo) {
 		this.cusSerNo = cusSerNo;
 	}
 
 	/**
 	 * @return the resSerNo
 	 */
-	public long getResSerNo() {
+	public Long getResSerNo() {
 		return resSerNo;
 	}
 
 	/**
 	 * @param resSerNo the resSerNo to set
 	 */
-	public void setResSerNo(long resSerNo) {
+	public void setResSerNo(Long resSerNo) {
 		this.resSerNo = resSerNo;
 	}
 
 	/**
 	 * @return the ebkSerNo
 	 */
-	public long getEbkSerNo() {
+	public Long getEbkSerNo() {
 		return ebkSerNo;
 	}
 
 	/**
 	 * @param ebkSerNo the ebkSerNo to set
 	 */
-	public void setEbkSerNo(long ebkSerNo) {
+	public void setEbkSerNo(Long ebkSerNo) {
 		this.ebkSerNo = ebkSerNo;
 	}
 
 	/**
 	 * @return the datSerNo
 	 */
-	public long getDatSerNo() {
+	public Long getDatSerNo() {
 		return datSerNo;
 	}
 
 	/**
 	 * @param datSerNo the datSerNo to set
 	 */
-	public void setDatSerNo(long datSerNo) {
+	public void setDatSerNo(Long datSerNo) {
 		this.datSerNo = datSerNo;
 	}
 
 	/**
 	 * @return the jouSerNo
 	 */
-	public long getJouSerNo() {
+	public Long getJouSerNo() {
 		return jouSerNo;
 	}
 
 	/**
 	 * @param jouSerNo the jouSerNo to set
 	 */
-	public void setJouSerNo(long jouSerNo) {
+	public void setJouSerNo(Long jouSerNo) {
 		this.jouSerNo = jouSerNo;
 	}
 	

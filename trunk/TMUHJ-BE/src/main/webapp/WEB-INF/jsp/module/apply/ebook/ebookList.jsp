@@ -16,6 +16,10 @@ $(document).ready(function() {
 	});
 });
 
+$(document).ready(function() {
+	$("select#listForm_searchCondition").val('<%=request.getParameter("option")%>');
+});
+
 //IE press Enter GoPage
 $(document).ready(function() {
 	$("input#listForm_currentPageHeader").keyup(function(e){
@@ -69,29 +73,43 @@ function goDelete() {
 
 //資料檢視
 function goView(serNo){
+	var isNum = /^\d+$/.test(serNo);
+	if (isNum && parseInt(serNo) > 0){
         var url = "<c:url value = '/'/>crud/apply.ebook.view.action";
         var data = 'viewSerNo='+serNo;
         goDetail(url,'電子書-檢視',data);
+	}
 }
 
 //更新資料
 function goUpdate(serNo) {
-	goDetail('<%=request.getContextPath()%>/crud/apply.ebook.query.action?'+'entity.serNo='+serNo,'電子書-修改');
+	var isNum = /^\d+$/.test(serNo);
+	if (isNum && parseInt(serNo) > 0){
+		goDetail('<%=request.getContextPath()%>/crud/apply.ebook.query.action?'+'entity.serNo='+serNo,'電子書-修改');
+	}
 }
 
 //GoPage
 function gotoPage(page){
+	var isNum = /^\d+$/.test(page);
 	var totalPage = $("span.totalNum:eq(0)").html();
-    var recordPerPage="${ds.pager.recordPerPage}";
-    var offset=parseInt(recordPerPage)*(parseInt(page)-1);
-    if(parseInt(page) < 1){
-        page=1;
-        offset=parseInt(recordPerPage)*(parseInt(page)-1);
-    }
-    else if(parseInt(page)>parseInt(totalPage)){
-        page=totalPage;
-        offset=parseInt(recordPerPage)*(parseInt(page)-1);
-    }
+	var recordPerPage="${ds.pager.recordPerPage}";
+	var offset=parseInt(recordPerPage)*(parseInt(page)-1);
+	
+	if(!isNum){
+		page="${ds.pager.currentPage}";
+		offset=parseInt(recordPerPage)*(parseInt(page)-1);
+	} else {
+		if (parseInt(page) < 1){
+			page=1;
+			offset=parseInt(recordPerPage)*(parseInt(page)-1);
+			}		
+		
+		if (parseInt(page) > parseInt(totalPage)){
+			page=totalPage;
+			offset=parseInt(recordPerPage)*(parseInt(page)-1);
+			} 
+		}
     goMain('<c:url value = '/'/>crud/apply.ebook.list.action','#apply_ebook_list','&pager.offset='+offset+'&pager.currentPage='+page);
 }
 
@@ -123,27 +141,15 @@ function goImport(){
 						<tr>
 							<td align="left"><select name="option"
 								id="listForm_searchCondition">
-									<c:set var="option">
-										<%=request.getParameter("option")%>
-									</c:set>
-									<c:choose>
-										<c:when test="${option=='entity.bookName' }">
-											<option value="entity.bookName" selected="selected">書名</option>
-											<option value="entity.isbn">ISBN</option>
-										</c:when>
-										<c:when test="${option=='entity.isbn' }">
-											<option value="entity.bookName">書名</option>
-											<option value="entity.isbn" selected="selected">ISBN</option>
-										</c:when>
-										<c:otherwise>
-											<option value="entity.bookName">書名</option>
-											<option value="entity.isbn">ISBN</option>
-										</c:otherwise>
-									</c:choose>
+									<option value="entity.bookName">書名</option>
+									<option value="isbn">ISBN</option>
 							</select></td>
+							<c:set var="option">
+								<%=request.getParameter("option")%>
+							</c:set>
 							<c:choose>
-								<c:when test="${option=='entity.bookName' }">
-									<td align="left"><input type="text" name="entity.bookName"
+								<c:when test="${not empty option }">
+									<td align="left"><input type="text" name="${option }"
 										maxlength="20" id="search" class="input_text"
 										value="<%if (request
 								.getParameter(request.getParameter("option")) != null) {
@@ -151,15 +157,6 @@ function goImport(){
 									.getParameter("option")));
 						}%>">
 									</td>
-								</c:when>
-								<c:when test="${option=='entity.isbn' }">
-									<td align="left"><input type="text" name="entity.isbn"
-										maxlength="20" id="search" class="input_text"
-										value="<%if (request
-								.getParameter(request.getParameter("option")) != null) {
-							out.print(request.getParameter(request
-									.getParameter("option")));
-						}%>"></td>
 								</c:when>
 								<c:otherwise>
 									<td align="left"><input type="text" name="entity.bookName"
