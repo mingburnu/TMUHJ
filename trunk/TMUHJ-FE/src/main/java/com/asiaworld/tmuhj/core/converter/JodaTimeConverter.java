@@ -12,7 +12,7 @@ import org.springframework.beans.factory.annotation.Value;
 
 /**
  * Joda Time Converter
- * @author David Hsu
+ * @author Roderick
  * @version 2014/3/17
  */
 public class JodaTimeConverter extends StrutsTypeConverter {

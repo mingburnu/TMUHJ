@@ -64,8 +64,7 @@
 				<prop key="hibernate.connection.release_mode">auto</prop>
 				<prop key="hibernate.autoReconnect">true</prop>
 				<prop key="hibernate.cglib.use_reflection_optimizer">true</prop>
-				<!--<prop key="hibernate.dialect">${hibernate.dialect}</prop> -->
-				<prop key="hibernate.dialect">org.hibernate.dialect.MySQLDialect</prop>
+				<prop key="hibernate.dialect">${hibernate.dialect}</prop>
 				<prop key="hibernate.show_sql">true</prop>
 				<prop key="hibernate.format_sql">true</prop>
 				<prop key="hibernate.use_sql_comments">false</prop>

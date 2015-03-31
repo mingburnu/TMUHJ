@@ -1,14 +1,8 @@
 package com.asiaworld.tmuhj.module.apply.resourcesUnion;
 
-import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
-import org.hibernate.Criteria;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
 import org.hibernate.criterion.LogicalExpression;
-import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,6 +11,7 @@ import org.springframework.util.Assert;
 import com.asiaworld.tmuhj.core.dao.GenericDaoSerNo;
 import com.asiaworld.tmuhj.core.dao.DsRestrictions;
 import com.asiaworld.tmuhj.core.model.DataSet;
+import com.asiaworld.tmuhj.core.model.Pager;
 import com.asiaworld.tmuhj.core.service.GenericServiceSerNo;
 import com.asiaworld.tmuhj.core.util.DsBeanFactory;
 import com.asiaworld.tmuhj.module.apply.ebook.Ebook;
@@ -24,8 +19,6 @@ import com.asiaworld.tmuhj.module.apply.journal.Journal;
 
 @Service
 public class ResourcesUnionService extends GenericServiceSerNo<ResourcesUnion> {
-	@Autowired
-	private SessionFactory sessionFactory;
 
 	@Autowired
 	private ResourcesUnionDao dao;
@@ -46,154 +39,84 @@ public class ResourcesUnionService extends GenericServiceSerNo<ResourcesUnion> {
 		return dao;
 	}
 
-	public ArrayList<ResourcesUnion> totalDb(long cusSerNo) {
-		Session session = sessionFactory.getCurrentSession();
-		ArrayList<ResourcesUnion> totalList = new ArrayList<ResourcesUnion>();
-
-		Criteria criteria = session.createCriteria(ResourcesUnion.class);
-		LogicalExpression andOperator = Restrictions.and(
+	public List<ResourcesUnion> totalDb(long cusSerNo) throws Exception {
+		DsRestrictions restrictions = DsBeanFactory.getDsRestrictions();
+		restrictions.customCriterion(Restrictions.and(
 				Restrictions.eq("cusSerNo", cusSerNo),
-				Restrictions.gt("datSerNo", 0L));
-		criteria.add(andOperator);
-
-		Iterator<?> iterator = criteria.list().iterator();
-		while (iterator.hasNext()) {
-			ResourcesUnion resourcesUnion = (ResourcesUnion) iterator.next();
-			totalList.add(resourcesUnion);
-		}
-
-		return totalList;
+				Restrictions.gt("datSerNo", 0L)));
+		return dao.findByRestrictions(restrictions);
 	}
 
 	public long countTotalDb(long cusSerNo) {
-		Session session = sessionFactory.getCurrentSession();
-
-		Criteria criteria = session.createCriteria(ResourcesUnion.class);
 		LogicalExpression andOperator = Restrictions.and(
 				Restrictions.eq("cusSerNo", cusSerNo),
 				Restrictions.gt("datSerNo", 0L));
-		criteria.add(andOperator);
-
-		criteria.setProjection(Projections.rowCount());
-		Long totalDb = (Long) criteria.list().get(0);
-		return totalDb;
+		
+		return dao.countTotal(andOperator);
 	}
 
-	public ArrayList<ResourcesUnion> totalJournal(long cusSerNo) {
-		Session session = sessionFactory.getCurrentSession();
-		ArrayList<ResourcesUnion> totalList = new ArrayList<ResourcesUnion>();
-
-		Criteria criteria = session.createCriteria(ResourcesUnion.class);
-		LogicalExpression andOperator = Restrictions.and(
+	public List<ResourcesUnion> totalJournal(long cusSerNo) throws Exception {
+		DsRestrictions restrictions = DsBeanFactory.getDsRestrictions();
+		restrictions.customCriterion(Restrictions.and(
 				Restrictions.eq("cusSerNo", cusSerNo),
-				Restrictions.gt("jouSerNo", 0L));
-		criteria.add(andOperator);
-
-		Iterator<?> iterator = criteria.list().iterator();
-		while (iterator.hasNext()) {
-			ResourcesUnion resourcesUnion = (ResourcesUnion) iterator.next();
-			totalList.add(resourcesUnion);
-		}
-
-		return totalList;
+				Restrictions.gt("jouSerNo", 0L)));
+		return dao.findByRestrictions(restrictions);
 	}
 
 	public long countTotalJournal(long cusSerNo) {
-		Session session = sessionFactory.getCurrentSession();
-
-		Criteria criteria = session.createCriteria(ResourcesUnion.class);
 		LogicalExpression andOperator = Restrictions.and(
 				Restrictions.eq("cusSerNo", cusSerNo),
 				Restrictions.gt("jouSerNo", 0L));
-		criteria.add(andOperator);
-
-		criteria.setProjection(Projections.rowCount());
-		Long totalJournal = (Long) criteria.list().get(0);
-		return totalJournal;
+		return dao.countTotal(andOperator);
 	}
 
-	public ArrayList<ResourcesUnion> totalEbook(long cusSerNo) {
-		Session session = sessionFactory.getCurrentSession();
-		ArrayList<ResourcesUnion> totalList = new ArrayList<ResourcesUnion>();
-
-		Criteria criteria = session.createCriteria(ResourcesUnion.class);
-		LogicalExpression andOperator = Restrictions.and(
+	public List<ResourcesUnion> totalEbook(long cusSerNo) throws Exception {
+		DsRestrictions restrictions = DsBeanFactory.getDsRestrictions();
+		restrictions.customCriterion(Restrictions.and(
 				Restrictions.eq("cusSerNo", cusSerNo),
-				Restrictions.gt("ebkSerNo", 0L));
-		criteria.add(andOperator);
-
-		Iterator<?> iterator = criteria.list().iterator();
-		while (iterator.hasNext()) {
-			ResourcesUnion resourcesUnion = (ResourcesUnion) iterator.next();
-			totalList.add(resourcesUnion);
-		}
-
-		return totalList;
+				Restrictions.gt("ebkSerNo", 0L)));
+		return dao.findByRestrictions(restrictions);
 	}
 
 	public long countTotalEbook(long cusSerNo) {
-		Session session = sessionFactory.getCurrentSession();
-
-		Criteria criteria = session.createCriteria(ResourcesUnion.class);
 		LogicalExpression andOperator = Restrictions.and(
 				Restrictions.eq("cusSerNo", cusSerNo),
 				Restrictions.gt("ebkSerNo", 0L));
-		criteria.add(andOperator);
-
-		criteria.setProjection(Projections.rowCount());
-		Long totalEbook = (Long) criteria.list().get(0);
-		return totalEbook;
+		return dao.countTotal(andOperator);
 	}
 
-	public ResourcesUnion getByObjSerNo(long objSerNo, Class<?> objClass) {
-		Session session = sessionFactory.getCurrentSession();
-		Criteria criteria = session.createCriteria(ResourcesUnion.class);
-		criteria.setFirstResult(0);
-		criteria.setMaxResults(1);
+	public ResourcesUnion getByObjSerNo(long objSerNo, Class<?> objClass) throws Exception {
+		DataSet<ResourcesUnion> ds = new DataSet<ResourcesUnion>();
+		ds.setPager(new Pager());
+		ds.getPager().setRecordPerPage(1);
+		DsRestrictions restrictions = DsBeanFactory.getDsRestrictions();
 
 		if (objClass.equals(Journal.class)) {
-			criteria.add(Restrictions.eq("jouSerNo", objSerNo));
+			restrictions.eq("jouSerNo", objSerNo);
 		} else if (objClass.equals(Ebook.class)) {
-			criteria.add(Restrictions.eq("ebkSerNo", objSerNo));
+			restrictions.eq("ebkSerNo", objSerNo);
 		} else {
-			criteria.add(Restrictions.eq("datSerNo", objSerNo));
+			restrictions.eq("datSerNo", objSerNo);
 		}
-
-		ResourcesUnion resourcesUnion = (ResourcesUnion) criteria.list().get(0);
-
-		return resourcesUnion;
+		
+		return dao.findByRestrictions(restrictions, ds).getResults().get(0);
 	}
 
-	public List<?> getByJouSerNo(long jouSerNo) {
-		Session session = sessionFactory.getCurrentSession();
-		Criteria criteria = session.createCriteria(ResourcesUnion.class);
-
-		criteria.add(Restrictions.eq("jouSerNo", jouSerNo));
-
-		List<?> journalResourcesUnionList = criteria.list();
-
-		return journalResourcesUnionList;
+	public List<ResourcesUnion> getByJouSerNo(long jouSerNo) throws Exception {
+		DsRestrictions restrictions = DsBeanFactory.getDsRestrictions();
+		restrictions.eq("jouSerNo", jouSerNo);
+		return dao.findByRestrictions(restrictions);
 	}
 
-	public List<?> getByEbkSerNo(long ebkSerNo) {
-		Session session = sessionFactory.getCurrentSession();
-		Criteria criteria = session.createCriteria(ResourcesUnion.class);
-
-		criteria.add(Restrictions.eq("ebkSerNo", ebkSerNo));
-
-		List<?> journalResourcesUnionList = criteria.list();
-
-		return journalResourcesUnionList;
+	public List<ResourcesUnion> getByEbkSerNo(long ebkSerNo) throws Exception {
+		DsRestrictions restrictions = DsBeanFactory.getDsRestrictions();
+		restrictions.eq("ebkSerNo", ebkSerNo);
+		return dao.findByRestrictions(restrictions);
 	}
 
-	public List<?> getByDatSerNo(long datSerNo) {
-		Session session = sessionFactory.getCurrentSession();
-		Criteria criteria = session.createCriteria(ResourcesUnion.class);
-
-		criteria.add(Restrictions.eq("datSerNo", datSerNo));
-
-		List<?> journalResourcesUnionList = criteria.list();
-
-		return journalResourcesUnionList;
+	public List<ResourcesUnion> getByDatSerNo(long datSerNo) throws Exception {
+		DsRestrictions restrictions = DsBeanFactory.getDsRestrictions();
+		restrictions.eq("datSerNo", datSerNo);
+		return dao.findByRestrictions(restrictions);
 	}
 }

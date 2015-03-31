@@ -1,12 +1,7 @@
 package com.asiaworld.tmuhj.core.apply.ipRange;
 
-import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
-import org.hibernate.Criteria;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
@@ -20,9 +15,6 @@ import com.asiaworld.tmuhj.core.util.DsBeanFactory;
 @Service
 public class IpRangeService extends GenericServiceFull<IpRange> {
 
-	@Autowired
-	private SessionFactory sessionFactory;
-	
 	@Autowired
 	private IpRangeDao dao;
 
@@ -42,17 +34,9 @@ public class IpRangeService extends GenericServiceFull<IpRange> {
 		return dao;
 	}
 	
-	public List<IpRange> getAllIpList() {
-		List<IpRange> allIpList=new ArrayList<IpRange>();
-		Session session = sessionFactory.getCurrentSession();
-		Criteria criteria = session.createCriteria(IpRange.class);
-		Iterator<?> iterator=criteria.list().iterator();
-		
-		while(iterator.hasNext()){
-			IpRange ipRange=(IpRange) iterator.next();
-			allIpList.add(ipRange);
-		}
-		return allIpList;	
+	public List<IpRange> getAllIpList() throws Exception {
+		DsRestrictions restrictions = DsBeanFactory.getDsRestrictions();
+		return dao.findByRestrictions(restrictions);	
 	}
 
 }

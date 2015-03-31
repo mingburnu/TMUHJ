@@ -10,6 +10,11 @@ import org.springframework.stereotype.Component;
 
 import com.asiaworld.tmuhj.core.entity.Entity;
 
+/**
+ * DataSet
+ * @author Roderick
+ * @version 2015/1/20
+ */
 @Component
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class ExcelWorkSheet<T extends Entity> implements Serializable {

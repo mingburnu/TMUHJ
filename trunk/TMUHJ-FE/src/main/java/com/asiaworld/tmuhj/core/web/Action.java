@@ -4,7 +4,7 @@ import com.asiaworld.tmuhj.core.entity.Entity;
 
 /**
  * Action
- * @author David Hsu
+ * @author Roderick
  * @version 2014/3/14
  */
 public interface Action<T extends Entity> {

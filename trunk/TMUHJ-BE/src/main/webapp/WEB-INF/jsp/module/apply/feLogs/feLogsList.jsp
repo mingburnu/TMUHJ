@@ -9,7 +9,7 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title></title>
 <script type="text/javascript">
-$(document).ready(function(){
+$(document).ready(function() {
 	formSetCSS();
 	state_hover();
 	initAutoComplete("<%=request.getContextPath()%>/crud/apply.customer.json.action",'#customerSerno','#customerName');
@@ -81,9 +81,11 @@ function goExport(){
 		window.open(url, "iframe1"); 
 	}
 }
+
 </script>
 </head>
 <body>
+	
 	<s:form action="apply.feLogs.list" namespace="/crud" method="post"
 		onsubmit="return false;">
 		<div class="tabs-box">
@@ -136,24 +138,25 @@ function goExport(){
 											<c:when test="${0 eq cusSerNo}">
 												<input type="radio" name="cusSerNo" id="customerSerno"
 													value="<%if (request.getAttribute("cusSerNo") != null) {
-							out.print(request.getAttribute("cusSerNo")
-									.toString());
-						}%>" />
+									out.print(request.getAttribute("cusSerNo")
+											.toString());
+								}%>" />
 											</c:when>
 											<c:otherwise>
 
 												<input type="radio" name="cusSerNo" id="customerSerno"
 													value="<%if (request.getAttribute("cusSerNo") != null) {
-							out.print(request.getAttribute("cusSerNo")
-									.toString());
-						}%>"
+									out.print(request.getAttribute("cusSerNo")
+											.toString());
+								}%>"
 													checked />
 											</c:otherwise>
 										</c:choose> <input type="text" id="customerName" class="input_text"
 										name="customer"
 										value="<%if (request.getAttribute("customer") != null) {
-					out.print(request.getAttribute("customer").toString());
-				}%>">
+							out.print(request.getAttribute("customer")
+									.toString());
+						}%>">
 										<a class="state-default" onclick="goSearch()">查詢</a></td>
 								</tr>
 							</c:when>
@@ -168,7 +171,6 @@ function goExport(){
 								</tr>
 							</c:otherwise>
 						</c:choose>
-
 					</tbody>
 				</table>
 			</div>

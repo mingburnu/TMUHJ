@@ -1,6 +1,5 @@
 package com.asiaworld.tmuhj.core.apply.feLogs;
 
-import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -10,8 +9,6 @@ import com.asiaworld.tmuhj.core.service.GenericServiceLog;
 
 @Service
 public class FeLogsService extends GenericServiceLog<FeLogs> {
-	@Autowired
-	private SessionFactory sessionFactory;
 
 	@Autowired
 	private FeLogsDao dao;

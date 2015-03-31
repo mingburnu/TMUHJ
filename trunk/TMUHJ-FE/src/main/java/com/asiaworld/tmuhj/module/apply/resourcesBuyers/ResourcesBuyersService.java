@@ -1,6 +1,5 @@
 package com.asiaworld.tmuhj.module.apply.resourcesBuyers;
 
-import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
@@ -13,8 +12,6 @@ import com.asiaworld.tmuhj.core.util.DsBeanFactory;
 
 @Service
 public class ResourcesBuyersService extends GenericServiceFull<ResourcesBuyers> {
-	@Autowired
-	private SessionFactory sessionFactory;
 
 	@Autowired
 	private ResourcesBuyersDao dao;

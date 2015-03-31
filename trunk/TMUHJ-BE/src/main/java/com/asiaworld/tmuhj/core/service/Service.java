@@ -6,7 +6,7 @@ import com.asiaworld.tmuhj.core.model.DataSet;
 
 /**
  * Service
- * @author David Hsu
+ * @author Roderick
  * @version 2014/3/11
  */
 public interface Service<T extends Entity> {

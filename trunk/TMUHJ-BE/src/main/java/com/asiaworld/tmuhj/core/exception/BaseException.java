@@ -2,7 +2,7 @@ package com.asiaworld.tmuhj.core.exception;
 
 /**
  * BaseException
- * @author David Hsu
+ * @author Roderick
  * @version 2014/3/11
  */
 public class BaseException extends Exception {

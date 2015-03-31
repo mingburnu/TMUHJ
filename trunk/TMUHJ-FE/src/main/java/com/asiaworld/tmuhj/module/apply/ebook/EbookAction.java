@@ -88,19 +88,19 @@ public class EbookAction extends GenericCRUDActionFull<Ebook> {
 		ebook = ebookService.getBySerNo(Long.parseLong(getRequest()
 				.getParameter("serNo")));
 
-		List<?> ebookResourcesUnionList = resourcesUnionService
+		List<ResourcesUnion> ebookResourcesUnionList = resourcesUnionService
 				.getByEbkSerNo(Long.parseLong(getRequest()
 						.getParameter("serNo")));
 
 		List<String> ownerNameList = new ArrayList<String>();
 
-		Iterator<?> iterator = ebookResourcesUnionList.iterator();
+		Iterator<ResourcesUnion> iterator = ebookResourcesUnionList.iterator();
 
 		while (iterator.hasNext()) {
-			ResourcesUnion datResourcesUnion = (ResourcesUnion) iterator.next();
+			ResourcesUnion datResourcesUnion = iterator.next();
 			customer = customerService.getBySerNo(datResourcesUnion
 					.getCusSerNo());
-			if(customer!=null){
+			if(customer != null){
 			ownerNameList.add(customer.getName());
 			}
 		}
