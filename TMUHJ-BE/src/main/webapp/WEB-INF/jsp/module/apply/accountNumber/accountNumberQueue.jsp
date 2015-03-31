@@ -151,6 +151,7 @@ function clearCheckedItem() {
 						<td>${item.userName }</td>
 						<td>${item.customer.name }</td>
 						<td>${item.role.role }</td>
+						<td>${item.status.status }</td>
 						<td align="center">${item.existStatus }</td>
 					</tr>
 				</c:forEach>

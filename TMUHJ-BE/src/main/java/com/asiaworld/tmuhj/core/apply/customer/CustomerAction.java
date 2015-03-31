@@ -249,14 +249,6 @@ public class CustomerAction extends GenericCRUDActionFull<Customer> {
 			int i = 0;
 			while (i < checkItem.length) {
 				if (customerService.getBySerNo(Long.parseLong(checkItem[i])) != null) {
-					Iterator<?> iterator = ipRangeService
-							.getOwnerIpRangeByCusSerNo(
-									Long.parseLong(checkItem[i])).iterator();
-					while (iterator.hasNext()) {
-						ipRange = (IpRange) iterator.next();
-						ipRangeService.deleteBySerNo(ipRange.getSerNo());
-					}
-
 					customerService.deleteOwnerObj(Long.parseLong(checkItem[i]));
 					customerService.deleteBySerNo(Long.parseLong(checkItem[i]));
 				}
@@ -297,7 +289,7 @@ public class CustomerAction extends GenericCRUDActionFull<Customer> {
 		return AJAX;
 	}
 
-	public String json() {
+	public String json() throws Exception {
 		List<Customer> customers=customerService.getAllCustomers();
 		List<JSONObject> objArray=new ArrayList<JSONObject>();
 

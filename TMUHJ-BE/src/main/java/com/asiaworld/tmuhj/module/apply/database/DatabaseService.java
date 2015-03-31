@@ -1,9 +1,6 @@
 package com.asiaworld.tmuhj.module.apply.database;
 
 import org.apache.commons.lang3.StringUtils;
-import org.hibernate.Criteria;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,18 +12,12 @@ import com.asiaworld.tmuhj.core.dao.DsRestrictions;
 import com.asiaworld.tmuhj.core.model.DataSet;
 import com.asiaworld.tmuhj.core.service.GenericServiceFull;
 import com.asiaworld.tmuhj.core.util.DsBeanFactory;
-import com.asiaworld.tmuhj.module.apply.resourcesUnion.ResourcesUnionService;
 
 @Service
 public class DatabaseService extends GenericServiceFull<Database> {
-	@Autowired
-	private SessionFactory sessionFactory;
 
 	@Autowired
 	private DatabaseDao dao;
-
-	@Autowired
-	private ResourcesUnionService resourcesUnionService;
 
 	@Override
 	public DataSet<Database> getByRestrictions(DataSet<Database> ds)
@@ -56,49 +47,45 @@ public class DatabaseService extends GenericServiceFull<Database> {
 
 	public long getDatSerNoByBothName(String dbChtTitle, String dbEngTitle)
 			throws Exception {
-		Session session = sessionFactory.getCurrentSession();
-		Criteria criteria = session.createCriteria(Database.class);
-		criteria.add(Restrictions.and(
+		DsRestrictions restrictions = DsBeanFactory.getDsRestrictions();
+		restrictions.customCriterion(Restrictions.and(
 				Restrictions.ilike("dbChtTitle", dbChtTitle, MatchMode.EXACT),
 				Restrictions.ilike("dbEngTitle", dbEngTitle, MatchMode.EXACT)));
-		if (criteria.list().size() > 0) {
-			return ((Database) criteria.list().get(0)).getSerNo();
+		
+		if (dao.findByRestrictions(restrictions).size() > 0) {
+			return (dao.findByRestrictions(restrictions).get(0)).getSerNo();
 		} else {
 			return 0;
 		}
 	}
 
 	public long getDatSerNoByChtName(String dbChtTitle) throws Exception {
-		Session session = sessionFactory.getCurrentSession();
-		Criteria criteria = session.createCriteria(Database.class);
-
+		DsRestrictions restrictions = DsBeanFactory.getDsRestrictions();
+		
 		if (StringUtils.isNotBlank(dbChtTitle)) {
-			criteria.add(Restrictions.ilike("dbChtTitle", dbChtTitle,
-					MatchMode.EXACT));
+			restrictions.likeIgnoreCase("dbChtTitle", dbChtTitle, MatchMode.EXACT);
 		} else {
 			return 0;
 		}
 
-		if (criteria.list().size() > 0) {
-			return ((Database) criteria.list().get(0)).getSerNo();
+		if (dao.findByRestrictions(restrictions).size() > 0) {
+			return (dao.findByRestrictions(restrictions).get(0)).getSerNo();
 		} else {
 			return 0;
 		}
 	}
 
 	public long getDatSerNoByEngName(String dbEngTitle) throws Exception {
-		Session session = sessionFactory.getCurrentSession();
-		Criteria criteria = session.createCriteria(Database.class);
+		DsRestrictions restrictions = DsBeanFactory.getDsRestrictions();
 		
 		if (StringUtils.isNotBlank(dbEngTitle)) {
-			criteria.add(Restrictions.ilike("dbEngTitle", dbEngTitle,
-					MatchMode.EXACT));
+			restrictions.likeIgnoreCase("dbEngTitle", dbEngTitle, MatchMode.EXACT);
 		} else {
 			return 0;
 		}
 		
-		if (criteria.list().size() > 0) {
-			return ((Database) criteria.list().get(0)).getSerNo();
+		if (dao.findByRestrictions(restrictions).size() > 0) {
+			return (dao.findByRestrictions(restrictions).get(0)).getSerNo();
 		} else {
 			return 0;
 		}

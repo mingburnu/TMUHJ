@@ -1,11 +1,7 @@
 package com.asiaworld.tmuhj.module.apply.journal;
 
 import org.apache.commons.lang3.StringUtils;
-import org.hibernate.Criteria;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
 import org.hibernate.criterion.MatchMode;
-import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
@@ -15,19 +11,12 @@ import com.asiaworld.tmuhj.core.dao.DsRestrictions;
 import com.asiaworld.tmuhj.core.model.DataSet;
 import com.asiaworld.tmuhj.core.service.GenericServiceFull;
 import com.asiaworld.tmuhj.core.util.DsBeanFactory;
-import com.asiaworld.tmuhj.module.apply.resourcesUnion.ResourcesUnionService;
 
 @Service
 public class JournalService extends GenericServiceFull<Journal> {
 
 	@Autowired
-	private SessionFactory sessionFactory;
-
-	@Autowired
 	private JournalDao dao;
-
-	@Autowired
-	private ResourcesUnionService resourcesUnionService;
 
 	@Override
 	public DataSet<Journal> getByRestrictions(DataSet<Journal> ds)
@@ -71,12 +60,12 @@ public class JournalService extends GenericServiceFull<Journal> {
 		return dao;
 	}
 
-	public long getJouSerNoByIssn(String issn) {
-		Session session = sessionFactory.getCurrentSession();
-		Criteria criteria = session.createCriteria(Journal.class);
-		criteria.add(Restrictions.eq("issn", issn));
-		if (criteria.list().size() > 0) {
-			return ((Journal) criteria.list().get(0)).getSerNo();
+	public long getJouSerNoByIssn(String issn) throws Exception {
+		DsRestrictions restrictions = DsBeanFactory.getDsRestrictions();
+		restrictions.eq("issn", issn);
+		
+		if (dao.findByRestrictions(restrictions).size() > 0) {
+			return dao.findByRestrictions(restrictions).get(0).getSerNo();
 		} else {
 			return 0;
 		}

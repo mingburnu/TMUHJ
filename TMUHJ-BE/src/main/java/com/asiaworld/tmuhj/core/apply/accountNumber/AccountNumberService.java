@@ -6,10 +6,6 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
-import org.hibernate.Criteria;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -40,9 +36,6 @@ public class AccountNumberService extends GenericServiceFull<AccountNumber> {
 
 	@Autowired
 	private CustomerService customerService;
-
-	@Autowired
-	private SessionFactory sessionFactory;
 
 	@Override
 	protected GenericDaoFull<AccountNumber> getDao() {
@@ -144,12 +137,12 @@ public class AccountNumberService extends GenericServiceFull<AccountNumber> {
 		}
 	}
 
-	public long getSerNoByUserId(String userId) {
-		Session session = sessionFactory.getCurrentSession();
-		Criteria criteria = session.createCriteria(AccountNumber.class);
-		criteria.add(Restrictions.eq("userId", userId));
-		if (criteria.list().size() > 0) {
-			return ((AccountNumber) criteria.list().get(0)).getSerNo();
+	public long getSerNoByUserId(String userId) throws Exception {
+		DsRestrictions restrictions = DsBeanFactory.getDsRestrictions();
+		restrictions.customCriterion(Restrictions.eq("userId", userId));
+		
+		if (dao.findByRestrictions(restrictions).size() > 0) {
+			return (dao.findByRestrictions(restrictions).get(0)).getSerNo();
 		} else {
 			return 0;
 		}
@@ -187,17 +180,16 @@ public class AccountNumberService extends GenericServiceFull<AccountNumber> {
 		
 		if (entity.getCustomer() != null
 				&& StringUtils.isNotEmpty(entity.getCustomer().getName())) {
-			List<?> customerList = customerService.getCustomerListByName(entity
+			List<Customer> customerList = customerService.getCustomerListByName(entity
 					.getCustomer().getName());
-			Iterator<?> iterator = customerList.iterator();
+			Iterator<Customer> iterator = customerList.iterator();
 
-			String sql = "";
+			StringBuilder sqlBuilder = new StringBuilder();
 			while (iterator.hasNext()) {
-				Customer customer = (Customer) iterator.next();
-				sql = sql + "cus_serNo=" + customer.getSerNo() + " or ";
+				sqlBuilder.append("cus_serNo=" + iterator.next().getSerNo() + " or ");
 			}
-			if (!sql.isEmpty()) {
-				restrictions.sqlQuery(sql.substring(0, sql.length() - 4));
+			if (!sqlBuilder.toString().isEmpty()) {
+				restrictions.sqlQuery(sqlBuilder.toString().substring(0, sqlBuilder.toString().length() - 4));
 			} else {
 				return ds;
 			}
@@ -208,11 +200,7 @@ public class AccountNumberService extends GenericServiceFull<AccountNumber> {
 	}
 
 	public boolean hasUser(long cusSerNo) {
-		Session session = sessionFactory.getCurrentSession();
-		Criteria criteria = session.createCriteria(AccountNumber.class);
-		criteria.add(Restrictions.eq("cusSerNo", cusSerNo));
-		criteria.setProjection(Projections.rowCount());
-		Long totalUser = (Long) criteria.list().get(0);
+		long totalUser = dao.countByCusSerNo(cusSerNo);
 
 		if (totalUser > 0) {
 			return true;

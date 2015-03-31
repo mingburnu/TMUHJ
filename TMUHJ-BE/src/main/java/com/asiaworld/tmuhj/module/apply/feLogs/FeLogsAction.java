@@ -106,7 +106,7 @@ public class FeLogsAction extends GenericCRUDActionLog<FeLogs> {
 					getRequest().getParameter("recordPerPage"), getRequest()
 							.getParameter("recordPoint"), ds.getPager()));
 
-			ds = feLogsService.getRanks(ds);
+			ds = feLogsService.getByRestrictions(ds);
 
 			getRequest().setAttribute("endDate", endDate);
 
@@ -116,7 +116,17 @@ public class FeLogsAction extends GenericCRUDActionLog<FeLogs> {
 			}
 			getRequest().setAttribute("cusSerNo", cusSerNo);
 
-			ds = feLogsService.getRanks(ds);
+			ds = feLogsService.getByRestrictions(ds);
+			
+			List<FeLogs> results = ds.getResults();
+			
+			int i= 0;
+			while(i < results.size()){
+				feLogs = results.get(i);
+				feLogs.setCustomer(customerService.getBySerNo(feLogs.getCusSerNo()));
+				feLogs.setRank(i + ds.getPager().getOffset() + 1);
+				i++;
+				}
 
 			setDs(ds);
 
@@ -158,8 +168,7 @@ public class FeLogsAction extends GenericCRUDActionLog<FeLogs> {
 			cusSerNo=String.valueOf(getLoginUser().getCusSerNo());
 		}
 
-		if (cusSerNo == null || !NumberUtils.isDigits(cusSerNo)
-				|| Long.parseLong(cusSerNo) == 0) {
+		if (cusSerNo == null || !NumberUtils.isDigits(cusSerNo)) {
 			addActionError("請正確填寫機構名稱");
 		}
 
@@ -182,9 +191,9 @@ public class FeLogsAction extends GenericCRUDActionLog<FeLogs> {
 			pager.setRecordPerPage(Integer.MAX_VALUE);
 			ds.setPager(pager);
 
-			ds = feLogsService.getRanks(ds);
+			ds = feLogsService.getByRestrictions(ds);
 
-			List<FeLogs> ranks = ds.getResults();
+			List<FeLogs> results = ds.getResults();
 
 			reportFile = "feLogs.xlsx";
 
@@ -199,12 +208,15 @@ public class FeLogsAction extends GenericCRUDActionLog<FeLogs> {
 			empinfo.put("1", new Object[] { "年月", "名次", "關鍵字", "次數" });
 
 			int i = 0;
-			while (i < ranks.size()) {
+			while (i < results.size()) {
+				feLogs = results.get(i);
+				feLogs.setCustomer(customerService.getBySerNo(feLogs.getCusSerNo()));
+				feLogs.setRank(i + 1);
 				empinfo.put(String.valueOf(i + 2),
 						new Object[] { startDate + "~" + endDate,
-								String.valueOf(ranks.get(i).getRank()),
-								ranks.get(i).getKeyword(),
-								String.valueOf(ranks.get(i).getCount()) });
+								String.valueOf(feLogs.getRank()),
+								feLogs.getKeyword(),
+								String.valueOf(feLogs.getCount()) });
 				i++;
 			}
 
@@ -235,7 +247,7 @@ public class FeLogsAction extends GenericCRUDActionLog<FeLogs> {
 		}
 	}
 
-	public boolean isDate(String date) {
+	private boolean isDate(String date) {
 		Pattern pattern = Pattern.compile("((19|20)\\d\\d)-(0?[1-9]|1[012])-(0?[1-9]|[12][0-9]|3[01])");
 		Matcher matcher = pattern.matcher(date);
 		return matcher.matches();

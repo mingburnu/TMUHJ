@@ -106,16 +106,16 @@ public class JournalAction extends GenericCRUDActionFull<Journal> {
 		resourcesBuyers = resourcesBuyersService.getBySerNo(resourcesUnion
 				.getResSerNo());
 
-		List<?> journalResourcesUnionList = resourcesUnionService
+		List<ResourcesUnion> journalResourcesUnionList = resourcesUnionService
 				.getByJouSerNo(Long.parseLong(getRequest()
 						.getParameter("serNo")));
 
 		List<String> ownerNameList = new ArrayList<String>();
 
-		Iterator<?> iterator = journalResourcesUnionList.iterator();
+		Iterator<ResourcesUnion> iterator = journalResourcesUnionList.iterator();
 
 		while (iterator.hasNext()) {
-			ResourcesUnion jouResourcesUnion = (ResourcesUnion) iterator.next();
+			ResourcesUnion jouResourcesUnion = iterator.next();
 			customer = customerService.getBySerNo(jouResourcesUnion
 					.getCusSerNo());
 			if(customer!=null){

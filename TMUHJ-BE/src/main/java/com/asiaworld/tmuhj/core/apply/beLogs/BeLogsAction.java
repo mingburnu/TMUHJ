@@ -126,8 +126,20 @@ public class BeLogsAction extends GenericCRUDActionLog<BeLogs> {
 			}
 			getRequest().setAttribute("cusSerNo", cusSerNo);
 
-			ds = beLogsService.getRanks(ds);
+			ds = beLogsService.getByRestrictions(ds);
+			
+			List<BeLogs> results = ds.getResults();
+			
+			int i = 0;
+			while(i < results.size()){
+				beLogs = results.get(i);
+				beLogs.setCustomer(customerService.getBySerNo(beLogs.getCusSerNo()));
+				beLogs.setAccountNumber(accountNumberService.getBySerNo(beLogs.getUserSerNo()));
+				beLogs.setRank(i + ds.getPager().getOffset() + 1);
+				i++;
+				}
 
+			ds.setResults(results);
 			setDs(ds);
 			return LIST;
 		} else {
@@ -188,12 +200,13 @@ public class BeLogsAction extends GenericCRUDActionLog<BeLogs> {
 			getEntity().setCusSerNo(Long.parseLong(cusSerNo));
 
 			Pager pager = ds.getPager();
+			pager.setOffset(0);
 			pager.setRecordPerPage(Integer.MAX_VALUE);
 			ds.setPager(pager);
 
-			ds = beLogsService.getRanks(ds);
+			ds = beLogsService.getByRestrictions(ds);
 
-			List<BeLogs> ranks = ds.getResults();
+			List<BeLogs> results = ds.getResults();
 
 			reportFile = "beLogs.xlsx";
 
@@ -209,16 +222,20 @@ public class BeLogsAction extends GenericCRUDActionLog<BeLogs> {
 					"客戶名稱", "狀態", "次數" });
 
 			int i = 0;
-			while (i < ranks.size()) {
+			while (i < results.size()) {
+				beLogs = results.get(i);
+				beLogs.setCustomer(customerService.getBySerNo(beLogs.getCusSerNo()));
+				beLogs.setAccountNumber(accountNumberService.getBySerNo(beLogs.getUserSerNo()));
+				beLogs.setRank(i + 1);
 				empinfo.put(String.valueOf(i + 2),
 						new Object[] {startDate + "~" + endDate,
-								String.valueOf(ranks.get(i).getRank()),
-								ranks.get(i).getAccountNumber().getUserId(),
-								ranks.get(i).getAccountNumber().getUserName(),
-								ranks.get(i).getAccountNumber().getRole().getRole(),
-								ranks.get(i).getCustomer().getName(),
-								ranks.get(i).getAccountNumber().getStatus().getStatus(),
-								String.valueOf(ranks.get(i).getCount()) });
+								String.valueOf(beLogs.getRank()),
+								beLogs.getAccountNumber().getUserId(),
+								beLogs.getAccountNumber().getUserName(),
+								beLogs.getAccountNumber().getRole().getRole(),
+								beLogs.getCustomer().getName(),
+								beLogs.getAccountNumber().getStatus().getStatus(),
+								String.valueOf(beLogs.getCount()) });
 
 				i++;
 			}
@@ -250,7 +267,7 @@ public class BeLogsAction extends GenericCRUDActionLog<BeLogs> {
 
 	}
 
-	public boolean isDate(String date) {
+	private boolean isDate(String date) {
 		Pattern pattern = Pattern.compile("((19|20)\\d\\d)-(0?[1-9]|1[012])-(0?[1-9]|[12][0-9]|3[01])");
 		Matcher matcher = pattern.matcher(date);
 		return matcher.matches();

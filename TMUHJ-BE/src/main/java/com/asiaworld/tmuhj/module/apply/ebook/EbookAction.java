@@ -123,7 +123,7 @@ public class EbookAction extends GenericCRUDActionFull<Ebook> {
 			ebook = ebookService.getBySerNo(getEntity().getSerNo());
 			
 			if(ebook != null){
-			Iterator<?> iterator = resourcesUnionService
+			Iterator<ResourcesUnion> iterator = resourcesUnionService
 					.getResourcesUnionsByObj(getEntity(), Ebook.class)
 					.iterator();
 
@@ -131,7 +131,7 @@ public class EbookAction extends GenericCRUDActionFull<Ebook> {
 
 			long resourcesBuyersSerNo = 0;
 			while (iterator.hasNext()) {
-				resourcesUnion = (ResourcesUnion) iterator.next();
+				resourcesUnion = iterator.next();
 				customer = customerService.getBySerNo(resourcesUnion.getCusSerNo());
 				if (customer != null){
 				customers.add(customer);
@@ -305,13 +305,13 @@ public class EbookAction extends GenericCRUDActionFull<Ebook> {
 			ebook.setResourcesBuyers(resourcesBuyersService
 					.getBySerNo(resourcesUnion.getResSerNo()));
 
-			List<?> resourceUnions = resourcesUnionService
+			List<ResourcesUnion> resourceUnions = resourcesUnionService
 					.getResourcesUnionsByObj(ebook, Ebook.class);
 			List<Customer> customers = new ArrayList<Customer>();
 
-			Iterator<?> iterator = resourceUnions.iterator();
+			Iterator<ResourcesUnion> iterator = resourceUnions.iterator();
 			while (iterator.hasNext()) {
-				resourcesUnion = (ResourcesUnion) iterator.next();
+				resourcesUnion = iterator.next();
 				customers.add(customerService.getBySerNo(resourcesUnion
 						.getCusSerNo()));
 			}
@@ -446,12 +446,12 @@ public class EbookAction extends GenericCRUDActionFull<Ebook> {
 					"resourcesBuyers.dbEngTitle"));
 			resourcesBuyersService.update(resourcesBuyers, getLoginUser());
 
-			List<?> resourcesUnions = resourcesUnionService
+			List<ResourcesUnion> resourcesUnions = resourcesUnionService
 					.getResourcesUnionsByObj(ebook, Ebook.class);
 
 			for (int j = 0; j < cusSerNo.length; j++) {
 				for (int i = 0; i < resourcesUnions.size(); i++) {
-					resourcesUnion = (ResourcesUnion) resourcesUnions.get(i);
+					resourcesUnion = resourcesUnions.get(i);
 					if (resourcesUnion.getCusSerNo() == Long
 							.parseLong(cusSerNo[j])) {
 						resourcesUnions.remove(i);
@@ -459,7 +459,7 @@ public class EbookAction extends GenericCRUDActionFull<Ebook> {
 				}
 			}
 
-			Iterator<?> iterator = resourcesUnions.iterator();
+			Iterator<ResourcesUnion> iterator = resourcesUnions.iterator();
 			while (iterator.hasNext()) {
 				resourcesUnion = (ResourcesUnion) iterator.next();
 				resourcesUnionService.deleteBySerNo(resourcesUnion.getSerNo());
@@ -482,13 +482,13 @@ public class EbookAction extends GenericCRUDActionFull<Ebook> {
 			ebook.setResourcesBuyers(resourcesBuyersService
 					.getBySerNo(resourcesUnion.getResSerNo()));
 
-			List<?> resourceUnions = resourcesUnionService
+			List<ResourcesUnion> resourceUnions = resourcesUnionService
 					.getResourcesUnionsByObj(ebook, Ebook.class);
 			List<Customer> customers = new ArrayList<Customer>();
 
 			iterator = resourceUnions.iterator();
 			while (iterator.hasNext()) {
-				resourcesUnion = (ResourcesUnion) iterator.next();
+				resourcesUnion = iterator.next();
 				customers.add(customerService.getBySerNo(resourcesUnion
 						.getCusSerNo()));
 			}
@@ -549,13 +549,13 @@ public class EbookAction extends GenericCRUDActionFull<Ebook> {
 		ebook.setResourcesBuyers(resourcesBuyersService
 				.getBySerNo(resourcesUnion.getResSerNo()));
 
-		List<?> resourceUnions = resourcesUnionService.getResourcesUnionsByObj(
+		List<ResourcesUnion> resourceUnions = resourcesUnionService.getResourcesUnionsByObj(
 				ebook, Ebook.class);
 		List<Customer> customers = new ArrayList<Customer>();
 
-		Iterator<?> iterator = resourceUnions.iterator();
+		Iterator<ResourcesUnion> iterator = resourceUnions.iterator();
 		while (iterator.hasNext()) {
-			resourcesUnion = (ResourcesUnion) iterator.next();
+			resourcesUnion = iterator.next();
 			customers.add(customerService.getBySerNo(resourcesUnion
 					.getCusSerNo()));
 		}
@@ -584,17 +584,17 @@ public class EbookAction extends GenericCRUDActionFull<Ebook> {
 			int j = 0;
 			while (j < checkItem.length) {
 				if (ebookService.getBySerNo(Long.parseLong(checkItem[j])) != null) {
-					List<?> resourcesUnions = resourcesUnionService
+					List<ResourcesUnion> resourcesUnions = resourcesUnionService
 							.getResourcesUnionsByObj(ebookService
 									.getBySerNo(Long.parseLong(checkItem[j])),
 									Ebook.class);
-					resourcesUnion = (ResourcesUnion) resourcesUnions.get(0);
+					resourcesUnion = resourcesUnions.get(0);
 					resourcesBuyersService.deleteBySerNo(resourcesUnion
 							.getResSerNo());
 
-					Iterator<?> iterator = resourcesUnions.iterator();
+					Iterator<ResourcesUnion> iterator = resourcesUnions.iterator();
 					while (iterator.hasNext()) {
-						resourcesUnion = (ResourcesUnion) iterator.next();
+						resourcesUnion = iterator.next();
 						resourcesUnionService.deleteBySerNo(resourcesUnion
 								.getSerNo());
 					}

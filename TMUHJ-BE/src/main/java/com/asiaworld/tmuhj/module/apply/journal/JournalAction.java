@@ -128,7 +128,7 @@ public class JournalAction extends GenericCRUDActionFull<Journal> {
 			journal = journalService.getBySerNo(getEntity().getSerNo());
 			
 			if (journal != null){
-			Iterator<?> iterator = resourcesUnionService
+			Iterator<ResourcesUnion> iterator = resourcesUnionService
 					.getResourcesUnionsByObj(getEntity(), Journal.class)
 					.iterator();
 
@@ -136,7 +136,7 @@ public class JournalAction extends GenericCRUDActionFull<Journal> {
 
 			long resourcesBuyersSerNo = 0;
 			while (iterator.hasNext()) {
-				resourcesUnion = (ResourcesUnion) iterator.next();
+				resourcesUnion = iterator.next();
 				customer = customerService.getBySerNo(resourcesUnion.getCusSerNo());
 				if (customer != null){
 				customers.add(customer);
@@ -288,13 +288,13 @@ public class JournalAction extends GenericCRUDActionFull<Journal> {
 			journal.setResourcesBuyers(resourcesBuyersService
 					.getBySerNo(resourcesUnion.getResSerNo()));
 
-			List<?> resourceUnions = resourcesUnionService
+			List<ResourcesUnion> resourceUnions = resourcesUnionService
 					.getResourcesUnionsByObj(journal, Journal.class);
 			List<Customer> customers = new ArrayList<Customer>();
 
-			Iterator<?> iterator = resourceUnions.iterator();
+			Iterator<ResourcesUnion> iterator = resourceUnions.iterator();
 			while (iterator.hasNext()) {
-				resourcesUnion = (ResourcesUnion) iterator.next();
+				resourcesUnion = iterator.next();
 				customers.add(customerService.getBySerNo(resourcesUnion
 						.getCusSerNo()));
 			}
@@ -419,12 +419,12 @@ public class JournalAction extends GenericCRUDActionFull<Journal> {
 					"resourcesBuyers.dbEngTitle"));
 			resourcesBuyersService.update(resourcesBuyers, getLoginUser());
 
-			List<?> resourcesUnions = resourcesUnionService
+			List<ResourcesUnion> resourcesUnions = resourcesUnionService
 					.getResourcesUnionsByObj(journal, Journal.class);
 
 			for (int j = 0; j < cusSerNo.length; j++) {
 				for (int i = 0; i < resourcesUnions.size(); i++) {
-					resourcesUnion = (ResourcesUnion) resourcesUnions.get(i);
+					resourcesUnion = resourcesUnions.get(i);
 					if (resourcesUnion.getCusSerNo() == Long
 							.parseLong(cusSerNo[j])) {
 						resourcesUnions.remove(i);
@@ -432,7 +432,7 @@ public class JournalAction extends GenericCRUDActionFull<Journal> {
 				}
 			}
 
-			Iterator<?> iterator = resourcesUnions.iterator();
+			Iterator<ResourcesUnion> iterator = resourcesUnions.iterator();
 			while (iterator.hasNext()) {
 				resourcesUnion = (ResourcesUnion) iterator.next();
 				resourcesUnionService.deleteBySerNo(resourcesUnion.getSerNo());
@@ -455,13 +455,13 @@ public class JournalAction extends GenericCRUDActionFull<Journal> {
 			journal.setResourcesBuyers(resourcesBuyersService
 					.getBySerNo(resourcesUnion.getResSerNo()));
 
-			List<?> resourceUnions = resourcesUnionService
+			List<ResourcesUnion> resourceUnions = resourcesUnionService
 					.getResourcesUnionsByObj(journal, Journal.class);
 			List<Customer> customers = new ArrayList<Customer>();
 
 			iterator = resourceUnions.iterator();
 			while (iterator.hasNext()) {
-				resourcesUnion = (ResourcesUnion) iterator.next();
+				resourcesUnion = iterator.next();
 				customers.add(customerService.getBySerNo(resourcesUnion
 						.getCusSerNo()));
 			}
@@ -522,13 +522,13 @@ public class JournalAction extends GenericCRUDActionFull<Journal> {
 		journal.setResourcesBuyers(resourcesBuyersService
 				.getBySerNo(resourcesUnion.getResSerNo()));
 
-		List<?> resourceUnions = resourcesUnionService.getResourcesUnionsByObj(
+		List<ResourcesUnion> resourceUnions = resourcesUnionService.getResourcesUnionsByObj(
 				journal, Journal.class);
 		List<Customer> customers = new ArrayList<Customer>();
 
-		Iterator<?> iterator = resourceUnions.iterator();
+		Iterator<ResourcesUnion> iterator = resourceUnions.iterator();
 		while (iterator.hasNext()) {
-			resourcesUnion = (ResourcesUnion) iterator.next();
+			resourcesUnion = iterator.next();
 			customers.add(customerService.getBySerNo(resourcesUnion
 					.getCusSerNo()));
 		}
@@ -557,11 +557,11 @@ public class JournalAction extends GenericCRUDActionFull<Journal> {
 			int j = 0;
 			while (j < checkItem.length) {
 				if (journalService.getBySerNo(Long.parseLong(checkItem[j])) != null) {
-					List<?> resourcesUnions = resourcesUnionService
+					List<ResourcesUnion> resourcesUnions = resourcesUnionService
 							.getResourcesUnionsByObj(journalService
 									.getBySerNo(Long.parseLong(checkItem[j])),
 									Journal.class);
-					resourcesUnion = (ResourcesUnion) resourcesUnions.get(0);
+					resourcesUnion = resourcesUnions.get(0);
 					resourcesBuyersService.deleteBySerNo(resourcesUnion
 							.getResSerNo());
 

@@ -4,7 +4,7 @@ import org.jasypt.util.password.StrongPasswordEncryptor;
 
 /**
  * EncryptorUtil
- * @author David Hsu
+ * @author Roderick
  * @version 2014/3/12
  */
 public class EncryptorUtil {

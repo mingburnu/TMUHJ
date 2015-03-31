@@ -1,9 +1,8 @@
 package com.asiaworld.tmuhj.module.apply.database;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
-import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
@@ -19,8 +18,6 @@ import com.asiaworld.tmuhj.module.apply.resourcesUnion.ResourcesUnionService;
 
 @Service
 public class DatabaseService extends GenericServiceFull<Database> {
-	@Autowired
-	private SessionFactory sessionFactory;
 
 	@Autowired
 	private DatabaseDao dao;
@@ -63,7 +60,7 @@ public class DatabaseService extends GenericServiceFull<Database> {
 
 		if (StringUtils.isNotEmpty(keywords)) {
 			char[] cArray = keywords.toCharArray();
-			StringBuilder keywordsBuilder = new StringBuilder("");
+			StringBuilder keywordsBuilder = new StringBuilder();
 			for (int i = 0; i < cArray.length; i++) {
 				int charCode = (int) cArray[i];
 				if (charCode > 65280 && charCode < 65375) {
@@ -79,7 +76,7 @@ public class DatabaseService extends GenericServiceFull<Database> {
 					"[^a-zA-Z0-9\u4e00-\u9fa5\u0391-\u03a9\u03b1-\u03c9]", " ");
 			String[] wordArray = keywords.split(" ");
 
-			StringBuilder sqlBuilder = new StringBuilder("");
+			StringBuilder sqlBuilder = new StringBuilder();
 			for (int i = 0; i < wordArray.length; i++) {
 				if (!wordArray[i].isEmpty() && !option.isEmpty()) {
 					sqlBuilder.append("LOWER(" + option + ") like LOWER('%"
@@ -122,7 +119,7 @@ public class DatabaseService extends GenericServiceFull<Database> {
 
 		if (StringUtils.isNotEmpty(keywords)) {
 			char[] cArray = keywords.toCharArray();
-			StringBuilder keywordsBuilder = new StringBuilder("");
+			StringBuilder keywordsBuilder = new StringBuilder();
 			for (int i = 0; i < cArray.length; i++) {
 				int charCode = (int) cArray[i];
 				if (charCode > 65280 && charCode < 65375) {
@@ -137,7 +134,7 @@ public class DatabaseService extends GenericServiceFull<Database> {
 					"[^a-zA-Z0-9\u4e00-\u9fa5\u0391-\u03a9\u03b1-\u03c9]", " ");
 			String[] wordArray = keywords.split(" ");
 
-			StringBuilder sqlBuilder = new StringBuilder("");
+			StringBuilder sqlBuilder = new StringBuilder();
 			for (int i = 0; i < wordArray.length; i++) {
 				if (!wordArray[i].isEmpty()) {
 					sqlBuilder.append("LOWER(DBchttitle) like LOWER('%"
@@ -169,14 +166,14 @@ public class DatabaseService extends GenericServiceFull<Database> {
 
 		DsRestrictions restrictions = DsBeanFactory.getDsRestrictions();
 
-		ArrayList<ResourcesUnion> resourcesUnionList = null;
+		List<ResourcesUnion> resourcesUnionList = null;
 		if (cusSerNo > 0) {
 			resourcesUnionList = resourcesUnionService.totalDb(cusSerNo);
 		}
 
 		if (resourcesUnionList != null && !resourcesUnionList.isEmpty()
 				&& resourcesUnionList.size() > 0) {
-			StringBuilder sqlBuilder = new StringBuilder("");
+			StringBuilder sqlBuilder = new StringBuilder();
 			for (int i = 0; i < resourcesUnionList.size(); i++) {
 				sqlBuilder.append("serNo="
 						+ resourcesUnionList.get(i).getDatSerNo() + " or ");

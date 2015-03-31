@@ -1,7 +1,6 @@
 package com.asiaworld.tmuhj.core.apply.customer;
 
 import org.apache.commons.lang3.StringUtils;
-import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
@@ -15,8 +14,6 @@ import com.asiaworld.tmuhj.core.util.DsBeanFactory;
 
 @Service
 public class CustomerService extends GenericServiceFull<Customer> {
-	@Autowired
-	private SessionFactory sessionFactory;
 
 	@Autowired
 	private CustomerDao dao;
@@ -47,7 +44,7 @@ public class CustomerService extends GenericServiceFull<Customer> {
 
 		if (StringUtils.isNotEmpty(keywords)) {
 			char[] cArray = keywords.toCharArray();
-			StringBuilder keywordsBuilder = new StringBuilder("");
+			StringBuilder keywordsBuilder = new StringBuilder();
 			for (int i = 0; i < cArray.length; i++) {
 				int charCode = (int) cArray[i];
 				if (charCode > 65280 && charCode < 65375) {
@@ -62,7 +59,7 @@ public class CustomerService extends GenericServiceFull<Customer> {
 					"[^a-zA-Z0-9\u4e00-\u9fa5\u0391-\u03a9\u03b1-\u03c9]", " ");
 			String[] wordArray = keywords.split(" ");
 
-			StringBuilder sqlBuilder = new StringBuilder("");
+			StringBuilder sqlBuilder = new StringBuilder();
 			for (int i = 0; i < wordArray.length; i++) {
 				if (wordArray[i].isEmpty() == false) {
 					sqlBuilder.append("LOWER(name) like LOWER('%"
