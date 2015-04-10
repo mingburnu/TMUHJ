@@ -123,7 +123,7 @@ public class AccountNumberAction extends GenericCRUDActionFull<AccountNumber> {
 		getRequest().setAttribute("statusList", statusList);
 		
 		if (getLoginUser().getRole().equals(Role.管理員)){
-			customer.setSerNo(getLoginUser().getCusSerNo());
+			customer.setSerNo(getLoginUser().getCustomer().getSerNo());
 
 		}
 		
@@ -141,7 +141,7 @@ public class AccountNumberAction extends GenericCRUDActionFull<AccountNumber> {
 			
 			if(isLegalRole){
 				if (getLoginUser().getRole().equals(Role.管理員)){
-					if (accountNumber.getCusSerNo().equals(getLoginUser().getCusSerNo())){
+					if (accountNumber.getCustomer().equals(getLoginUser().getCustomer())){
 						setEntity(accountNumber);
 						} else {
 							getResponse().setStatus(HttpServletResponse.SC_FORBIDDEN);
@@ -173,16 +173,6 @@ public class AccountNumberAction extends GenericCRUDActionFull<AccountNumber> {
 						.getParameter("recordPoint"), ds.getPager()));
 				
 		ds = accountNumberService.getByRestrictions(ds, getLoginUser());
-		List<AccountNumber> results = ds.getResults();
-
-		int i = 0;
-		while (i < results.size()) {
-			results.get(i).setCustomer(
-					customerService.getBySerNo(results.get(i).getCusSerNo()));
-			i++;
-		}
-
-		ds.setResults(results);
 
 		setDs(ds);
 		return LIST;
@@ -253,10 +243,10 @@ public class AccountNumberAction extends GenericCRUDActionFull<AccountNumber> {
 				|| customerService.getBySerNo(Long.parseLong(getRequest().getParameter("cusSerNo"))) == null){
 			addActionError("用戶名稱必選");
 			} else {
-				getEntity().setCusSerNo(Long.parseLong(getRequest().getParameter("cusSerNo")));
+				getEntity().setCustomer(customerService.getBySerNo(Long.parseLong(getRequest().getParameter("cusSerNo"))));
 				
 				if(getLoginUser().getRole().equals(Role.管理員)){
-					if (getLoginUser().getCusSerNo() != getEntity().getCusSerNo()){
+					if (getLoginUser().getCustomer().getSerNo() != getEntity().getCustomer().getSerNo()){
 						addActionError("用戶名稱不正確");
 					}
 				}
@@ -276,7 +266,7 @@ public class AccountNumberAction extends GenericCRUDActionFull<AccountNumber> {
 		if (!hasActionErrors()) {
 			accountNumber = accountNumberService.save(getEntity(),
 					getLoginUser());
-			accountNumber.setCustomer(customerService.getBySerNo(accountNumber.getCusSerNo()));
+			accountNumber.setCustomer(accountNumber.getCustomer());
 			setEntity(accountNumber);
 			return VIEW;
 		} else {
@@ -284,7 +274,7 @@ public class AccountNumberAction extends GenericCRUDActionFull<AccountNumber> {
 			getRequest().setAttribute("statusList", statusList);
 			setEntity(getEntity());
 			if (getLoginUser().getRole().equals(Role.管理員)){
-				customer.setSerNo(getLoginUser().getCusSerNo());
+				customer.setSerNo(getLoginUser().getCustomer().getSerNo());
 				
 			}
 			
@@ -323,8 +313,6 @@ public class AccountNumberAction extends GenericCRUDActionFull<AccountNumber> {
 			}
 		}
 		
-		
-		
 		boolean isLegalStatus=false;
 		for (int i=0; i < statusList.size(); i++){
 			if(getRequest().getParameter("status") != null
@@ -356,10 +344,10 @@ public class AccountNumberAction extends GenericCRUDActionFull<AccountNumber> {
 				|| customerService.getBySerNo(Long.parseLong(getRequest().getParameter("cusSerNo"))) == null){
 			addActionError("用戶名稱必選");
 			} else {
-				getEntity().setCusSerNo(Long.parseLong(getRequest().getParameter("cusSerNo")));
+				getEntity().setCustomer(customerService.getBySerNo(Long.parseLong(getRequest().getParameter("cusSerNo"))));
 				
 				if(getLoginUser().getRole().equals(Role.管理員)){
-					if (getLoginUser().getCusSerNo() != getEntity().getCusSerNo()){
+					if (getLoginUser().getCustomer().getSerNo() != getEntity().getCustomer().getSerNo()){
 						addActionError("用戶名稱不正確");
 					}
 				}
@@ -386,7 +374,7 @@ public class AccountNumberAction extends GenericCRUDActionFull<AccountNumber> {
 			getEntity().setUserId(accountNumberService.getBySerNo(getEntity().getSerNo()).getUserId());
 			
 			if (getLoginUser().getRole().equals(Role.管理員)){
-				customer.setSerNo(getLoginUser().getCusSerNo());
+				customer.setSerNo(getLoginUser().getCustomer().getSerNo());
 				
 			}
 			
@@ -450,8 +438,7 @@ public class AccountNumberAction extends GenericCRUDActionFull<AccountNumber> {
 			while (j < checkItem.length) {
 				if (accountNumberService.getBySerNo(Long
 						.parseLong(checkItem[j])) != null) {
-					accountNumber = accountNumberService.getBySerNo(Long
-							.parseLong(checkItem[j]));
+					accountNumber = accountNumberService.getBySerNo(Long.parseLong(checkItem[j]));
 					accountNumber.setStatus(Status.不生效);
 					accountNumberService.update(accountNumber, getLoginUser());
 				}
@@ -460,14 +447,6 @@ public class AccountNumberAction extends GenericCRUDActionFull<AccountNumber> {
 			DataSet<AccountNumber> ds = accountNumberService
 					.getByRestrictions(initDataSet());
 			List<AccountNumber> results = ds.getResults();
-
-			int i = 0;
-			while (i < results.size()) {
-				results.get(i).setCustomer(
-						customerService
-								.getBySerNo(results.get(i).getCusSerNo()));
-				i++;
-			}
 
 			ds.setResults(results);
 
@@ -478,14 +457,6 @@ public class AccountNumberAction extends GenericCRUDActionFull<AccountNumber> {
 			DataSet<AccountNumber> ds = accountNumberService
 					.getByRestrictions(initDataSet(), getLoginUser());
 			List<AccountNumber> results = ds.getResults();
-
-			int i = 0;
-			while (i < results.size()) {
-				results.get(i).setCustomer(
-						customerService
-								.getBySerNo(results.get(i).getCusSerNo()));
-				i++;
-			}
 
 			ds.setResults(results);
 
@@ -556,14 +527,6 @@ public class AccountNumberAction extends GenericCRUDActionFull<AccountNumber> {
 			ds = accountNumberService.getByRestrictions(ds);
 			List<AccountNumber> results = ds.getResults();
 
-			int i = 0;
-			while (i < results.size()) {
-				results.get(i).setCustomer(
-						customerService
-								.getBySerNo(results.get(i).getCusSerNo()));
-				i++;
-			}
-
 			ds.setResults(results);
 
 			setDs(ds);
@@ -573,14 +536,6 @@ public class AccountNumberAction extends GenericCRUDActionFull<AccountNumber> {
 			DataSet<AccountNumber> ds = accountNumberService
 					.getByRestrictions(initDataSet(), getLoginUser());
 			List<AccountNumber> results = ds.getResults();
-
-			int i = 0;
-			while (i < results.size()) {
-				results.get(i).setCustomer(
-						customerService
-								.getBySerNo(results.get(i).getCusSerNo()));
-				i++;
-			}
 
 			ds.setResults(results);
 
@@ -597,7 +552,6 @@ public class AccountNumberAction extends GenericCRUDActionFull<AccountNumber> {
 		
 			accountNumber = accountNumberService.getBySerNo(Long.parseLong(getRequest().getParameter("viewSerNo")));
 			if (accountNumber != null){
-				accountNumber.setCustomer(customerService.getBySerNo(accountNumber.getCusSerNo()));
 				setEntity(accountNumber);
 				}
 			}
@@ -768,25 +722,27 @@ public class AccountNumberAction extends GenericCRUDActionFull<AccountNumber> {
 				}
 				
 				accountNumber = new AccountNumber(
-						customerService.getCusSerNoByName(rowValues[3].trim()),
+						
 						rowValues[0].trim(), rowValues[1].trim(),
 						rowValues[2].trim(), Role.valueOf(role), Status.valueOf(status),
 						null, "");
 
+				if (customerService.getCusSerNoByName(rowValues[3].trim()) != 0){
+					customer = customerService.getBySerNo(customerService.getCusSerNoByName(rowValues[3].trim()));
+					accountNumber.setCustomer(customer);
+				}
+				
 				long serNo = accountNumberService
 						.getSerNoByUserId(accountNumber.getUserId());
 				if (serNo != 0) {
-					customer = new Customer();
-					customer.setName(rowValues[3].trim());
-					accountNumber.setCustomer(customer);
 					accountNumber.setExistStatus("已存在");
 				} else {						
 					if(getLoginUser().getRole().equals(Role.管理員)){
 						if (accountNumber.getUserId().isEmpty()
 								|| accountNumber.getUserPw().isEmpty()
-								|| accountNumber.getCusSerNo() == 0
+								|| accountNumber.getCustomer() == null
 								|| !isLegalRole
-								|| !getLoginUser().getCusSerNo().equals(accountNumber.getCusSerNo())) {
+								|| !getLoginUser().getCustomer().equals(accountNumber.getCustomer())) {
 							customer = new Customer();
 							customer.setName(rowValues[3].trim());
 							accountNumber.setCustomer(customer);
@@ -801,7 +757,7 @@ public class AccountNumberAction extends GenericCRUDActionFull<AccountNumber> {
 					} else {
 						if (accountNumber.getUserId().isEmpty()
 								|| accountNumber.getUserPw().isEmpty()
-								|| accountNumber.getCusSerNo() == 0
+								|| accountNumber.getCustomer() == null
 								|| !isLegalRole) {
 							customer = new Customer();
 							customer.setName(rowValues[3].trim());
@@ -971,7 +927,7 @@ public class AccountNumberAction extends GenericCRUDActionFull<AccountNumber> {
 				}
 			}
 
-			getRequest().setAttribute("successCount", importList.size());
+			getRequest().setAttribute("successCount", importIndexs.size());
 			return VIEW;
 		} else {
 			paginate();

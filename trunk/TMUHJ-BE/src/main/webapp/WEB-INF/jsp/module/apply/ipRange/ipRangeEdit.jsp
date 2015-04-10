@@ -26,11 +26,11 @@ $(document).ready(function() {
 		closeDetail_2();
 		if ($("form#apply_ipRange_save").length != 0) {
 			var data = $('form#apply_ipRange_save').serialize();
-			goDetail_2("<c:url value = '/'/>crud/apply.ipRange.save.action?entity.cusSerNo=${entity.cusSerNo}",
+			goDetail_2("<c:url value = '/'/>crud/apply.ipRange.save.action?entity.customer.serNo=${entity.customer.serNo}",
 					'客戶-IP Range新增', data);
 		} else {
 			var data = $('form#apply_ipRange_update').serialize();
-			goDetail_2("<c:url value = '/'/>crud/apply.ipRange.update.action?entity.serNo=${entity.serNo}&entity.cusSerNo=${entity.cusSerNo}&entity.listNo=${entity.listNo}",
+			goDetail_2("<c:url value = '/'/>crud/apply.ipRange.update.action?entity.serNo=${entity.serNo}&entity.customer.serNo=${entity.customer.serNo}&entity.listNo=${entity.listNo}",
 					'客戶-IP Range修改', data);
 		}
 	}

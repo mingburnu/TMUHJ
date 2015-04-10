@@ -90,13 +90,18 @@ public class BeLogsAction extends GenericCRUDActionLog<BeLogs> {
 		
 		String cusSerNo = getRequest().getParameter("cusSerNo");
 		if(getLoginUser().getRole().equals(Role.管理員)){
-			cusSerNo=String.valueOf(getLoginUser().getCusSerNo());
+			cusSerNo=String.valueOf(getLoginUser().getCustomer().getSerNo());
 		}
 
 		if (cusSerNo == null || !NumberUtils.isDigits(cusSerNo)) {
 			addActionError("請正確填寫機構名稱");
+		} else {
+			if (Long.parseLong(cusSerNo) != 0 
+					&& customerService.getBySerNo(Long.parseLong(cusSerNo)) == null){
+				addActionError("請正確填寫機構名稱");
+			}
 		}
-
+		
 		if (!hasActionErrors()) {
 			if (StringUtils.isNotBlank(startDate) && isDate(startDate)) {
 				getEntity().setStart(LocalDateTime.parse(startDate));
@@ -112,8 +117,6 @@ public class BeLogsAction extends GenericCRUDActionLog<BeLogs> {
 
 			DataSet<BeLogs> ds = initDataSet();
 
-			getEntity().setCusSerNo(Long.parseLong(cusSerNo));
-
 			ds.setPager(Pager.getChangedPager(
 					getRequest().getParameter("recordPerPage"), getRequest()
 							.getParameter("recordPoint"), ds.getPager()));
@@ -121,25 +124,18 @@ public class BeLogsAction extends GenericCRUDActionLog<BeLogs> {
 			getRequest().setAttribute("endDate", endDate);
 
 			if (Long.parseLong(cusSerNo) > 0) {
-				getRequest().setAttribute("customer",
-						customerService.getBySerNo(Long.parseLong(cusSerNo)).getName());
-			}
+				getEntity().setCustomer(customerService.getBySerNo(Long.parseLong(cusSerNo)));
+				getRequest().setAttribute("customer", getEntity().getCustomer().getName());
+			} else {
+				customer =new Customer();
+				customer.setSerNo(Long.parseLong(cusSerNo));
+				getEntity().setCustomer(customer);
+			} 
+			
 			getRequest().setAttribute("cusSerNo", cusSerNo);
 
 			ds = beLogsService.getByRestrictions(ds);
 			
-			List<BeLogs> results = ds.getResults();
-			
-			int i = 0;
-			while(i < results.size()){
-				beLogs = results.get(i);
-				beLogs.setCustomer(customerService.getBySerNo(beLogs.getCusSerNo()));
-				beLogs.setAccountNumber(accountNumberService.getBySerNo(beLogs.getUserSerNo()));
-				beLogs.setRank(i + ds.getPager().getOffset() + 1);
-				i++;
-				}
-
-			ds.setResults(results);
 			setDs(ds);
 			return LIST;
 		} else {
@@ -177,12 +173,17 @@ public class BeLogsAction extends GenericCRUDActionLog<BeLogs> {
 		
 		String cusSerNo = getRequest().getParameter("cusSerNo");
 		if(getLoginUser().getRole().equals(Role.管理員)){
-			cusSerNo=String.valueOf(getLoginUser().getCusSerNo());
+			cusSerNo=String.valueOf(getLoginUser().getCustomer().getSerNo());
 		}
 
 		if (cusSerNo == null || !NumberUtils.isDigits(cusSerNo)) {
 			addActionError("請正確填寫機構名稱");
-		}
+		} else {
+			if (Long.parseLong(cusSerNo) != 0 
+					&& customerService.getBySerNo(Long.parseLong(cusSerNo)) == null){
+				addActionError("請正確填寫機構名稱");
+			}
+		} 
 
 		if (!hasActionErrors()) {
 			if (StringUtils.isNotBlank(startDate) && isDate(startDate)) {
@@ -197,7 +198,14 @@ public class BeLogsAction extends GenericCRUDActionLog<BeLogs> {
 
 			DataSet<BeLogs> ds = initDataSet();
 
-			getEntity().setCusSerNo(Long.parseLong(cusSerNo));
+			if (Long.parseLong(cusSerNo) > 0) {
+				getEntity().setCustomer(customerService.getBySerNo(Long.parseLong(cusSerNo)));
+				getRequest().setAttribute("customer", getEntity().getCustomer().getName());
+			} else {
+				customer =new Customer();
+				customer.setSerNo(Long.parseLong(cusSerNo));
+				getEntity().setCustomer(customer);
+			}
 
 			Pager pager = ds.getPager();
 			pager.setOffset(0);
@@ -224,9 +232,6 @@ public class BeLogsAction extends GenericCRUDActionLog<BeLogs> {
 			int i = 0;
 			while (i < results.size()) {
 				beLogs = results.get(i);
-				beLogs.setCustomer(customerService.getBySerNo(beLogs.getCusSerNo()));
-				beLogs.setAccountNumber(accountNumberService.getBySerNo(beLogs.getUserSerNo()));
-				beLogs.setRank(i + 1);
 				empinfo.put(String.valueOf(i + 2),
 						new Object[] {startDate + "~" + endDate,
 								String.valueOf(beLogs.getRank()),

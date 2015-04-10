@@ -1,13 +1,17 @@
 package com.asiaworld.tmuhj.core.apply.ipRange;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 
+import com.asiaworld.tmuhj.core.apply.customer.Customer;
 import com.asiaworld.tmuhj.core.entity.GenericEntityFull;
 
 @Entity
@@ -20,9 +24,12 @@ public class IpRange extends GenericEntityFull {
 	 */
 	private static final long serialVersionUID = -1606674601447344379L;
 
-	// 用戶流水號
-	@Column(name="cus_serNo")
-	private long cusSerNo;
+	/**
+	 * 用戶流水號
+	 */
+	@ManyToOne(cascade = CascadeType.DETACH)
+	@JoinColumn(name = "cus_serNo", nullable = false)
+	private Customer customer;
 
 	// IP開始
 	@Column(name="ipRangeStart")
@@ -36,18 +43,17 @@ public class IpRange extends GenericEntityFull {
 	private int listNo;
 
 	/**
-	 * @return the cusSerNo
+	 * @return the customer
 	 */
-	public long getCusSerNo() {
-		return cusSerNo;
+	public Customer getCustomer() {
+		return customer;
 	}
 
 	/**
-	 * @param cusSerNo
-	 *            the cusSerNo to set
+	 * @param customer the customer to set
 	 */
-	public void setCusSerNo(long cusSerNo) {
-		this.cusSerNo = cusSerNo;
+	public void setCustomer(Customer customer) {
+		this.customer = customer;
 	}
 
 	/**

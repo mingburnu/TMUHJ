@@ -1,14 +1,19 @@
 package com.asiaworld.tmuhj.core.apply.feLogs;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 
+import com.asiaworld.tmuhj.core.apply.accountNumber.AccountNumber;
+import com.asiaworld.tmuhj.core.apply.customer.Customer;
 import com.asiaworld.tmuhj.core.apply.enums.Act;
 import com.asiaworld.tmuhj.core.entity.GenericEntityLog;
 
@@ -37,13 +42,19 @@ public class FeLogs extends GenericEntityLog {
 	@Column(name = "keyword")
 	private String keyword;
 
-	// 用戶流水號
-	@Column(name = "cus_SerNo")
-	private Long cusSerNo;
+	/**
+	 * 用戶流水號
+	 */
+	@ManyToOne(cascade = CascadeType.REMOVE)
+	@JoinColumn(name = "cus_serNo", nullable = false)
+	private Customer customer;
 
-	// 帳戶流水號
-	@Column(name = "acc_SerNo")
-	private Long accSerNo;
+	/**
+	 * 帳戶流水號
+	 */
+	@ManyToOne(cascade = CascadeType.ALL)
+	@JoinColumn(name = "acc_SerNo", nullable = true)
+	private AccountNumber accountNumber;
 
 	// 資料庫流水號
 	@Column(name = "dat_SerNo")
@@ -88,33 +99,31 @@ public class FeLogs extends GenericEntityLog {
 	}
 
 	/**
-	 * @return the cusSerNo
+	 * @return the customer
 	 */
-	public Long getCusSerNo() {
-		return cusSerNo;
+	public Customer getCustomer() {
+		return customer;
 	}
 
 	/**
-	 * @param cusSerNo
-	 *            the cusSerNo to set
+	 * @param customer the customer to set
 	 */
-	public void setCusSerNo(Long cusSerNo) {
-		this.cusSerNo = cusSerNo;
+	public void setCustomer(Customer customer) {
+		this.customer = customer;
 	}
 
 	/**
-	 * @return the accSerNo
+	 * @return the accountNumber
 	 */
-	public Long getAccSerNo() {
-		return accSerNo;
+	public AccountNumber getAccountNumber() {
+		return accountNumber;
 	}
 
 	/**
-	 * @param accSerNo
-	 *            the accSerNo to set
+	 * @param accountNumber the accountNumber to set
 	 */
-	public void setAccSerNo(Long accSerNo) {
-		this.accSerNo = accSerNo;
+	public void setAccountNumber(AccountNumber accountNumber) {
+		this.accountNumber = accountNumber;
 	}
 
 	/**
@@ -167,13 +176,13 @@ public class FeLogs extends GenericEntityLog {
 		// TODO Auto-generated constructor stub
 	}
 
-	public FeLogs(Act actionType, String keyword, Long cusSerNo, Long accSerNo,
+	public FeLogs(Act actionType, String keyword, Customer customer, AccountNumber accountNumber,
 			Long datSerNo, Long ebkSerNo, Long jouSerNo) {
 		super();
 		this.actionType = actionType;
 		this.keyword = keyword;
-		this.cusSerNo = cusSerNo;
-		this.accSerNo = accSerNo;
+		this.customer = customer;
+		this.accountNumber = accountNumber;
 		this.datSerNo = datSerNo;
 		this.ebkSerNo = ebkSerNo;
 		this.jouSerNo = jouSerNo;
@@ -185,7 +194,7 @@ public class FeLogs extends GenericEntityLog {
 	@Override
 	public String toString() {
 		return "FeLogs [actionType=" + actionType + ", keyword=" + keyword
-				+ ", cusSerNo=" + cusSerNo + ", accSerNo=" + accSerNo
+				+ ", customer=" + customer + ", accountNumber=" + accountNumber
 				+ ", datSerNo=" + datSerNo + ", ebkSerNo=" + ebkSerNo
 				+ ", jouSerNo=" + jouSerNo + "]";
 	}

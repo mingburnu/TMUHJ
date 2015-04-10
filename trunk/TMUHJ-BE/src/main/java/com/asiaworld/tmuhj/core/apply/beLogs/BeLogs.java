@@ -1,9 +1,12 @@
 package com.asiaworld.tmuhj.core.apply.beLogs;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
@@ -38,17 +41,13 @@ public class BeLogs extends GenericEntityLog {
 	private Act actionType;
 
 	// 帳戶流水號
-	@Column(name = "fk_account_serNo")
-	private Long userSerNo;
-
-	// 用戶流水號
-	@Column(name = "fk_customer_serNo")
-	private Long cusSerNo;
-
-	@Transient
+	@ManyToOne(cascade = CascadeType.ALL)
+	@JoinColumn(name = "acc_serNo", nullable = false)
 	private AccountNumber accountNumber;
 
-	@Transient
+	// 用戶流水號
+	@ManyToOne(cascade = CascadeType.ALL)
+	@JoinColumn(name = "cus_serNo", nullable = false)
 	private Customer customer;
 
 	@Transient
@@ -76,36 +75,6 @@ public class BeLogs extends GenericEntityLog {
 	 */
 	public void setActionType(Act actionType) {
 		this.actionType = actionType;
-	}
-
-	/**
-	 * @return the userSerNo
-	 */
-	public Long getUserSerNo() {
-		return userSerNo;
-	}
-
-	/**
-	 * @param userSerNo
-	 *            the userSerNo to set
-	 */
-	public void setUserSerNo(Long userSerNo) {
-		this.userSerNo = userSerNo;
-	}
-
-	/**
-	 * @return the cusSerNo
-	 */
-	public Long getCusSerNo() {
-		return cusSerNo;
-	}
-
-	/**
-	 * @param cusSerNo
-	 *            the cusSerNo to set
-	 */
-	public void setCusSerNo(Long cusSerNo) {
-		this.cusSerNo = cusSerNo;
 	}
 
 	/**
@@ -199,10 +168,9 @@ public class BeLogs extends GenericEntityLog {
 	 */
 	@Override
 	public String toString() {
-		return "BeLogs [actionType=" + actionType + ", userSerNo=" + userSerNo
-				+ ", cusSerNo=" + cusSerNo + ", accountNumber=" + accountNumber
-				+ ", customer=" + customer + ", start=" + start + ", end="
-				+ end + ", count=" + count + ", rank=" + rank + "]";
+		return "BeLogs [actionType=" + actionType + ", accountNumber="
+				+ accountNumber + ", customer=" + customer + ", start=" + start
+				+ ", end=" + end + ", count=" + count + ", rank=" + rank + "]";
 	}
 
 	public BeLogs() {
@@ -210,11 +178,11 @@ public class BeLogs extends GenericEntityLog {
 		// TODO Auto-generated constructor stub
 	}
 
-	public BeLogs(Act actionType, Long userSerNo, Long cusSerNo) {
+	public BeLogs(Act actionType, AccountNumber accountNumber, Customer customer) {
 		super();
 		this.actionType = actionType;
-		this.userSerNo = userSerNo;
-		this.cusSerNo = cusSerNo;
+		this.accountNumber = accountNumber;
+		this.customer = customer;
 	}
 
 }

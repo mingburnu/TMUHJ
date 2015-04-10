@@ -21,6 +21,13 @@ $(document).ready(function() {
 		if(e.keyCode == 13){gotoPage($(this).val());}
 	});
 });
+
+$(document).ready(function() {
+	$('input#customerName').click(function(){
+		$('input[name="cusSerNo"]:eq(0)').attr( "checked", '' );
+		$('input[name="cusSerNo"]:eq(1)').attr( "checked", true );
+	});
+});
 	
 function goSearch(){
 	if($("input#customerSerno").attr("checked")){

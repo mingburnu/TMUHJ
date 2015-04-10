@@ -104,8 +104,7 @@ public class DatabaseAction extends GenericCRUDActionFull<Database> {
 				Long.parseLong(getRequest().getParameter("serNo")),
 				database.getClass());
 
-		resourcesBuyers = resourcesBuyersService.getBySerNo(resourcesUnion
-				.getResSerNo());
+		resourcesBuyers = resourcesUnion.getResourcesBuyers();
 
 		List<ResourcesUnion> dbResourcesUnionList = resourcesUnionService.getByDatSerNo(Long
 				.parseLong(getRequest().getParameter("serNo")));
@@ -116,8 +115,7 @@ public class DatabaseAction extends GenericCRUDActionFull<Database> {
 
 		while (iterator.hasNext()) {
 			ResourcesUnion datResourcesUnion = iterator.next();
-			customer = customerService.getBySerNo(datResourcesUnion
-					.getCusSerNo());
+			customer = datResourcesUnion.getCustomer();
 			if(customer!=null){
 			ownerNameList.add(customer.getName());
 			}

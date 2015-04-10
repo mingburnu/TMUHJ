@@ -10,13 +10,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.Assert;
 
+import com.asiaworld.tmuhj.core.apply.accountNumber.AccountNumber;
+import com.asiaworld.tmuhj.core.apply.customer.Customer;
 import com.asiaworld.tmuhj.core.apply.enums.Act;
 import com.asiaworld.tmuhj.core.dao.ModuleDaoLog;
 import com.asiaworld.tmuhj.core.model.DataSet;
 
 @Repository
 public class BeLogsDao extends ModuleDaoLog<BeLogs> {
-	
+
 	@Autowired
 	private BeLogs beLogs;
 	
@@ -35,75 +37,80 @@ public class BeLogsDao extends ModuleDaoLog<BeLogs> {
 			end = entity.getEnd().plusDays(1).toString().split("T")[0];
 		}
 
-		Query listQuery= null;
+		Query listQuery = null;
 		SQLQuery totalQuery = null;
 		if (entity.getEnd() != null) {
-			String listHql = "SELECT B.userSerNo, B.cusSerNo, B.actionType, count(B.userSerNo) FROM BeLogs B WHERE B.cDTime >'"
+			String listHql = "SELECT B.accountNumber, B.customer, B.customer.serNo, B.actionType, count(B.accountNumber) FROM BeLogs B WHERE B.cDTime >'"
 					+ start
 					+ "' and B.cDTime <'"
 					+ end
-					+ "' and B.cusSerNo ='"
-					+ entity.getCusSerNo()
-					+ "' GROUP BY B.userSerNo ORDER BY count(B.userSerNo) DESC";
-			String countSql = "SELECT count(*) as total FROM (SELECT count(fk_account_serNo) FROM BE_Logs WHERE cDTime >'"
+					+ "' and B.customer.serNo ='"
+					+ entity.getCustomer().getSerNo()
+					+ "' GROUP BY B.accountNumber ORDER BY count(B.accountNumber) DESC";
+			String countSql = "SELECT count(*) as total FROM (SELECT count(acc_serNo) FROM BE_Logs WHERE cDTime >'"
 					+ start
 					+ "' and cDTime <'"
 					+ end
-					+ "' and fk_customer_serNo ='"
-					+ entity.getCusSerNo()
-					+ "' group by fk_account_serNo) as countTotal";
+					+ "' and cus_serNo ='"
+					+ entity.getCustomer().getSerNo()
+					+ "' group by acc_serNo) as countTotal";
 
-			if (entity.getCusSerNo() == 0) {
-				listHql = listHql.replace("' and B.cusSerNo ='" + entity.getCusSerNo(), "");
-				countSql = countSql.replace("' and fk_customer_serNo ='" + entity.getCusSerNo(), "");
+			if (entity.getCustomer().getSerNo() == 0) {
+				listHql = listHql.replace("' and B.customer.serNo ='"
+						+ entity.getCustomer(), "");
+				countSql = countSql.replace("' and cus_serNo ='"
+						+ entity.getCustomer().getSerNo(), "");
 			}
 
-			listQuery=getSession().createQuery(listHql);
-			totalQuery=getSession().createSQLQuery(countSql);
+			listQuery = getSession().createQuery(listHql);
+			totalQuery = getSession().createSQLQuery(countSql);
 		} else {
-			String listHql = "SELECT B.userSerNo, B.cusSerNo, B.actionType, count(B.userSerNo) FROM BeLogs B WHERE B.cDTime >'"
+			String listHql = "SELECT B.accountNumber, B.customer, B.customer.serNo, B.actionType, count(B.accountNumber) FROM BeLogs B WHERE B.cDTime >'"
 					+ start
-					+ "' and B.cusSerNo ='"
-					+ entity.getCusSerNo()
-					+ "' GROUP BY B.userSerNo ORDER BY count(B.userSerNo) DESC";
-			String countSql = "SELECT count(*) as total FROM (SELECT count(fk_account_serNo) FROM BE_Logs WHERE cDTime >'"
+					+ "' and B.customer.serNo ='"
+					+ entity.getCustomer().getSerNo()
+					+ "' GROUP BY B.accountNumber ORDER BY count(B.accountNumber) DESC";
+			String countSql = "SELECT count(*) as total FROM (SELECT count(acc_serNo) FROM BE_Logs WHERE cDTime >'"
 					+ start
-					+ "' and fk_customer_serNo ='"
-					+ entity.getCusSerNo()
-					+ "' group by fk_account_serNo) as countTotal";
+					+ "' and cus_serNo ='"
+					+ entity.getCustomer().getSerNo()
+					+ "' group by acc_serNo) as countTotal";
 
-			if (entity.getCusSerNo() == 0) {
-				listHql = listHql.replace("' and B.cusSerNo ='" + entity.getCusSerNo(), "");
-				countSql = countSql.replace("' and fk_customer_serNo ='" + entity.getCusSerNo(), "");
+			if (entity.getCustomer().getSerNo() == 0) {
+				listHql = listHql.replace("' and B.customer.serNo ='"
+						+ entity.getCustomer().getSerNo(), "");
+				countSql = countSql.replace("' and cus_serNo ='"
+						+ entity.getCustomer().getSerNo(), "");
 			}
 
-			listQuery=getSession().createQuery(listHql);
-			totalQuery=getSession().createSQLQuery(countSql);
-			
+			listQuery = getSession().createQuery(listHql);
+			totalQuery = getSession().createSQLQuery(countSql);
+
 		}
-		
+
 		listQuery.setFirstResult(ds.getPager().getOffset());
 		listQuery.setMaxResults(ds.getPager().getRecordPerPage());
-		
+
 		List<?> data = listQuery.list();
 		List<?> total = totalQuery.list();
 		Iterator<?> iterator = data.iterator();
 		List<BeLogs> ranks = new ArrayList<BeLogs>();
-		
-		while(iterator.hasNext()){
-			Object[] row = (Object[])iterator.next();
-			
-			beLogs = new BeLogs(Act.valueOf(row[2].toString()), 
-					Long.parseLong(row[0].toString()),
-					Long.parseLong(row[1].toString()));
-			beLogs.setCount(Integer.parseInt(row[3].toString()));
-			
+
+		int i = 0;
+		while (iterator.hasNext()) {
+			Object[] row = (Object[]) iterator.next();
+
+			beLogs = new BeLogs(Act.valueOf(row[3].toString()),
+					(AccountNumber) row[0], (Customer) row[1]);
+			beLogs.setCount(Integer.parseInt(row[4].toString()));
+			beLogs.setRank(i + ds.getPager().getOffset() + 1);
 			ranks.add(beLogs);
+			i++;
 		}
-		
+
 		ds.getPager().setTotalRecord(Long.parseLong(total.get(0).toString()));
 		ds.setResults(ranks);
-		
+
 		return ds;
 	}
 }

@@ -132,18 +132,15 @@ public class DatabaseAction extends GenericCRUDActionFull<Database> {
 
 			List<Customer> customers = new ArrayList<Customer>();
 
-			long resourcesBuyersSerNo = 0;
 			while (iterator.hasNext()) {
 				resourcesUnion = iterator.next();
-				customer = customerService.getBySerNo(resourcesUnion.getCusSerNo());
+				customer = resourcesUnion.getCustomer();
 				if (customer != null){
 				customers.add(customer);
 				}
-				resourcesBuyersSerNo = resourcesUnion.getResSerNo();
 			}
-			
-			resourcesBuyers = resourcesBuyersService
-					.getBySerNo(resourcesBuyersSerNo);
+
+			resourcesBuyers = resourcesUnion.getResourcesBuyers();
 			getRequest().setAttribute("rCategory", resourcesBuyers.getrCategory().getCategory());
 			getRequest().setAttribute("rType", resourcesBuyers.getrType().getType());
 			database.setCustomers(customers);
@@ -175,9 +172,8 @@ public class DatabaseAction extends GenericCRUDActionFull<Database> {
 		int i = 0;
 		while (i < results.size()) {
 			results.get(i).setResourcesBuyers(
-					resourcesBuyersService.getBySerNo(resourcesUnionService
-							.getByObjSerNo(results.get(i).getSerNo(),
-									Database.class).getResSerNo()));
+					resourcesUnionService.getByObjSerNo(results.get(i).getSerNo(),
+									Database.class).getResourcesBuyers());
 			i++;
 		}
 
@@ -273,11 +269,11 @@ public class DatabaseAction extends GenericCRUDActionFull<Database> {
 											"resourcesBuyers.rType")), database
 									.getDbChtTitle(), database.getDbEngTitle()),
 							getLoginUser());
-
+			
 			int i = 0;
 			while (i < cusSerNo.length) {
-				resourcesUnionService.save(new ResourcesUnion(Long.parseLong(cusSerNo[i]),
-								resourcesBuyers.getSerNo(), 0L, database
+				resourcesUnionService.save(new ResourcesUnion(customerService.getBySerNo(Long.parseLong(cusSerNo[i])),
+								resourcesBuyers, 0L, database
 										.getSerNo(), 0L), getLoginUser());
 
 				i++;
@@ -285,8 +281,7 @@ public class DatabaseAction extends GenericCRUDActionFull<Database> {
 
 			resourcesUnion = resourcesUnionService.getByObjSerNo(
 					database.getSerNo(), Database.class);
-			database.setResourcesBuyers(resourcesBuyersService
-					.getBySerNo(resourcesUnion.getResSerNo()));
+			database.setResourcesBuyers(resourcesUnion.getResourcesBuyers());
 
 			List<ResourcesUnion> resourceUnions = resourcesUnionService
 					.getResourcesUnionsByObj(database, Database.class);
@@ -295,8 +290,7 @@ public class DatabaseAction extends GenericCRUDActionFull<Database> {
 			Iterator<ResourcesUnion> iterator = resourceUnions.iterator();
 			while (iterator.hasNext()) {
 				resourcesUnion = iterator.next();
-				customers.add(customerService.getBySerNo(resourcesUnion
-						.getCusSerNo()));
+				customers.add(resourcesUnion.getCustomer());
 			}
 
 			database.setCustomers(customers);
@@ -419,9 +413,8 @@ public class DatabaseAction extends GenericCRUDActionFull<Database> {
 		if (!hasActionErrors()) {
 			database = databaseService.update(getEntity(), getLoginUser());
 
-			resourcesBuyers = resourcesBuyersService
-					.getBySerNo(resourcesUnionService.getByObjSerNo(
-							database.getSerNo(), Database.class).getResSerNo());
+			resourcesBuyers = resourcesUnionService.getByObjSerNo(
+							database.getSerNo(), Database.class).getResourcesBuyers();
 			resourcesBuyers.setStartDate(getRequest().getParameter(
 					"resourcesBuyers.startDate"));
 			resourcesBuyers.setMaturityDate(getRequest().getParameter(
@@ -440,7 +433,7 @@ public class DatabaseAction extends GenericCRUDActionFull<Database> {
 			for (int j = 0; j < cusSerNo.length; j++) {
 				for (int i = 0; i < resourcesUnions.size(); i++) {
 					resourcesUnion = resourcesUnions.get(i);
-					if (resourcesUnion.getCusSerNo() == Long
+					if (resourcesUnion.getCustomer().getSerNo() == Long
 							.parseLong(cusSerNo[j])) {
 						resourcesUnions.remove(i);
 					}
@@ -457,9 +450,9 @@ public class DatabaseAction extends GenericCRUDActionFull<Database> {
 			while (i < cusSerNo.length) {
 				if (!resourcesUnionService.isExist(database, Database.class,
 						Long.parseLong(cusSerNo[i]))) {
-					resourcesUnionService.save(new ResourcesUnion(Long.parseLong(cusSerNo[i]),
-									resourcesBuyers.getSerNo(), 0L, database
-											.getSerNo(), 0L), getLoginUser());
+					resourcesUnionService.save(new ResourcesUnion(customerService.getBySerNo(Long.parseLong(cusSerNo[i])),
+							resourcesBuyers, 0L, database
+							.getSerNo(), 0L), getLoginUser());
 				}
 
 				i++;
@@ -467,8 +460,7 @@ public class DatabaseAction extends GenericCRUDActionFull<Database> {
 
 			resourcesUnion = resourcesUnionService.getByObjSerNo(
 					database.getSerNo(), Database.class);
-			database.setResourcesBuyers(resourcesBuyersService
-					.getBySerNo(resourcesUnion.getResSerNo()));
+			database.setResourcesBuyers(resourcesUnion.getResourcesBuyers());
 
 			List<ResourcesUnion> resourceUnions = resourcesUnionService
 					.getResourcesUnionsByObj(database, Database.class);
@@ -477,8 +469,7 @@ public class DatabaseAction extends GenericCRUDActionFull<Database> {
 			iterator = resourceUnions.iterator();
 			while (iterator.hasNext()) {
 				resourcesUnion = iterator.next();
-				customers.add(customerService.getBySerNo(resourcesUnion
-						.getCusSerNo()));
+				customers.add(resourcesUnion.getCustomer());
 			}
 
 			database.setCustomers(customers);
@@ -531,8 +522,7 @@ public class DatabaseAction extends GenericCRUDActionFull<Database> {
 				}
 		
 		if (!hasActionErrors()){
-		database.setResourcesBuyers(resourcesBuyersService
-				.getBySerNo(resourcesUnion.getResSerNo()));
+		database.setResourcesBuyers(resourcesUnion.getResourcesBuyers());
 
 		List<ResourcesUnion> resourceUnions = resourcesUnionService.getResourcesUnionsByObj(
 				database, Database.class);
@@ -541,8 +531,7 @@ public class DatabaseAction extends GenericCRUDActionFull<Database> {
 		Iterator<ResourcesUnion> iterator = resourceUnions.iterator();
 		while (iterator.hasNext()) {
 			resourcesUnion = iterator.next();
-			customers.add(customerService.getBySerNo(resourcesUnion
-					.getCusSerNo()));
+			customers.add(resourcesUnion.getCustomer());
 		}
 
 		database.setCustomers(customers);
@@ -574,8 +563,6 @@ public class DatabaseAction extends GenericCRUDActionFull<Database> {
 									.getBySerNo(Long.parseLong(checkItem[j])),
 									Database.class);
 					resourcesUnion = resourcesUnions.get(0);
-					resourcesBuyersService.deleteBySerNo(resourcesUnion
-							.getResSerNo());
 
 					Iterator<ResourcesUnion> iterator = resourcesUnions.iterator();
 					while (iterator.hasNext()) {
@@ -584,6 +571,7 @@ public class DatabaseAction extends GenericCRUDActionFull<Database> {
 								.getSerNo());
 					}
 
+					resourcesBuyersService.deleteBySerNo(resourcesUnion.getResourcesBuyers().getSerNo());
 					databaseService.deleteBySerNo(Long.parseLong(checkItem[j]));
 				}
 				j++;
@@ -596,9 +584,8 @@ public class DatabaseAction extends GenericCRUDActionFull<Database> {
 			int i = 0;
 			while (i < results.size()) {
 				results.get(i).setResourcesBuyers(
-						resourcesBuyersService.getBySerNo(resourcesUnionService
-								.getByObjSerNo(results.get(i).getSerNo(),
-										Database.class).getResSerNo()));
+						resourcesUnionService.getByObjSerNo(results.get(i).getSerNo(),
+								Database.class).getResourcesBuyers());
 				i++;
 			}
 
@@ -613,9 +600,8 @@ public class DatabaseAction extends GenericCRUDActionFull<Database> {
 			int i = 0;
 			while (i < results.size()) {
 				results.get(i).setResourcesBuyers(
-						resourcesBuyersService.getBySerNo(resourcesUnionService
-								.getByObjSerNo(results.get(i).getSerNo(),
-										Database.class).getResSerNo()));
+						resourcesUnionService.getByObjSerNo(results.get(i).getSerNo(),
+								Database.class).getResourcesBuyers());
 				i++;
 			}
 
@@ -1032,14 +1018,14 @@ public class DatabaseAction extends GenericCRUDActionFull<Database> {
 					database = databaseService.save(importIndexs.get(i),
 							getLoginUser());
 
-					resourcesUnionService.save(new ResourcesUnion(cusSerNo,
-							resourcesBuyers.getSerNo(), 0L, database.getSerNo(),
+					resourcesUnionService.save(new ResourcesUnion(customerService.getBySerNo(cusSerNo),
+							resourcesBuyers, 0L, database.getSerNo(),
 							0L), getLoginUser());
 				} else {
 					resourcesUnion = resourcesUnionService.getByObjSerNo(
 							datSerNo, Database.class);
-					resourcesUnionService.save(new ResourcesUnion(cusSerNo,
-							resourcesUnion.getResSerNo(), 0L, datSerNo, 0L),
+					resourcesUnionService.save(new ResourcesUnion(customerService.getBySerNo(cusSerNo),
+							resourcesUnion.getResourcesBuyers(), 0L, datSerNo, 0L),
 							getLoginUser());
 
 				}

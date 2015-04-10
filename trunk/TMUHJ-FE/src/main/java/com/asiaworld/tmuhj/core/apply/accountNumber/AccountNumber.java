@@ -1,12 +1,13 @@
 package com.asiaworld.tmuhj.core.apply.accountNumber;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import javax.persistence.Transient;
-
 import org.apache.struts2.json.annotations.JSON;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
@@ -31,12 +32,6 @@ public class AccountNumber extends GenericEntityFull {
 	 * 
 	 */
 	private static final long serialVersionUID = 5804311089729989927L;
-
-	/**
-	 * 用戶流水號
-	 */
-	@Column(name = "cus_serNo")
-	private Long cusSerNo;
 
 	/**
 	 * 使用者代號
@@ -69,23 +64,19 @@ public class AccountNumber extends GenericEntityFull {
 	@Column(name = "status")
 	@Enumerated(EnumType.STRING)
 	private Status status;
-	
-	@Transient
+
+	/**
+	 * 用戶流水號
+	 */
+	@ManyToOne(cascade = CascadeType.ALL)
+	@JoinColumn(name = "cus_serNo", nullable = false)
 	private Customer customer;
 
 	/**
 	 * @return the cusSerNo
 	 */
-	public Long getCusSerNo() {
-		return cusSerNo;
-	}
-
-	/**
-	 * @param cusSerNo
-	 *            the cusSerNo to set
-	 */
-	public void setCusSerNo(Long cusSerNo) {
-		this.cusSerNo = cusSerNo;
+	public Customer getCustomer() {
+		return customer;
 	}
 
 	/**
@@ -155,13 +146,6 @@ public class AccountNumber extends GenericEntityFull {
 	 */
 	public void setStatus(Status status) {
 		this.status = status;
-	}
-
-	/**
-	 * @return the customer
-	 */
-	public Customer getCustomer() {
-		return customer;
 	}
 
 	/**

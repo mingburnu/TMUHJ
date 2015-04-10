@@ -72,10 +72,18 @@ public class SearchActionInterceptor extends AbstractInterceptor {
 
 			if (request.getParameter("recordPerPage") == null
 					&& request.getParameter("recordPoint") == null) {
-				feLogsService.save(
-						new FeLogs(Act.綜合查詢, request.getParameter("keywords"),
-								accountNumber.getCusSerNo(), accountNumber
-										.getSerNo(), 0L, 0L, 0L), accountNumber);
+				if (accountNumber.getSerNo() != null) {
+					feLogsService.save(
+							new FeLogs(Act.綜合查詢, request.getParameter("keywords"),
+								accountNumber.getCustomer(), accountNumber, 0L, 0L, 0L),
+							accountNumber);
+				} else {
+					feLogsService.save(
+							new FeLogs(Act.綜合查詢, request.getParameter("keywords"),
+									accountNumber.getCustomer(), null, 0L, 0L, 0L),
+							accountNumber);
+				}
+
 			}
 		}
 
@@ -92,10 +100,17 @@ public class SearchActionInterceptor extends AbstractInterceptor {
 
 			if (request.getParameter("recordPerPage") == null
 					&& request.getParameter("recordPoint") == null) {
-				feLogsService.save(
-						new FeLogs(Act.項目查詢, request.getParameter("keywords"),
-								accountNumber.getCusSerNo(), accountNumber
-										.getSerNo(), 0L, 0L, 0L), accountNumber);
+				if (accountNumber.getSerNo() != null) {
+					feLogsService.save(
+							new FeLogs(Act.項目查詢, request.getParameter("keywords"),
+								accountNumber.getCustomer(), accountNumber, 0L, 0L, 0L),
+							accountNumber);
+				} else {
+					feLogsService.save(
+							new FeLogs(Act.項目查詢, request.getParameter("keywords"),
+									accountNumber.getCustomer(), null, 0L, 0L, 0L),
+							accountNumber);
+				}
 			}
 		}
 

@@ -46,8 +46,8 @@ public class LoginActionInterceptor extends AbstractInterceptor {
 			accountNumber = (AccountNumber) session.get("login");
 
 			if (accountNumber != null) {
-				beLogs = new BeLogs(Act.登入, accountNumber.getSerNo(),
-						accountNumber.getCusSerNo());
+				beLogs = new BeLogs(Act.登入, accountNumber,
+						accountNumber.getCustomer());
 
 				beLogsService.save(beLogs, accountNumber);
 			}

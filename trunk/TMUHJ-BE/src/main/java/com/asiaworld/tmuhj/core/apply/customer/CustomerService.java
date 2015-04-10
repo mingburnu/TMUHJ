@@ -1,6 +1,7 @@
 package com.asiaworld.tmuhj.core.apply.customer;
 
 import java.util.List;
+
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.MatchMode;
@@ -69,12 +70,6 @@ public class CustomerService extends GenericServiceFull<Customer> {
 		} else {
 			return true;
 		}
-	}
-
-	public List<Customer> getCustomerListByName(String name) throws Exception {
-		DsRestrictions restrictions = DsBeanFactory.getDsRestrictions();
-		restrictions.like("name", name.trim(), MatchMode.ANYWHERE);
-		return dao.findByRestrictions(restrictions);
 	}
 
 	public long getCusSerNoByName(String name) throws Exception {

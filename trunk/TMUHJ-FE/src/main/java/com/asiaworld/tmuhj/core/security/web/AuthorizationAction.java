@@ -100,7 +100,7 @@ public class AuthorizationAction extends GenericWebActionFull<AccountNumber> {
 		return false;
 	}
 
-	public long getMatchCusSerNo(String ip, List<IpRange> allIpList) {
+	public Customer getMatchCustomer(String ip, List<IpRange> allIpList) {
 		String[] ipNum = ip.split("\\.");
 		for (int i = 0; i < allIpList.size(); i++) {
 			String[] start = allIpList.get(i).getIpRangeStart().split("\\.");
@@ -115,11 +115,11 @@ public class AuthorizationAction extends GenericWebActionFull<AccountNumber> {
 								.parseInt(end[2])
 								* 1000
 								+ Integer.parseInt(end[3])) {
-					return allIpList.get(i).getCusSerNo();
+					return allIpList.get(i).getCustomer();
 				}
 			}
 		}
-		return 0L;
+		return null;
 	}
 
 	/**
@@ -136,12 +136,6 @@ public class AuthorizationAction extends GenericWebActionFull<AccountNumber> {
 			log.error(ExceptionUtils.getStackTrace(e));
 			throw new Exception(e);
 		}
-
-		ds.getResults()
-				.get(0)
-				.setCustomer(
-						customerService.getBySerNo(ds.getResults().get(0)
-								.getCusSerNo()));
 
 		getSession().put(LOGIN, ds.getResults().get(0));
 		return INDEX;
@@ -161,7 +155,7 @@ public class AuthorizationAction extends GenericWebActionFull<AccountNumber> {
 			try {
 				user = new AccountNumber();
 				user.setUserId("guest");
-				user.setCusSerNo(getMatchCusSerNo(ip,
+				user.setCustomer(getMatchCustomer(ip,
 						ipRangeService.getAllIpList()));
 				ds.setEntity(user);
 				ds = userService.getByRestrictions(ds);
@@ -169,9 +163,8 @@ public class AuthorizationAction extends GenericWebActionFull<AccountNumber> {
 				log.error(ExceptionUtils.getStackTrace(e));
 				throw new Exception(e);
 			}
-			customer = customerService.getBySerNo(user.getCusSerNo());
+			
 			customer.setContactUserName("訪客");
-			user.setCustomer(customer);
 			getSession().put(LOGIN, user);
 			return INDEX;
 		} else if (getLoginUser() != null) {
@@ -198,16 +191,15 @@ public class AuthorizationAction extends GenericWebActionFull<AccountNumber> {
 			try {
 				user = new AccountNumber();
 				user.setUserId("guest");
-				user.setCusSerNo(getMatchCusSerNo(ip, allipList));
+				user.setCustomer(getMatchCustomer(ip, allipList));
 				ds.setEntity(user);
 				ds = userService.getByRestrictions(ds);
 			} catch (Exception e) {
 				log.error(ExceptionUtils.getStackTrace(e));
 				throw new Exception(e);
 			}
-			customer = customerService.getBySerNo(user.getCusSerNo());
+			
 			customer.setContactUserName("訪客");
-			user.setCustomer(customer);
 			getSession().put(LOGIN, user);
 			return INDEX;
 		} else {

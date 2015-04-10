@@ -130,7 +130,7 @@ $(document).ready(function() {
 		var isNum = /^\d+$/.test(serNo);
 		if (isNum && parseInt(serNo) > 0){	  
 			var url = '<c:url value = '/'/>crud/apply.ipRange.list.action';
-			var data = 'entity.cusSerNo='+serNo;
+			var data = 'entity.customer.serNo='+serNo;
 			goDetail(url,'客戶-IP Range管理',data);
 			}
 		}

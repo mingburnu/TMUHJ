@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
+import com.asiaworld.tmuhj.core.apply.customer.Customer;
+import com.asiaworld.tmuhj.core.apply.customer.CustomerService;
 import com.asiaworld.tmuhj.core.dao.GenericDaoFull;
 import com.asiaworld.tmuhj.core.dao.DsRestrictions;
 import com.asiaworld.tmuhj.core.model.DataSet;
@@ -20,10 +22,16 @@ import com.asiaworld.tmuhj.module.apply.resourcesUnion.ResourcesUnionService;
 public class DatabaseService extends GenericServiceFull<Database> {
 
 	@Autowired
+	private Customer customer;
+
+	@Autowired
 	private DatabaseDao dao;
 
 	@Autowired
 	private ResourcesUnionService resourcesUnionService;
+
+	@Autowired
+	private CustomerService customerService;
 
 	@Override
 	public DataSet<Database> getByRestrictions(DataSet<Database> ds)
@@ -165,10 +173,13 @@ public class DatabaseService extends GenericServiceFull<Database> {
 		Assert.notNull(ds.getEntity());
 
 		DsRestrictions restrictions = DsBeanFactory.getDsRestrictions();
+		Pager pager = ds.getPager();
+
+		customer = customerService.getBySerNo(cusSerNo);
 
 		List<ResourcesUnion> resourcesUnionList = null;
 		if (cusSerNo > 0) {
-			resourcesUnionList = resourcesUnionService.totalDb(cusSerNo);
+			resourcesUnionList = resourcesUnionService.totalDb(customer, pager);
 		}
 
 		if (resourcesUnionList != null && !resourcesUnionList.isEmpty()
@@ -182,11 +193,15 @@ public class DatabaseService extends GenericServiceFull<Database> {
 			String sql = sqlBuilder.toString();
 			restrictions.sqlQuery(sql.substring(0, sql.length() - 4));
 		} else {
-			Pager pager = ds.getPager();
 			pager.setTotalRecord(0L);
 			ds.setPager(pager);
 			return ds;
 		}
-		return dao.findByRestrictions(restrictions, ds);
+		
+		List<Database> results =dao.findByRestrictions(restrictions);
+		pager.setTotalRecord(resourcesUnionService.countTotalDb(customer));
+		ds.setResults(results);
+		ds.setPager(pager);
+		return ds;
 	}
 }

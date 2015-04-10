@@ -122,8 +122,8 @@ public class IpRangeAction extends GenericCRUDActionFull<IpRange> {
 									ipRangeService.getAllIpList(0));
 							if (repeatIpRange != null) {
 								addActionError("此IP區間"
-										+ customerService.getBySerNo(
-												repeatIpRange.getCusSerNo())
+										+ 
+												repeatIpRange.getCustomer()
 												.getName() + "正在使用");
 							}
 						}
@@ -199,8 +199,8 @@ public class IpRangeAction extends GenericCRUDActionFull<IpRange> {
 											.getSerNo()));
 
 							if (repeatIpRange != null) {
-								String name = customerService.getBySerNo(
-										repeatIpRange.getCusSerNo()).getName();
+								String name = 
+										repeatIpRange.getCustomer().getName();
 								addActionError("此IP區間" + name + "正在使用");
 							}
 						}

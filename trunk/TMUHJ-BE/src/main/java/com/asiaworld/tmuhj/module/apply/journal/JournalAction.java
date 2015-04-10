@@ -134,18 +134,15 @@ public class JournalAction extends GenericCRUDActionFull<Journal> {
 
 			List<Customer> customers = new ArrayList<Customer>();
 
-			long resourcesBuyersSerNo = 0;
 			while (iterator.hasNext()) {
 				resourcesUnion = iterator.next();
-				customer = customerService.getBySerNo(resourcesUnion.getCusSerNo());
+				customer = resourcesUnion.getCustomer();
 				if (customer != null){
 				customers.add(customer);
 				}
-				resourcesBuyersSerNo = resourcesUnion.getResSerNo();
 			}
 
-			resourcesBuyers = resourcesBuyersService
-					.getBySerNo(resourcesBuyersSerNo);
+			resourcesBuyers = resourcesUnion.getResourcesBuyers();
 			getRequest().setAttribute("rCategory", resourcesBuyers.getrCategory().getCategory());
 			getRequest().setAttribute("rType", resourcesBuyers.getrType().getType());
 			journal.setCustomers(customers);
@@ -181,9 +178,8 @@ public class JournalAction extends GenericCRUDActionFull<Journal> {
 		int i = 0;
 		while (i < results.size()) {
 			results.get(i).setResourcesBuyers(
-					resourcesBuyersService.getBySerNo(resourcesUnionService
-							.getByObjSerNo(results.get(i).getSerNo(),
-									Journal.class).getResSerNo()));
+					resourcesUnionService.getByObjSerNo(results.get(i).getSerNo(),
+							Journal.class).getResourcesBuyers());
 			i++;
 		}
 
@@ -276,8 +272,8 @@ public class JournalAction extends GenericCRUDActionFull<Journal> {
 
 			int i = 0;
 			while (i < cusSerNo.length) {
-				resourcesUnionService.save(new ResourcesUnion(Long.parseLong(cusSerNo[i]),
-								resourcesBuyers.getSerNo(), 0L, 0L, journal
+				resourcesUnionService.save(new ResourcesUnion(customerService.getBySerNo(Long.parseLong(cusSerNo[i])),
+								resourcesBuyers, 0L, 0L, journal
 										.getSerNo()), getLoginUser());
 
 				i++;
@@ -285,8 +281,7 @@ public class JournalAction extends GenericCRUDActionFull<Journal> {
 
 			resourcesUnion = resourcesUnionService.getByObjSerNo(
 					journal.getSerNo(), Journal.class);
-			journal.setResourcesBuyers(resourcesBuyersService
-					.getBySerNo(resourcesUnion.getResSerNo()));
+			journal.setResourcesBuyers(resourcesUnion.getResourcesBuyers());
 
 			List<ResourcesUnion> resourceUnions = resourcesUnionService
 					.getResourcesUnionsByObj(journal, Journal.class);
@@ -295,8 +290,7 @@ public class JournalAction extends GenericCRUDActionFull<Journal> {
 			Iterator<ResourcesUnion> iterator = resourceUnions.iterator();
 			while (iterator.hasNext()) {
 				resourcesUnion = iterator.next();
-				customers.add(customerService.getBySerNo(resourcesUnion
-						.getCusSerNo()));
+				customers.add(resourcesUnion.getCustomer());
 			}
 
 			journal.setCustomers(customers);
@@ -402,9 +396,8 @@ public class JournalAction extends GenericCRUDActionFull<Journal> {
 			journal.setIssn(getEntity().getIssn().toUpperCase());
 			journal = journalService.update(journal, getLoginUser());
 
-			resourcesBuyers = resourcesBuyersService
-					.getBySerNo(resourcesUnionService.getByObjSerNo(
-							journal.getSerNo(), Journal.class).getResSerNo());
+			resourcesBuyers = resourcesUnionService.getByObjSerNo(
+							journal.getSerNo(), Journal.class).getResourcesBuyers();
 			resourcesBuyers.setStartDate(getRequest().getParameter(
 					"resourcesBuyers.startDate"));
 			resourcesBuyers.setMaturityDate(getRequest().getParameter(
@@ -425,7 +418,7 @@ public class JournalAction extends GenericCRUDActionFull<Journal> {
 			for (int j = 0; j < cusSerNo.length; j++) {
 				for (int i = 0; i < resourcesUnions.size(); i++) {
 					resourcesUnion = resourcesUnions.get(i);
-					if (resourcesUnion.getCusSerNo() == Long
+					if (resourcesUnion.getCustomer().getSerNo() == Long
 							.parseLong(cusSerNo[j])) {
 						resourcesUnions.remove(i);
 					}
@@ -442,8 +435,8 @@ public class JournalAction extends GenericCRUDActionFull<Journal> {
 			while (i < cusSerNo.length) {
 				if (!resourcesUnionService.isExist(journal, Journal.class,
 						Long.parseLong(cusSerNo[i]))) {
-					resourcesUnionService.save(new ResourcesUnion(Long.parseLong(cusSerNo[i]),
-									resourcesBuyers.getSerNo(), 0L, 0L, journal
+					resourcesUnionService.save(new ResourcesUnion(customerService.getBySerNo(Long.parseLong(cusSerNo[i])),
+									resourcesBuyers, 0L, 0L, journal
 											.getSerNo()), getLoginUser());
 				}
 
@@ -452,8 +445,7 @@ public class JournalAction extends GenericCRUDActionFull<Journal> {
 
 			resourcesUnion = resourcesUnionService.getByObjSerNo(
 					journal.getSerNo(), Journal.class);
-			journal.setResourcesBuyers(resourcesBuyersService
-					.getBySerNo(resourcesUnion.getResSerNo()));
+			journal.setResourcesBuyers(resourcesUnion.getResourcesBuyers());
 
 			List<ResourcesUnion> resourceUnions = resourcesUnionService
 					.getResourcesUnionsByObj(journal, Journal.class);
@@ -462,8 +454,7 @@ public class JournalAction extends GenericCRUDActionFull<Journal> {
 			iterator = resourceUnions.iterator();
 			while (iterator.hasNext()) {
 				resourcesUnion = iterator.next();
-				customers.add(customerService.getBySerNo(resourcesUnion
-						.getCusSerNo()));
+				customers.add(resourcesUnion.getCustomer());
 			}
 
 			journal.setCustomers(customers);
@@ -519,8 +510,7 @@ public class JournalAction extends GenericCRUDActionFull<Journal> {
 		
 		if(!hasActionErrors()){
 		
-		journal.setResourcesBuyers(resourcesBuyersService
-				.getBySerNo(resourcesUnion.getResSerNo()));
+		journal.setResourcesBuyers(resourcesUnion.getResourcesBuyers());
 
 		List<ResourcesUnion> resourceUnions = resourcesUnionService.getResourcesUnionsByObj(
 				journal, Journal.class);
@@ -529,8 +519,7 @@ public class JournalAction extends GenericCRUDActionFull<Journal> {
 		Iterator<ResourcesUnion> iterator = resourceUnions.iterator();
 		while (iterator.hasNext()) {
 			resourcesUnion = iterator.next();
-			customers.add(customerService.getBySerNo(resourcesUnion
-					.getCusSerNo()));
+			customers.add(resourcesUnion.getCustomer());
 		}
 		
 		journal.setCustomers(customers);
@@ -562,16 +551,14 @@ public class JournalAction extends GenericCRUDActionFull<Journal> {
 									.getBySerNo(Long.parseLong(checkItem[j])),
 									Journal.class);
 					resourcesUnion = resourcesUnions.get(0);
-					resourcesBuyersService.deleteBySerNo(resourcesUnion
-							.getResSerNo());
 
-					Iterator<?> iterator = resourcesUnions.iterator();
+					Iterator<ResourcesUnion> iterator = resourcesUnions.iterator();
 					while (iterator.hasNext()) {
-						resourcesUnion = (ResourcesUnion) iterator.next();
+						resourcesUnion = iterator.next();
 						resourcesUnionService.deleteBySerNo(resourcesUnion
 								.getSerNo());
 					}
-
+					resourcesBuyersService.deleteBySerNo(resourcesUnion.getResourcesBuyers().getSerNo());
 					journalService.deleteBySerNo(Long.parseLong(checkItem[j]));
 				}
 				j++;
@@ -583,9 +570,8 @@ public class JournalAction extends GenericCRUDActionFull<Journal> {
 			int i = 0;
 			while (i < results.size()) {
 				results.get(i).setResourcesBuyers(
-						resourcesBuyersService.getBySerNo(resourcesUnionService
-								.getByObjSerNo(results.get(i).getSerNo(),
-										Journal.class).getResSerNo()));
+						resourcesUnionService.getByObjSerNo(results.get(i).getSerNo(),
+								Journal.class).getResourcesBuyers());
 				i++;
 			}
 
@@ -599,9 +585,8 @@ public class JournalAction extends GenericCRUDActionFull<Journal> {
 			int i = 0;
 			while (i < results.size()) {
 				results.get(i).setResourcesBuyers(
-						resourcesBuyersService.getBySerNo(resourcesUnionService
-								.getByObjSerNo(results.get(i).getSerNo(),
-										Journal.class).getResSerNo()));
+						resourcesUnionService.getByObjSerNo(results.get(i).getSerNo(),
+								Journal.class).getResourcesBuyers());
 				i++;
 			}
 
@@ -991,14 +976,14 @@ public class JournalAction extends GenericCRUDActionFull<Journal> {
 					journal = journalService.save(importIndexs.get(i),
 							getLoginUser());
 
-					resourcesUnionService.save(new ResourcesUnion(cusSerNo, resourcesBuyers
-									.getSerNo(), 0L, 0L, journal.getSerNo()),
+					resourcesUnionService.save(new ResourcesUnion(customerService.getBySerNo(cusSerNo), 
+							resourcesBuyers, 0L, 0L, journal.getSerNo()),
 							getLoginUser());
 				} else {
 					resourcesUnion = resourcesUnionService.getByObjSerNo(
 							jouSerNo, Journal.class);
-					resourcesUnionService.save(new ResourcesUnion(cusSerNo,
-							resourcesUnion.getResSerNo(), 0L, 0L, jouSerNo),
+					resourcesUnionService.save(new ResourcesUnion(customerService.getBySerNo(cusSerNo),
+							resourcesUnion.getResourcesBuyers(), 0L, 0L, jouSerNo),
 							getLoginUser());
 
 				}

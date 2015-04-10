@@ -25,32 +25,32 @@ public class ResourcesUnionDaoTest extends GenericTest {
 	@Test
 	public void testCRUD() throws Exception {
 
-		final Long cusSerNo1 = 123l;
-		final Long cusSerNo2 = 456l;
+//		final Long cusSerNo1 = 123l;
+//		final Long cusSerNo2 = 456l;
 
 		// Save dbResourcesUnion1
 		ResourcesUnion resourcesUnion1 = new ResourcesUnion();
-		resourcesUnion1.setCusSerNo(cusSerNo1);
+//		resourcesUnion1.setCusSerNo(cusSerNo1);
 
 		ResourcesUnion dbResourcesUnion1 = dao.save(resourcesUnion1);
 		final Long resourcesUnionSerNo1 = dbResourcesUnion1.getSerNo();
-		Assert.assertEquals(cusSerNo1, dbResourcesUnion1.getCusSerNo());
+//		Assert.assertEquals(cusSerNo1, dbResourcesUnion1.getCusSerNo());
 
 		// Save dbResourcesUnion2
 		ResourcesUnion resourcesUnion2 = new ResourcesUnion();
-		resourcesUnion2.setCusSerNo(cusSerNo2);
+//		resourcesUnion2.setCusSerNo(cusSerNo2);
 
 		ResourcesUnion dbResourcesUnion2 = dao.save(resourcesUnion2);
 		final Long resourcesUnionSerNo2 = dbResourcesUnion2.getSerNo();
-		Assert.assertEquals(cusSerNo2, dbResourcesUnion2.getCusSerNo());
+//		Assert.assertEquals(cusSerNo2, dbResourcesUnion2.getCusSerNo());
 
 		// Query by id
 		dbResourcesUnion1 = dao.findBySerNo(resourcesUnionSerNo1);
-		Assert.assertEquals(cusSerNo1, dbResourcesUnion1.getCusSerNo());
+//		Assert.assertEquals(cusSerNo1, dbResourcesUnion1.getCusSerNo());
 
 		// update
 		final Long dbResourcesUnion1UpdNum = 789l;
-		dbResourcesUnion1.setCusSerNo(dbResourcesUnion1UpdNum);
+//		dbResourcesUnion1.setCusSerNo(dbResourcesUnion1UpdNum);
 		boolean updated = true;
 		try {
 			dao.update(dbResourcesUnion1);
@@ -66,7 +66,7 @@ public class ResourcesUnionDaoTest extends GenericTest {
 				.findByRestrictions(restrictions);
 		Assert.assertEquals(1, resourcesUnions.size());
 		Assert.assertEquals(dbResourcesUnion1UpdNum, resourcesUnions.get(0)
-				.getCusSerNo());
+				.getCustomer().getSerNo());
 
 		// delete by id
 		boolean deleted = true;
