@@ -63,17 +63,17 @@ public class ResourcesUnionService extends GenericServiceSerNo<ResourcesUnion> {
 			Journal journal = (Journal) obj;
 			restrictions.customCriterion(Restrictions.and(
 					Restrictions.eq("jouSerNo", journal.getSerNo()),
-					Restrictions.eq("cusSerNo", cusSerNo)));
+					Restrictions.eq("customer.serNo", cusSerNo)));
 		} else if (objClass.equals(Ebook.class)) {
 			Ebook ebook = (Ebook) obj;
 			restrictions.customCriterion(Restrictions.and(
 					Restrictions.eq("ebkSerNo", ebook.getSerNo()),
-					Restrictions.eq("cusSerNo", cusSerNo)));
+					Restrictions.eq("customer.serNo", cusSerNo)));
 		} else {
 			Database database = (Database) obj;
 			restrictions.customCriterion(Restrictions.and(
 					Restrictions.eq("datSerNo", database.getSerNo()),
-					Restrictions.eq("cusSerNo", cusSerNo)));
+					Restrictions.eq("customer.serNo", cusSerNo)));
 		}
 
 		if (dao.findByRestrictions(restrictions).size() != 0) {

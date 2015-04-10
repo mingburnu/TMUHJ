@@ -1,13 +1,18 @@
 package com.asiaworld.tmuhj.module.apply.resourcesUnion;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 
+import com.asiaworld.tmuhj.core.apply.customer.Customer;
 import com.asiaworld.tmuhj.core.entity.GenericEntitySerNo;
+import com.asiaworld.tmuhj.module.apply.resourcesBuyers.ResourcesBuyers;
 
 @Entity
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
@@ -19,11 +24,13 @@ public class ResourcesUnion extends GenericEntitySerNo {
 	 */
 	private static final long serialVersionUID = 4506632636578324717L;
 
-	@Column(name = "cus_SerNo")
-	private Long cusSerNo;
+	@ManyToOne(cascade = CascadeType.DETACH)
+	@JoinColumn(name = "cus_serNo", nullable = false)
+	private Customer customer;
 
-	@Column(name = "res_SerNo")
-	private Long resSerNo;
+	@ManyToOne(cascade = CascadeType.DETACH)
+	@JoinColumn(name = "res_SerNo", nullable = false)
+	private ResourcesBuyers resourcesBuyers;
 
 	@Column(name = "ebk_SerNo")
 	private Long ebkSerNo;
@@ -35,33 +42,33 @@ public class ResourcesUnion extends GenericEntitySerNo {
 	private Long jouSerNo;
 
 	/**
-	 * @return the cusSerNo
+	 * @return the customer
 	 */
-	public Long getCusSerNo() {
-		return cusSerNo;
+	public Customer getCustomer() {
+		return customer;
 	}
 
 	/**
-	 * @param cusSerNo
-	 *            the cusSerNo to set
+	 * @param customer
+	 *            the customer to set
 	 */
-	public void setCusSerNo(Long cusSerNo) {
-		this.cusSerNo = cusSerNo;
+	public void setCustomer(Customer customer) {
+		this.customer = customer;
 	}
 
 	/**
-	 * @return the resSerNo
+	 * @return the resourcesBuyers
 	 */
-	public Long getResSerNo() {
-		return resSerNo;
+	public ResourcesBuyers getResourcesBuyers() {
+		return resourcesBuyers;
 	}
 
 	/**
-	 * @param resSerNo
-	 *            the resSerNo to set
+	 * @param resourcesBuyers
+	 *            the resourcesBuyers to set
 	 */
-	public void setResSerNo(Long resSerNo) {
-		this.resSerNo = resSerNo;
+	public void setResourcesBuyers(ResourcesBuyers resourcesBuyers) {
+		this.resourcesBuyers = resourcesBuyers;
 	}
 
 	/**
@@ -114,11 +121,11 @@ public class ResourcesUnion extends GenericEntitySerNo {
 		// TODO Auto-generated constructor stub
 	}
 
-	public ResourcesUnion(Long cusSerNo, Long resSerNo, Long ebkSerNo,
-			Long datSerNo, Long jouSerNo) {
+	public ResourcesUnion(Customer customer, ResourcesBuyers resourcesBuyers,
+			Long ebkSerNo, Long datSerNo, Long jouSerNo) {
 		super();
-		this.cusSerNo = cusSerNo;
-		this.resSerNo = resSerNo;
+		this.customer = customer;
+		this.resourcesBuyers = resourcesBuyers;
 		this.ebkSerNo = ebkSerNo;
 		this.datSerNo = datSerNo;
 		this.jouSerNo = jouSerNo;

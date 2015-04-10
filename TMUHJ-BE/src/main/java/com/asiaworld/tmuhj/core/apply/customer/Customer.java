@@ -52,6 +52,9 @@ public class Customer extends GenericEntityFull {
 
 	@Transient
 	private String existStatus;
+	
+//	@OneToMany(cascade=CascadeType.ALL, mappedBy="customer")
+//	private Set<AccountNumber> accountNumbers;
 
 	/**
 	 * @return the name
@@ -172,6 +175,20 @@ public class Customer extends GenericEntityFull {
 	public void setExistStatus(String existStatus) {
 		this.existStatus = existStatus;
 	}
+
+//	/**
+//	 * @return the accountNumbers
+//	 */
+//	public Set<AccountNumber> getAccountNumbers() {
+//		return accountNumbers;
+//	}
+//
+//	/**
+//	 * @param accountNumbers the accountNumbers to set
+//	 */
+//	public void setAccountNumbers(Set<AccountNumber> accountNumbers) {
+//		this.accountNumbers = accountNumbers;
+//	}
 
 	/*
 	 * (non-Javadoc)

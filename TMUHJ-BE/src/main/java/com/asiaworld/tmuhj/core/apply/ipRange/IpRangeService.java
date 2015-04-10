@@ -26,8 +26,8 @@ public class IpRangeService extends GenericServiceFull<IpRange> {
 		IpRange entity = ds.getEntity();
 		DsRestrictions restrictions = DsBeanFactory.getDsRestrictions();
 		
-		if (entity.getCusSerNo() > 0) {
-			restrictions.eq("cusSerNo", entity.getCusSerNo());
+		if (entity.getCustomer().getSerNo() > 0) {
+			restrictions.eq("customer.serNo", entity.getCustomer().getSerNo());
 		}
 
 		restrictions.addOrderAsc("serNo");

@@ -26,7 +26,7 @@ $(document).ready(function() {
 	//新增IP Range
 	function goAdd_detail() {
 		var url = "<c:url value = '/'/>/crud/apply.ipRange.query.action";
-		var data ='entity.cusSerNo='+'<%=request.getParameter("entity.cusSerNo")%>';
+		var data ='entity.customer.serNo='+'<%=request.getParameter("entity.customer.serNo")%>';
 		goDetail_2(url, 'IP Range管理-新增', data);
 	}
 
@@ -104,8 +104,8 @@ $(document).ready(function() {
 </head>
 <body>
 	<s:form action="apply.ipRange.list" namespace="/crud" method="post">
-		<input type="hidden" name="entity.cusSerNo"
-			value="<%=request.getParameter("entity.cusSerNo")%>" />
+		<input type="hidden" name="entity.customer.serNo"
+			value="<%=request.getParameter("entity.customer.serNo")%>" />
 		<div class="list-box">
 			<div class="list-buttons">
 				<a class="state-default" onclick="goAdd_detail();">新增</a>

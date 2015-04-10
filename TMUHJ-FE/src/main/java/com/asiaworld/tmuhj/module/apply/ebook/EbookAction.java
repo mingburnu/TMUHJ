@@ -98,8 +98,7 @@ public class EbookAction extends GenericCRUDActionFull<Ebook> {
 
 		while (iterator.hasNext()) {
 			ResourcesUnion datResourcesUnion = iterator.next();
-			customer = customerService.getBySerNo(datResourcesUnion
-					.getCusSerNo());
+			customer = datResourcesUnion.getCustomer();
 			if(customer != null){
 			ownerNameList.add(customer.getName());
 			}

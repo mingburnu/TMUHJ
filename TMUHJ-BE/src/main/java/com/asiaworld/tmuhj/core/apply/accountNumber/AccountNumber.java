@@ -1,9 +1,12 @@
 package com.asiaworld.tmuhj.core.apply.accountNumber;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
@@ -31,12 +34,6 @@ public class AccountNumber extends GenericEntityFull {
 	 * 
 	 */
 	private static final long serialVersionUID = 5804311089729989927L;
-
-	/**
-	 * 用戶流水號
-	 */
-	@Column(name = "cus_serNo")
-	private Long cusSerNo;
 
 	/**
 	 * 使用者代號
@@ -70,26 +67,15 @@ public class AccountNumber extends GenericEntityFull {
 	@Enumerated(EnumType.STRING)
 	private Status status;
 	
-	@Transient
+	/**
+	 * 用戶流水號
+	 */
+	@ManyToOne(cascade = CascadeType.DETACH)
+	@JoinColumn(name = "cus_serNo", nullable = false)
 	private Customer customer;
 	
 	@Transient
 	private String existStatus;
-
-	/**
-	 * @return the cusSerNo
-	 */
-	public Long getCusSerNo() {
-		return cusSerNo;
-	}
-
-	/**
-	 * @param cusSerNo
-	 *            the cusSerNo to set
-	 */
-	public void setCusSerNo(Long cusSerNo) {
-		this.cusSerNo = cusSerNo;
-	}
 
 	/**
 	 * @return the userId
@@ -193,11 +179,10 @@ public class AccountNumber extends GenericEntityFull {
 		// TODO Auto-generated constructor stub
 	}
 
-	public AccountNumber(Long cusSerNo, String userId, String userPw,
+	public AccountNumber(String userId, String userPw,
 			String userName, Role role, Status status, Customer customer,
 			String existStatus) {
 		super();
-		this.cusSerNo = cusSerNo;
 		this.userId = userId;
 		this.userPw = userPw;
 		this.userName = userName;

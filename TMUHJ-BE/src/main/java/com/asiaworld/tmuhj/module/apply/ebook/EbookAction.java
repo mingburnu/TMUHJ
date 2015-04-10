@@ -129,18 +129,15 @@ public class EbookAction extends GenericCRUDActionFull<Ebook> {
 
 			List<Customer> customers = new ArrayList<Customer>();
 
-			long resourcesBuyersSerNo = 0;
 			while (iterator.hasNext()) {
 				resourcesUnion = iterator.next();
-				customer = customerService.getBySerNo(resourcesUnion.getCusSerNo());
+				customer = resourcesUnion.getCustomer();
 				if (customer != null){
 				customers.add(customer);
 				}
-				resourcesBuyersSerNo = resourcesUnion.getResSerNo();
 			}
 
-			resourcesBuyers = resourcesBuyersService
-					.getBySerNo(resourcesBuyersSerNo);
+			resourcesBuyers = resourcesUnion.getResourcesBuyers();
 			ebook.setCustomers(customers);
 			}
 			setEntity(ebook);
@@ -182,9 +179,8 @@ public class EbookAction extends GenericCRUDActionFull<Ebook> {
 		int i = 0;
 		while (i < results.size()) {
 			results.get(i).setResourcesBuyers(
-					resourcesBuyersService.getBySerNo(resourcesUnionService
-							.getByObjSerNo(results.get(i).getSerNo(),
-									Ebook.class).getResSerNo()));
+					resourcesUnionService.getByObjSerNo(results.get(i).getSerNo(),
+							Ebook.class).getResourcesBuyers());
 			i++;
 		}
 
@@ -293,8 +289,8 @@ public class EbookAction extends GenericCRUDActionFull<Ebook> {
 
 			int i = 0;
 			while (i < cusSerNo.length) {
-				resourcesUnionService.save(new ResourcesUnion(Long.parseLong(cusSerNo[i]),
-								resourcesBuyers.getSerNo(), ebook.getSerNo(),
+				resourcesUnionService.save(new ResourcesUnion(customerService.getBySerNo(Long.parseLong(cusSerNo[i])),
+								resourcesBuyers, ebook.getSerNo(),
 								0L, 0L), getLoginUser());
 
 				i++;
@@ -302,8 +298,7 @@ public class EbookAction extends GenericCRUDActionFull<Ebook> {
 
 			resourcesUnion = resourcesUnionService.getByObjSerNo(
 					ebook.getSerNo(), Ebook.class);
-			ebook.setResourcesBuyers(resourcesBuyersService
-					.getBySerNo(resourcesUnion.getResSerNo()));
+			ebook.setResourcesBuyers(resourcesUnion.getResourcesBuyers());
 
 			List<ResourcesUnion> resourceUnions = resourcesUnionService
 					.getResourcesUnionsByObj(ebook, Ebook.class);
@@ -312,8 +307,7 @@ public class EbookAction extends GenericCRUDActionFull<Ebook> {
 			Iterator<ResourcesUnion> iterator = resourceUnions.iterator();
 			while (iterator.hasNext()) {
 				resourcesUnion = iterator.next();
-				customers.add(customerService.getBySerNo(resourcesUnion
-						.getCusSerNo()));
+				customers.add(resourcesUnion.getCustomer());
 			}
 
 			ebook.setCustomers(customers);
@@ -429,9 +423,8 @@ public class EbookAction extends GenericCRUDActionFull<Ebook> {
 		if (!hasActionErrors()) {
 			ebook = ebookService.update(getEntity(), getLoginUser());
 
-			resourcesBuyers = resourcesBuyersService
-					.getBySerNo(resourcesUnionService.getByObjSerNo(
-							ebook.getSerNo(), Ebook.class).getResSerNo());
+			resourcesBuyers = resourcesUnionService.getByObjSerNo(
+							ebook.getSerNo(), Ebook.class).getResourcesBuyers();
 			resourcesBuyers.setStartDate(getRequest().getParameter(
 					"resourcesBuyers.startDate"));
 			resourcesBuyers.setMaturityDate(getRequest().getParameter(
@@ -452,7 +445,7 @@ public class EbookAction extends GenericCRUDActionFull<Ebook> {
 			for (int j = 0; j < cusSerNo.length; j++) {
 				for (int i = 0; i < resourcesUnions.size(); i++) {
 					resourcesUnion = resourcesUnions.get(i);
-					if (resourcesUnion.getCusSerNo() == Long
+					if (resourcesUnion.getCustomer().getSerNo() == Long
 							.parseLong(cusSerNo[j])) {
 						resourcesUnions.remove(i);
 					}
@@ -469,9 +462,9 @@ public class EbookAction extends GenericCRUDActionFull<Ebook> {
 			while (i < cusSerNo.length) {
 				if (!resourcesUnionService.isExist(ebook, Ebook.class,
 						Long.parseLong(cusSerNo[i]))) {
-					resourcesUnionService.save(new ResourcesUnion(Long.parseLong(cusSerNo[i]),
-									resourcesBuyers.getSerNo(), ebook
-											.getSerNo(), 0L, 0L), getLoginUser());
+					resourcesUnionService.save(new ResourcesUnion(customerService.getBySerNo(Long.parseLong(cusSerNo[i])),
+									resourcesBuyers, ebook
+									.getSerNo(), 0L, 0L), getLoginUser());
 				}
 
 				i++;
@@ -479,8 +472,7 @@ public class EbookAction extends GenericCRUDActionFull<Ebook> {
 
 			resourcesUnion = resourcesUnionService.getByObjSerNo(
 					ebook.getSerNo(), Ebook.class);
-			ebook.setResourcesBuyers(resourcesBuyersService
-					.getBySerNo(resourcesUnion.getResSerNo()));
+			ebook.setResourcesBuyers(resourcesUnion.getResourcesBuyers());
 
 			List<ResourcesUnion> resourceUnions = resourcesUnionService
 					.getResourcesUnionsByObj(ebook, Ebook.class);
@@ -489,8 +481,7 @@ public class EbookAction extends GenericCRUDActionFull<Ebook> {
 			iterator = resourceUnions.iterator();
 			while (iterator.hasNext()) {
 				resourcesUnion = iterator.next();
-				customers.add(customerService.getBySerNo(resourcesUnion
-						.getCusSerNo()));
+				customers.add(resourcesUnion.getCustomer());
 			}
 
 			ebook.setCustomers(customers);
@@ -546,8 +537,7 @@ public class EbookAction extends GenericCRUDActionFull<Ebook> {
 			}
 		
 		if(!hasActionErrors()){
-		ebook.setResourcesBuyers(resourcesBuyersService
-				.getBySerNo(resourcesUnion.getResSerNo()));
+		ebook.setResourcesBuyers(resourcesUnion.getResourcesBuyers());
 
 		List<ResourcesUnion> resourceUnions = resourcesUnionService.getResourcesUnionsByObj(
 				ebook, Ebook.class);
@@ -556,8 +546,7 @@ public class EbookAction extends GenericCRUDActionFull<Ebook> {
 		Iterator<ResourcesUnion> iterator = resourceUnions.iterator();
 		while (iterator.hasNext()) {
 			resourcesUnion = iterator.next();
-			customers.add(customerService.getBySerNo(resourcesUnion
-					.getCusSerNo()));
+			customers.add(resourcesUnion.getCustomer());
 		}
 
 		ebook.setCustomers(customers);
@@ -589,16 +578,14 @@ public class EbookAction extends GenericCRUDActionFull<Ebook> {
 									.getBySerNo(Long.parseLong(checkItem[j])),
 									Ebook.class);
 					resourcesUnion = resourcesUnions.get(0);
-					resourcesBuyersService.deleteBySerNo(resourcesUnion
-							.getResSerNo());
-
+					
 					Iterator<ResourcesUnion> iterator = resourcesUnions.iterator();
 					while (iterator.hasNext()) {
 						resourcesUnion = iterator.next();
 						resourcesUnionService.deleteBySerNo(resourcesUnion
 								.getSerNo());
 					}
-
+					resourcesBuyersService.deleteBySerNo(resourcesUnion.getResourcesBuyers().getSerNo());
 					ebookService.deleteBySerNo(Long.parseLong(checkItem[j]));
 				}
 				j++;
@@ -610,9 +597,8 @@ public class EbookAction extends GenericCRUDActionFull<Ebook> {
 			int i = 0;
 			while (i < results.size()) {
 				results.get(i).setResourcesBuyers(
-						resourcesBuyersService.getBySerNo(resourcesUnionService
-								.getByObjSerNo(results.get(i).getSerNo(),
-										Ebook.class).getResSerNo()));
+						resourcesUnionService.getByObjSerNo(results.get(i).getSerNo(),
+								Ebook.class).getResourcesBuyers());
 				i++;
 			}
 
@@ -626,9 +612,8 @@ public class EbookAction extends GenericCRUDActionFull<Ebook> {
 			int i = 0;
 			while (i < results.size()) {
 				results.get(i).setResourcesBuyers(
-						resourcesBuyersService.getBySerNo(resourcesUnionService
-								.getByObjSerNo(results.get(i).getSerNo(),
-										Ebook.class).getResSerNo()));
+						resourcesUnionService.getByObjSerNo(results.get(i).getSerNo(),
+								Ebook.class).getResourcesBuyers());
 				i++;
 			}
 
@@ -1045,14 +1030,14 @@ public class EbookAction extends GenericCRUDActionFull<Ebook> {
 						resourcesBuyers = resourcesBuyersService.save(importIndexs
 								.get(i).getResourcesBuyers(), getLoginUser());
 						ebook = ebookService.save(importIndexs.get(i), getLoginUser());
-						resourcesUnionService.save(new ResourcesUnion(cusSerNo, resourcesBuyers
-								.getSerNo(), ebook.getSerNo(), 0L, 0L),
+						resourcesUnionService.save(new ResourcesUnion(customerService.getBySerNo(cusSerNo), 
+								resourcesBuyers, ebook.getSerNo(), 0L, 0L),
 								getLoginUser());
 						} else {
 							resourcesUnion = resourcesUnionService.getByObjSerNo(
 									ebkSerNo, Ebook.class);
-							resourcesUnionService.save(new ResourcesUnion(cusSerNo,
-									resourcesUnion.getResSerNo(), ebkSerNo, 0L, 0L),
+							resourcesUnionService.save(new ResourcesUnion(customerService.getBySerNo(cusSerNo),
+									resourcesUnion.getResourcesBuyers(), ebkSerNo, 0L, 0L),
 									getLoginUser());
 							}
 					}

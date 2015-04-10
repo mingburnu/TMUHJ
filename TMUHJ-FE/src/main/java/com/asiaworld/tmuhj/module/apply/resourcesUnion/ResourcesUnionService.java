@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
+import com.asiaworld.tmuhj.core.apply.customer.Customer;
 import com.asiaworld.tmuhj.core.dao.GenericDaoSerNo;
 import com.asiaworld.tmuhj.core.dao.DsRestrictions;
 import com.asiaworld.tmuhj.core.model.DataSet;
@@ -39,53 +40,55 @@ public class ResourcesUnionService extends GenericServiceSerNo<ResourcesUnion> {
 		return dao;
 	}
 
-	public List<ResourcesUnion> totalDb(long cusSerNo) throws Exception {
-		DsRestrictions restrictions = DsBeanFactory.getDsRestrictions();
-		restrictions.customCriterion(Restrictions.and(
-				Restrictions.eq("cusSerNo", cusSerNo),
-				Restrictions.gt("datSerNo", 0L)));
-		return dao.findByRestrictions(restrictions);
-	}
-
-	public long countTotalDb(long cusSerNo) {
+	public List<ResourcesUnion> totalDb(Customer customer, Pager pager) throws Exception {
 		LogicalExpression andOperator = Restrictions.and(
-				Restrictions.eq("cusSerNo", cusSerNo),
+				Restrictions.eq("customer.serNo", customer.getSerNo()),
 				Restrictions.gt("datSerNo", 0L));
-		
+		return dao.getTotal(andOperator, pager);
+	}
+
+	public long countTotalDb(Customer customer) {
+		LogicalExpression andOperator = Restrictions.and(
+				Restrictions.eq("customer.serNo", customer.getSerNo()),
+				Restrictions.gt("datSerNo", 0L));
+
 		return dao.countTotal(andOperator);
 	}
 
-	public List<ResourcesUnion> totalJournal(long cusSerNo) throws Exception {
-		DsRestrictions restrictions = DsBeanFactory.getDsRestrictions();
-		restrictions.customCriterion(Restrictions.and(
-				Restrictions.eq("cusSerNo", cusSerNo),
-				Restrictions.gt("jouSerNo", 0L)));
-		return dao.findByRestrictions(restrictions);
+	public List<ResourcesUnion> totalJournal(Customer customer, Pager pager)
+			throws Exception {
+
+		LogicalExpression andOperator = Restrictions.and(
+				Restrictions.eq("customer.serNo", customer.getSerNo()),
+				Restrictions.ne("jouSerNo", 0L));
+
+		return dao.getTotal(andOperator, pager);
 	}
 
-	public long countTotalJournal(long cusSerNo) {
+	public long countTotalJournal(Customer customer) {
 		LogicalExpression andOperator = Restrictions.and(
-				Restrictions.eq("cusSerNo", cusSerNo),
+				Restrictions.eq("customer.serNo", customer.getSerNo()),
 				Restrictions.gt("jouSerNo", 0L));
+
 		return dao.countTotal(andOperator);
 	}
 
-	public List<ResourcesUnion> totalEbook(long cusSerNo) throws Exception {
-		DsRestrictions restrictions = DsBeanFactory.getDsRestrictions();
-		restrictions.customCriterion(Restrictions.and(
-				Restrictions.eq("cusSerNo", cusSerNo),
-				Restrictions.gt("ebkSerNo", 0L)));
-		return dao.findByRestrictions(restrictions);
+	public List<ResourcesUnion> totalEbook(Customer customer, Pager pager) throws Exception {
+		LogicalExpression andOperator = Restrictions.and(
+				Restrictions.eq("customer.serNo", customer.getSerNo()),
+				Restrictions.gt("ebkSerNo", 0L));
+		return dao.getTotal(andOperator, pager);
 	}
 
-	public long countTotalEbook(long cusSerNo) {
+	public long countTotalEbook(Customer customer) {
 		LogicalExpression andOperator = Restrictions.and(
-				Restrictions.eq("cusSerNo", cusSerNo),
+				Restrictions.eq("customer.serNo", customer.getSerNo()),
 				Restrictions.gt("ebkSerNo", 0L));
 		return dao.countTotal(andOperator);
 	}
 
-	public ResourcesUnion getByObjSerNo(long objSerNo, Class<?> objClass) throws Exception {
+	public ResourcesUnion getByObjSerNo(long objSerNo, Class<?> objClass)
+			throws Exception {
 		DataSet<ResourcesUnion> ds = new DataSet<ResourcesUnion>();
 		ds.setPager(new Pager());
 		ds.getPager().setRecordPerPage(1);
@@ -98,25 +101,28 @@ public class ResourcesUnionService extends GenericServiceSerNo<ResourcesUnion> {
 		} else {
 			restrictions.eq("datSerNo", objSerNo);
 		}
-		
+
 		return dao.findByRestrictions(restrictions, ds).getResults().get(0);
 	}
 
 	public List<ResourcesUnion> getByJouSerNo(long jouSerNo) throws Exception {
 		DsRestrictions restrictions = DsBeanFactory.getDsRestrictions();
 		restrictions.eq("jouSerNo", jouSerNo);
+		restrictions.ne("customer.serNo", 0L);
 		return dao.findByRestrictions(restrictions);
 	}
 
 	public List<ResourcesUnion> getByEbkSerNo(long ebkSerNo) throws Exception {
 		DsRestrictions restrictions = DsBeanFactory.getDsRestrictions();
 		restrictions.eq("ebkSerNo", ebkSerNo);
+		restrictions.ne("customer.serNo", 0L);
 		return dao.findByRestrictions(restrictions);
 	}
 
 	public List<ResourcesUnion> getByDatSerNo(long datSerNo) throws Exception {
 		DsRestrictions restrictions = DsBeanFactory.getDsRestrictions();
 		restrictions.eq("datSerNo", datSerNo);
+		restrictions.ne("customer.serNo", 0L);
 		return dao.findByRestrictions(restrictions);
 	}
 }

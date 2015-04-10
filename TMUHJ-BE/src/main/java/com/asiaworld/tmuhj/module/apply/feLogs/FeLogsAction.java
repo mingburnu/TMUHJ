@@ -22,6 +22,7 @@ import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 
+import com.asiaworld.tmuhj.core.apply.customer.Customer;
 import com.asiaworld.tmuhj.core.apply.customer.CustomerService;
 import com.asiaworld.tmuhj.core.apply.enums.Role;
 import com.asiaworld.tmuhj.core.model.DataSet;
@@ -39,6 +40,9 @@ public class FeLogsAction extends GenericCRUDActionLog<FeLogs> {
 	@Autowired
 	private FeLogs feLogs;
 
+	@Autowired
+	private Customer customer;
+	
 	@Autowired
 	private CustomerService customerService;
 
@@ -78,11 +82,16 @@ public class FeLogsAction extends GenericCRUDActionLog<FeLogs> {
 		
 		String cusSerNo = getRequest().getParameter("cusSerNo");
 		if(getLoginUser().getRole().equals(Role.管理員)){
-			cusSerNo=String.valueOf(getLoginUser().getCusSerNo());
+			cusSerNo=String.valueOf(getLoginUser().getCustomer().getSerNo());
 		}
 		
 		if (cusSerNo == null || !NumberUtils.isDigits(cusSerNo)) {
 			addActionError("請正確填寫機構名稱");
+		} else {
+			if (Long.parseLong(cusSerNo) != 0 
+					&& customerService.getBySerNo(Long.parseLong(cusSerNo)) == null){
+				addActionError("請正確填寫機構名稱");
+			}
 		}
 
 		if (!hasActionErrors()) {
@@ -100,34 +109,25 @@ public class FeLogsAction extends GenericCRUDActionLog<FeLogs> {
 
 			DataSet<FeLogs> ds = initDataSet();
 
-			getEntity().setCusSerNo(Long.parseLong(cusSerNo));
-
 			ds.setPager(Pager.getChangedPager(
 					getRequest().getParameter("recordPerPage"), getRequest()
 							.getParameter("recordPoint"), ds.getPager()));
 
-			ds = feLogsService.getByRestrictions(ds);
-
 			getRequest().setAttribute("endDate", endDate);
 
 			if (Long.parseLong(cusSerNo) > 0) {
-				getRequest().setAttribute("customer",
-						customerService.getBySerNo(Long.parseLong(cusSerNo)).getName());
-			}
+				getEntity().setCustomer(customerService.getBySerNo(Long.parseLong(cusSerNo)));
+				getRequest().setAttribute("customer", getEntity().getCustomer().getName());
+			} else {
+				customer =new Customer();
+				customer.setSerNo(Long.parseLong(cusSerNo));
+				getEntity().setCustomer(customer);
+			} 
+			
 			getRequest().setAttribute("cusSerNo", cusSerNo);
 
 			ds = feLogsService.getByRestrictions(ds);
 			
-			List<FeLogs> results = ds.getResults();
-			
-			int i= 0;
-			while(i < results.size()){
-				feLogs = results.get(i);
-				feLogs.setCustomer(customerService.getBySerNo(feLogs.getCusSerNo()));
-				feLogs.setRank(i + ds.getPager().getOffset() + 1);
-				i++;
-				}
-
 			setDs(ds);
 
 			return LIST;
@@ -165,11 +165,16 @@ public class FeLogsAction extends GenericCRUDActionLog<FeLogs> {
 		
 		String cusSerNo = getRequest().getParameter("cusSerNo");
 		if(getLoginUser().getRole().equals(Role.管理員)){
-			cusSerNo=String.valueOf(getLoginUser().getCusSerNo());
+			cusSerNo=String.valueOf(getLoginUser().getCustomer().getSerNo());
 		}
 
 		if (cusSerNo == null || !NumberUtils.isDigits(cusSerNo)) {
 			addActionError("請正確填寫機構名稱");
+		} else {
+			if (Long.parseLong(cusSerNo) != 0 
+					&& customerService.getBySerNo(Long.parseLong(cusSerNo)) == null){
+				addActionError("請正確填寫機構名稱");
+			}
 		}
 
 		if (!hasActionErrors()) {
@@ -185,7 +190,14 @@ public class FeLogsAction extends GenericCRUDActionLog<FeLogs> {
 
 			DataSet<FeLogs> ds = initDataSet();
 
-			getEntity().setCusSerNo(Long.parseLong(cusSerNo));
+			if (Long.parseLong(cusSerNo) > 0) {
+				getEntity().setCustomer(customerService.getBySerNo(Long.parseLong(cusSerNo)));
+				getRequest().setAttribute("customer", getEntity().getCustomer().getName());
+			} else {
+				customer =new Customer();
+				customer.setSerNo(Long.parseLong(cusSerNo));
+				getEntity().setCustomer(customer);
+			}
 
 			Pager pager = ds.getPager();
 			pager.setRecordPerPage(Integer.MAX_VALUE);
@@ -210,8 +222,6 @@ public class FeLogsAction extends GenericCRUDActionLog<FeLogs> {
 			int i = 0;
 			while (i < results.size()) {
 				feLogs = results.get(i);
-				feLogs.setCustomer(customerService.getBySerNo(feLogs.getCusSerNo()));
-				feLogs.setRank(i + 1);
 				empinfo.put(String.valueOf(i + 2),
 						new Object[] { startDate + "~" + endDate,
 								String.valueOf(feLogs.getRank()),

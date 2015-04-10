@@ -38,38 +38,38 @@ public class ResourcesUnionServiceTest extends GenericTest {
 
 		// Save resourcesUnion1
 		ResourcesUnion resourcesUnion1 = new ResourcesUnion();
-		resourcesUnion1.setCusSerNo(cusSerNo1);
+//		resourcesUnion1.setCusSerNo(cusSerNo1);
 		resourcesUnion1.setDatSerNo(1l);
 		resourcesUnion1.setEbkSerNo(1l);
 		resourcesUnion1.setJouSerNo(1l);
-		resourcesUnion1.setResSerNo(1l);
+//		resourcesUnion1.setResSerNo(1l);
 
 		ResourcesUnion dbResourcesUnion1 = service.save(resourcesUnion1, user);
 		final Long dbResourcesUnion1SerNo = dbResourcesUnion1.getSerNo();
-		Assert.assertEquals(cusSerNo1, dbResourcesUnion1.getCusSerNo());
+		Assert.assertEquals(cusSerNo1, dbResourcesUnion1.getCustomer().getSerNo());
 
 		// Save dbResourcesUnion2
 		ResourcesUnion resourcesUnion2 = new ResourcesUnion();
-		resourcesUnion2.setCusSerNo(cusSerNo2);
+//		resourcesUnion2.setCusSerNo(cusSerNo2);
 		resourcesUnion2.setDatSerNo(1l);
 		resourcesUnion2.setEbkSerNo(1l);
 		resourcesUnion2.setJouSerNo(1l);
-		resourcesUnion2.setResSerNo(1l);
+//		resourcesUnion2.setResSerNo(1l);
 
 		ResourcesUnion dbResourcesUnion2 = service.save(resourcesUnion2, user);
 		final Long dbResourcesUnion2SerNo = dbResourcesUnion2.getSerNo();
-		Assert.assertEquals(cusSerNo2, dbResourcesUnion2.getCusSerNo());
+		Assert.assertEquals(cusSerNo2, dbResourcesUnion2.getCustomer());
 
 		// Query by id
 		dbResourcesUnion1 = service.getBySerNo(dbResourcesUnion1SerNo);
-		Assert.assertEquals(cusSerNo1, dbResourcesUnion1.getCusSerNo());
+		Assert.assertEquals(cusSerNo1, dbResourcesUnion1.getCustomer().getSerNo());
 
 		// update
 		final Long dbResourcesUnion1UpdNum = 789L;
-		dbResourcesUnion1.setCusSerNo(dbResourcesUnion1UpdNum);
+//		dbResourcesUnion1.setCusSerNo(dbResourcesUnion1UpdNum);
 		dbResourcesUnion1 = service.update(dbResourcesUnion1, user);
 		Assert.assertEquals(dbResourcesUnion1UpdNum,
-				dbResourcesUnion1.getCusSerNo());
+				dbResourcesUnion1.getCustomer().getSerNo());
 
 		// query by condition
 		ResourcesUnion queryResourcesUnion = new ResourcesUnion();
@@ -79,7 +79,7 @@ public class ResourcesUnionServiceTest extends GenericTest {
 		List<ResourcesUnion> resourcesUnions = ds.getResults();
 		Assert.assertEquals(2, resourcesUnions.size());
 		Assert.assertEquals(dbResourcesUnion1UpdNum, resourcesUnions.get(0)
-				.getCusSerNo());
+				.getCustomer().getSerNo());
 
 		// delete by id
 		boolean deleted = true;

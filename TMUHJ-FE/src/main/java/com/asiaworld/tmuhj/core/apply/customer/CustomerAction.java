@@ -60,12 +60,9 @@ public class CustomerAction extends GenericCRUDActionFull<Customer> {
 		List<Customer> results = ds.getResults();
 		for (int i = 0; i < results.size(); i++) {
 			customer = results.get(i);
-			customer.setDbAmount(resourcesUnionService.countTotalDb(customer
-					.getSerNo()));
-			customer.setEbookAmount(resourcesUnionService
-					.countTotalEbook(customer.getSerNo()));
-			customer.setJournalAmount(resourcesUnionService
-					.countTotalJournal(customer.getSerNo()));
+			customer.setDbAmount(resourcesUnionService.countTotalDb(customer));
+			customer.setEbookAmount(resourcesUnionService.countTotalEbook(customer));
+			customer.setJournalAmount(resourcesUnionService.countTotalJournal(customer));
 			results.remove(i);
 			results.add(i, customer);
 		}

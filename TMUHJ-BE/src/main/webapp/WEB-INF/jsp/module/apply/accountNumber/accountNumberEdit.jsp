@@ -21,7 +21,7 @@
 	
 	$(document).ready(function() {
 		$("select#apply_accountNumber_save_cusSerNo").children().each(function(){
-		    if ($(this).val()=="${entity.cusSerNo}"){
+		    if ($(this).val()=="${entity.customer.serNo}"){
 		        this.selected = true; 
 		    }
 		});
@@ -39,7 +39,7 @@
 		});
 		
 		$("select#apply_accountNumber_update_cusSerNo").children().each(function(){
-		    if ($(this).val()=="${entity.cusSerNo}"){
+		    if ($(this).val()=="${entity.customer.serNo}"){
 		        this.selected = true; 
 		    }
 		});

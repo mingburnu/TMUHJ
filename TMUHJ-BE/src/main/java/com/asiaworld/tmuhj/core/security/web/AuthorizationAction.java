@@ -87,13 +87,7 @@ public class AuthorizationAction extends GenericWebActionFull<AccountNumber> {
 			log.error(ExceptionUtils.getStackTrace(e));
 			throw new Exception(e);
 		}
-
-		ds.getResults()
-				.get(0)
-				.setCustomer(
-						customerService.getBySerNo(ds.getResults().get(0)
-								.getCusSerNo()));
-
+	
 		getSession().put(LOGIN, ds.getResults().get(0));
 		return INDEX;
 	}

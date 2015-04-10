@@ -1,9 +1,12 @@
 package com.asiaworld.tmuhj.module.apply.feLogs;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
@@ -41,13 +44,19 @@ public class FeLogs extends GenericEntityLog {
 	@Column(name = "keyword")
 	private String keyword;
 
-	// 用戶流水號
-	@Column(name = "cus_SerNo")
-	private Long cusSerNo;
+	/**
+	 * 用戶流水號
+	 */
+	@ManyToOne(cascade = CascadeType.DETACH)
+	@JoinColumn(name = "cus_serNo", nullable = false)
+	private Customer customer;
 
-	// 帳戶流水號
-	@Column(name = "acc_SerNo")
-	private Long accSerNo;
+	/**
+	 * 帳戶流水號
+	 */
+	@ManyToOne(cascade = CascadeType.ALL)
+	@JoinColumn(name = "acc_SerNo", nullable = true)
+	private AccountNumber accountNumber;
 
 	// 資料庫流水號
 	@Column(name = "dat_SerNo")
@@ -60,12 +69,6 @@ public class FeLogs extends GenericEntityLog {
 	// 期刊流水號
 	@Column(name = "jou_SerNo")
 	private Long jouSerNo;
-
-	@Transient
-	private AccountNumber accountNumber;
-
-	@Transient
-	private Customer customer;
 
 	@Transient
 	private LocalDateTime start;
@@ -107,36 +110,6 @@ public class FeLogs extends GenericEntityLog {
 	 */
 	public void setKeyword(String keyword) {
 		this.keyword = keyword;
-	}
-
-	/**
-	 * @return the cusSerNo
-	 */
-	public Long getCusSerNo() {
-		return cusSerNo;
-	}
-
-	/**
-	 * @param cusSerNo
-	 *            the cusSerNo to set
-	 */
-	public void setCusSerNo(Long cusSerNo) {
-		this.cusSerNo = cusSerNo;
-	}
-
-	/**
-	 * @return the accSerNo
-	 */
-	public Long getAccSerNo() {
-		return accSerNo;
-	}
-
-	/**
-	 * @param accSerNo
-	 *            the accSerNo to set
-	 */
-	public void setAccSerNo(Long accSerNo) {
-		this.accSerNo = accSerNo;
 	}
 
 	/**
@@ -279,30 +252,28 @@ public class FeLogs extends GenericEntityLog {
 		// TODO Auto-generated constructor stub
 	}
 
-	public FeLogs(Act actionType, String keyword, Long cusSerNo, Long accSerNo,
-			Long datSerNo, Long ebkSerNo, Long jouSerNo) {
+	public FeLogs(Act actionType, String keyword, Customer customer,
+			AccountNumber accountNumber, Long datSerNo, Long ebkSerNo,
+			Long jouSerNo) {
 		super();
 		this.actionType = actionType;
 		this.keyword = keyword;
-		this.cusSerNo = cusSerNo;
-		this.accSerNo = accSerNo;
+		this.customer = customer;
+		this.accountNumber = accountNumber;
 		this.datSerNo = datSerNo;
 		this.ebkSerNo = ebkSerNo;
 		this.jouSerNo = jouSerNo;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */
 	@Override
 	public String toString() {
 		return "FeLogs [actionType=" + actionType + ", keyword=" + keyword
-				+ ", cusSerNo=" + cusSerNo + ", accSerNo=" + accSerNo
+				+ ", customer=" + customer + ", accountNumber=" + accountNumber
 				+ ", datSerNo=" + datSerNo + ", ebkSerNo=" + ebkSerNo
-				+ ", jouSerNo=" + jouSerNo + ", accountNumber=" + accountNumber
-				+ ", customer=" + customer + ", start=" + start + ", end="
+				+ ", jouSerNo=" + jouSerNo + ", start=" + start + ", end="
 				+ end + ", count=" + count + ", rank=" + rank + "]";
 	}
 
