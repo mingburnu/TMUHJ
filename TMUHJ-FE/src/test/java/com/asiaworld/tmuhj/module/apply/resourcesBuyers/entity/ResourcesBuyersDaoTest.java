@@ -64,7 +64,7 @@ public class ResourcesBuyersDaoTest extends GenericTest {
 		restrictions.eq("startDate", dbResourcesBuyers1UpdateValue);
 		List<ResourcesBuyers> resourcesBuyers = dao
 				.findByRestrictions(restrictions);
-		Assert.assertEquals(4, resourcesBuyers.size());
+		Assert.assertEquals(1, resourcesBuyers.size());
 		Assert.assertEquals(dbResourcesBuyers1UpdateValue, resourcesBuyers.get(0)
 				.getStartDate());
 

@@ -1,4 +1,4 @@
-package com.asiaworld.tmuhj.core.apply.enums;
+package com.asiaworld.tmuhj.module.apply.enums;
 
 /**
  * 資源種類

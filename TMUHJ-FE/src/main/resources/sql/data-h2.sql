@@ -1,6 +1,33 @@
+--customer
+insert into customer(serNo, cUid, uUid, cDTime, uDTime, name, engName, contactUserName) values(1, 'admin', 'admin', sysdate(), sysdate(), '長庚紀念醫院', 'CGMH', '林麗雯');
+insert into customer(serNo, cUid, uUid, cDTime, uDTime, name, engName, contactUserName) values(2, 'admin', 'admin', sysdate(), sysdate(), '國防醫學中心', 'NDMC', '陳小美');
+insert into customer(serNo, cUid, uUid, cDTime, uDTime, name, engName, contactUserName) values(3, 'admin', 'admin', sysdate(), sysdate(), '成功大學附設醫院', 'NCKUH', '陳桔根');
+insert into customer(serNo, cUid, uUid, cDTime, uDTime, name, engName, contactUserName) values(4, 'admin', 'admin', sysdate(), sysdate(), '台北醫學院附屬醫院', 'TMUH', '曾慧君');
+insert into customer(serNo, cUid, uUid, cDTime, uDTime, name, engName, contactUserName) values(5, 'admin', 'admin', sysdate(), sysdate(), '恩主公醫院', 'ECKH', '歐陽慧');
+insert into customer(serNo, cUid, uUid, cDTime, uDTime, name, engName, contactUserName) values(6, 'admin', 'admin', sysdate(), sysdate(), '中國醫藥大學附設醫院', 'CMUH', '董世勳');
+insert into customer(serNo, cUid, uUid, cDTime, uDTime, name, engName, contactUserName) values(7, 'admin', 'admin', sysdate(), sysdate(), '宏恩醫院', 'HEH', '郭啟文');
+insert into customer(serNo, cUid, uUid, cDTime, uDTime, name, engName, contactUserName) values(8, 'admin', 'admin', sysdate(), sysdate(), '馬偕紀念醫院', 'MMH', '鄞玉娟');
+insert into customer(serNo, cUid, uUid, cDTime, uDTime, name, engName, contactUserName) values(9, 'admin', 'admin', sysdate(), sysdate(), '碩睿資訊公司', 'SRISC', 'Roderick');
+insert into customer(serNo, cUid, uUid, cDTime, uDTime, name, engName, contactUserName) values(10, 'admin', 'admin', sysdate(), sysdate(), '佛教慈濟綜合醫院', 'BTCGH', '廖振智');
+insert into customer(serNo, cUid, uUid, cDTime, uDTime, name, engName, contactUserName) values(11, 'admin', 'admin', sysdate(), sysdate(), '高雄醫學院附設醫院', 'KMUH', '張大功');
+insert into customer(serNo, cUid, uUid, cDTime, uDTime, name, engName, contactUserName) values(12, 'admin', 'admin', sysdate(), sysdate(), '天主教耕莘醫療財團法人耕莘醫院', 'CTH', '許蕎麟');
+insert into customer(serNo, cUid, uUid, cDTime, uDTime, name, engName, contactUserName) values(13, 'admin', 'admin', sysdate(), sysdate(), '為恭紀念醫院', 'WGMH', '韓菱紗');
+insert into customer(serNo, cUid, uUid, cDTime, uDTime, name, engName, contactUserName) values(14, 'admin', 'admin', sysdate(), sysdate(), '台灣大學附設醫院', 'NTUH', '王大明');
+insert into customer(serNo, cUid, uUid, cDTime, uDTime, name, engName, contactUserName) values(15, 'admin', 'admin', sysdate(), sysdate(), '疾病管制署', 'CDC', '王小明');
+
 --accountNumber
-insert into accountNumber(serNo, cUid, uUid, cDTime, uDTime, cus_serNo, userID, userName, userPW, role, status) values(1, 'admin', 'admin', sysdate(), sysdate(), 1,'admin', 'administer', '8w5y4CYvLHP69kq5Wm2vHDVfPX1IOcrpskUugS/4KZN6budffcIYbfhpEL6HmNZ0', '系統管理員','生效');
-insert into accountNumber(serNo, cUid, uUid, cDTime, uDTime, cus_serNo, userID, userName, userPW, role, status) values(2, 'admin', 'admin', sysdate(), sysdate(), 5, 'user', 'Default User', '8w5y4CYvLHP69kq5Wm2vHDVfPX1IOcrpskUugS/4KZN6budffcIYbfhpEL6HmNZ0', '使用者','生效');
+insert into accountNumber(serNo, cUid, uUid, cDTime, uDTime, cus_serNo, userID, userName, userPW, role, status) values(1, 'admin', 'admin', sysdate(), sysdate(), 5, 'user3', 'Default User', '8w5y4CYvLHP69kq5Wm2vHDVfPX1IOcrpskUugS/4KZN6budffcIYbfhpEL6HmNZ0', '使用者','生效');
+insert into accountNumber(serNo, cUid, uUid, cDTime, uDTime, cus_serNo, userID, userName, userPW, role, status) values(2, 'admin', 'admin', sysdate(), sysdate(), 2,'admin2', 'administer', '8w5y4CYvLHP69kq5Wm2vHDVfPX1IOcrpskUugS/4KZN6budffcIYbfhpEL6HmNZ0', '維護人員','生效');
+insert into accountNumber(serNo, cUid, uUid, cDTime, uDTime, cus_serNo, userID, userName, userPW, role, status) values(3, 'admin', 'admin', sysdate(), sysdate(), 5, 'user', 'Default User', '8w5y4CYvLHP69kq5Wm2vHDVfPX1IOcrpskUugS/4KZN6budffcIYbfhpEL6HmNZ0', '使用者','生效');
+insert into accountNumber(serNo, cUid, uUid, cDTime, uDTime, cus_serNo, userID, userName, userPW, role, status) values(4, 'admin', 'admin', sysdate(), sysdate(), 1,'admin3', 'administer', '8w5y4CYvLHP69kq5Wm2vHDVfPX1IOcrpskUugS/4KZN6budffcIYbfhpEL6HmNZ0', '管理員','生效');
+insert into accountNumber(serNo, cUid, uUid, cDTime, uDTime, cus_serNo, userID, userName, userPW, role, status) values(5, 'admin', 'admin', sysdate(), sysdate(), 2,'admin4', 'administer', '8w5y4CYvLHP69kq5Wm2vHDVfPX1IOcrpskUugS/4KZN6budffcIYbfhpEL6HmNZ0', '系統管理員','生效');
+insert into accountNumber(serNo, cUid, uUid, cDTime, uDTime, cus_serNo, userID, userName, userPW, role, status) values(6, 'admin', 'admin', sysdate(), sysdate(), 5, 'user2', 'Default User', '8w5y4CYvLHP69kq5Wm2vHDVfPX1IOcrpskUugS/4KZN6budffcIYbfhpEL6HmNZ0', '使用者','生效');
+insert into accountNumber(serNo, cUid, uUid, cDTime, uDTime, cus_serNo, userID, userName, userPW, role, status) values(7, 'admin', 'admin', sysdate(), sysdate(), 1,'admin5', 'administer', '8w5y4CYvLHP69kq5Wm2vHDVfPX1IOcrpskUugS/4KZN6budffcIYbfhpEL6HmNZ0', '系統管理員','生效');
+insert into accountNumber(serNo, cUid, uUid, cDTime, uDTime, cus_serNo, userID, userName, userPW, role, status) values(8, 'admin', 'admin', sysdate(), sysdate(), 2,'admin6', 'administer', '8w5y4CYvLHP69kq5Wm2vHDVfPX1IOcrpskUugS/4KZN6budffcIYbfhpEL6HmNZ0', '系統管理員','生效');
+insert into accountNumber(serNo, cUid, uUid, cDTime, uDTime, cus_serNo, userID, userName, userPW, role, status) values(9, 'admin', 'admin', sysdate(), sysdate(), 9,'admin', 'administer', '8w5y4CYvLHP69kq5Wm2vHDVfPX1IOcrpskUugS/4KZN6budffcIYbfhpEL6HmNZ0', '系統管理員','生效');
+insert into accountNumber(serNo, cUid, uUid, cDTime, uDTime, cus_serNo, userID, userName, userPW, role, status) values(10, 'admin', 'admin', sysdate(), sysdate(), 1,'admin7', 'administer', '8w5y4CYvLHP69kq5Wm2vHDVfPX1IOcrpskUugS/4KZN6budffcIYbfhpEL6HmNZ0', '系統管理員','生效');
+insert into accountNumber(serNo, cUid, uUid, cDTime, uDTime, cus_serNo, userID, userName, userPW, role, status) values(11, 'admin', 'admin', sysdate(), sysdate(), 2,'admin8', 'administer', '8w5y4CYvLHP69kq5Wm2vHDVfPX1IOcrpskUugS/4KZN6budffcIYbfhpEL6HmNZ0', '系統管理員','生效');
+insert into accountNumber(serNo, cUid, uUid, cDTime, uDTime, cus_serNo, userID, userName, userPW, role, status) values(12, 'admin', 'admin', sysdate(), sysdate(), 5, 'user4', 'Default User', '8w5y4CYvLHP69kq5Wm2vHDVfPX1IOcrpskUugS/4KZN6budffcIYbfhpEL6HmNZ0', '使用者','生效');
 
 --journal
 insert into journal(serNo, cUid, uUid, cDTime, uDTime, chinesetitle, englishtitle, ISSN, version) values(1, 'admin', 'admin', sysdate(), sysdate(), '新英格蘭','New England', 123456, 1);
@@ -13,13 +40,14 @@ insert into journal(serNo, cUid, uUid, cDTime, uDTime, chinesetitle, englishtitl
 
 --database
 insert into db(serNo, cUid, uUid, cDTime, uDTime, DBchttitle, DBengtitle) values(1, 'admin', 'admin', sysdate(), sysdate(), '歷史', 'History');
-insert into db(serNo, cUid, uUid, cDTime, uDTime, DBchttitle, DBengtitle) values(2, 'admin', 'admin', sysdate(), sysdate(), '醫學', 'Medcine');
+insert into db(serNo, cUid, uUid, cDTime, uDTime, DBchttitle, DBengtitle) values(2, 'admin', 'admin', sysdate(), sysdate(), '醫學', 'Medicine');
 insert into db(serNo, cUid, uUid, cDTime, uDTime, DBchttitle, DBengtitle) values(3, 'admin', 'admin', sysdate(), sysdate(), '物理', 'Physics');
 insert into db(serNo, cUid, uUid, cDTime, uDTime, DBchttitle, DBengtitle) values(4, 'admin', 'admin', sysdate(), sysdate(), '數學', 'Math');
 insert into db(serNo, cUid, uUid, cDTime, uDTime, DBchttitle, DBengtitle) values(5, 'admin', 'admin', sysdate(), sysdate(), '化學', 'Chemistry');
 insert into db(serNo, cUid, uUid, cDTime, uDTime, DBchttitle, DBengtitle) values(6, 'admin', 'admin', sysdate(), sysdate(), '地理', 'Geography');
 insert into db(serNo, cUid, uUid, cDTime, uDTime, DBchttitle, DBengtitle) values(7, 'admin', 'admin', sysdate(), sysdate(), '法學', 'Law');
 insert into db(serNo, cUid, uUid, cDTime, uDTime, DBchttitle, DBengtitle) values(8, 'admin', 'admin', sysdate(), sysdate(), '生物', 'Biology');
+insert into db(serNo, cUid, uUid, cDTime, uDTime, DBchttitle, DBengtitle) values(9, 'admin', 'admin', sysdate(), sysdate(), '', 'Femem');
 
 --ebook
 insert into ebook(serNo, cUid, uUid, cDTime, uDTime, bookname, ISBN ,version, authername, authers) values(1, 'admin', 'admin', sysdate(), sysdate(), 'Saxons',  777777, 3, 'Cathy' , 'Arthur, Rodney');
@@ -31,50 +59,74 @@ insert into ebook(serNo, cUid, uUid, cDTime, uDTime, bookname, ISBN ,version, au
 insert into ebook(serNo, cUid, uUid, cDTime, uDTime, bookname, ISBN ,version, authername, authers) values(7, 'admin', 'admin', sysdate(), sysdate(), 'Hans',  777444, 3, 'Cathy' , 'Arthur, Rodney');
 insert into ebook(serNo, cUid, uUid, cDTime, uDTime, bookname, ISBN ,version, authername, authers) values(8, 'admin', 'admin', sysdate(), sysdate(), 'Racist', 555888, 2, 'Cathy' , 'Arthur, Rodney');
 insert into ebook(serNo, cUid, uUid, cDTime, uDTime, bookname, ISBN ,version, authername, authers) values(9, 'admin', 'admin', sysdate(), sysdate(), 'Indians', 999000, 1, 'Cathy' , 'Arthur, Rodney');
---customer
-insert into customer(serNo, cUid, uUid, cDTime, uDTime, name, engName, contactUserName) values(1, 'admin', 'admin', sysdate(), sysdate(), '碩睿資訊公司', 'SRISC', 'Roderick');
-insert into customer(serNo, cUid, uUid, cDTime, uDTime, name, engName, contactUserName) values(2, 'admin', 'admin', sysdate(), sysdate(), '國防醫學中心', 'NDMC', '陳小美');
-insert into customer(serNo, cUid, uUid, cDTime, uDTime, name, engName, contactUserName) values(3, 'admin', 'admin', sysdate(), sysdate(), '成功大學附設醫院', 'NCKUH', '陳桔根');
-insert into customer(serNo, cUid, uUid, cDTime, uDTime, name, engName, contactUserName) values(4, 'admin', 'admin', sysdate(), sysdate(), '台北醫學院附屬醫院', 'TMUH', '曾慧君');
-insert into customer(serNo, cUid, uUid, cDTime, uDTime, name, engName, contactUserName) values(5, 'admin', 'admin', sysdate(), sysdate(), '台北醫學院附屬醫院', 'TMUH', '訪客');
-insert into customer(serNo, cUid, uUid, cDTime, uDTime, name, engName, contactUserName) values(6, 'admin', 'admin', sysdate(), sysdate(), '中國醫藥大學附設醫院', 'CMUH', '董世勳');
-insert into customer(serNo, cUid, uUid, cDTime, uDTime, name, engName, contactUserName) values(7, 'admin', 'admin', sysdate(), sysdate(), '宏恩醫院', 'HEH', '郭啟文');
-insert into customer(serNo, cUid, uUid, cDTime, uDTime, name, engName, contactUserName) values(8, 'admin', 'admin', sysdate(), sysdate(), '馬偕紀念醫院', 'MMH', '鄞玉娟');
-insert into customer(serNo, cUid, uUid, cDTime, uDTime, name, engName, contactUserName) values(9, 'admin', 'admin', sysdate(), sysdate(), '長庚紀念醫院', 'CGMH', '林麗雯');
-insert into customer(serNo, cUid, uUid, cDTime, uDTime, name, engName, contactUserName) values(10, 'admin', 'admin', sysdate(), sysdate(), '佛教慈濟綜合醫院', 'BTCGH', '廖振智');
-insert into customer(serNo, cUid, uUid, cDTime, uDTime, name, engName, contactUserName) values(11, 'admin', 'admin', sysdate(), sysdate(), '高雄醫學院附設醫院', 'KMUH', '張大功');
-insert into customer(serNo, cUid, uUid, cDTime, uDTime, name, engName, contactUserName) values(12, 'admin', 'admin', sysdate(), sysdate(), '天主教耕莘醫療財團法人耕莘醫院', 'CTH', '許蕎麟');
-insert into customer(serNo, cUid, uUid, cDTime, uDTime, name, engName, contactUserName) values(13, 'admin', 'admin', sysdate(), sysdate(), '為恭紀念醫院', 'WGMH', '韓菱紗');
-insert into customer(serNo, cUid, uUid, cDTime, uDTime, name, engName, contactUserName) values(14, 'admin', 'admin', sysdate(), sysdate(), '台灣大學附設醫院', 'NTUH', '王大明');
 
 --resourcesBuyers
 insert into resourcesBuyers(serNo, cUid, uUid, cDTime, uDTime, startdate, maturitydate, Rcategory, Rtype, DBchttitle, DBengtitle) values(1, 'admin', 'admin', sysdate(), sysdate(),'1980', '2020', '買斷', '資料庫', '醫學', 'Medcine');
 insert into resourcesBuyers(serNo, cUid, uUid, cDTime, uDTime, startdate, maturitydate, Rcategory, Rtype, DBchttitle, DBengtitle) values(2, 'admin', 'admin', sysdate(), sysdate(),'1980', '2020', '買斷', '資料庫', '醫學', 'Medcine');
-insert into resourcesBuyers(serNo, cUid, uUid, cDTime, uDTime, startdate, maturitydate, Rcategory, Rtype, DBchttitle, DBengtitle) values(3, 'admin', 'admin', sysdate(), sysdate(),'1980', '2020', 'RC1', 'RT3', '醫學', 'Medcine');
+insert into resourcesBuyers(serNo, cUid, uUid, cDTime, uDTime, startdate, maturitydate, Rcategory, Rtype, DBchttitle, DBengtitle) values(3, 'admin', 'admin', sysdate(), sysdate(),'1980', '2020', '買斷', '資料庫', '醫學', 'Medcine');
+insert into resourcesBuyers(serNo, cUid, uUid, cDTime, uDTime, startdate, maturitydate, Rcategory, Rtype, DBchttitle, DBengtitle) values(4, 'admin', 'admin', sysdate(), sysdate(),'1980', '2020', '買斷', '資料庫', '', '');
+insert into resourcesBuyers(serNo, cUid, uUid, cDTime, uDTime, startdate, maturitydate, Rcategory, Rtype, DBchttitle, DBengtitle) values(5, 'admin', 'admin', sysdate(), sysdate(),'1980', '2020', '買斷', '資料庫', '醫學', 'Medcine');
+insert into resourcesBuyers(serNo, cUid, uUid, cDTime, uDTime, startdate, maturitydate, Rcategory, Rtype, DBchttitle, DBengtitle) values(6, 'admin', 'admin', sysdate(), sysdate(),'1980', '2020', '買斷', '資料庫', '醫學', 'Medcine');
+insert into resourcesBuyers(serNo, cUid, uUid, cDTime, uDTime, startdate, maturitydate, Rcategory, Rtype, DBchttitle, DBengtitle) values(7, 'admin', 'admin', sysdate(), sysdate(),'1980', '2020', '買斷', '資料庫', '醫學', 'Medcine');
+insert into resourcesBuyers(serNo, cUid, uUid, cDTime, uDTime, startdate, maturitydate, Rcategory, Rtype, DBchttitle, DBengtitle) values(8, 'admin', 'admin', sysdate(), sysdate(),'1980', '2020', '買斷', '資料庫', '', '');
+insert into resourcesBuyers(serNo, cUid, uUid, cDTime, uDTime, startdate, maturitydate, Rcategory, Rtype, DBchttitle, DBengtitle) values(9, 'admin', 'admin', sysdate(), sysdate(),'1980', '2020', '買斷', '資料庫', '醫學', 'Medcine');
+insert into resourcesBuyers(serNo, cUid, uUid, cDTime, uDTime, startdate, maturitydate, Rcategory, Rtype, DBchttitle, DBengtitle) values(10, 'admin', 'admin', sysdate(), sysdate(),'1980', '2020', '買斷', '資料庫', '醫學', 'Medcine');
+insert into resourcesBuyers(serNo, cUid, uUid, cDTime, uDTime, startdate, maturitydate, Rcategory, Rtype, DBchttitle, DBengtitle) values(11, 'admin', 'admin', sysdate(), sysdate(),'1980', '2020', '買斷', '資料庫', '醫學', 'Medcine');
+insert into resourcesBuyers(serNo, cUid, uUid, cDTime, uDTime, startdate, maturitydate, Rcategory, Rtype, DBchttitle, DBengtitle) values(12, 'admin', 'admin', sysdate(), sysdate(),'1980', '2020', '買斷', '資料庫', '', '');
+insert into resourcesBuyers(serNo, cUid, uUid, cDTime, uDTime, startdate, maturitydate, Rcategory, Rtype, DBchttitle, DBengtitle) values(13, 'admin', 'admin', sysdate(), sysdate(),'1980', '2020', '買斷', '資料庫', '醫學', 'Medcine');
+insert into resourcesBuyers(serNo, cUid, uUid, cDTime, uDTime, startdate, maturitydate, Rcategory, Rtype, DBchttitle, DBengtitle) values(14, 'admin', 'admin', sysdate(), sysdate(),'1980', '2020', '買斷', '資料庫', '醫學', 'Medcine');
+insert into resourcesBuyers(serNo, cUid, uUid, cDTime, uDTime, startdate, maturitydate, Rcategory, Rtype, DBchttitle, DBengtitle) values(15, 'admin', 'admin', sysdate(), sysdate(),'1980', '2020', '買斷', '資料庫', '醫學', 'Medcine');
+insert into resourcesBuyers(serNo, cUid, uUid, cDTime, uDTime, startdate, maturitydate, Rcategory, Rtype, DBchttitle, DBengtitle) values(16, 'admin', 'admin', sysdate(), sysdate(),'1980', '2020', '買斷', '資料庫', '', '');
+insert into resourcesBuyers(serNo, cUid, uUid, cDTime, uDTime, startdate, maturitydate, Rcategory, Rtype, DBchttitle, DBengtitle) values(17, 'admin', 'admin', sysdate(), sysdate(),'1980', '2020', '買斷', '資料庫', '醫學', 'Medcine');
+insert into resourcesBuyers(serNo, cUid, uUid, cDTime, uDTime, startdate, maturitydate, Rcategory, Rtype, DBchttitle, DBengtitle) values(18, 'admin', 'admin', sysdate(), sysdate(),'1980', '2020', '買斷', '資料庫', '醫學', 'Medcine');
+insert into resourcesBuyers(serNo, cUid, uUid, cDTime, uDTime, startdate, maturitydate, Rcategory, Rtype, DBchttitle, DBengtitle) values(19, 'admin', 'admin', sysdate(), sysdate(),'1980', '2020', '買斷', '資料庫', '醫學', 'Medcine');
+insert into resourcesBuyers(serNo, cUid, uUid, cDTime, uDTime, startdate, maturitydate, Rcategory, Rtype, DBchttitle, DBengtitle) values(20, 'admin', 'admin', sysdate(), sysdate(),'1980', '2020', '買斷', '資料庫', '', '');
+insert into resourcesBuyers(serNo, cUid, uUid, cDTime, uDTime, startdate, maturitydate, Rcategory, Rtype, DBchttitle, DBengtitle) values(21, 'admin', 'admin', sysdate(), sysdate(),'1980', '2020', '買斷', '資料庫', '醫學', 'Medcine');
+insert into resourcesBuyers(serNo, cUid, uUid, cDTime, uDTime, startdate, maturitydate, Rcategory, Rtype, DBchttitle, DBengtitle) values(22, 'admin', 'admin', sysdate(), sysdate(),'1980', '2020', '買斷', '資料庫', '醫學', 'Medcine');
+insert into resourcesBuyers(serNo, cUid, uUid, cDTime, uDTime, startdate, maturitydate, Rcategory, Rtype, DBchttitle, DBengtitle) values(23, 'admin', 'admin', sysdate(), sysdate(),'1980', '2020', '買斷', '資料庫', '醫學', 'Medcine');
+insert into resourcesBuyers(serNo, cUid, uUid, cDTime, uDTime, startdate, maturitydate, Rcategory, Rtype, DBchttitle, DBengtitle) values(24, 'admin', 'admin', sysdate(), sysdate(),'1980', '2020', '買斷', '資料庫', '', '');
+insert into resourcesBuyers(serNo, cUid, uUid, cDTime, uDTime, startdate, maturitydate, Rcategory, Rtype, DBchttitle, DBengtitle) values(25, 'admin', 'admin', sysdate(), sysdate(),'1980', '2020', '買斷', '資料庫', '醫學', 'Medcine');
+insert into resourcesBuyers(serNo, cUid, uUid, cDTime, uDTime, startdate, maturitydate, Rcategory, Rtype, DBchttitle, DBengtitle) values(26, 'admin', 'admin', sysdate(), sysdate(),'1980', '2020', '買斷', '資料庫', '', '');
+insert into resourcesBuyers(serNo, cUid, uUid, cDTime, uDTime, startdate, maturitydate, Rcategory, Rtype, DBchttitle, DBengtitle) values(27, 'admin', 'admin', sysdate(), sysdate(),'1980', '2020', '買斷', '資料庫', '醫學', 'Medcine');
+insert into resourcesBuyers(serNo, cUid, uUid, cDTime, uDTime, startdate, maturitydate, Rcategory, Rtype, DBchttitle, DBengtitle) values(28, 'admin', 'admin', sysdate(), sysdate(),'1980', '2020', '買斷', '資料庫', '醫學', 'Medcine');
+insert into resourcesBuyers(serNo, cUid, uUid, cDTime, uDTime, startdate, maturitydate, Rcategory, Rtype, DBchttitle, DBengtitle) values(29, 'admin', 'admin', sysdate(), sysdate(),'1980', '2020', '買斷', '資料庫', '醫學', 'Medcine');
+insert into resourcesBuyers(serNo, cUid, uUid, cDTime, uDTime, startdate, maturitydate, Rcategory, Rtype, DBchttitle, DBengtitle) values(30, 'admin', 'admin', sysdate(), sysdate(),'1980', '2020', '買斷', '資料庫', '', '');
+insert into resourcesBuyers(serNo, cUid, uUid, cDTime, uDTime, startdate, maturitydate, Rcategory, Rtype, DBchttitle, DBengtitle) values(31, 'admin', 'admin', sysdate(), sysdate(),'1980', '2020', '買斷', '資料庫', '醫學', 'Medcine');
+insert into resourcesBuyers(serNo, cUid, uUid, cDTime, uDTime, startdate, maturitydate, Rcategory, Rtype, DBchttitle, DBengtitle) values(32, 'admin', 'admin', sysdate(), sysdate(),'1980', '2020', '買斷', '資料庫', '醫學', 'Medcine');
+
 --resourcesUnion
 insert into resourcesUnion(serNo, cus_serNo, res_serNo, ebk_serNo, dat_serNo, jou_serNo) values(1, 3, 1, 0, 0, 1);
-insert into resourcesUnion(serNo, cus_serNo, res_serNo, ebk_serNo, dat_serNo, jou_serNo) values(2, 3, 1, 0, 0, 2);
-insert into resourcesUnion(serNo, cus_serNo, res_serNo, ebk_serNo, dat_serNo, jou_serNo) values(3, 3, 1, 0, 0, 3);
-insert into resourcesUnion(serNo, cus_serNo, res_serNo, ebk_serNo, dat_serNo, jou_serNo) values(4, 3, 1, 0, 0, 4);
-insert into resourcesUnion(serNo, cus_serNo, res_serNo, ebk_serNo, dat_serNo, jou_serNo) values(5, 3, 1, 0, 0, 5);
-insert into resourcesUnion(serNo, cus_serNo, res_serNo, ebk_serNo, dat_serNo, jou_serNo) values(6, 3, 1, 0, 0, 6);
-insert into resourcesUnion(serNo, cus_serNo, res_serNo, ebk_serNo, dat_serNo, jou_serNo) values(7, 3, 1, 0, 0, 7);
-insert into resourcesUnion(serNo, cus_serNo, res_serNo, ebk_serNo, dat_serNo, jou_serNo) values(8, 2, 2, 0, 1, 0);
-insert into resourcesUnion(serNo, cus_serNo, res_serNo, ebk_serNo, dat_serNo, jou_serNo) values(9, 2, 2, 0, 2, 0);
-insert into resourcesUnion(serNo, cus_serNo, res_serNo, ebk_serNo, dat_serNo, jou_serNo) values(10, 2, 2, 0, 3, 0);
-insert into resourcesUnion(serNo, cus_serNo, res_serNo, ebk_serNo, dat_serNo, jou_serNo) values(11, 2, 2, 0, 4, 0);
-insert into resourcesUnion(serNo, cus_serNo, res_serNo, ebk_serNo, dat_serNo, jou_serNo) values(12, 2, 2, 0, 5, 0);
-insert into resourcesUnion(serNo, cus_serNo, res_serNo, ebk_serNo, dat_serNo, jou_serNo) values(13, 2, 2, 0, 6, 0);
-insert into resourcesUnion(serNo, cus_serNo, res_serNo, ebk_serNo, dat_serNo, jou_serNo) values(14, 2, 2, 0, 7, 0);
-insert into resourcesUnion(serNo, cus_serNo, res_serNo, ebk_serNo, dat_serNo, jou_serNo) values(15, 4, 3, 1, 1, 0);
-insert into resourcesUnion(serNo, cus_serNo, res_serNo, ebk_serNo, dat_serNo, jou_serNo) values(16, 4, 3, 2, 2, 0);
-insert into resourcesUnion(serNo, cus_serNo, res_serNo, ebk_serNo, dat_serNo, jou_serNo) values(17, 4, 3, 3, 3, 0);
-insert into resourcesUnion(serNo, cus_serNo, res_serNo, ebk_serNo, dat_serNo, jou_serNo) values(18, 4, 3, 4, 4, 0);
-insert into resourcesUnion(serNo, cus_serNo, res_serNo, ebk_serNo, dat_serNo, jou_serNo) values(19, 4, 3, 5, 5, 0);
-insert into resourcesUnion(serNo, cus_serNo, res_serNo, ebk_serNo, dat_serNo, jou_serNo) values(20, 4, 3, 6, 6, 0);
-insert into resourcesUnion(serNo, cus_serNo, res_serNo, ebk_serNo, dat_serNo, jou_serNo) values(21, 4, 3, 7, 7, 0);
-insert into resourcesUnion(serNo, cus_serNo, res_serNo, ebk_serNo, dat_serNo, jou_serNo) values(22, 4, 3, 8, 7, 0);
-insert into resourcesUnion(serNo, cus_serNo, res_serNo, ebk_serNo, dat_serNo, jou_serNo) values(23, 4, 3, 9, 7, 0);
+insert into resourcesUnion(serNo, cus_serNo, res_serNo, ebk_serNo, dat_serNo, jou_serNo) values(2, 3, 2, 0, 0, 2);
+insert into resourcesUnion(serNo, cus_serNo, res_serNo, ebk_serNo, dat_serNo, jou_serNo) values(3, 3, 3, 0, 0, 3);
+insert into resourcesUnion(serNo, cus_serNo, res_serNo, ebk_serNo, dat_serNo, jou_serNo) values(4, 3, 4, 0, 0, 4);
+insert into resourcesUnion(serNo, cus_serNo, res_serNo, ebk_serNo, dat_serNo, jou_serNo) values(5, 3, 5, 0, 0, 5);
+insert into resourcesUnion(serNo, cus_serNo, res_serNo, ebk_serNo, dat_serNo, jou_serNo) values(6, 3, 6, 0, 0, 6);
+insert into resourcesUnion(serNo, cus_serNo, res_serNo, ebk_serNo, dat_serNo, jou_serNo) values(7, 3, 7, 0, 0, 7);
+insert into resourcesUnion(serNo, cus_serNo, res_serNo, ebk_serNo, dat_serNo, jou_serNo) values(8, 2, 8, 0, 1, 0);
+insert into resourcesUnion(serNo, cus_serNo, res_serNo, ebk_serNo, dat_serNo, jou_serNo) values(9, 2, 9, 0, 2, 0);
+insert into resourcesUnion(serNo, cus_serNo, res_serNo, ebk_serNo, dat_serNo, jou_serNo) values(10, 2, 10, 0, 3, 0);
+insert into resourcesUnion(serNo, cus_serNo, res_serNo, ebk_serNo, dat_serNo, jou_serNo) values(11, 2, 11, 0, 4, 0);
+insert into resourcesUnion(serNo, cus_serNo, res_serNo, ebk_serNo, dat_serNo, jou_serNo) values(12, 2, 12, 0, 5, 0);
+insert into resourcesUnion(serNo, cus_serNo, res_serNo, ebk_serNo, dat_serNo, jou_serNo) values(13, 2, 13, 0, 6, 0);
+insert into resourcesUnion(serNo, cus_serNo, res_serNo, ebk_serNo, dat_serNo, jou_serNo) values(14, 2, 14, 0, 7, 0);
+insert into resourcesUnion(serNo, cus_serNo, res_serNo, ebk_serNo, dat_serNo, jou_serNo) values(15, 4, 15, 1, 0, 0);
+insert into resourcesUnion(serNo, cus_serNo, res_serNo, ebk_serNo, dat_serNo, jou_serNo) values(16, 4, 16, 2, 0, 0);
+insert into resourcesUnion(serNo, cus_serNo, res_serNo, ebk_serNo, dat_serNo, jou_serNo) values(17, 4, 17, 3, 0, 0);
+insert into resourcesUnion(serNo, cus_serNo, res_serNo, ebk_serNo, dat_serNo, jou_serNo) values(18, 4, 18, 4, 0, 0);
+insert into resourcesUnion(serNo, cus_serNo, res_serNo, ebk_serNo, dat_serNo, jou_serNo) values(19, 4, 19, 5, 0, 0);
+insert into resourcesUnion(serNo, cus_serNo, res_serNo, ebk_serNo, dat_serNo, jou_serNo) values(20, 4, 20, 6, 0, 0);
+insert into resourcesUnion(serNo, cus_serNo, res_serNo, ebk_serNo, dat_serNo, jou_serNo) values(21, 4, 21, 7, 0, 0);
+insert into resourcesUnion(serNo, cus_serNo, res_serNo, ebk_serNo, dat_serNo, jou_serNo) values(22, 4, 22, 8, 0, 0);
+insert into resourcesUnion(serNo, cus_serNo, res_serNo, ebk_serNo, dat_serNo, jou_serNo) values(23, 4, 23, 9, 0, 0);
+insert into resourcesUnion(serNo, cus_serNo, res_serNo, ebk_serNo, dat_serNo, jou_serNo) values(24, 3, 24, 0, 1, 0);
+insert into resourcesUnion(serNo, cus_serNo, res_serNo, ebk_serNo, dat_serNo, jou_serNo) values(25, 3, 25, 0, 2, 0);
+insert into resourcesUnion(serNo, cus_serNo, res_serNo, ebk_serNo, dat_serNo, jou_serNo) values(26, 3, 26, 0, 3, 0);
+insert into resourcesUnion(serNo, cus_serNo, res_serNo, ebk_serNo, dat_serNo, jou_serNo) values(27, 3, 27, 0, 4, 0);
+insert into resourcesUnion(serNo, cus_serNo, res_serNo, ebk_serNo, dat_serNo, jou_serNo) values(28, 3, 28, 0, 5, 0);
+insert into resourcesUnion(serNo, cus_serNo, res_serNo, ebk_serNo, dat_serNo, jou_serNo) values(29, 3, 29, 0, 6, 0);
+insert into resourcesUnion(serNo, cus_serNo, res_serNo, ebk_serNo, dat_serNo, jou_serNo) values(30, 3, 30, 0, 7, 0);
+insert into resourcesUnion(serNo, cus_serNo, res_serNo, ebk_serNo, dat_serNo, jou_serNo) values(31, 3, 31, 0, 8, 0);
+insert into resourcesUnion(serNo, cus_serNo, res_serNo, ebk_serNo, dat_serNo, jou_serNo) values(32, 3, 32, 0, 9, 0);
 
 --ip_range
 insert into ip_range (serNo, cDTime, cUid, uDTime, uUid, cus_serNo, ipRangeEnd, ipRangeStart) values('1',sysdate(),'admin',sysdate(),'admin','9','59.120.245.198','59.120.245.193');
@@ -87,7 +139,7 @@ insert into ip_range (serNo, cDTime, cUid, uDTime, uUid, cus_serNo, ipRangeEnd, 
 insert into ip_range (serNo, cDTime, cUid, uDTime, uUid, cus_serNo, ipRangeEnd, ipRangeStart) values('8',sysdate(),'admin',sysdate(),'admin','9','60.250.74.240','60.250.74.238');
 insert into ip_range (serNo, cDTime, cUid, uDTime, uUid, cus_serNo, ipRangeEnd, ipRangeStart) values('9',sysdate(),'admin',sysdate(),'admin','9','122.147.148.255','122.147.148.128');
 insert into ip_range (serNo, cDTime, cUid, uDTime, uUid, cus_serNo, ipRangeEnd, ipRangeStart) values('10',sysdate(),'admin',sysdate(),'admin','10','163.29.19.210','163.29.19.200');
-insert into ip_range (serNo, cDTime, cUid, uDTime, uUid, cus_serNo, ipRangeEnd, ipRangeStart) values('11',sysdate(),'admin',sysdate(),'admin','1','117.56.254','117.56.2.1');
+insert into ip_range (serNo, cDTime, cUid, uDTime, uUid, cus_serNo, ipRangeEnd, ipRangeStart) values('11',sysdate(),'admin',sysdate(),'admin','1','117.56.2.1','117.56.2.1');
 insert into ip_range (serNo, cDTime, cUid, uDTime, uUid, cus_serNo, ipRangeEnd, ipRangeStart) values('12',sysdate(),'admin',sysdate(),'admin','2','163.29.9.210','163.29.9.200');
 insert into ip_range (serNo, cDTime, cUid, uDTime, uUid, cus_serNo, ipRangeEnd, ipRangeStart) values('13',sysdate(),'admin',sysdate(),'admin','3','163.29.8.210','163.29.8.200');
 insert into ip_range (serNo, cDTime, cUid, uDTime, uUid, cus_serNo, ipRangeEnd, ipRangeStart) values('14',sysdate(),'admin',sysdate(),'admin','4','163.29.80.210','163.29.80.200');
@@ -128,8 +180,43 @@ insert into ip_range (serNo, cDTime, cUid, uDTime, uUid, cus_serNo, ipRangeEnd, 
 insert into ip_range (serNo, cDTime, cUid, uDTime, uUid, cus_serNo, ipRangeEnd, ipRangeStart) values('49',sysdate(),'admin',sysdate(),'admin','5','117.56.56.130','117.56.56.130');
 insert into ip_range (serNo, cDTime, cUid, uDTime, uUid, cus_serNo, ipRangeEnd, ipRangeStart) values('50',sysdate(),'admin',sysdate(),'admin','8','203.65.102.254','203.65.102.1');
 insert into ip_range (serNo, cDTime, cUid, uDTime, uUid, cus_serNo, ipRangeEnd, ipRangeStart) values('51',sysdate(),'admin',sysdate(),'admin','8','203.65.103.254','203.65.103.1');
-insert into ip_range (serNo, cDTime, cUid, uDTime, uUid, cus_serNo, ipRangeEnd, ipRangeStart) values('52',sysdate(),'admin',sysdate(),'admin','8','203.65.104.254','203.65.1041');
+insert into ip_range (serNo, cDTime, cUid, uDTime, uUid, cus_serNo, ipRangeEnd, ipRangeStart) values('52',sysdate(),'admin',sysdate(),'admin','8','203.65.104.1','203.65.104.1');
 insert into ip_range (serNo, cDTime, cUid, uDTime, uUid, cus_serNo, ipRangeEnd, ipRangeStart) values('53',sysdate(),'admin',sysdate(),'admin','8','203.65.106.254','203.65.106.1');
 insert into ip_range (serNo, cDTime, cUid, uDTime, uUid, cus_serNo, ipRangeEnd, ipRangeStart) values('54',sysdate(),'admin',sysdate(),'admin','8','203.65.109.254','203.65.109.1');
 insert into ip_range (serNo, cDTime, cUid, uDTime, uUid, cus_serNo, ipRangeEnd, ipRangeStart) values('55',sysdate(),'admin',sysdate(),'admin','8','203.65.100.13','203.65.100.13');
 insert into ip_range (serNo, cDTime, cUid, uDTime, uUid, cus_serNo, ipRangeEnd, ipRangeStart) values('56',sysdate(),'admin',sysdate(),'admin','8','210.241.104.254','210.241.104.128');
+
+
+--BE_Logs
+insert into BE_Logs(serNo, cDTime, actionType, acc_serNo, cus_serNo) values(1, sysdate(), '登入', 1, 1);
+insert into BE_Logs(serNo, cDTime, actionType, acc_serNo, cus_serNo) values(2, sysdate(), '登入', 2, 2);
+insert into BE_Logs(serNo, cDTime, actionType, acc_serNo, cus_serNo) values(3, sysdate(), '登入', 3, 5);
+insert into BE_Logs(serNo, cDTime, actionType, acc_serNo, cus_serNo) values(4, sysdate(), '登入', 4, 1);
+insert into BE_Logs(serNo, cDTime, actionType, acc_serNo, cus_serNo) values(5, sysdate(), '登入', 5, 2);
+insert into BE_Logs(serNo, cDTime, actionType, acc_serNo, cus_serNo) values(6, sysdate(), '登入', 6, 5);
+insert into BE_Logs(serNo, cDTime, actionType, acc_serNo, cus_serNo) values(7, sysdate(), '登入', 7, 1);
+insert into BE_Logs(serNo, cDTime, actionType, acc_serNo, cus_serNo) values(8, sysdate(), '登入', 8, 2);
+insert into BE_Logs(serNo, cDTime, actionType, acc_serNo, cus_serNo) values(9, sysdate(), '登入', 9, 9);
+insert into BE_Logs(serNo, cDTime, actionType, acc_serNo, cus_serNo) values(10, sysdate(), '登入', 10, 1);
+insert into BE_Logs(serNo, cDTime, actionType, acc_serNo, cus_serNo) values(11, sysdate(), '登入', 11, 2);
+insert into BE_Logs(serNo, cDTime, actionType, acc_serNo, cus_serNo) values(12, sysdate(), '登入', 12, 5);
+insert into BE_Logs(serNo, cDTime, actionType, acc_serNo, cus_serNo) values(13, sysdate(), '登入', 1, 1);
+
+--FE_Logs
+insert into FE_Logs(serNo, cDTime, actionType, keyword, cus_SerNo, acc_SerNo, dat_SerNo, ebk_SerNo, jou_SerNo) values(1, sysdate(), '綜合查詢', 'Hello', 1,1,0,0,0);
+insert into FE_Logs(serNo, cDTime, actionType, keyword, cus_SerNo, acc_SerNo, dat_SerNo, ebk_SerNo, jou_SerNo) values(2, sysdate(), '綜合查詢', 'world', 1,1,0,0,0);
+insert into FE_Logs(serNo, cDTime, actionType, keyword, cus_SerNo, acc_SerNo, dat_SerNo, ebk_SerNo, jou_SerNo) values(3, sysdate(), '綜合查詢', 'c++', 1,1,0,0,0);
+insert into FE_Logs(serNo, cDTime, actionType, keyword, cus_SerNo, acc_SerNo, dat_SerNo, ebk_SerNo, jou_SerNo) values(4, sysdate(), '綜合查詢', 'python', 1,1,0,0,0);
+insert into FE_Logs(serNo, cDTime, actionType, keyword, cus_SerNo, acc_SerNo, dat_SerNo, ebk_SerNo, jou_SerNo) values(5, sysdate(), '綜合查詢', 'php', 1,1,0,0,0);
+insert into FE_Logs(serNo, cDTime, actionType, keyword, cus_SerNo, acc_SerNo, dat_SerNo, ebk_SerNo, jou_SerNo) values(6, sysdate(), '綜合查詢', 'ruby', 1,1,0,0,0);
+insert into FE_Logs(serNo, cDTime, actionType, keyword, cus_SerNo, acc_SerNo, dat_SerNo, ebk_SerNo, jou_SerNo) values(7, sysdate(), '綜合查詢', 'java', 1,1,0,0,0);
+insert into FE_Logs(serNo, cDTime, actionType, keyword, cus_SerNo, acc_SerNo, dat_SerNo, ebk_SerNo, jou_SerNo) values(8, sysdate(), '綜合查詢', 'javascript', 1,1,0,0,0);
+insert into FE_Logs(serNo, cDTime, actionType, keyword, cus_SerNo, acc_SerNo, dat_SerNo, ebk_SerNo, jou_SerNo) values(9, sysdate(), '綜合查詢', 'jQuery', 1,1,0,0,0);
+insert into FE_Logs(serNo, cDTime, actionType, keyword, cus_SerNo, acc_SerNo, dat_SerNo, ebk_SerNo, jou_SerNo) values(10, sysdate(), '綜合查詢', 'c#', 1,1,0,0,0);
+insert into FE_Logs(serNo, cDTime, actionType, keyword, cus_SerNo, acc_SerNo, dat_SerNo, ebk_SerNo, jou_SerNo) values(11, sysdate(), '綜合查詢', 'json', 1,1,0,0,0);
+insert into FE_Logs(serNo, cDTime, actionType, keyword, cus_SerNo, acc_SerNo, dat_SerNo, ebk_SerNo, jou_SerNo) values(12, sysdate(), '綜合查詢', 'xml', 1,1,0,0,0);
+insert into FE_Logs(serNo, cDTime, actionType, keyword, cus_SerNo, acc_SerNo, dat_SerNo, ebk_SerNo, jou_SerNo) values(13, sysdate(), '綜合查詢', 'html', 1,1,0,0,0);
+insert into FE_Logs(serNo, cDTime, actionType, keyword, cus_SerNo, acc_SerNo, dat_SerNo, ebk_SerNo, jou_SerNo) values(14, sysdate(), '綜合查詢', 'jsp', 1,1,0,0,0);
+insert into FE_Logs(serNo, cDTime, actionType, keyword, cus_SerNo, acc_SerNo, dat_SerNo, ebk_SerNo, jou_SerNo) values(15, sysdate(), '綜合查詢', 'objective-c', 1,1,0,0,0);
+insert into FE_Logs(serNo, cDTime, actionType, keyword, cus_SerNo, acc_SerNo, dat_SerNo, ebk_SerNo, jou_SerNo) values(16, sysdate(), '綜合查詢', 'java', 1,1,0,0,0);
+insert into FE_Logs(serNo, cDTime, actionType, keyword, cus_SerNo, acc_SerNo, dat_SerNo, ebk_SerNo, jou_SerNo) values(17, sysdate(), '綜合查詢', 'java', 2,2,0,0,0);

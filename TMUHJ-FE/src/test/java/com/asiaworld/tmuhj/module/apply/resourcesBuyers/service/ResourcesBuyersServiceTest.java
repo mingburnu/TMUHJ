@@ -69,8 +69,8 @@ public class ResourcesBuyersServiceTest extends GenericTest {
 		ds.setEntity(queryResourcesBuyers);
 		ds = service.getByRestrictions(ds);
 		List<ResourcesBuyers> resourcesBuyerss = ds.getResults();
-		Assert.assertEquals(2, resourcesBuyerss.size());
-		Assert.assertEquals(dbResourcesBuyers1UpdValue, resourcesBuyerss.get(0)
+		Assert.assertEquals(5, resourcesBuyerss.size());
+		Assert.assertEquals("1980", resourcesBuyerss.get(0)
 				.getStartDate());
 
 		// delete by id

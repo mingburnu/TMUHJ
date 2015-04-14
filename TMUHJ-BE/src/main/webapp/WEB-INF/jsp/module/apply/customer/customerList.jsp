@@ -70,7 +70,8 @@ $(document).ready(function() {
                     trueText:'是',
                     trueFunc:function(){
                             var url = '<%=request.getContextPath()%>/crud/apply.customer.deleteChecked.action';
-                            var data = $('#apply_customer_list').serialize()+'&pager.offset='+'${ds.pager.offset}'+'&pager.currentPage='+'${ds.pager.currentPage}'+'&pager.offsetPoint'+'${ds.pager.offset}';
+                            var data = $('#apply_customer_list').serialize()+'&pager.offset='+'${ds.pager.offset}'+'&pager.currentPage='+'${ds.pager.currentPage}'+'&pager.offsetPoint='+'${ds.pager.offset}';
+                            console.log(data);
                             goMain(url,'',data);
                     },
                     falseText:'否',
@@ -107,8 +108,9 @@ $(document).ready(function() {
 		var f = {
 			trueText:'是',
 			trueFunc:function(){
-	                        var url = '<c:url value = '/'/>crud/apply.customer.delete.action';
-	                        var data =$('#apply_customer_list').serialize()+'&pager.offset='+'${ds.pager.offset}'+'&pager.currentPage='+'${ds.pager.currentPage}'+'&pager.offsetPoint'+'${ds.pager.offset}'+'&entity.serNo='+serNo;
+	                        var url = '<c:url value = '/'/>crud/apply.customer.deleteChecked.action';
+	                        var data =$('#apply_customer_list').serialize()+'&pager.offset='+'${ds.pager.offset}'+'&pager.currentPage='+'${ds.pager.currentPage}'+'&pager.offsetPoint='+'${ds.pager.offset}'+'&checkItem='+serNo;
+	                        console.log(data);
 	                        goMain(url,'',data);
 			},
 			falseText:'否',
