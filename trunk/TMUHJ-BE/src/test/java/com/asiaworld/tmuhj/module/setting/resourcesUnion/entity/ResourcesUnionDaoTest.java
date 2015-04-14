@@ -7,6 +7,7 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.asiaworld.tmuhj.core.GenericTest;
+import com.asiaworld.tmuhj.core.apply.customer.Customer;
 import com.asiaworld.tmuhj.core.dao.DsRestrictions;
 import com.asiaworld.tmuhj.core.util.DsBeanFactory;
 import com.asiaworld.tmuhj.module.apply.resourcesUnion.ResourcesUnion;
@@ -25,57 +26,61 @@ public class ResourcesUnionDaoTest extends GenericTest {
 	@Test
 	public void testCRUD() throws Exception {
 
-//		final Long cusSerNo1 = 123L;
-//		final Long cusSerNo2 = 456L;
-//
-//		// Save dbResourcesUnion1
-//		ResourcesUnion resourcesUnion1 = new ResourcesUnion();
-//		resourcesUnion1.setCusSerNo(cusSerNo1);
-//
-//		ResourcesUnion dbResourcesUnion1 = dao.save(resourcesUnion1);
-//		final Long resourcesUnionSerNo1 = dbResourcesUnion1.getSerNo();
-//		Assert.assertEquals(cusSerNo1, dbResourcesUnion1.getCusSerNo());
-//
-//		// Save dbResourcesUnion2
-//		ResourcesUnion resourcesUnion2 = new ResourcesUnion();
-//		resourcesUnion2.setCusSerNo(cusSerNo2);
-//
-//		ResourcesUnion dbResourcesUnion2 = dao.save(resourcesUnion2);
-//		final Long resourcesUnionSerNo2 = dbResourcesUnion2.getSerNo();
-//		Assert.assertEquals(cusSerNo2, dbResourcesUnion2.getCusSerNo());
-//
-//		// Query by id
-//		dbResourcesUnion1 = dao.findBySerNo(resourcesUnionSerNo1);
-//		Assert.assertEquals(cusSerNo1, dbResourcesUnion1.getCusSerNo());
-//
-//		// update
-//		final Long dbResourcesUnion1UpdNum = 789L;
-//		dbResourcesUnion1.setCusSerNo(dbResourcesUnion1UpdNum);
-//		boolean updated = true;
-//		try {
-//			dao.update(dbResourcesUnion1);
-//		} catch (Exception e) {
-//			updated = false;
-//		}
-//		Assert.assertTrue(updated);
-//
-//		// query by condition
-//		DsRestrictions restrictions = DsBeanFactory.getDsRestrictions();
-//		restrictions.eq("cusSerNo", dbResourcesUnion1UpdNum);
-//		List<ResourcesUnion> resourcesUnions = dao
-//				.findByRestrictions(restrictions);
-//		Assert.assertEquals(1, resourcesUnions.size());
-//		Assert.assertEquals(dbResourcesUnion1UpdNum, resourcesUnions.get(0)
-//				.getCusSerNo());
-//
-//		// delete by id
-//		boolean deleted = true;
-//		try {
-//			dao.deleteBySerNo(resourcesUnionSerNo1);
-//			dao.deleteBySerNo(resourcesUnionSerNo2);
-//		} catch (Exception e) {
-//			deleted = false;
-//		}
-//		Assert.assertTrue(deleted);
+		final Customer customer1 = new Customer();
+		final Customer customer2 = new Customer();
+
+		customer1.setSerNo(123L);
+		customer1.setSerNo(456L);
+
+		// Save dbResourcesUnion1
+		ResourcesUnion resourcesUnion1 = new ResourcesUnion();
+		resourcesUnion1.setCustomer(customer1);
+
+		ResourcesUnion dbResourcesUnion1 = dao.save(resourcesUnion1);
+		final Long resourcesUnionSerNo1 = dbResourcesUnion1.getSerNo();
+		Assert.assertEquals(customer1, dbResourcesUnion1.getCustomer());
+
+		// Save dbResourcesUnion2
+		ResourcesUnion resourcesUnion2 = new ResourcesUnion();
+		resourcesUnion2.setCustomer(customer2);
+
+		ResourcesUnion dbResourcesUnion2 = dao.save(resourcesUnion2);
+		final Long resourcesUnionSerNo2 = dbResourcesUnion2.getSerNo();
+		Assert.assertEquals(customer2, dbResourcesUnion2.getCustomer());
+
+		// Query by id
+		dbResourcesUnion1 = dao.findBySerNo(resourcesUnionSerNo1);
+		Assert.assertEquals(customer1, dbResourcesUnion1.getCustomer());
+
+		// update
+		final Customer dbResourcesUnion1UpdCus = new Customer();
+		dbResourcesUnion1UpdCus.setSerNo(789L);
+		dbResourcesUnion1.setCustomer(dbResourcesUnion1UpdCus);
+		boolean updated = true;
+		try {
+			dao.update(dbResourcesUnion1);
+		} catch (Exception e) {
+			updated = false;
+		}
+		Assert.assertTrue(updated);
+
+		// query by condition
+		DsRestrictions restrictions = DsBeanFactory.getDsRestrictions();
+		restrictions.eq("customer.serNo", dbResourcesUnion1UpdCus);
+		List<ResourcesUnion> resourcesUnions = dao
+				.findByRestrictions(restrictions);
+		Assert.assertEquals(1, resourcesUnions.size());
+		Assert.assertEquals(dbResourcesUnion1UpdCus, resourcesUnions.get(0)
+				.getCustomer());
+
+		// delete by id
+		boolean deleted = true;
+		try {
+			dao.deleteBySerNo(resourcesUnionSerNo1);
+			dao.deleteBySerNo(resourcesUnionSerNo2);
+		} catch (Exception e) {
+			deleted = false;
+		}
+		Assert.assertTrue(deleted);
 	}
 }

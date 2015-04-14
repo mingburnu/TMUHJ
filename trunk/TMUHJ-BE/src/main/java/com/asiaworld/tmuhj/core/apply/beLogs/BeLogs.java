@@ -41,12 +41,12 @@ public class BeLogs extends GenericEntityLog {
 	private Act actionType;
 
 	// 帳戶流水號
-	@ManyToOne(cascade = CascadeType.ALL)
-	@JoinColumn(name = "acc_serNo", nullable = false)
+	@ManyToOne(cascade = CascadeType.DETACH)
+	@JoinColumn(name = "acc_serNo", nullable = true)
 	private AccountNumber accountNumber;
 
 	// 用戶流水號
-	@ManyToOne(cascade = CascadeType.ALL)
+	@ManyToOne(cascade = CascadeType.DETACH)
 	@JoinColumn(name = "cus_serNo", nullable = false)
 	private Customer customer;
 
@@ -55,10 +55,10 @@ public class BeLogs extends GenericEntityLog {
 
 	@Transient
 	private LocalDateTime end;
-	
+
 	@Transient
 	private Integer count;
-	
+
 	@Transient
 	private Integer rank;
 
@@ -115,7 +115,8 @@ public class BeLogs extends GenericEntityLog {
 	}
 
 	/**
-	 * @param start the start to set
+	 * @param start
+	 *            the start to set
 	 */
 	public void setStart(LocalDateTime start) {
 		this.start = start;
@@ -129,7 +130,8 @@ public class BeLogs extends GenericEntityLog {
 	}
 
 	/**
-	 * @param end the end to set
+	 * @param end
+	 *            the end to set
 	 */
 	public void setEnd(LocalDateTime end) {
 		this.end = end;
@@ -143,7 +145,8 @@ public class BeLogs extends GenericEntityLog {
 	}
 
 	/**
-	 * @param count the count to set
+	 * @param count
+	 *            the count to set
 	 */
 	public void setCount(Integer count) {
 		this.count = count;
@@ -157,13 +160,16 @@ public class BeLogs extends GenericEntityLog {
 	}
 
 	/**
-	 * @param rank the rank to set
+	 * @param rank
+	 *            the rank to set
 	 */
 	public void setRank(Integer rank) {
 		this.rank = rank;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#toString()
 	 */
 	@Override

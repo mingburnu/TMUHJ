@@ -7,6 +7,7 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.asiaworld.tmuhj.core.GenericTest;
+import com.asiaworld.tmuhj.core.apply.customer.Customer;
 import com.asiaworld.tmuhj.core.dao.DsRestrictions;
 import com.asiaworld.tmuhj.core.util.DsBeanFactory;
 import com.asiaworld.tmuhj.module.apply.resourcesUnion.ResourcesUnion;
@@ -25,32 +26,36 @@ public class ResourcesUnionDaoTest extends GenericTest {
 	@Test
 	public void testCRUD() throws Exception {
 
-//		final Long cusSerNo1 = 123l;
-//		final Long cusSerNo2 = 456l;
+		final Customer customer1 = new Customer();
+		final Customer customer2 = new Customer();
+
+		customer1.setSerNo(123L);
+		customer1.setSerNo(456L);
 
 		// Save dbResourcesUnion1
 		ResourcesUnion resourcesUnion1 = new ResourcesUnion();
-//		resourcesUnion1.setCusSerNo(cusSerNo1);
+		resourcesUnion1.setCustomer(customer1);
 
 		ResourcesUnion dbResourcesUnion1 = dao.save(resourcesUnion1);
 		final Long resourcesUnionSerNo1 = dbResourcesUnion1.getSerNo();
-//		Assert.assertEquals(cusSerNo1, dbResourcesUnion1.getCusSerNo());
+		Assert.assertEquals(customer1, dbResourcesUnion1.getCustomer());
 
 		// Save dbResourcesUnion2
 		ResourcesUnion resourcesUnion2 = new ResourcesUnion();
-//		resourcesUnion2.setCusSerNo(cusSerNo2);
+		resourcesUnion2.setCustomer(customer2);
 
 		ResourcesUnion dbResourcesUnion2 = dao.save(resourcesUnion2);
 		final Long resourcesUnionSerNo2 = dbResourcesUnion2.getSerNo();
-//		Assert.assertEquals(cusSerNo2, dbResourcesUnion2.getCusSerNo());
+		Assert.assertEquals(customer2, dbResourcesUnion2.getCustomer());
 
 		// Query by id
 		dbResourcesUnion1 = dao.findBySerNo(resourcesUnionSerNo1);
-//		Assert.assertEquals(cusSerNo1, dbResourcesUnion1.getCusSerNo());
+		Assert.assertEquals(customer1, dbResourcesUnion1.getCustomer());
 
 		// update
-		final Long dbResourcesUnion1UpdNum = 789l;
-//		dbResourcesUnion1.setCusSerNo(dbResourcesUnion1UpdNum);
+		final Customer dbResourcesUnion1UpdCus = new Customer();
+		dbResourcesUnion1UpdCus.setSerNo(789L);
+		dbResourcesUnion1.setCustomer(dbResourcesUnion1UpdCus);
 		boolean updated = true;
 		try {
 			dao.update(dbResourcesUnion1);
@@ -61,12 +66,12 @@ public class ResourcesUnionDaoTest extends GenericTest {
 
 		// query by condition
 		DsRestrictions restrictions = DsBeanFactory.getDsRestrictions();
-		restrictions.eq("cusSerNo", dbResourcesUnion1UpdNum);
+		restrictions.eq("customer.serNo", dbResourcesUnion1UpdCus);
 		List<ResourcesUnion> resourcesUnions = dao
 				.findByRestrictions(restrictions);
 		Assert.assertEquals(1, resourcesUnions.size());
-		Assert.assertEquals(dbResourcesUnion1UpdNum, resourcesUnions.get(0)
-				.getCustomer().getSerNo());
+		Assert.assertEquals(dbResourcesUnion1UpdCus, resourcesUnions.get(0)
+				.getCustomer());
 
 		// delete by id
 		boolean deleted = true;

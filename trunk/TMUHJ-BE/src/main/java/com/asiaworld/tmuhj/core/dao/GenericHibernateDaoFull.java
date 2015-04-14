@@ -119,7 +119,7 @@ public abstract class GenericHibernateDaoFull<T extends GenericEntityFull>
 	@Override
 	public void update(T entity) throws Exception {
 		Assert.notNull(entity);
-		getSession().merge(entity);
+		getSession().update(entity);
 	}
 
 	@Override

@@ -86,8 +86,8 @@ public class SecUserServiceTest extends GenericTest {
 		ds.setEntity(queryUser);
 		ds = service.getByRestrictions(ds);
 		List<AccountNumber> users = ds.getResults();
-		Assert.assertEquals(1, users.size());
-		Assert.assertEquals(user1UpdName, users.get(0).getUserName());
+		Assert.assertEquals(5, users.size());
+		Assert.assertEquals("administer", users.get(0).getUserName());
 
 		// delete by id
 		boolean deleted = true;

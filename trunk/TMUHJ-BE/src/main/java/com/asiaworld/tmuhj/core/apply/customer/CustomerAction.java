@@ -189,42 +189,8 @@ public class CustomerAction extends GenericCRUDActionFull<Customer> {
 
 	@Override
 	public String delete() throws Exception {
-		if(getLoginUser().getRole().equals(Role.系統管理員)){
-			if (getRequest().getParameter("entity.serNo") == null
-					|| getRequest().getParameter("entity.serNo").trim().equals("")) {
-				addActionError("沒有流水號");
-				} else {
-					if (getEntity().getSerNo() <= 0 || getEntity().getSerNo() == 9) {
-						addActionError("流水號不正確");
-						}
-					}
-			} else {
-				addActionError("權限不足");
-			}
-
-		if (!hasActionErrors()) {
-			customerService.deleteOwnerObj(getEntity().getSerNo());
-			customerService.deleteBySerNo(getEntity().getSerNo());
-
-			DataSet<Customer> ds = initDataSet();
-			ds.setPager(Pager.getChangedPager(
-					getRequest().getParameter("recordPerPage"), getRequest()
-							.getParameter("recordPoint"), ds.getPager()));
-			ds = customerService.getByRestrictions(ds);
-
-			setDs(ds);
-
-			return LIST;
-		} else {
-			DataSet<Customer> ds = initDataSet();
-			ds.setPager(Pager.getChangedPager(
-					getRequest().getParameter("recordPerPage"), getRequest()
-							.getParameter("recordPoint"), ds.getPager()));
-			ds = customerService.getByRestrictions(ds);
-
-			setDs(ds);
-			return LIST;
-		}
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	public String deleteChecked() throws Exception {

@@ -1,10 +1,10 @@
 package com.asiaworld.tmuhj.core.apply.customer;
 
-import java.util.List;
 import java.util.Map;
 
-import org.hibernate.Criteria;
+import org.hibernate.Query;
 import org.hibernate.SQLQuery;
+import org.hibernate.metadata.ClassMetadata;
 import org.springframework.stereotype.Repository;
 
 import com.asiaworld.tmuhj.core.dao.ModuleDaoFull;
@@ -14,56 +14,54 @@ public class CustomerDao extends ModuleDaoFull<Customer> {
 
 	public void delRelatedObj(long cusSerNo) {
 
+		// SET REFERENTIAL_INTEGRITY FALSE
 		SQLQuery fkDisable = getSession().createSQLQuery(
 				"SET FOREIGN_KEY_CHECKS=0");
 		fkDisable.executeUpdate();
 
-		SQLQuery showTables = getSession().createSQLQuery("SHOW TABLES");
-		showTables.setResultTransformer(Criteria.ALIAS_TO_ENTITY_MAP);
-		List<?> tableList = showTables.list();
+		Map<String, ClassMetadata> map = (Map<String, ClassMetadata>) getSession()
+				.getSessionFactory().getAllClassMetadata();
+		for (String entityName : map.keySet()) {
+			Query query = getSession().createQuery("FROM " + entityName);
+			query.setFirstResult(0);
+			query.setMaxResults(1);
 
-		int i = 0;
-		while (i < tableList.size()) {
-			Map<?, ?> row = (Map<?, ?>) tableList.get(i);
-
-			// 資料庫不同，寫法不一樣
-			if (row.get("TABLE_NAME") != null) {
-
-				SQLQuery columnQuery = getSession()
-						.createSQLQuery(
-								"SHOW COLUMNS FROM "
-										+ row.get("TABLE_NAME").toString());
-				columnQuery.setResultTransformer(Criteria.ALIAS_TO_ENTITY_MAP);
-				List<?> columnList = columnQuery.list();
-
-				if (columnList.toString().toUpperCase()
-						.contains("cus_serNo".toUpperCase())) {
-					SQLQuery delQuery = getSession().createSQLQuery(
-							"DELETE FROM " + row.get("TABLE_NAME").toString()
-									+ " WHERE cus_serNo=" + cusSerNo);
-					delQuery.executeUpdate();
-				}
-
-			} else {
-
-				SQLQuery columnQuery = getSession()
-						.createSQLQuery(
-								"SHOW COLUMNS FROM "
-										+ row.get("table_name").toString());
-				columnQuery.setResultTransformer(Criteria.ALIAS_TO_ENTITY_MAP);
-				List<?> columnList = columnQuery.list();
-
-				if (columnList.toString().toUpperCase()
-						.contains("cus_serNo".toUpperCase())) {
-					SQLQuery delQuery = getSession().createSQLQuery(
-							"DELETE FROM " + row.get("table_name").toString()
-									+ " WHERE cus_serNo=" + cusSerNo);
-					delQuery.executeUpdate();
-				}
-
+			if (query.list().toString().contains("accountNumber=")) {
+				Query update = getSession()
+						.createQuery(
+								"UPDATE "
+										+ entityName
+										+ " SET accountNumber = null where accountNumber != null");
+				update.executeUpdate();
 			}
 
-			i++;
 		}
+
+		for (String entityName : map.keySet()) {
+			Query query = getSession().createQuery("FROM " + entityName);
+			query.setFirstResult(0);
+			query.setMaxResults(1);
+			log.info(query.getQueryString());
+
+			if (query.list().toString().contains("customer=")) {
+				Query selQuery = getSession().createQuery(
+						"FROM " + entityName + " WHERE customer.serNo="
+								+ cusSerNo);
+				selQuery.setFirstResult(0);
+				selQuery.setMaxResults(1);
+
+				if (selQuery.list().size() > 0) {
+					Query delQuery = getSession().createQuery(
+							"DELETE FROM " + entityName
+									+ " WHERE customer.serNo=" + cusSerNo);
+					delQuery.executeUpdate();
+				}
+			}
+		}
+
+		// SET REFERENTIAL_INTEGRITY TRUE
+		SQLQuery fkAble = getSession().createSQLQuery(
+				"SET FOREIGN_KEY_CHECKS=1");
+		fkAble.executeUpdate();
 	}
 }
