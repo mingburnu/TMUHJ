@@ -33,7 +33,6 @@ import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 
-import com.asiaworld.tmuhj.core.apply.accountNumber.AccountNumberService;
 import com.asiaworld.tmuhj.core.apply.enums.Role;
 import com.asiaworld.tmuhj.core.apply.ipRange.IpRange;
 import com.asiaworld.tmuhj.core.apply.ipRange.IpRangeService;
@@ -55,9 +54,6 @@ public class CustomerAction extends GenericCRUDActionFull<Customer> {
 
 	private String fileContentType;
 
-	@Autowired
-	private AccountNumberService accountNumberService;
-	
 	@Autowired
 	private Customer customer;
 
@@ -215,15 +211,23 @@ public class CustomerAction extends GenericCRUDActionFull<Customer> {
 			int i = 0;
 			while (i < checkItem.length) {
 				if (customerService.getBySerNo(Long.parseLong(checkItem[i])) != null) {
-					customerService.deleteOwnerObj(Long.parseLong(checkItem[i]));
-					customerService.deleteBySerNo(Long.parseLong(checkItem[i]));
+					String name = customerService.getBySerNo(Long.parseLong(checkItem[i])).getName();
+					if (customerService.deleteOwnerObj(Long.parseLong(checkItem[i]))) {
+						customerService.deleteBySerNo(Long.parseLong(checkItem[i]));
+						addActionMessage(name+"刪除成功");
+					} else {
+						addActionMessage(name+"資源必須先刪除");
+					}
 				}
 				i++;
 			}
-			DataSet<Customer> ds = customerService
-					.getByRestrictions(initDataSet());
+			DataSet<Customer> ds = initDataSet();
+			ds.setPager(Pager.getChangedPager(
+					getRequest().getParameter("recordPerPage"), getRequest()
+							.getParameter("recordPoint"), ds.getPager()));
+			ds = customerService.getByRestrictions(ds);
 			setDs(ds);
-			addActionMessage("刪除成功");
+			
 			return LIST;
 		} else {
 			DataSet<Customer> ds = initDataSet();

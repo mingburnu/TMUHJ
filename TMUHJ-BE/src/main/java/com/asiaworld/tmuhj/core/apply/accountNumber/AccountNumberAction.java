@@ -254,7 +254,7 @@ public class AccountNumberAction extends GenericCRUDActionFull<AccountNumber> {
 
 		if (getEntity().getUserId() != null
 				&& !getEntity().getUserId().trim().equals("")) {
-			if (accountNumberService.userIdIsExist(getEntity())) {
+			if (accountNumberService.getSerNoByUserId(getEntity().getUserId()) != 0) {
 				addActionError("用戶代碼已存在");
 				}
 
@@ -357,9 +357,11 @@ public class AccountNumberAction extends GenericCRUDActionFull<AccountNumber> {
 		if (!hasActionErrors()) {
 			if (getEntity().getUserPw() == null
 					|| getEntity().getUserPw().trim().equals("")) {
+				accountNumberService.updateLog(getEntity());
 				accountNumber = accountNumberService.update(getEntity(),
 						getLoginUser(), "userId", "userPw");
 			} else {
+				accountNumberService.updateLog(getEntity());
 				accountNumber = accountNumberService.update(getEntity(),
 						getLoginUser(), "userId");
 			}

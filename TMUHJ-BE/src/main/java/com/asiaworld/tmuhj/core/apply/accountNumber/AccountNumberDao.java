@@ -1,8 +1,9 @@
 package com.asiaworld.tmuhj.core.apply.accountNumber;
 
-import org.hibernate.Criteria;
-import org.hibernate.criterion.Projections;
-import org.hibernate.criterion.Restrictions;
+import java.util.Map;
+
+import org.hibernate.Query;
+import org.hibernate.metadata.ClassMetadata;
 import org.springframework.stereotype.Repository;
 
 import com.asiaworld.tmuhj.core.dao.GenericHibernateDaoFull;
@@ -15,13 +16,26 @@ import com.asiaworld.tmuhj.core.dao.GenericHibernateDaoFull;
  */
 @Repository
 public class AccountNumberDao extends GenericHibernateDaoFull<AccountNumber> {
-	
-	public long countByCusSerNo(long cusSerNo) {
-		Criteria criteria = getSession().createCriteria(AccountNumber.class);
-		criteria.add(Restrictions.eq("cusSerNo", cusSerNo));
-		criteria.setProjection(Projections.rowCount());
-		Long totalUser = (Long) criteria.list().get(0);
 
-		return totalUser;
+	public void updateCustomer(AccountNumber accountNumber) {
+		Map<String, ClassMetadata> map = (Map<String, ClassMetadata>) getSession()
+				.getSessionFactory().getAllClassMetadata();
+
+		for (String entityName : map.keySet()) {
+			Query query = getSession().createQuery("FROM " + entityName);
+			query.setFirstResult(0);
+			query.setMaxResults(1);
+
+			if (query.list().toString().contains("customer=")
+					&& query.list().toString().contains("accountNumber=")) {
+				Query update = getSession().createQuery(
+						"UPDATE " + entityName + " SET customer.serNo ="
+								+ accountNumber.getCustomer().getSerNo()
+								+ " WHERE accountNumber.serNo ="
+								+ accountNumber.getSerNo());
+				update.executeUpdate();
+			}
+
+		}
 	}
 }

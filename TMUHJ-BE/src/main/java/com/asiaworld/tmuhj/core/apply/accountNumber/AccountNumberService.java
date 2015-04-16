@@ -121,20 +121,6 @@ public class AccountNumberService extends GenericServiceFull<AccountNumber> {
 				secUser.getUserPw());
 	}
 
-	public boolean userIdIsExist(AccountNumber entity) throws Exception {
-		Assert.notNull(entity);
-
-		DsRestrictions restrictions = DsBeanFactory.getDsRestrictions();
-		restrictions.eq("userId", entity.getUserId().trim());
-		List<AccountNumber> accountNumbers = dao
-				.findByRestrictions(restrictions);
-		if (accountNumbers == null || accountNumbers.isEmpty()) {
-			return false;
-		} else {
-			return true;
-		}
-	}
-
 	public long getSerNoByUserId(String userId) throws Exception {
 		DsRestrictions restrictions = DsBeanFactory.getDsRestrictions();
 		restrictions.customCriterion(Restrictions.eq("userId", userId));
@@ -186,13 +172,7 @@ public class AccountNumberService extends GenericServiceFull<AccountNumber> {
 		return dao.findByRestrictions(restrictions, ds);
 	}
 
-	public boolean hasUser(long cusSerNo) {
-		long totalUser = dao.countByCusSerNo(cusSerNo);
-
-		if (totalUser > 0) {
-			return true;
-		} else {
-			return false;
-		}
+	public void updateLog(AccountNumber accountNumber) {
+		dao.updateCustomer(accountNumber);
 	}
 }
