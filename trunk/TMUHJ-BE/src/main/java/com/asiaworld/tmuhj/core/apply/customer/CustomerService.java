@@ -89,7 +89,7 @@ public class CustomerService extends GenericServiceFull<Customer> {
 		return dao.findByRestrictions(restrictions);
 	}
 
-	public void deleteOwnerObj(long cusSerNo) {
-		dao.delRelatedObj(cusSerNo);
+	public boolean deleteOwnerObj(long cusSerNo) {
+		 return dao.delRelatedObj(cusSerNo);
 	}
 }

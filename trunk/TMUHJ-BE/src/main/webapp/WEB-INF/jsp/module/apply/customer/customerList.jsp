@@ -248,7 +248,9 @@ $(document).ready(function() {
 						<td colspan="5" class="topic">基本設定</td>
 					</tr>
 					<tr>
-						<th width="50" align="center">&nbsp;</th>
+						<c:if test="${login.role =='系統管理員'}">
+							<th width="50" align="center">&nbsp;</th>
+						</c:if>
 						<th>用戶名稱</th>
 						<th>電話</th>
 						<th>地址</th>
@@ -256,16 +258,15 @@ $(document).ready(function() {
 					</tr>
 					<c:forEach var="item" items="${ds.results}" varStatus="status">
 						<tr>
-							<td align="center" class="td_first" nowrap><c:if
-									test="${login.role =='系統管理員'}">
-									<c:choose>
+							<c:if test="${login.role =='系統管理員'}">
+								<td align="center" class="td_first" nowrap><c:choose>
 										<c:when test="${9 eq  item.serNo }"></c:when>
 										<c:otherwise>
 											<input type="checkbox" class="checkbox" name="checkItem"
 												value="${item.serNo}">
 										</c:otherwise>
-									</c:choose>
-								</c:if></td>
+									</c:choose></td>
+							</c:if>
 							<td>${item.name }</td>
 							<td align="center">${item.tel }</td>
 							<td>${item.address }</td>
