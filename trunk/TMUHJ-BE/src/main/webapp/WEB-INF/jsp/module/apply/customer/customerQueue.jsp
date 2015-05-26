@@ -138,7 +138,7 @@ function changePageSize_detail(recordPerPage,recordPoint) {
 					<c:forEach var="item" items="${cellNames}" varStatus="status">
 						<c:if
 							test="${(0 eq status.index) || (1 eq status.index)||(2 eq status.index)||(3 eq status.index)||(4 eq status.index)}">
-							<th>${item}</th>
+							<th><c:out value="${item}" /></th>
 						</c:if>
 					</c:forEach>
 					<th></th>
@@ -155,11 +155,11 @@ function changePageSize_detail(recordPerPage,recordPoint) {
 									<input type="checkbox" disabled="disabled">
 								</c:otherwise>
 							</c:choose></td>
-						<td>${item.name }</td>
-						<td>${item.engName }</td>
-						<td>${item.address }</td>
-						<td>${item.contactUserName }</td>
-						<td align="center">${item.tel }</td>
+						<td><c:out value="${item.name }" /></td>
+						<td><c:out value="${item.engName }" /></td>
+						<td><c:out value="${item.address }" /></td>
+						<td><c:out value="${item.contactUserName }" /></td>
+						<td align="center"><c:out value="${item.tel }" /></td>
 						<td align="center">${item.existStatus }</td>
 					</tr>
 				</c:forEach>

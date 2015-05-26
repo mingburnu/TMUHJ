@@ -50,6 +50,18 @@
 		        this.checked = true;
 		    }
 		});
+		
+		$("input#apply_database_update_resourcesBuyers_rCategory").each(function(){
+			if ($(this).val()=="未註明"){
+		        this.checked = true;
+		    }
+		});
+		
+		$("input#apply_database_update_resourcesBuyers_rType").each(function(){
+			if ($(this).val()=="資料庫"){
+		        this.checked = true;
+		    }
+		});
 	});
 	
 	$(document).ready(function() {
@@ -285,7 +297,7 @@ input#customer_name {
 						<th width="130">資源類型</th>
 						<td>
 						<c:forEach var="item" items="${categoryList}" varStatus="status">						
-						<input type="radio" name="resourcesBuyers.rCategory"
+						<input type="radio" name="rCategory"
 							id="apply_database_save_resourcesBuyers_rCategory" value="${item.category }"> <label
 							for="apply_database_save_resourcesBuyers_rCategory">${item.category }</label>
 						</c:forEach>
@@ -295,7 +307,7 @@ input#customer_name {
 						<th width="130">資源種類</th>
 						<td>
 						<c:forEach var="item" items="${typeList}" varStatus="status">
-						<input type="radio" name="resourcesBuyers.rType"
+						<input type="radio" name="rType"
 							id="apply_database_save_resourcesBuyers_rType" value="${item.type }"> <label
 							for="apply_database_save_resourcesBuyers_rType">${item.type }</label> 
 						</c:forEach>
@@ -432,7 +444,7 @@ input#customer_name {
 						<th width="130">資源類型</th>
 						<td>
 						<c:forEach var="item" items="${categoryList}" varStatus="status">						
-						<input type="radio" name="resourcesBuyers.rCategory"
+						<input type="radio" name="rCategory"
 							id="apply_database_update_resourcesBuyers_rCategory" value="${item.category }"> <label
 							for="apply_database_update_resourcesBuyers_rCategory">${item.category }</label>
 						</c:forEach>
@@ -442,7 +454,7 @@ input#customer_name {
 						<th width="130">資源種類</th>
 						<td>
 						<c:forEach var="item" items="${typeList}" varStatus="status">
-						<input type="radio" name="resourcesBuyers.rType"
+						<input type="radio" name="rType"
 							id="apply_database_update_resourcesBuyers_rType" value="${item.type }"> <label
 							for="apply_database_update_resourcesBuyers_rType">${item.type }</label> 
 						</c:forEach>
@@ -492,7 +504,7 @@ input#customer_name {
 		<script language="javascript" type="text/javascript">
 			var msg = "";
 			<s:iterator value="actionErrors">
-			msg += '<s:property escape="false"/><br>';
+			msg += '<s:property escape="true"/><br>';
 			</s:iterator>;
 			goAlert('訊息', msg);
 		</script>

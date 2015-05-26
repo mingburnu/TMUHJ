@@ -31,10 +31,10 @@ public class CrudActionInterceptor extends AbstractInterceptor {
 
 		if (!invocation.getAction().toString().contains("beLogs")
 				&& !invocation.getAction().toString().contains("feLogs")) {
-			
+
 			String method = invocation.getProxy().getMethod();
 			HttpServletRequest request = ServletActionContext.getRequest();
-			
+
 			List<String> methodList = Arrays.asList("queue", "paginate",
 					"getCheckedItem", "allCheckedItem", "clearCheckedItem",
 					"importData");
@@ -50,20 +50,35 @@ public class CrudActionInterceptor extends AbstractInterceptor {
 				}
 			}
 		}
-		
-		if (invocation.getAction().toString().contains("customer") 
-				|| invocation.getAction().toString().contains("ipRange")){
+
+		if (invocation.getAction().toString().contains("ipRange")) {
 			Map<String, Object> session = ActionContext.getContext()
 					.getSession();
 			accountNumber = (AccountNumber) session.get("login");
-			
-			if (accountNumber.getRole().getRole().equals("管理員")){
-				HttpServletResponse response=ServletActionContext.getResponse();
-				response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-				return null;
+
+			if (accountNumber.getRole().getRole().equals("管理員")) {
+				HttpServletResponse response = ServletActionContext
+						.getResponse();
+				response.sendError(HttpServletResponse.SC_FORBIDDEN);
 			}
 		}
 
+		if (invocation.getAction().toString().contains("customer")) {
+			Map<String, Object> session = ActionContext.getContext()
+					.getSession();
+			accountNumber = (AccountNumber) session.get("login");
+
+			if (accountNumber.getRole().getRole().equals("管理員")) {
+				String method = invocation.getProxy().getMethod();
+
+				if (!method.equals("json") && !method.equals("ajax")) {
+					HttpServletResponse response = ServletActionContext
+							.getResponse();
+					response.sendError(HttpServletResponse.SC_FORBIDDEN);
+				}
+			}
+
+		}
 		return invocation.invoke();
 	}
 }

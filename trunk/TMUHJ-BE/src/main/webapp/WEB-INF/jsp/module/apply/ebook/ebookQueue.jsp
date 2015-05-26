@@ -143,7 +143,7 @@ $(document).ready(function() {
 					<c:forEach var="item" items="${cellNames}" varStatus="status">
 						<c:if
 							test="${(0 eq status.index) || (1 eq status.index) || (9 eq status.index) || (10 eq status.index)||(13 eq status.index)||(14 eq status.index)||(17 eq status.index)}">
-							<th>${item}</th>
+							<th><c:out value="${item}" /></th>
 						</c:if>
 					</c:forEach>
 					<th></th>
@@ -160,16 +160,16 @@ $(document).ready(function() {
 									<input type="checkbox" disabled="disabled">
 								</c:otherwise>
 							</c:choose></td>
-						<td>${item.bookName }</td>
-						<td>${item.isbn }</td>
-						<td>${item.cnClassBzStr }</td>
-						<td>${item.bookInfoIntegral }</td>
+						<td><c:out value="${item.bookName }" /></td>
+						<td><c:out value="${item.isbn }" /></td>
+						<td><c:out value="${item.cnClassBzStr }" /></td>
+						<td><c:out value="${item.bookInfoIntegral }" /></td>
 						<td>${item.resourcesBuyers.rCategory.category }</td>
 						<td>${item.resourcesBuyers.rType.type }</td>
 						<td align="center"><c:forEach var="customer"
 								items="${item.customers}" varStatus="status">
-				${customer.name }
-				</c:forEach></td>
+								<c:out value="${customer.name }" />
+							</c:forEach></td>
 						<td align="center">${item.existStatus }</td>
 					</tr>
 				</c:forEach>

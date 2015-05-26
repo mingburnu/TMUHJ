@@ -13,74 +13,61 @@
 	
 </script>
 <script language="javascript" type="text/javascript">
-$(document).ready(function(){
-    formSetCSS();
-    state_hover();
-});
-//css
-function formSetCSS(){
-    $('input[type="text"]').addClass("input_text");
-    $('input[type="password"]').addClass("input_text");
-}
-//state
-function state_hover(){
-    $(".state-default").hover(
-        function(){
-            $(this).addClass("state-hover");
-        },
-        function(){
-            $(this).removeClass("state-hover");
-        }
-    );
-}
-//打開Alert畫面之函式
-function goAlert(argTitle,argMsg){
-    $("#div_Alert").show();
-    UI_Resize();
-    //
-    $("#div_Alert .content > .header > .title").html(argTitle);
-    $("#div_Alert .content > .contain").html(argMsg);
-}
-//關閉Alert畫面之函式
-function closeAlert(){
-    $("#div_Alert").hide();
-    UI_Resize();
-}
-//UI_Resize
-function UI_Resize(){
-    $("#div_Detail > .overlay").css("width",$(window).width());
-    $("#div_Detail > .overlay").css("height",$(window).height());
-    $("#div_Detail_2 > .overlay").css("width",$(window).width());
-    $("#div_Detail_2 > .overlay").css("height",$(window).height());
-    $("#div_Alert > .overlay").css("width",$(window).width());
-    $("#div_Alert > .overlay").css("height",$(window).height());
-}
-$(window).resize(function(){
-    UI_Resize();
-});
-//UI_Scroll
-function UI_Scroll(){
-    $("#div_Detail > .overlay").css("top",$(window).scrollTop());
-    $("#div_Detail > .overlay").css("left",$(window).scrollLeft());
-    $("#div_Detail_2 > .overlay").css("top",$(window).scrollTop());
-    $("#div_Detail_2 > .overlay").css("left",$(window).scrollLeft());
-    $("#div_Alert > .overlay").css("top",$(window).scrollTop());
-    $("#div_Alert > .overlay").css("left",$(window).scrollLeft());
-}
-$(window).scroll(function(){
-    UI_Scroll();
-});
-
-//var contain_size = $("#div-contain").length;
-//if(contain_size > 0){
-<%--    window.location.href="<%=request.getContextPath()%>	" + "/TWBE/";--%>
-//	}
+	$(document).ready(function() {
+		formSetCSS();
+		state_hover();
+	});
+	//css
+	function formSetCSS() {
+		$('input[type="text"]').addClass("input_text");
+		$('input[type="password"]').addClass("input_text");
+	}
+	//state
+	function state_hover() {
+		$(".state-default").hover(function() {
+			$(this).addClass("state-hover");
+		}, function() {
+			$(this).removeClass("state-hover");
+		});
+	}
+	//打開Alert畫面之函式
+	function goAlert(argTitle, argMsg) {
+		$("#div_Alert").show();
+		UI_Resize();
+		//
+		$("#div_Alert .content > .header > .title").html(argTitle);
+		$("#div_Alert .content > .contain").html(argMsg);
+	}
+	//關閉Alert畫面之函式
+	function closeAlert() {
+		$("#div_Alert").hide();
+		UI_Resize();
+	}
+	//UI_Resize
+	function UI_Resize() {
+		$("#div_Detail > .overlay").css("width", $(window).width());
+		$("#div_Detail > .overlay").css("height", $(window).height());
+		$("#div_Detail_2 > .overlay").css("width", $(window).width());
+		$("#div_Detail_2 > .overlay").css("height", $(window).height());
+		$("#div_Alert > .overlay").css("width", $(window).width());
+		$("#div_Alert > .overlay").css("height", $(window).height());
+	}
+	$(window).resize(function() {
+		UI_Resize();
+	});
+	//UI_Scroll
+	function UI_Scroll() {
+		$("#div_Detail > .overlay").css("top", $(window).scrollTop());
+		$("#div_Detail > .overlay").css("left", $(window).scrollLeft());
+		$("#div_Detail_2 > .overlay").css("top", $(window).scrollTop());
+		$("#div_Detail_2 > .overlay").css("left", $(window).scrollLeft());
+		$("#div_Alert > .overlay").css("top", $(window).scrollTop());
+		$("#div_Alert > .overlay").css("left", $(window).scrollLeft());
+	}
+	$(window).scroll(function() {
+		UI_Scroll();
+	});
 </script>
-<!--<style type="text/css">
-input:-webkit-autofill {
-	-webkit-box-shadow: 0 0 0px 1000px #ffffff inset;
-}
-</style>-->
 <title>跨司署電子資料庫索引查詢平台</title>
 </head>
 <c:if

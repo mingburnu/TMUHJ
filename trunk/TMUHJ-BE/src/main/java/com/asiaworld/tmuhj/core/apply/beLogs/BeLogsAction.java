@@ -86,6 +86,15 @@ public class BeLogsAction extends GenericCRUDActionLog<BeLogs> {
 	public String list() throws Exception {
 		String startDate = getRequest().getParameter("start");
 		String endDate = getRequest().getParameter("end");
+		
+		if (startDate != null){
+			startDate = startDate.trim();
+		}
+		
+		if (endDate != null){
+			endDate = endDate.trim();
+		}
+		
 		String customerName = getRequest().getParameter("customer");
 		
 		String cusSerNo = getRequest().getParameter("cusSerNo");
@@ -120,7 +129,7 @@ public class BeLogsAction extends GenericCRUDActionLog<BeLogs> {
 			ds.setPager(Pager.getChangedPager(
 					getRequest().getParameter("recordPerPage"), getRequest()
 							.getParameter("recordPoint"), ds.getPager()));
-
+			
 			getRequest().setAttribute("endDate", endDate);
 
 			if (Long.parseLong(cusSerNo) > 0) {
@@ -169,6 +178,15 @@ public class BeLogsAction extends GenericCRUDActionLog<BeLogs> {
 	public String exports() throws Exception {
 		String startDate = getRequest().getParameter("start");
 		String endDate = getRequest().getParameter("end");
+		
+		if (startDate != null){
+			startDate = startDate.trim();
+		}
+		
+		if (endDate != null){
+			endDate = endDate.trim();
+		}
+		
 		String customerName = getRequest().getParameter("customer");
 		
 		String cusSerNo = getRequest().getParameter("cusSerNo");

@@ -66,11 +66,8 @@
 			</interceptor-stack>
 		</interceptors>
 		<default-interceptor-ref name="defaultInterceptor" />
-		<action name="home" class="commonMainPageAction">
-			<result name="success">/WEB-INF/jsp/index.jsp</result>
-		</action>
-		<action name="query" class="commonMainPageAction">
-			<result name="success">/WEB-INF/jsp/adv_query.jsp</result>
+		<action name="*" class="commonMainPageAction">
+			<result name="success">/WEB-INF/jsp/{1}.jsp</result>
 		</action>
 	</package>
 
@@ -92,14 +89,8 @@
 			<exception-mapping exception="java.lang.NoSuchMethodException"
 				result="error" />
 			<result name="input">/login.jsp</result>
-			<result name="list">/WEB-INF/jsp/module/apply/{1}/{1}List.jsp
-			</result>
-			<result name="edit">/WEB-INF/jsp/module/apply/{1}/{1}Edit.jsp
-			</result>
-			<result name="delete">/WEB-INF/jsp/module/apply/{1}/{1}Edit.jsp
-			</result>
-			<result name="search">/WEB-INF/jsp/index.jsp</result>
-			<result name="query">/WEB-INF/jsp/adv_query.jsp</result>
+			<result name="query">/WEB-INF/jsp/query.jsp</result>
+			<result name="adv_query">/WEB-INF/jsp/adv_query.jsp</result>
 			<result name="database">/WEB-INF/jsp/module/apply/search/result_a.jsp
 			</result>
 			<result name="ebook">/WEB-INF/jsp/module/apply/search/result_b.jsp
@@ -114,6 +105,7 @@
 			</result>
 			<result name="j-detail">/WEB-INF/jsp/module/apply/search/detail_c.jsp
 			</result>
+			<result name="*"></result>
 		</action>
 	</package>
 

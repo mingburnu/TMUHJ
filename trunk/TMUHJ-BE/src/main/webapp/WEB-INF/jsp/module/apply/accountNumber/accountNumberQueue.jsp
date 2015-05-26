@@ -130,7 +130,7 @@ function clearCheckedItem() {
 					<th></th>
 					<c:forEach var="item" items="${cellNames}" varStatus="status">
 						<c:if test="${1 ne status.index }">
-							<th>${item}</th>
+							<th><c:out value="${item}" /></th>
 						</c:if>
 					</c:forEach>
 					<th></th>
@@ -147,9 +147,9 @@ function clearCheckedItem() {
 									<input type="checkbox" disabled="disabled">
 								</c:otherwise>
 							</c:choose></td>
-						<td>${item.userId }</td>
-						<td>${item.userName }</td>
-						<td>${item.customer.name }</td>
+						<td><c:out value="${item.userId }" /></td>
+						<td><c:out value="${item.userName }" /></td>
+						<td><c:out value="${item.customer.name }" /></td>
 						<td>${item.role.role }</td>
 						<td>${item.status.status }</td>
 						<td align="center">${item.existStatus }</td>
@@ -205,7 +205,7 @@ function clearCheckedItem() {
 	<s:if test="hasActionErrors()">
 		<script language="javascript" type="text/javascript">
 			var msg = "";
-			<s:iterator value="actionErrors">msg += '<s:property escape="false"/><br>';
+			<s:iterator value="actionErrors">msg += '<s:property escape="true"/><br>';
 			</s:iterator>;
 			goAlert('訊息', msg);
 		</script>

@@ -199,8 +199,8 @@
 				</table>
 				<div class="button_box">
 					<div class="detail-func-button">
-						<a class="state-default" onclick="closeDetail();">取消</a>
-						&nbsp;<a class="state-default" onclick="resetData();">重置</a>&nbsp;<a
+						<a class="state-default" onclick="closeDetail();">取消</a> &nbsp;<a
+							class="state-default" onclick="resetData();">重置</a>&nbsp;<a
 							id="ports" class="state-default" onclick="goQueue();">下一步</a>
 					</div>
 				</div>
@@ -219,7 +219,7 @@
 				<table cellspacing="1" class="detail-table">
 					<tr>
 						<th width="130">用戶名稱<span class="required">(&#8226;)</span></th>
-						<td>${entity.name }</td>
+						<td><c:out value="${entity.name }" /></td>
 					</tr>
 					<tr>
 						<th width="130">用戶英文名稱</th>
@@ -264,7 +264,8 @@
 	<s:if test="hasActionErrors()">
 		<script language="javascript" type="text/javascript">
 			var msg = "";
-			<s:iterator value="actionErrors">msg += '<s:property escape="false"/><br>';</s:iterator>;
+			<s:iterator value="actionErrors">msg += '<s:property escape="true"/><br>';
+			</s:iterator>;
 			goAlert('訊息', msg);
 		</script>
 	</s:if>

@@ -27,40 +27,7 @@ function goAdd(){
 }
 
 //失效多筆資料之函式
-function goFail(){
-    //檢查資料是否已被勾選
-    var IsSelected = false;
-    var serNoStr = "";
-    var checkbox_checked_num = 0;
-    for(var i=0;i<$(".checkbox").length;i++){
-        if($(".checkbox").get(i).checked){
-            serNoStr = serNoStr + $(".checkbox").get(i).value + "；；";
-            IsSelected = true;
-            checkbox_checked_num++;
-        }
-    }
-    //進行刪除動作
-    if(IsSelected){
-    	var f = {
-                trueText:'是',
-                trueFunc:function(){
-                        var url = '<%=request.getContextPath()%>/crud/apply.accountNumber.invalidChecked.action';
-                        var data = $('#apply_accountNumber_list').serialize()+'&pager.offset='+'${ds.pager.offset}'+'&pager.currentPage='+'${ds.pager.currentPage}'+'&pager.offsetPoint'+'${ds.pager.offset}';
-                        goMain(url,'',data);
-                },
-                falseText:'否',
-                falseFunc:function(){
-                        //不進行刪除...
-                }
-        };
-    	goAlert('提醒','您確定要失效所勾選的帳戶嗎?',f);
-    }else{
-    	goAlert("提醒","請選擇一筆或一筆以上的資料");
-    }
-}
-
-//失效多筆資料之函式
-function goFail(){
+function goDeauthorize(){
     //檢查資料是否已被勾選
     var IsSelected = false;
     var serNoStr = "";
@@ -77,7 +44,7 @@ function goFail(){
     	var f = {
                 trueText:'是',
                 trueFunc:function(){
-                        var url = '<%=request.getContextPath()%>/crud/apply.accountNumber.invalidChecked.action';
+                        var url = '<%=request.getContextPath()%>/crud/apply.accountNumber.deauthorize.action';
                         var data = $('#apply_accountNumber_list').serialize()+'&pager.offset='+'${ds.pager.offset}'+'&pager.currentPage='+'${ds.pager.currentPage}'+'&pager.offsetPoint'+'${ds.pager.offset}';
                         goMain(url,'',data);
                 },
@@ -93,7 +60,7 @@ function goFail(){
 }
 
 //生效多筆資料之函式
-function goEffect(){
+function goAuthorize(){
     //檢查資料是否已被勾選
     var IsSelected = false;
     var serNoStr = "";
@@ -110,7 +77,7 @@ function goEffect(){
     	var f = {
                 trueText:'是',
                 trueFunc:function(){
-                        var url = '<%=request.getContextPath()%>/crud/apply.accountNumber.validChecked.action';
+                        var url = '<%=request.getContextPath()%>/crud/apply.accountNumber.authorize.action';
                         var data = $('#apply_accountNumber_list').serialize()+'&pager.offset='+'${ds.pager.offset}'+'&pager.currentPage='+'${ds.pager.currentPage}'+'&pager.offsetPoint'+'${ds.pager.offset}';
                         goMain(url,'',data);
                 },
@@ -196,19 +163,18 @@ function goImport(){
 							<td align="left"></td>
 						</tr>
 						<tr>
-							<td align="left"><input type="text" name="entity.userId"
-								maxlength="20" id="search" class="input_text"
-								value="<%if (request.getParameter("entity.userId") != null) {
-					out.print(request.getParameter("entity.userId"));
-				}%>">&nbsp;
+							<td align="left"><c:set var="userId">
+									<c:out value="${entity.userId }"></c:out>
+								</c:set> <input type="text" name="entity.userId" maxlength="20"
+								id="search" class="input_text" value="${userId }">&nbsp;
 								<c:choose>
 									<c:when test="${login.role.role != '管理員' }">
+										<c:set var="customerName">
+											<c:out value="${entity.customer.name }">
+											</c:out>
+										</c:set>
 										<input type="text" name="entity.customer.name" maxlength="20"
-											id="search" class="input_text"
-											value="<%if (request.getParameter("entity.customer.name") != null) {
-							out.print(request
-									.getParameter("entity.customer.name"));
-						}%>">
+											id="search" class="input_text" value="${customerName }">
 									</c:when>
 									<c:otherwise>
 										<input type="text" maxlength="20" id="search"
@@ -234,8 +200,8 @@ function goImport(){
 						<a class="state-default" onclick="allSelect(1);">全選</a>
 						<a class="state-default" onclick="allSelect(0);">取消</a>
 						<a class="state-default" onclick="goAdd();">新增</a>
-						<a class="state-default" onclick="goFail();">失效</a>
-						<a class="state-default" onclick="goEffect();">生效</a>
+						<a class="state-default" onclick="goDeauthorize();">失效</a>
+						<a class="state-default" onclick="goAuthorize();">生效</a>
 						<a class="state-default" onclick="goImport()">匯入</a>
 					</c:when>
 					<c:otherwise>
@@ -268,9 +234,9 @@ function goImport(){
 											value="${item.serNo}">
 									</c:otherwise>
 								</c:choose></td>
-							<td>${item.userId }</td>
-							<td align="center">${item.userName }</td>
-							<td>${item.customer.name }</td>
+							<td><c:out value="${item.userId }" /></td>
+							<td align="center"><c:out value="${item.userName }" /></td>
+							<td><c:out value="${item.customer.name }" /></td>
 							<td align="center">${item.customer.email }</td>
 							<td>${item.role.role }</td>
 							<td align="center">${item.status.status }</td>
@@ -332,7 +298,7 @@ function goImport(){
 	<s:if test="hasActionMessages()">
 		<script language="javascript" type="text/javascript">
             var msg = "";
-            <s:iterator value="actionMessages">msg += '<s:property escape="false"/><br>';
+            <s:iterator value="actionMessages">msg += '<s:property escape="true"/><br>';
             </s:iterator>;
             goAlert('訊息', msg);
         </script>
@@ -341,7 +307,7 @@ function goImport(){
 		<script language="javascript" type="text/javascript">
 			var msg = "";
 			<s:iterator value="actionErrors">
-			msg += '<s:property escape="false"/><br>';
+			msg += '<s:property escape="true"/><br>';
 			</s:iterator>;
 			goAlert('訊息', msg);
 		</script>

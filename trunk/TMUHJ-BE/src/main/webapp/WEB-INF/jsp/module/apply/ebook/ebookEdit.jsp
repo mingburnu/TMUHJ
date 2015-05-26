@@ -8,6 +8,18 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title></title>
+<c:choose>
+	<c:when test="${empty isbn}">
+		<c:set var="isbn">
+			<c:out value="${entity.isbn }"></c:out>
+		</c:set>
+	</c:when>
+	<c:otherwise>
+		<c:set var="isbn">
+			<c:out value="${isbn }"></c:out>
+		</c:set>
+	</c:otherwise>
+</c:choose>
 <script type="text/javascript">
 	var saveForm = "";
 	var updateForm = "";
@@ -46,6 +58,18 @@
 		});
 		
 		$("input#apply_ebook_save_resourcesBuyers_rType").each(function(){
+			if ($(this).val()=="電子書"){
+		        this.checked = true;
+		    }
+		});
+		
+		$("input#apply_ebook_update_resourcesBuyers_rCategory").each(function(){
+			if ($(this).val()=="未註明"){
+		        this.checked = true;
+		    }
+		});
+		
+		$("input#apply_ebook_update_resourcesBuyers_rType").each(function(){
 			if ($(this).val()=="電子書"){
 		        this.checked = true;
 		    }
@@ -295,23 +319,23 @@ input#customer_name {
 					</tr>
 					<tr>
 						<th width="130">資源類型</th>
-						<td>
-						<c:forEach var="item" items="${categoryList}" varStatus="status">						
-						<input type="radio" name="resourcesBuyers.rCategory"
-							id="apply_ebook_save_resourcesBuyers_rCategory" value="${item.category }"> <label
-							for="apply_ebook_save_resourcesBuyers_rCategory">${item.category }</label>
-						</c:forEach>
-						</td>
+						<td><c:forEach var="item" items="${categoryList}"
+								varStatus="status">
+								<input type="radio" name="rCategory"
+									id="apply_ebook_save_resourcesBuyers_rCategory"
+									value="${item.category }">
+								<label for="apply_ebook_save_resourcesBuyers_rCategory">${item.category }</label>
+							</c:forEach></td>
 					</tr>
 					<tr>
 						<th width="130">資源種類</th>
-						<td>
-						<c:forEach var="item" items="${typeList}" varStatus="status">
-						<input type="radio" name="resourcesBuyers.rType"
-							id="apply_ebook_save_resourcesBuyers_rType" value="${item.type }"> <label
-							for="apply_ebook_save_resourcesBuyers_rType">${item.type }</label> 
-						</c:forEach>
-						</td>
+						<td><c:forEach var="item" items="${typeList}"
+								varStatus="status">
+								<input type="radio" name="rType"
+									id="apply_ebook_save_resourcesBuyers_rType"
+									value="${item.type }">
+								<label for="apply_ebook_save_resourcesBuyers_rType">${item.type }</label>
+							</c:forEach></td>
 					</tr>
 					<tr>
 						<th width="130">資料庫中文題名</th>
@@ -392,17 +416,17 @@ input#customer_name {
 		<c:otherwise>
 			<%
 				ArrayList<?> allCustomers = (ArrayList<?>) request.getAttribute("allCustomers");
-					ArrayList<?> entityCustomers = (ArrayList<?>) request.getAttribute("entity.customers");
-					Object[] allCustomerArray=allCustomers.toArray();
-					if (entityCustomers.size() > 0) {
-						for (int j = 0; j < entityCustomers.size(); j++) {
-								if (allCustomers.contains(entityCustomers.get(j))) {
-									allCustomers.remove(entityCustomers.get(j));
+								ArrayList<?> entityCustomers = (ArrayList<?>) request.getAttribute("entity.customers");
+								Object[] allCustomerArray=allCustomers.toArray();
+								if (entityCustomers.size() > 0) {
+									for (int j = 0; j < entityCustomers.size(); j++) {
+											if (allCustomers.contains(entityCustomers.get(j))) {
+												allCustomers.remove(entityCustomers.get(j));
+												}
+										}
 									}
-							}
-						}
-					
-					request.setAttribute("allCustomers", allCustomers);
+								
+								request.setAttribute("allCustomers", allCustomers);
 			%>
 			<s:form namespace="/crud" action="apply.ebook.update">
 				<table cellspacing="1" class="detail-table">
@@ -459,23 +483,23 @@ input#customer_name {
 					</tr>
 					<tr>
 						<th width="130">資源類型</th>
-						<td>
-						<c:forEach var="item" items="${categoryList}" varStatus="status">						
-						<input type="radio" name="resourcesBuyers.rCategory"
-							id="apply_ebook_save_resourcesBuyers_rCategory" value="${item.category }"> <label
-							for="apply_ebook_save_resourcesBuyers_rCategory">${item.category }</label>
-						</c:forEach>
-						</td>
+						<td><c:forEach var="item" items="${categoryList}"
+								varStatus="status">
+								<input type="radio" name="rCategory"
+									id="apply_ebook_save_resourcesBuyers_rCategory"
+									value="${item.category }">
+								<label for="apply_ebook_save_resourcesBuyers_rCategory">${item.category }</label>
+							</c:forEach></td>
 					</tr>
 					<tr>
 						<th width="130">資源種類</th>
-						<td>
-						<c:forEach var="item" items="${typeList}" varStatus="status">
-						<input type="radio" name="resourcesBuyers.rType"
-							id="apply_ebook_save_resourcesBuyers_rType" value="${item.type }"> <label
-							for="apply_ebook_save_resourcesBuyers_rType">${item.type }</label> 
-						</c:forEach>
-						</td>
+						<td><c:forEach var="item" items="${typeList}"
+								varStatus="status">
+								<input type="radio" name="rType"
+									id="apply_ebook_save_resourcesBuyers_rType"
+									value="${item.type }">
+								<label for="apply_ebook_save_resourcesBuyers_rType">${item.type }</label>
+							</c:forEach></td>
 					</tr>
 					<tr>
 						<th width="130">資料庫中文題名</th>

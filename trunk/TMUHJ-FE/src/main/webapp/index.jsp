@@ -17,7 +17,7 @@
 	<c:if test="${not empty login.userId}">
 		<%
 			response.sendRedirect(request.getContextPath()
-						+ "/page/home.action");
+						+ "/page/index.action");
 		%>
 	</c:if>
 </body>

@@ -62,18 +62,29 @@
 		<url-pattern>/*</url-pattern>
 	</filter-mapping>
 
-	<!--<servlet> <servlet-name>H2Console</servlet-name> <servlet-class>org.h2.server.web.WebServlet</servlet-class> 
-		<init-param> <param-name>-webAllowOthers</param-name> <param-value>true</param-value> 
-		</init-param> </servlet> <servlet-mapping> <servlet-name>H2Console</servlet-name> 
-		<url-pattern>/admin/h2/*</url-pattern> </servlet-mapping> -->
+	<filter>
+		<display-name>ClickjackFilter</display-name>
+		<filter-name>ClickjackFilter</filter-name>
+		<filter-class>com.asiaworld.tmuhj.core.filter.ClickjackFilter</filter-class>
+		<init-param>
+			<param-name>mode</param-name>
+			<param-value>SAMEORIGIN</param-value>
+		</init-param>
+	</filter>
+	<filter-mapping>
+		<filter-name>ClickjackFilter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+
 	<error-page>
 		<exception-type>java.lang.Exception</exception-type>
-		<location>/</location>
+		<location>/WEB-INF/jsp/exception.jsp</location>
 	</error-page>
-	
+
 	<session-config>
 		<session-timeout>1440</session-timeout>
 	</session-config>
+
 	<welcome-file-list>
 		<welcome-file>login.jsp</welcome-file>
 		<welcome-file>index.jsp</welcome-file>

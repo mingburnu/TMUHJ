@@ -45,7 +45,7 @@
 	<s:if test="hasActionMessages()">
 		<script language="javascript" type="text/javascript">
 			var msg = "";
-			<s:iterator value="actionMessages">msg += '<s:property escape="false"/><br>';
+			<s:iterator value="actionMessages">msg += '<s:property escape="true"/><br>';
 			</s:iterator>;
 			goAlert('訊息', msg);
 		</script>

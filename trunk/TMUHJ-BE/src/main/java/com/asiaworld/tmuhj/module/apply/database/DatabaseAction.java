@@ -95,20 +95,184 @@ public class DatabaseAction extends GenericCRUDActionFull<Database> {
 	private InputStream inputStream;
 
 	private String reportFile;
+	
+	private List<String> actionErrors;
 
 	@Override
 	public void validateSave() throws Exception {
-		// TODO Auto-generated method stub
+		actionErrors = new ArrayList<String>();
+		
+		List<Category> categoryList=new ArrayList<Category>(Arrays.asList(Category.values()));
+		categoryList.remove(categoryList.size()-1);
+				
+		List<Type> typeList=new ArrayList<Type>(Arrays.asList(Type.values()));
+		
+		if (StringUtils.isBlank(getEntity().getDbChtTitle()) 
+				&& StringUtils.isBlank(getEntity().getDbEngTitle())){
+			actionErrors.add("沒有資料庫名稱");
+		} 
+		
+		if (actionErrors.size() == 0){
+			if (databaseService.getDatSerNoByChtName(getEntity().getDbChtTitle()) != 0){
+				actionErrors.add("資料庫中文名稱已存在");
+			}
+			
+			if (databaseService.getDatSerNoByEngName(getEntity().getDbEngTitle()) != 0){
+				actionErrors.add("資料庫英文名稱已存在");
+			}
+		}
+		
+		if (StringUtils.isBlank(getEntity().getUrl())) {
+			actionErrors.add("URL必需填寫");
+		} else {
+			String regex = "(@)?(href=')?(HREF=')?(HREF=\")?(href=\")?(http://)?(https://)?[a-zA-Z_0-9\\-]+(\\.\\w[`~!@#$%^&*()_-{[}]|;:<>?,./a-zA-Z0-9\u0000-\uffff\\+=]+)+(/[#&\\n\\-=?\\+\\%/\\.\\w]+)?";
+			Pattern pattern = Pattern.compile(regex);
+			Matcher matcher = pattern.matcher(getEntity().getUrl());
+			if (!matcher.matches()) {
+				actionErrors.add("URL格式不正確");
+			}
+		}
+		
+		if (cusSerNo == null || cusSerNo.length == 0) {
+			actionErrors.add("至少選擇一筆以上購買單位");
+		} else {
+			int i = 0;
+			while (i < cusSerNo.length) {
+				if (!NumberUtils.isDigits(String.valueOf(cusSerNo[i]))
+						|| Long.parseLong(cusSerNo[i]) < 1
+						|| customerService.getBySerNo(Long.parseLong(cusSerNo[i])) == null) {
+					actionErrors.add(cusSerNo[i] + "為不可利用的流水號");
+				}
+				i++;
+			}
+		}
+		
+		boolean isLegalCategory=false;
+		for (int i=0; i < categoryList.size(); i++){
+			if(getRequest().getParameter("rCategory") != null
+					&& getRequest().getParameter("rCategory").equals(categoryList.get(i).getCategory())){
+				isLegalCategory=true;
+			}
+		}
+		
+		if(isLegalCategory){
+			getRequest().setAttribute("rCategory", getRequest().getParameter("rCategory"));
+		} else {
+			actionErrors.add("資源類型錯誤");
+		}
+		
+		boolean isLegalType=false;
+		for (int i=0; i < categoryList.size(); i++){
+			if(getRequest().getParameter("rType") != null
+					&& getRequest().getParameter("rType").equals(typeList.get(i).getType())){
+				isLegalType=true;
+			}
+		}
+		
+		if(isLegalType){
+			getRequest().setAttribute("rType", getRequest().getParameter("rType"));
+		} else {
+			actionErrors.add("資源種類錯誤");
+		}
+		
 	}
 
 	@Override
 	public void validateUpdate() throws Exception {
-		// TODO Auto-generated method stub
+		actionErrors = new ArrayList<String>();
+		
+		List<Category> categoryList=new ArrayList<Category>(Arrays.asList(Category.values()));
+		categoryList.remove(categoryList.size()-1);
+				
+		List<Type> typeList=new ArrayList<Type>(Arrays.asList(Type.values()));
+		
+		if (StringUtils.isBlank(getEntity().getDbChtTitle()) 
+				&& StringUtils.isBlank(getEntity().getDbEngTitle())){
+			actionErrors.add("沒有資料庫名稱");
+		} 
+		
+		if (actionErrors.size() == 0){
+			long datSerNo = databaseService.getDatSerNoByChtName(getEntity().getDbChtTitle());
+			if (datSerNo != 0 && datSerNo != getEntity().getSerNo()){
+				actionErrors.add("資料庫中文名稱已存在");
+			}
+			
+			datSerNo = databaseService.getDatSerNoByEngName(getEntity().getDbEngTitle());
+			if (datSerNo != 0 && datSerNo != getEntity().getSerNo()){
+				actionErrors.add("資料庫英文文名稱已存在");
+			}
+		}
+		
+		if (StringUtils.isBlank(getEntity().getUrl())) {
+			actionErrors.add("URL必需填寫");
+		} else {
+			String regex = "(@)?(href=')?(HREF=')?(HREF=\")?(href=\")?(http://)?(https://)?[a-zA-Z_0-9\\-]+(\\.\\w[`~!@#$%^&*()_-{[}]|;:<>?,./a-zA-Z0-9\u0000-\uffff\\+=]+)+(/[#&\\n\\-=?\\+\\%/\\.\\w]+)?";
+			Pattern pattern = Pattern.compile(regex);
+			Matcher matcher = pattern.matcher(getEntity().getUrl());
+			if (!matcher.matches()) {
+				actionErrors.add("URL格式不正確");
+			}
+		}
+		
+		if (cusSerNo == null || cusSerNo.length == 0) {
+			actionErrors.add("至少選擇一筆以上購買單位");
+		} else {
+			int i = 0;
+			while (i < cusSerNo.length) {
+				if (!NumberUtils.isDigits(String.valueOf(cusSerNo[i]))
+						|| Long.parseLong(cusSerNo[i]) < 1
+						|| customerService.getBySerNo(Long.parseLong(cusSerNo[i])) == null) {
+					actionErrors.add(cusSerNo[i] + "為不可利用的流水號");
+				}
+				i++;
+			}
+		}
+		
+		boolean isLegalCategory=false;
+		for (int i=0; i < categoryList.size(); i++){
+			if(getRequest().getParameter("rCategory") != null
+					&& getRequest().getParameter("rCategory").equals(categoryList.get(i).getCategory())){
+				isLegalCategory=true;
+			}
+		}
+		
+		if(isLegalCategory){
+			getRequest().setAttribute("rCategory", getRequest().getParameter("rCategory"));
+		} else {
+			actionErrors.add("資源類型錯誤");
+		}
+		
+		boolean isLegalType=false;
+		for (int i=0; i < categoryList.size(); i++){
+			if(getRequest().getParameter("rType") != null
+					&& getRequest().getParameter("rType").equals(typeList.get(i).getType())){
+				isLegalType=true;
+			}
+		}
+		
+		if(isLegalType){
+			getRequest().setAttribute("rType", getRequest().getParameter("rType"));
+		} else {
+			actionErrors.add("資源種類錯誤");
+		}
 	}
 
 	@Override
 	public void validateDelete() throws Exception {
-		// TODO Auto-generated method stub
+		actionErrors = new ArrayList<String>();
+		
+		if (checkItem == null || checkItem.length == 0) {
+			actionErrors.add("請選擇一筆或一筆以上的資料");
+		} else {
+			int i = 0;
+			while (i < checkItem.length) {
+				if (!NumberUtils.isDigits(String.valueOf(checkItem[i]))
+						|| Long.parseLong(checkItem[i]) < 1) {
+					actionErrors.add(checkItem[i] + "為不可利用的流水號");
+				}
+				i++;
+			}
+		}
 	}
 
 	@Override
@@ -124,7 +288,7 @@ public class DatabaseAction extends GenericCRUDActionFull<Database> {
 				customerService.getAllCustomers());
 		if (getEntity().getSerNo() != null) {
 			database = databaseService.getBySerNo(getEntity().getSerNo());
-			
+						
 			if (database != null){
 			Iterator<ResourcesUnion> iterator = resourcesUnionService
 					.getResourcesUnionsByObj(getEntity(), Database.class)
@@ -161,6 +325,20 @@ public class DatabaseAction extends GenericCRUDActionFull<Database> {
 
 	@Override
 	public String list() throws Exception {
+		if (StringUtils.isNotEmpty(getRequest().getParameter("option"))) {
+			if (getRequest().getParameter("option").equals("entity.dbChtTitle") ||
+					getRequest().getParameter("option").equals("entity.dbEngTitle")) {
+				getRequest().setAttribute("option", getRequest().getParameter("option"));
+				
+			} else {
+				getRequest().setAttribute("option", "entity.dbChtTitle");
+			}
+			
+		} else {
+				getRequest().setAttribute("option", "entity.dbChtTitle");
+			
+		}
+		
 		DataSet<Database> ds = initDataSet();
 		ds.setPager(Pager.getChangedPager(
 				getRequest().getParameter("recordPerPage"), getRequest()
@@ -189,72 +367,10 @@ public class DatabaseAction extends GenericCRUDActionFull<Database> {
 				
 		List<Type> typeList=new ArrayList<Type>(Arrays.asList(Type.values()));
 		
-		if (StringUtils.isBlank(getEntity().getDbChtTitle()) 
-				&& StringUtils.isBlank(getEntity().getDbEngTitle())){
-			addActionError("沒有資料庫名稱");
-		}
-		
-		if (!hasActionErrors()){
-			if (databaseService.getDatSerNoByChtName(getEntity().getDbChtTitle()) != 0){
-				addActionError("資料庫中文名稱已存在");
-			}
-			
-			if (databaseService.getDatSerNoByEngName(getEntity().getDbEngTitle()) != 0){
-				addActionError("資料庫英文名稱已存在");
-			}
-		}
-		
-		if (StringUtils.isBlank(getEntity().getUrl())) {
-			addActionError("URL必需填寫");
-		} else {
-			String regex = "(@)?(href=')?(HREF=')?(HREF=\")?(href=\")?(http://)?(https://)?[a-zA-Z_0-9\\-]+(\\.\\w[`~!@#$%^&*()_-{[}]|;:<>?,./a-zA-Z0-9\u0000-\uffff\\+=]+)+(/[#&\\n\\-=?\\+\\%/\\.\\w]+)?";
-			Pattern pattern = Pattern.compile(regex);
-			Matcher matcher = pattern.matcher(getEntity().getUrl());
-			if (!matcher.matches()) {
-				addActionError("URL格式不正確");
-			}
-		}
-		
-		if (cusSerNo == null || cusSerNo.length == 0) {
-			addActionError("至少選擇一筆以上購買單位");
-		} else {
-			int i = 0;
-			while (i < cusSerNo.length) {
-				if (!NumberUtils.isDigits(String.valueOf(cusSerNo[i]))
-						|| Long.parseLong(cusSerNo[i]) < 1
-						|| customerService.getBySerNo(Long.parseLong(cusSerNo[i])) == null) {
-					addActionError(cusSerNo[i] + "為不可利用的流水號");
-				}
-				i++;
-			}
-		}
-		
-		boolean isLegalCategory=false;
-		for (int i=0; i < categoryList.size(); i++){
-			if(getRequest().getParameter("resourcesBuyers.rCategory") != null
-					&& getRequest().getParameter("resourcesBuyers.rCategory").equals(categoryList.get(i).getCategory())){
-				isLegalCategory=true;
-			}
-		}
-		
-		if(isLegalCategory){
-			getRequest().setAttribute("rCategory", getRequest().getParameter("resourcesBuyers.rCategory"));
-		} else {
-			addActionError("資源類型錯誤");
-		}
-		
-		boolean isLegalType=false;
-		for (int i=0; i < categoryList.size(); i++){
-			if(getRequest().getParameter("resourcesBuyers.rType") != null
-					&& getRequest().getParameter("resourcesBuyers.rType").equals(typeList.get(i).getType())){
-				isLegalType=true;
-			}
-		}
-		
-		if(isLegalType){
-			getRequest().setAttribute("rType", getRequest().getParameter("resourcesBuyers.rType"));
-		} else {
-			addActionError("資源種類錯誤");
+		validateSave();
+		Iterator<String> iteratorMsg = actionErrors.iterator();
+		while(iteratorMsg.hasNext()){
+			addActionError(iteratorMsg.next());
 		}
 
 		if (!hasActionErrors()) {
@@ -264,9 +380,9 @@ public class DatabaseAction extends GenericCRUDActionFull<Database> {
 							"resourcesBuyers.startDate"), getRequest()
 							.getParameter("resourcesBuyers.maturityDate"),
 							Category.valueOf(getRequest().getParameter(
-									"resourcesBuyers.rCategory")), Type
+									"rCategory")), Type
 									.valueOf(getRequest().getParameter(
-											"resourcesBuyers.rType")), database
+											"rType")), database
 									.getDbChtTitle(), database.getDbEngTitle()),
 							getLoginUser());
 			
@@ -326,88 +442,10 @@ public class DatabaseAction extends GenericCRUDActionFull<Database> {
 				
 		List<Type> typeList=new ArrayList<Type>(Arrays.asList(Type.values()));
 		
-		if (StringUtils.isBlank(getEntity().getDbChtTitle()) 
-				&& StringUtils.isBlank(getEntity().getDbEngTitle())){
-			addActionError("沒有資料庫名稱");
-		}
-		
-		if (!hasActionErrors()){
-			long datSerNo = databaseService.getDatSerNoByChtName(getEntity().getDbChtTitle());
-			if (datSerNo != 0 && datSerNo != getEntity().getSerNo()){
-				addActionError("資料庫中文名稱已存在");
-			}
-			
-			datSerNo = databaseService.getDatSerNoByEngName(getEntity().getDbEngTitle());
-			if (datSerNo != 0 && datSerNo != getEntity().getSerNo()){
-				addActionError("資料庫英文文名稱已存在");
-			}
-		}
-		
-		if (getEntity().getUrl() == null
-				|| getEntity().getUrl().trim().equals("")) {
-			addActionError("URL必需填寫");
-		} else {
-			String regex = "(@)?(href=')?(HREF=')?(HREF=\")?(href=\")?(http://)?(https://)?[a-zA-Z_0-9\\-]+(\\.\\w[`~!@#$%^&*()_-{[}]|;:<>?,./a-zA-Z0-9\u0000-\uffff\\+=]+)+(/[#&\\n\\-=?\\+\\%/\\.\\w]+)?";
-			Pattern pattern = Pattern.compile(regex);
-			Matcher matcher = pattern.matcher(getEntity().getUrl());
-			if (!matcher.matches()) {
-				addActionError("URL格式不正確");
-			}
-		}
-
-		if (cusSerNo == null || cusSerNo.length == 0) {
-			addActionError("至少選擇一筆以上購買單位");
-		} else {
-			int i = 0;
-			while (i < cusSerNo.length) {
-				if (!NumberUtils.isDigits(String.valueOf(cusSerNo[i]))
-						|| Long.parseLong(cusSerNo[i]) < 1
-						|| customerService.getBySerNo(Long.parseLong(cusSerNo[i])) == null) {
-					addActionError(cusSerNo[i] + "為不可利用的流水號");
-				}
-				i++;
-			}
-		}
-
-		if (cusSerNo == null || cusSerNo.length == 0) {
-			addActionError("至少選擇一筆以上購買單位");
-		} else {
-			int i = 0;
-			while (i < cusSerNo.length) {
-				if (!NumberUtils.isDigits(String.valueOf(cusSerNo[i]))
-						|| Long.parseLong(cusSerNo[i]) < 1) {
-					addActionError(cusSerNo[i] + "為不可利用的流水號");
-				}
-				i++;
-			}
-		}
-		
-		boolean isLegalCategory=false;
-		for (int i=0; i < categoryList.size(); i++){
-			if(getRequest().getParameter("resourcesBuyers.rCategory") != null
-					&& getRequest().getParameter("resourcesBuyers.rCategory").equals(categoryList.get(i).getCategory())){
-				isLegalCategory=true;
-			}
-		}
-		
-		if(isLegalCategory){
-			getRequest().setAttribute("rCategory", getRequest().getParameter("resourcesBuyers.rCategory"));
-		} else {
-			addActionError("資源類型錯誤");
-		}
-		
-		boolean isLegalType=false;
-		for (int i=0; i < categoryList.size(); i++){
-			if(getRequest().getParameter("resourcesBuyers.rType") != null
-					&& getRequest().getParameter("resourcesBuyers.rType").equals(typeList.get(i).getType())){
-				isLegalType=true;
-			}
-		}
-		
-		if(isLegalType){
-			getRequest().setAttribute("rType", getRequest().getParameter("resourcesBuyers.rType"));
-		} else {
-			addActionError("資源種類錯誤");
+		validateUpdate();
+		Iterator<String> iteratorMsg = actionErrors.iterator();
+		while(iteratorMsg.hasNext()){
+			addActionError(iteratorMsg.next());
 		}
 
 		if (!hasActionErrors()) {
@@ -420,9 +458,9 @@ public class DatabaseAction extends GenericCRUDActionFull<Database> {
 			resourcesBuyers.setMaturityDate(getRequest().getParameter(
 					"resourcesBuyers.maturityDate"));
 			resourcesBuyers.setrCategory(Category.valueOf(getRequest()
-					.getParameter("resourcesBuyers.rCategory")));
+					.getParameter("rCategory")));
 			resourcesBuyers.setrType(Type.valueOf(getRequest().getParameter(
-					"resourcesBuyers.rType")));
+					"rType")));
 			resourcesBuyers.setDbChtTitle(database.getDbChtTitle());
 			resourcesBuyers.setDbEngTitle(database.getDbEngTitle());
 			resourcesBuyersService.update(resourcesBuyers, getLoginUser());
@@ -500,58 +538,10 @@ public class DatabaseAction extends GenericCRUDActionFull<Database> {
 
 	@Override
 	public String delete() throws Exception {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public String view() throws NumberFormatException, Exception {
-		getRequest().setAttribute("viewSerNo", getRequest().getParameter("viewSerNo"));
-		
-		if (getRequest().getParameter("viewSerNo") == null 
-				|| !NumberUtils.isDigits(getRequest().getParameter("viewSerNo"))){
-			addActionError("流水號不正確");
-			} else {
-				database = databaseService.getBySerNo(Long.parseLong(getRequest()
-						.getParameter("viewSerNo")));
-				if (database == null){
-					addActionError("資料庫不存在");
-					} else {
-						resourcesUnion = resourcesUnionService.getByObjSerNo(
-								database.getSerNo(), Database.class);
-						}
-				}
-		
-		if (!hasActionErrors()){
-		database.setResourcesBuyers(resourcesUnion.getResourcesBuyers());
-
-		List<ResourcesUnion> resourceUnions = resourcesUnionService.getResourcesUnionsByObj(
-				database, Database.class);
-		List<Customer> customers = new ArrayList<Customer>();
-
-		Iterator<ResourcesUnion> iterator = resourceUnions.iterator();
-		while (iterator.hasNext()) {
-			resourcesUnion = iterator.next();
-			customers.add(resourcesUnion.getCustomer());
-		}
-
-		database.setCustomers(customers);
-		setEntity(database);
-		}
-		return VIEW;
-	}
-
-	public String deleteChecked() throws Exception {
-		if (checkItem == null || checkItem.length == 0) {
-			addActionError("請選擇一筆或一筆以上的資料");
-		} else {
-			int i = 0;
-			while (i < checkItem.length) {
-				if (!NumberUtils.isDigits(String.valueOf(checkItem[i]))
-						|| Long.parseLong(checkItem[i]) < 1) {
-					addActionError(checkItem[i] + "為不可利用的流水號");
-				}
-				i++;
-			}
+		validateDelete();
+		Iterator<String> iteratorMsg = actionErrors.iterator();
+		while(iteratorMsg.hasNext()){
+			addActionError(iteratorMsg.next());
 		}
 
 		if (!hasActionErrors()) {
@@ -608,6 +598,42 @@ public class DatabaseAction extends GenericCRUDActionFull<Database> {
 			setDs(ds);
 			return LIST;
 		}
+	}
+
+	public String view() throws NumberFormatException, Exception {
+		getRequest().setAttribute("viewSerNo", getRequest().getParameter("viewSerNo"));
+		
+		if (getRequest().getParameter("viewSerNo") == null 
+				|| !NumberUtils.isDigits(getRequest().getParameter("viewSerNo"))){
+			addActionError("流水號不正確");
+			} else {
+				database = databaseService.getBySerNo(Long.parseLong(getRequest()
+						.getParameter("viewSerNo")));
+				if (database == null){
+					addActionError("資料庫不存在");
+					} else {
+						resourcesUnion = resourcesUnionService.getByObjSerNo(
+								database.getSerNo(), Database.class);
+						}
+				}
+		
+		if (!hasActionErrors()){
+		database.setResourcesBuyers(resourcesUnion.getResourcesBuyers());
+
+		List<ResourcesUnion> resourceUnions = resourcesUnionService.getResourcesUnionsByObj(
+				database, Database.class);
+		List<Customer> customers = new ArrayList<Customer>();
+
+		Iterator<ResourcesUnion> iterator = resourceUnions.iterator();
+		while (iterator.hasNext()) {
+			resourcesUnion = iterator.next();
+			customers.add(resourcesUnion.getCustomer());
+		}
+
+		database.setCustomers(customers);
+		setEntity(database);
+		}
+		return VIEW;
 	}
 
 	public String queue() throws Exception {
@@ -1103,7 +1129,7 @@ public class DatabaseAction extends GenericCRUDActionFull<Database> {
 		}
 		return null;
 	}
-
+	
 	/**
 	 * @return the checkItem
 	 */

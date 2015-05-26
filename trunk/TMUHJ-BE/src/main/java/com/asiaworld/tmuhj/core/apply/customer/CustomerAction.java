@@ -78,23 +78,77 @@ public class CustomerAction extends GenericCRUDActionFull<Customer> {
 	private String reportFile;
 
 	private String jsonString;
+	
+	private List<String> actionErrors;
 
 	@Override
 	public void validateSave() throws Exception {
-		// TODO Auto-generated method stub
+		actionErrors = new ArrayList<String>();
+		
+		String xmlPattern = "[<>&'"+'"'+"]";
+		
+		String emailPattern = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@"
+				+ "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
+		if (StringUtils.isEmpty(getEntity().getName())) {
+			actionErrors.add("用戶名稱不可空白");
+		}
+		
+		if (StringUtils.isNotEmpty(getEntity().getName())) {
+			String name = getEntity().getName().trim().replaceAll(xmlPattern,"<<<");
+			if (name.contains("<<<")) {
+				actionErrors.add("用戶名稱請勿使用&、<、>、單雙引號字元");
+			}
+		}
+		
+		if (StringUtils.isNotEmpty(getEntity().getName())) {
+			if(customerService.getCusSerNoByName(getEntity().getName()) != 0){
+				actionErrors.add("用戶名稱已存在");
+				}
+			}
 
+		if (StringUtils.isNotEmpty(getEntity().getEmail())) {
+			if (!Pattern.compile(emailPattern).matcher(getEntity().getEmail())
+					.matches()) {
+				actionErrors.add("email格式不正確");
+			}
+		}
 	}
 
 	@Override
 	public void validateUpdate() throws Exception {
-		// TODO Auto-generated method stub
+		actionErrors = new ArrayList<String>();
+		
+		String emailPattern = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@"
+				+ "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
 
+		if (StringUtils.isNotBlank(getEntity().getEmail())) {
+			if (!Pattern.compile(emailPattern).matcher(getEntity().getEmail())
+					.matches()) {
+				actionErrors.add("email格式不正確");
+			}
+		}
 	}
 
 	@Override
 	public void validateDelete() throws Exception {
-		// TODO Auto-generated method stub
-
+		actionErrors = new ArrayList<String>();
+		
+		if(getLoginUser().getRole().equals(Role.系統管理員)){
+			if (checkItem == null || checkItem.length == 0) {
+				actionErrors.add("請選擇一筆或一筆以上的資料");
+				} else {
+					int i = 0;
+					while (i < checkItem.length) {
+						if (!NumberUtils.isDigits(String.valueOf(checkItem[i]))
+								|| Long.parseLong(checkItem[i]) < 1 || Long.parseLong(checkItem[i]) == 9) {
+							actionErrors.add(checkItem[i] + "為不可利用的流水號");
+							}
+						i++;
+						}
+					}
+			} else {
+				actionErrors.add("權限不足");
+			}
 	}
 
 	@Override
@@ -113,9 +167,17 @@ public class CustomerAction extends GenericCRUDActionFull<Customer> {
 
 	@Override
 	public String list() throws Exception {
-		getRequest()
-				.setAttribute("option", getRequest().getParameter("option"));
-
+		if (StringUtils.isNotEmpty(getRequest().getParameter("option"))) {
+			if (getRequest().getParameter("option").equals("entity.name") 
+					|| getRequest().getParameter("option").equals("entity.engName")) {
+				getRequest().setAttribute("option", getRequest().getParameter("option"));
+			} else {
+				getRequest().setAttribute("option", "entity.name");
+			}
+		} else {
+			getRequest().setAttribute("option", "entity.name");
+		}
+		
 		DataSet<Customer> ds = initDataSet();
 		ds.setPager(Pager.getChangedPager(
 				getRequest().getParameter("recordPerPage"), getRequest()
@@ -128,21 +190,10 @@ public class CustomerAction extends GenericCRUDActionFull<Customer> {
 
 	@Override
 	public String save() throws Exception {
-		String emailPattern = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@"
-				+ "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
-		if (StringUtils.isBlank(getEntity().getName())) {
-			addActionError("用戶名稱不可空白");
-		}
-
-		if(customerService.getCusSerNoByName(getEntity().getName()) != 0){
-			addActionError("用戶名稱已存在");
-		}
-
-		if (StringUtils.isNotBlank(getEntity().getEmail())) {
-			if (!Pattern.compile(emailPattern).matcher(getEntity().getEmail())
-					.matches()) {
-				addActionError("email格式不正確");
-			}
+		validateSave();
+		Iterator<String> iteratorMsg = actionErrors.iterator();
+		while(iteratorMsg.hasNext()){
+			addActionError(iteratorMsg.next());
 		}
 
 		if (!hasActionErrors()) {
@@ -160,14 +211,10 @@ public class CustomerAction extends GenericCRUDActionFull<Customer> {
 
 	@Override
 	public String update() throws Exception {
-		String emailPattern = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@"
-				+ "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
-
-		if (StringUtils.isNotBlank(getEntity().getEmail())) {
-			if (!Pattern.compile(emailPattern).matcher(getEntity().getEmail())
-					.matches()) {
-				addActionError("email格式不正確");
-			}
+		validateUpdate();
+		Iterator<String> iteratorMsg = actionErrors.iterator();
+		while(iteratorMsg.hasNext()){
+			addActionError(iteratorMsg.next());
 		}
 
 		if (!hasActionErrors()) {
@@ -185,27 +232,11 @@ public class CustomerAction extends GenericCRUDActionFull<Customer> {
 
 	@Override
 	public String delete() throws Exception {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public String deleteChecked() throws Exception {
-		if(getLoginUser().getRole().equals(Role.系統管理員)){
-			if (checkItem == null || checkItem.length == 0) {
-				addActionError("請選擇一筆或一筆以上的資料");
-				} else {
-					int i = 0;
-					while (i < checkItem.length) {
-						if (!NumberUtils.isDigits(String.valueOf(checkItem[i]))
-								|| Long.parseLong(checkItem[i]) < 1 || Long.parseLong(checkItem[i]) == 9) {
-							addActionError(checkItem[i] + "為不可利用的流水號");
-							}
-						i++;
-						}
-					}
-			} else {
-				addActionError("權限不足");
-			}
+		validateDelete();
+		Iterator<String> iteratorMsg = actionErrors.iterator();
+		while(iteratorMsg.hasNext()){
+			addActionError(iteratorMsg.next());
+		}
 
 		if (!hasActionErrors()) {
 			int i = 0;
@@ -267,6 +298,7 @@ public class CustomerAction extends GenericCRUDActionFull<Customer> {
 		while(i < customers.size()){
 			JSONObject obj = new JSONObject();
 			customer=customers.get(i);
+			
 			obj.put("name", customer.getName());
 			obj.put("value", customer.getSerNo());
 			objArray.add(obj);
@@ -277,6 +309,8 @@ public class CustomerAction extends GenericCRUDActionFull<Customer> {
 		
 		return JSON;
 	}
+	
+	 
 
 	public String queue() throws Exception {
 		if (file == null || !file.isFile()) {
@@ -409,17 +443,22 @@ public class CustomerAction extends GenericCRUDActionFull<Customer> {
 						rowValues[1].trim(), rowValues[2], rowValues[5],
 						rowValues[4], rowValues[3], "", "");
 
-				if (customer.getName().isEmpty()
-						|| customer.getEngName().isEmpty()) {
+				if (customer.getName().isEmpty()) {
 					customer.setExistStatus("資料錯誤");
 				} else {
-					long cusSerNo = customerService.getCusSerNoByName(customer
+					String xmlPattern = "[<>&'"+'"'+"]";				
+					String name = customer.getName().replaceAll(xmlPattern,"<<<");
+						if (name.contains("<<<")) {
+							customer.setExistStatus("字元異常");
+						} else {
+							long cusSerNo = customerService.getCusSerNoByName(customer
 							.getName());
-					if (cusSerNo != 0) {
-						customer.setExistStatus("已存在");
-					} else {
-						customer.setExistStatus("正常");
-					}
+							if (cusSerNo != 0) {
+								customer.setExistStatus("已存在");
+								} else {
+									customer.setExistStatus("正常");
+									}
+							}
 
 				}
 				originalData.add(customer);

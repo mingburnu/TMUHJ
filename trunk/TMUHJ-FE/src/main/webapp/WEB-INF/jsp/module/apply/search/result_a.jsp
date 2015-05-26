@@ -17,284 +17,308 @@ function view(serNo){
 	}
 </script>
 <style>
-.list td a:hover{
+.list td a:hover {
 	cursor: pointer;
 }
-</style>	
-	<div id="main_b_box">
-		<!-- 內容開始 -->
-		<div class="result">
+</style>
+<div id="main_b_box">
+	<!-- 內容開始 -->
+	<div class="result">
 
-			<c:choose>
-				<c:when test="${not empty query}">
-					<div class="pager">
-						<table width="100%" border="0" cellpadding="0" cellspacing="0">
-							<tr>
-								<td align="left" class="p_01"><s:form
-										action="apply.database.query.action">
-										<input type="hidden" name="recordPoint"
-											value="${ds.pager.recordPoint}">共 <strong>${ds.pager.totalRecord}</strong>
+		<c:choose>
+			<c:when test="${not empty query}">
+				<div class="pager">
+					<table width="100%" border="0" cellpadding="0" cellspacing="0">
+						<tr>
+							<td align="left" class="p_01"><s:form
+									action="apply.database.query.action">
+									<input type="hidden" name="recordPoint"
+										value="${ds.pager.recordPoint}">共 <strong>${ds.pager.totalRecord}</strong>
 									筆記錄， 每頁顯示筆數 <select name="recordPerPage"
-											id="apply_database_query_action_recordPerPage"
-											onchange="upperChangeSize(this.value);">
-											<option value="${ds.pager.recordPerPage}">${ds.pager.recordPerPage}</option>
-											<option value="5">5</option>
-											<option value="10">10</option>
-											<option value="20">20</option>
-											<option value="50">50</option>
-											<option value="100">100</option>
-										</select>
-										<input type="hidden" name="keywords" value="${keywords }" />
-									</s:form></td>
-								<td align="right" class="p_02"><c:if
-										test="${ds.pager.totalRecord > 0 }"><jsp:include
-											page="/WEB-INF/jsp/layout/pagination.jsp">
-											<jsp:param name="namespace" value="/crud" />
-											<jsp:param name="action" value="apply.database.query" />
-											<jsp:param name="pager" value="${ds.pager}" />
-											<jsp:param name="keywords" value="${keywords}" />
-											<jsp:param name="recordPerPage"
-												value="${ds.pager.recordPerPage}" />
-										</jsp:include></c:if></td>
-							</tr>
-						</table>
-					</div>
-				</c:when>
-				<c:when test="${not empty owner}">
-					<div class="pager">
-						<table width="100%" border="0" cellpadding="0" cellspacing="0">
-							<tr>
-								<td align="left" class="p_01"><s:form
-										action="apply.database.owner.action">
-										<input type="hidden" name="recordPoint"
-											value="${ds.pager.recordPoint}">共 <strong>${ds.pager.totalRecord}</strong>
+										id="apply_database_query_action_recordPerPage"
+										onchange="upperChangeSize(this.value);">
+										<option value="${ds.pager.recordPerPage}">${ds.pager.recordPerPage}</option>
+										<option value="5">5</option>
+										<option value="10">10</option>
+										<option value="20">20</option>
+										<option value="50">50</option>
+										<option value="100">100</option>
+									</select>
+									<c:set var="keywords">
+										<c:out value="${keywords }"></c:out>
+									</c:set>
+									<input type="hidden" name="keywords" value="${keywords }" />
+								</s:form></td>
+							<td align="right" class="p_02"><c:if
+									test="${ds.pager.totalRecord > 0 }"><jsp:include
+										page="/WEB-INF/jsp/layout/pagination.jsp">
+										<jsp:param name="namespace" value="/crud" />
+										<jsp:param name="action" value="apply.database.query" />
+										<jsp:param name="pager" value="${ds.pager}" />
+										<jsp:param name="keywords" value="${keywords}" />
+										<jsp:param name="recordPerPage"
+											value="${ds.pager.recordPerPage}" />
+									</jsp:include></c:if></td>
+						</tr>
+					</table>
+				</div>
+			</c:when>
+			<c:when test="${not empty owner}">
+				<div class="pager">
+					<table width="100%" border="0" cellpadding="0" cellspacing="0">
+						<tr>
+							<td align="left" class="p_01"><s:form
+									action="apply.database.owner.action">
+									<input type="hidden" name="recordPoint"
+										value="${ds.pager.recordPoint}">共 <strong>${ds.pager.totalRecord}</strong>
 									筆記錄， 每頁顯示筆數 <select name="recordPerPage"
-											id="apply_database_owner_action_recordPerPage"
-											onchange="upperChangeSize(this.value);">
-											<option value="${ds.pager.recordPerPage}">${ds.pager.recordPerPage}</option>
-											<option value="5">5</option>
-											<option value="10">10</option>
-											<option value="20">20</option>
-											<option value="50">50</option>
-											<option value="100">100</option>
-										</select>
-										<input type="hidden" name="cusSerNo" value="${cusSerNo }" />
-									</s:form></td>
-								<td align="right" class="p_02"><c:if
-										test="${ds.pager.totalRecord > 0 }"><jsp:include
-											page="/WEB-INF/jsp/layout/pagination.jsp">
-											<jsp:param name="namespace" value="/crud" />
-											<jsp:param name="action" value="apply.database.owner" />
-											<jsp:param name="pager" value="${ds.pager}" />
-											<jsp:param name="cusSerNo" value="${cusSerNo}" />
-											<jsp:param name="recordPerPage"
-												value="${ds.pager.recordPerPage}" />
-										</jsp:include></c:if></td>
-							</tr>
-						</table>
-					</div>
-				</c:when>
-				<c:when test="${not empty focus}">
-					<div class="pager">
-						<table width="100%" border="0" cellpadding="0" cellspacing="0">
-							<tr>
-								<td align="left" class="p_01"><s:form
-										action="apply.database.focus.action">
-										<input type="hidden" name="recordPoint"
-											value="${ds.pager.recordPoint}">共 <strong>${ds.pager.totalRecord}</strong>
+										id="apply_database_owner_action_recordPerPage"
+										onchange="upperChangeSize(this.value);">
+										<option value="${ds.pager.recordPerPage}">${ds.pager.recordPerPage}</option>
+										<option value="5">5</option>
+										<option value="10">10</option>
+										<option value="20">20</option>
+										<option value="50">50</option>
+										<option value="100">100</option>
+									</select>
+									<input type="hidden" name="cusSerNo" value="${cusSerNo }" />
+								</s:form></td>
+							<td align="right" class="p_02"><c:if
+									test="${ds.pager.totalRecord > 0 }"><jsp:include
+										page="/WEB-INF/jsp/layout/pagination.jsp">
+										<jsp:param name="namespace" value="/crud" />
+										<jsp:param name="action" value="apply.database.owner" />
+										<jsp:param name="pager" value="${ds.pager}" />
+										<jsp:param name="cusSerNo" value="${cusSerNo}" />
+										<jsp:param name="recordPerPage"
+											value="${ds.pager.recordPerPage}" />
+									</jsp:include></c:if></td>
+						</tr>
+					</table>
+				</div>
+			</c:when>
+			<c:when test="${not empty focus}">
+				<div class="pager">
+					<table width="100%" border="0" cellpadding="0" cellspacing="0">
+						<tr>
+							<td align="left" class="p_01"><s:form
+									action="apply.database.focus.action">
+									<input type="hidden" name="recordPoint"
+										value="${ds.pager.recordPoint}">共 <strong>${ds.pager.totalRecord}</strong>
 												筆記錄， 每頁顯示筆數 <select name="recordPerPage"
-											id="apply_database_focus_action_recordPerPage"
-											onchange="upperChangeSize(this.value);">
-											<option value="${ds.pager.recordPerPage}">${ds.pager.recordPerPage}</option>
-											<option value="5">5</option>
-											<option value="10">10</option>
-											<option value="20">20</option>
-											<option value="50">50</option>
-											<option value="100">100</option>
-										</select>
-										<input type="hidden" name="option" value="${option }" />
-										<input type="hidden" name="keywords" value="${keywords }" />
-									</s:form></td>
-								<td align="right" class="p_02"><c:if
-										test="${ds.pager.totalRecord > 0 }"><jsp:include
-											page="/WEB-INF/jsp/layout/pagination.jsp">
-											<jsp:param name="namespace" value="/crud" />
-											<jsp:param name="action" value="apply.database.focus" />
-											<jsp:param name="pager" value="${ds.pager}" />
-											<jsp:param name="keywords" value="${keywords}" />
-											<jsp:param name="option" value="${option}" />
-											<jsp:param name="recordPerPage"
-												value="${ds.pager.recordPerPage}" />
-										</jsp:include></c:if></td>
-							</tr>
-						</table>
-					</div>
-				</c:when>
-			</c:choose>
+										id="apply_database_focus_action_recordPerPage"
+										onchange="upperChangeSize(this.value);">
+										<option value="${ds.pager.recordPerPage}">${ds.pager.recordPerPage}</option>
+										<option value="5">5</option>
+										<option value="10">10</option>
+										<option value="20">20</option>
+										<option value="50">50</option>
+										<option value="100">100</option>
+									</select>
+									<c:set var="option">
+										<c:out value="${option }"></c:out>
+									</c:set>
+									<c:set var="keywords">
+										<c:out value="${keywords }"></c:out>
+									</c:set>
+									<input type="hidden" name="option" value="${option }" />
+									<input type="hidden" name="keywords" value="${keywords }" />
+								</s:form></td>
+							<td align="right" class="p_02"><c:if
+									test="${ds.pager.totalRecord > 0 }"><jsp:include
+										page="/WEB-INF/jsp/layout/pagination.jsp">
+										<jsp:param name="namespace" value="/crud" />
+										<jsp:param name="action" value="apply.database.focus" />
+										<jsp:param name="pager" value="${ds.pager}" />
+										<jsp:param name="keywords" value="${keywords}" />
+										<jsp:param name="option" value="${option}" />
+										<jsp:param name="recordPerPage"
+											value="${ds.pager.recordPerPage}" />
+									</jsp:include></c:if></td>
+						</tr>
+					</table>
+				</div>
+			</c:when>
+		</c:choose>
 
-			<div class="list">
-				<table width="100%" border="0" cellpadding="0" cellspacing="0">
-					<tr valign="top">
-						<th width="40">序號</th>
-						<th width="545">題名</th>
-						<th width="203">出版社</th>
-						<th width="92">收錄年代</th>
-					</tr>
-					<c:forEach var="item" items="${ds.results}" varStatus="status">
-						<c:set var="num" scope="session" value="${(status.index+1)%2}" />
-						<c:set var="orderInt" scope="session"
-							value="${ds.pager.offset+(status.index+1)}" />
-						<c:choose>
-							<c:when test="${num > 0}">
-								<tr valign="top">
-									<td>${orderInt}</td>
-									<c:choose>
-										<c:when test="${not empty item.dbEngTitle}">
-											<td><a onclick="view(${item.serNo})">${item.dbEngTitle}</a></td>
+		<div class="list">
+			<table width="100%" border="0" cellpadding="0" cellspacing="0">
+				<tr valign="top">
+					<th width="40">序號</th>
+					<th width="545">題名</th>
+					<th width="203">出版社</th>
+					<th width="92">收錄年代</th>
+				</tr>
+				<c:forEach var="item" items="${ds.results}" varStatus="status">
+					<c:set var="num" scope="session" value="${(status.index+1)%2}" />
+					<c:set var="orderInt" scope="session"
+						value="${ds.pager.offset+(status.index+1)}" />
+					<c:choose>
+						<c:when test="${num > 0}">
+							<tr valign="top">
+								<td>${orderInt}</td>
+								<c:choose>
+									<c:when test="${not empty item.dbEngTitle}">
+										<td><a onclick="view(${item.serNo})"><c:out
+													value="${item.dbEngTitle}" /></a></td>
+									</c:when>
+									<c:otherwise>
+										<td><a onclick="view(${item.serNo})"><c:out
+													value="${item.dbChtTitle}" /></a></td>
+									</c:otherwise>
+								</c:choose>
+								<td>${item.publishName}</td>
+								<td><c:choose>
+										<c:when test="${not empty item.indexedYears }">
+											<c:out value="${item.indexedYears}" />
 										</c:when>
-										<c:otherwise>
-											<td><a onclick="view(${item.serNo})">${item.dbChtTitle}</a></td>
-										</c:otherwise>
-									</c:choose>
-									<td>${item.publishName}</td>
-									<td><c:choose>
-											<c:when test="${not empty item.indexedYears }">
-											${item.indexedYears}</c:when>
-											<c:otherwise>N/A</c:otherwise>
-										</c:choose></td>
-								</tr>
-							</c:when>
-							<c:otherwise>
-								<tr valign="top" class="odd">
-									<td>${orderInt}</td>
-									<c:choose>
-										<c:when test="${not empty item.dbEngTitle}">
-											<td><a onclick="view(${item.serNo})">${item.dbEngTitle}</a></td>
+										<c:otherwise>N/A</c:otherwise>
+									</c:choose></td>
+							</tr>
+						</c:when>
+						<c:otherwise>
+							<tr valign="top" class="odd">
+								<td>${orderInt}</td>
+								<c:choose>
+									<c:when test="${not empty item.dbEngTitle}">
+										<td><a onclick="view(${item.serNo})"><c:out
+													value="${item.dbEngTitle}" /></a></td>
+									</c:when>
+									<c:otherwise>
+										<td><a onclick="view(${item.serNo})"><c:out
+													value="${item.dbChtTitle}" /></a></td>
+									</c:otherwise>
+								</c:choose>
+								<td>${item.publishName}</td>
+								<td><c:choose>
+										<c:when test="${not empty item.indexedYears }">
+											<c:out value="${item.indexedYears}" />
 										</c:when>
-										<c:otherwise>
-											<td><a onclick="view(${item.serNo})">${item.dbChtTitle}</a></td>
-										</c:otherwise>
-									</c:choose>
-									<td>${item.publishName}</td>
-									<td><c:choose>
-											<c:when test="${not empty item.indexedYears }">
-											${item.indexedYears}</c:when>
-											<c:otherwise>N/A</c:otherwise>
-										</c:choose></td>
-								</tr>
-							</c:otherwise>
-						</c:choose>
-					</c:forEach>
-				</table>
-			</div>
-
-			<c:choose>
-				<c:when test="${not empty query}">
-					<div class="pager">
-						<table width="100%" border="0" cellpadding="0" cellspacing="0">
-							<tr>
-								<td align="left" class="p_01"><s:form
-										action="apply.database.query.action">
-										<input type="hidden" name="recordPoint"
-											value="${ds.pager.recordPoint}">共 <strong>${ds.pager.totalRecord}</strong>
-									筆記錄， 每頁顯示筆數 <select name="recordPerPage"
-											id="apply_database_query_action_recordPerPage"
-											onchange="bottomChangeSize(this.value);">
-											<option value="${ds.pager.recordPerPage}">${ds.pager.recordPerPage}</option>
-											<option value="5">5</option>
-											<option value="10">10</option>
-											<option value="20">20</option>
-											<option value="50">50</option>
-											<option value="100">100</option>
-										</select>
-										<input type="hidden" name="keywords" value="${keywords }" />
-									</s:form></td>
-								<td align="right" class="p_02"><c:if
-										test="${ds.pager.totalRecord > 0 }"><jsp:include
-											page="/WEB-INF/jsp/layout/pagination.jsp">
-											<jsp:param name="namespace" value="/crud" />
-											<jsp:param name="action" value="apply.database.query" />
-											<jsp:param name="pager" value="${ds.pager}" />
-											<jsp:param name="keywords" value="${keywords}" />
-											<jsp:param name="recordPerPage"
-												value="${ds.pager.recordPerPage}" />
-										</jsp:include></c:if></td>
+										<c:otherwise>N/A</c:otherwise>
+									</c:choose></td>
 							</tr>
-						</table>
-					</div>
-				</c:when>
-				<c:when test="${not empty owner}">
-					<div class="pager">
-						<table width="100%" border="0" cellpadding="0" cellspacing="0">
-							<tr>
-								<td align="left" class="p_01"><s:form
-										action="apply.database.owner.action">
-										<input type="hidden" name="recordPoint"
-											value="${ds.pager.recordPoint}">共 <strong>${ds.pager.totalRecord}</strong>
-									筆記錄， 每頁顯示筆數 <select name="recordPerPage"
-											id="apply_database_owner_action_recordPerPage"
-											onchange="bottomChangeSize(this.value);">
-											<option value="${ds.pager.recordPerPage}">${ds.pager.recordPerPage}</option>
-											<option value="5">5</option>
-											<option value="10">10</option>
-											<option value="20">20</option>
-											<option value="50">50</option>
-											<option value="100">100</option>
-										</select>
-										<input type="hidden" name="cusSerNo" value="${cusSerNo }" />
-									</s:form></td>
-								<td align="right" class="p_02"><c:if
-										test="${ds.pager.totalRecord > 0 }"><jsp:include
-											page="/WEB-INF/jsp/layout/pagination.jsp">
-											<jsp:param name="namespace" value="/crud" />
-											<jsp:param name="action" value="apply.database.owner" />
-											<jsp:param name="pager" value="${ds.pager}" />
-											<jsp:param name="cusSerNo" value="${cusSerNo}" />
-											<jsp:param name="recordPerPage"
-												value="${ds.pager.recordPerPage}" />
-										</jsp:include></c:if></td>
-							</tr>
-						</table>
-					</div>
-				</c:when>
-				<c:when test="${not empty focus}">
-					<div class="pager">
-						<table width="100%" border="0" cellpadding="0" cellspacing="0">
-							<tr>
-								<td align="left" class="p_01"><s:form
-										action="apply.database.focus.action">
-										<input type="hidden" name="recordPoint"
-											value="${ds.pager.recordPoint}">共 <strong>${ds.pager.totalRecord}</strong>
-									筆記錄， 每頁顯示筆數 <select name="recordPerPage"
-											id="apply_database_focus_action_recordPerPage"
-											onchange="bottomChangeSize(this.value);">
-											<option value="${ds.pager.recordPerPage}">${ds.pager.recordPerPage}</option>
-											<option value="5">5</option>
-											<option value="10">10</option>
-											<option value="20">20</option>
-											<option value="50">50</option>
-											<option value="100">100</option>
-										</select>
-										<input type="hidden" name="option" value="${option }" />
-										<input type="hidden" name="keywords" value="${keywords }" />
-									</s:form></td>
-								<td align="right" class="p_02"><c:if
-										test="${ds.pager.totalRecord > 0 }"><jsp:include
-											page="/WEB-INF/jsp/layout/pagination.jsp">
-											<jsp:param name="namespace" value="/crud" />
-											<jsp:param name="action" value="apply.database.focus" />
-											<jsp:param name="pager" value="${ds.pager}" />
-											<jsp:param name="keywords" value="${keywords}" />
-											<jsp:param name="option" value="${option}" />
-											<jsp:param name="recordPerPage"
-												value="${ds.pager.recordPerPage}" />
-										</jsp:include></c:if></td>
-							</tr>
-						</table>
-					</div>
-				</c:when>
-			</c:choose>
-
+						</c:otherwise>
+					</c:choose>
+				</c:forEach>
+			</table>
 		</div>
-		<!-- 內容結束 -->
+
+		<c:choose>
+			<c:when test="${not empty query}">
+				<div class="pager">
+					<table width="100%" border="0" cellpadding="0" cellspacing="0">
+						<tr>
+							<td align="left" class="p_01"><s:form
+									action="apply.database.query.action">
+									<input type="hidden" name="recordPoint"
+										value="${ds.pager.recordPoint}">共 <strong>${ds.pager.totalRecord}</strong>
+									筆記錄， 每頁顯示筆數 <select name="recordPerPage"
+										id="apply_database_query_action_recordPerPage"
+										onchange="bottomChangeSize(this.value);">
+										<option value="${ds.pager.recordPerPage}">${ds.pager.recordPerPage}</option>
+										<option value="5">5</option>
+										<option value="10">10</option>
+										<option value="20">20</option>
+										<option value="50">50</option>
+										<option value="100">100</option>
+									</select>
+									<c:set var="keywords">
+										<c:out value="${keywords }"></c:out>
+									</c:set>
+									<input type="hidden" name="keywords" value="${keywords }" />
+								</s:form></td>
+							<td align="right" class="p_02"><c:if
+									test="${ds.pager.totalRecord > 0 }"><jsp:include
+										page="/WEB-INF/jsp/layout/pagination.jsp">
+										<jsp:param name="namespace" value="/crud" />
+										<jsp:param name="action" value="apply.database.query" />
+										<jsp:param name="pager" value="${ds.pager}" />
+										<jsp:param name="keywords" value="${keywords}" />
+										<jsp:param name="recordPerPage"
+											value="${ds.pager.recordPerPage}" />
+									</jsp:include></c:if></td>
+						</tr>
+					</table>
+				</div>
+			</c:when>
+			<c:when test="${not empty owner}">
+				<div class="pager">
+					<table width="100%" border="0" cellpadding="0" cellspacing="0">
+						<tr>
+							<td align="left" class="p_01"><s:form
+									action="apply.database.owner.action">
+									<input type="hidden" name="recordPoint"
+										value="${ds.pager.recordPoint}">共 <strong>${ds.pager.totalRecord}</strong>
+									筆記錄， 每頁顯示筆數 <select name="recordPerPage"
+										id="apply_database_owner_action_recordPerPage"
+										onchange="bottomChangeSize(this.value);">
+										<option value="${ds.pager.recordPerPage}">${ds.pager.recordPerPage}</option>
+										<option value="5">5</option>
+										<option value="10">10</option>
+										<option value="20">20</option>
+										<option value="50">50</option>
+										<option value="100">100</option>
+									</select>
+									<input type="hidden" name="cusSerNo" value="${cusSerNo }" />
+								</s:form></td>
+							<td align="right" class="p_02"><c:if
+									test="${ds.pager.totalRecord > 0 }"><jsp:include
+										page="/WEB-INF/jsp/layout/pagination.jsp">
+										<jsp:param name="namespace" value="/crud" />
+										<jsp:param name="action" value="apply.database.owner" />
+										<jsp:param name="pager" value="${ds.pager}" />
+										<jsp:param name="cusSerNo" value="${cusSerNo}" />
+										<jsp:param name="recordPerPage"
+											value="${ds.pager.recordPerPage}" />
+									</jsp:include></c:if></td>
+						</tr>
+					</table>
+				</div>
+			</c:when>
+			<c:when test="${not empty focus}">
+				<div class="pager">
+					<table width="100%" border="0" cellpadding="0" cellspacing="0">
+						<tr>
+							<td align="left" class="p_01"><s:form
+									action="apply.database.focus.action">
+									<input type="hidden" name="recordPoint"
+										value="${ds.pager.recordPoint}">共 <strong>${ds.pager.totalRecord}</strong>
+									筆記錄， 每頁顯示筆數 <select name="recordPerPage"
+										id="apply_database_focus_action_recordPerPage"
+										onchange="bottomChangeSize(this.value);">
+										<option value="${ds.pager.recordPerPage}">${ds.pager.recordPerPage}</option>
+										<option value="5">5</option>
+										<option value="10">10</option>
+										<option value="20">20</option>
+										<option value="50">50</option>
+										<option value="100">100</option>
+									</select>
+									<c:set var="option">
+										<c:out value="${option }"></c:out>
+									</c:set>
+									<c:set var="keywords">
+										<c:out value="${keywords }"></c:out>
+									</c:set>
+									<input type="hidden" name="option" value="${option }" />
+									<input type="hidden" name="keywords" value="${keywords }" />
+								</s:form></td>
+							<td align="right" class="p_02"><c:if
+									test="${ds.pager.totalRecord > 0 }"><jsp:include
+										page="/WEB-INF/jsp/layout/pagination.jsp">
+										<jsp:param name="namespace" value="/crud" />
+										<jsp:param name="action" value="apply.database.focus" />
+										<jsp:param name="pager" value="${ds.pager}" />
+										<jsp:param name="keywords" value="${keywords}" />
+										<jsp:param name="option" value="${option}" />
+										<jsp:param name="recordPerPage"
+											value="${ds.pager.recordPerPage}" />
+									</jsp:include></c:if></td>
+						</tr>
+					</table>
+				</div>
+			</c:when>
+		</c:choose>
+
 	</div>
+	<!-- 內容結束 -->
+</div>

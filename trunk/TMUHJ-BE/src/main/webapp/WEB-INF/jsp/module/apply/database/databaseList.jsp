@@ -17,7 +17,7 @@ $(document).ready(function() {
 });
 
 $(document).ready(function() {
-	$("select#listForm_searchCondition").val('<%=request.getParameter("option")%>');
+	$("select#listForm_searchCondition").val('${option }');
 });
 
 //IE press Enter GoPage
@@ -56,7 +56,7 @@ function goDelete() {
 		var f = {
                 trueText:'是',
                 trueFunc:function(){
-                        var url = '<%=request.getContextPath()%>/crud/apply.database.deleteChecked.action';
+                        var url = "<c:url value='/crud/apply.database.delete.action'/>";
                         var data = $('#apply_database_list').serialize()+'&pager.offset='+'${ds.pager.offset}'+'&pager.currentPage='+'${ds.pager.currentPage}'+'&pager.offsetPoint'+'${ds.pager.offset}';
                         goMain(url,'',data);
                 },
@@ -144,17 +144,17 @@ function goImport(){
 									<option value="entity.dbEngTitle">資料庫英文題名</option>
 							</select></td>
 							<c:set var="option">
-								<%=request.getParameter("option")%>
+								<c:out value="${option }" />
 							</c:set>
 							<c:choose>
 								<c:when test="${not empty option }">
+									<c:set var="find">
+										<c:out
+											value='<%=request.getParameter(request
+									.getAttribute("option").toString())%>' />
+									</c:set>
 									<td align="left"><input type="text" name="${option }"
-										maxlength="20" id="search" class="input_text"
-										value="<%if (request
-								.getParameter(request.getParameter("option")) != null) {
-							out.print(request.getParameter(request
-									.getParameter("option")));
-						}%>">
+										maxlength="20" id="search" class="input_text" value="${find }">
 									</td>
 								</c:when>
 								<c:otherwise>
@@ -209,12 +209,16 @@ function goImport(){
 								type="checkbox" class="checkbox" name="checkItem"
 								value="${item.serNo}"></td>
 							<td><c:choose>
-									<c:when test="${not empty item.dbEngTitle }">${item.dbEngTitle }</c:when>
-									<c:otherwise>${item.dbChtTitle }</c:otherwise>
+									<c:when test="${not empty item.dbEngTitle }">
+										<c:out value="${item.dbEngTitle }" />
+									</c:when>
+									<c:otherwise>
+										<c:out value="${item.dbChtTitle }" />
+									</c:otherwise>
 								</c:choose></td>
 							<td align="center">${item.resourcesBuyers.rType.type }</td>
-							<td>${item.resourcesBuyers.cUid }</td>
-							<td align="center">${item.resourcesBuyers.uUid }</td>
+							<td><c:out value="${item.cUid }" /></td>
+							<td align="center"><c:out value="${item.uUid }" /></td>
 							<td align="center"><a class="state-default2"
 								onclick="goView(${item.serNo });"><span
 									class="icon-default icon-view"></span>檢視</a> <a
@@ -273,7 +277,7 @@ function goImport(){
 	<s:if test="hasActionMessages()">
 		<script language="javascript" type="text/javascript">
             var msg = "";
-            <s:iterator value="actionMessages">msg += '<s:property escape="false"/><br>';
+            <s:iterator value="actionMessages">msg += '<s:property escape="true"/><br>';
             </s:iterator>;
             goAlert('訊息', msg);
         </script>
@@ -281,7 +285,7 @@ function goImport(){
 	<s:if test="hasActionErrors()">
 		<script language="javascript" type="text/javascript">
 			var msg = "";
-			<s:iterator value="actionErrors">msg += '<s:property escape="false"/><br>';
+			<s:iterator value="actionErrors">msg += '<s:property escape="true"/><br>';
 			</s:iterator>;
 			goAlert('訊息', msg);
 		</script>

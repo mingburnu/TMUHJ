@@ -17,7 +17,7 @@ $(document).ready(function() {
 });
 
 $(document).ready(function() {
-	$("select#listForm_searchCondition").val('<%=request.getParameter("option")%>');
+	$("select#listForm_searchCondition").val('${option }');
 });
 
 //IE press Enter GoPage
@@ -56,7 +56,7 @@ function goDelete() {
 		var f = {
                 trueText:'是',
                 trueFunc:function(){
-                        var url = '<%=request.getContextPath()%>/crud/apply.ebook.deleteChecked.action';
+                        var url = "<c:url value='/crud/apply.ebook.delete.action'/>";
                         var data = $('#apply_ebook_list').serialize()+'&pager.offset='+'${ds.pager.offset}'+'&pager.currentPage='+'${ds.pager.currentPage}'+'&pager.offsetPoint'+'${ds.pager.offset}';
                         goMain(url,'',data);
                 },
@@ -145,17 +145,17 @@ function goImport(){
 									<option value="isbn">ISBN</option>
 							</select></td>
 							<c:set var="option">
-								<%=request.getParameter("option")%>
+								<c:out value="${option }" />
 							</c:set>
 							<c:choose>
 								<c:when test="${not empty option }">
+									<c:set var="find">
+										<c:out
+											value='<%=request.getParameter(request
+									.getAttribute("option").toString())%>' />
+									</c:set>
 									<td align="left"><input type="text" name="${option }"
-										maxlength="20" id="search" class="input_text"
-										value="<%if (request
-								.getParameter(request.getParameter("option")) != null) {
-							out.print(request.getParameter(request
-									.getParameter("option")));
-						}%>">
+										maxlength="20" id="search" class="input_text" value="${find }">
 									</td>
 								</c:when>
 								<c:otherwise>
@@ -208,10 +208,10 @@ function goImport(){
 							<td align="center" class="td_first" nowrap><input
 								type="checkbox" class="checkbox" name="checkItem"
 								value="${item.serNo}"></td>
-							<td>${item.bookName }</td>
+							<td><c:out value="${item.bookName }" /></td>
 							<td align="center">${item.resourcesBuyers.rType.type }</td>
-							<td>${item.resourcesBuyers.cUid }</td>
-							<td align="center">${item.resourcesBuyers.uUid }</td>
+							<td><c:out value="${item.cUid }" /></td>
+							<td align="center"><c:out value="${item.uUid }" /></td>
 							<td align="center"><a class="state-default2"
 								onclick="goView(${item.serNo });"><span
 									class="icon-default icon-view"></span>檢視</a> <a
@@ -279,7 +279,7 @@ function goImport(){
 		<script language="javascript" type="text/javascript">
 			var msg = "";
 			<s:iterator value="actionErrors">
-			msg += '<s:property escape="false"/><br>';
+			msg += '<s:property escape="true"/><br>';
 			</s:iterator>;
 			goAlert('訊息', msg);
 		</script>

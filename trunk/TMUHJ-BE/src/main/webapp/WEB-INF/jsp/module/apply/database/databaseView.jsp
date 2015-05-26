@@ -8,47 +8,49 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title></title>
 <c:choose>
-<c:when test="${empty viewSerNo}">
-<script type="text/javascript">
-	//關閉並更新上一層資料
-	function closeDetail_ToQuery() {
-		$("#div_Detail").hide();
-		UI_Resize();
-		if ($("form#apply_database_list input#listForm_currentPageHeader")
-				.val() != null) {
-			gotoPage($(
-					"form#apply_database_list input#listForm_currentPageHeader")
-					.val());
-			resetCloseDetail();
-		} else {
-			goSearch();
-			resetCloseDetail();
-		}
-	}
-	
-	function closeDetail() {
-		$("#div_Detail").hide();
-		UI_Resize();
-		if ($("form#apply_database_list input#listForm_currentPageHeader")
-				.val() != null) {
-			gotoPage($(
-					"form#apply_database_list input#listForm_currentPageHeader")
-					.val());
-			resetCloseDetail();
-		} else {
-			goSearch();
-			resetCloseDetail();
-		}
-	}
-</script>
-</c:when>
-<c:otherwise>
-<script type="text/javascript">
-	function closeDetail_ToQuery() {
-		closeDetail();
-	}
-</script>	
-</c:otherwise>
+	<c:when test="${empty viewSerNo}">
+		<script type="text/javascript">
+			//關閉並更新上一層資料
+			function closeDetail_ToQuery() {
+				$("#div_Detail").hide();
+				UI_Resize();
+				if ($(
+						"form#apply_database_list input#listForm_currentPageHeader")
+						.val() != null) {
+					gotoPage($(
+							"form#apply_database_list input#listForm_currentPageHeader")
+							.val());
+					resetCloseDetail();
+				} else {
+					goSearch();
+					resetCloseDetail();
+				}
+			}
+
+			function closeDetail() {
+				$("#div_Detail").hide();
+				UI_Resize();
+				if ($(
+						"form#apply_database_list input#listForm_currentPageHeader")
+						.val() != null) {
+					gotoPage($(
+							"form#apply_database_list input#listForm_currentPageHeader")
+							.val());
+					resetCloseDetail();
+				} else {
+					goSearch();
+					resetCloseDetail();
+				}
+			}
+		</script>
+	</c:when>
+	<c:otherwise>
+		<script type="text/javascript">
+			function closeDetail_ToQuery() {
+				closeDetail();
+			}
+		</script>
+	</c:otherwise>
 </c:choose>
 </head>
 <body>
@@ -58,31 +60,31 @@
 				<tbody>
 					<tr>
 						<th width="130">資料庫中文題名<span class="required">(&#8226;)</span></th>
-						<td>${entity.dbChtTitle }</td>
+						<td><c:out value="${entity.dbChtTitle }" /></td>
 					</tr>
 					<tr>
 						<th width="130">資料庫英文題名<span class="required">(&#8226;)</span></th>
-						<td>${entity.dbEngTitle }</td>
+						<td><c:out value="${entity.dbEngTitle }" /></td>
 					</tr>
 					<tr>
 						<th width="130">出版社</th>
-						<td>${entity.publishName }</td>
+						<td><c:out value="${entity.publishName }" /></td>
 					</tr>
 					<tr>
 						<th width="130">語文</th>
-						<td>${entity.languages }</td>
+						<td><c:out value="${entity.languages }" /></td>
 					</tr>
 					<tr>
 						<th width="130">URL<span class="required">(&#8226;)</span></th>
-						<td>${entity.url }</td>
+						<td><c:out value="${entity.url }" /></td>
 					</tr>
 					<tr>
 						<th width="130">起始日</th>
-						<td>${entity.resourcesBuyers.startDate}</td>
+						<td><c:out value="${entity.resourcesBuyers.startDate}" /></td>
 					</tr>
 					<tr>
 						<th width="130">到期日</th>
-						<td>${entity.resourcesBuyers.maturityDate}</td>
+						<td><c:out value="${entity.resourcesBuyers.maturityDate}" /></td>
 					</tr>
 					<tr>
 						<th width="130">資源類型</th>
@@ -96,7 +98,9 @@
 						<th width="130">購買單位名稱</th>
 						<td><c:forEach var="item" items="${entity.customers}"
 								varStatus="status">
-								<div>${item.name}</div>
+								<div>
+									<c:out value="${item.name}" />
+								</div>
 							</c:forEach></td>
 					</tr>
 
@@ -111,7 +115,7 @@
 	<s:if test="hasActionMessages()">
 		<script language="javascript" type="text/javascript">
 			var msg = "";
-			<s:iterator value="actionMessages">msg += '<s:property escape="false"/>\n';
+			<s:iterator value="actionMessages">msg += '<s:property escape="true"/>\n';
 			</s:iterator>;
 			goAlert('訊息', msg);
 		</script>

@@ -103,12 +103,12 @@ public class Pager implements Serializable {
 				&& NumberUtils.isDigits(recordPoint)
 				&& Integer.parseInt(recordPoint) >= 0) {
 
-			if (Integer.parseInt(recordPerPage) <= 100) {
+			if (Integer.parseInt(recordPerPage) <= 50) {
 				pager.setRecordPerPage(Integer.parseInt(recordPerPage));
 			} else {
-				pager.setRecordPerPage(100);
+				pager.setRecordPerPage(50);
 			}
-			
+
 			pager.setCurrentPage(Integer.parseInt(recordPoint)
 					/ Integer.parseInt(recordPerPage) + 1);
 			pager.setOffset(Integer.parseInt(recordPerPage)
@@ -117,12 +117,25 @@ public class Pager implements Serializable {
 
 			return pager;
 		} else if (recordPerPage != null && NumberUtils.isDigits(recordPerPage)
-				&& Integer.parseInt(recordPerPage) > 0 && recordPoint == null) {
-			
-			if (Integer.parseInt(recordPerPage) <= 100) {
+				&& Integer.parseInt(recordPerPage) > 0 && recordPoint != null
+				&& !NumberUtils.isDigits(recordPoint)) {
+
+			if (Integer.parseInt(recordPerPage) <= 50) {
 				pager.setRecordPerPage(Integer.parseInt(recordPerPage));
 			} else {
-				pager.setRecordPerPage(100);
+				pager.setRecordPerPage(50);
+			}
+
+			pager.setRecordPerPage(Integer.parseInt(recordPerPage));
+			pager.setRecordPoint(pager.getOffset());
+			return pager;
+		} else if (recordPerPage != null && NumberUtils.isDigits(recordPerPage)
+				&& Integer.parseInt(recordPerPage) > 0 && recordPoint == null) {
+
+			if (Integer.parseInt(recordPerPage) <= 50) {
+				pager.setRecordPerPage(Integer.parseInt(recordPerPage));
+			} else {
+				pager.setRecordPerPage(50);
 			}
 
 			pager.setRecordPerPage(Integer.parseInt(recordPerPage));

@@ -64,6 +64,7 @@
 		} else {
 			//$("form").submit();
 			var url = $("form").attr("action") + "?" + $("form").serialize();
+			alert(url);
 			$.ajax({
 				url : url,
 				success : function(result) {
@@ -73,112 +74,111 @@
 		}
 	}
 </script>
-			<table width="100%" border="0" cellpadding="0" cellspacing="0"
-				class="table_container">
-				<tr valign="top">
-					<td class="L">
-						<div id="main_box">
-							<!-- 內容開始 -->
-							<s:form action="apply.database.focus" namespace="/crud"
-								method="post" onsubmit="return false;">
-								<table width="100%" border="0" cellpadding="0" cellspacing="0"
-									class="table_02">
-									<tr valign="middle">
-										<td class="t_01"><img
-											src="<c:url value = '/'/>resources/images/txt_01.png"></td>
-										<td class="t_02"><label><input name="type"
-												class="v_type" value="database" type="radio"
-												onClick="showType(this.value);" checked> 資料庫</label> <label><input
-												name="type" class="v_type" value="ebook" type="radio"
-												onClick="showType(this.value);"> 電子書</label> <label><input
-												name="type" class="v_type" value="journal" type="radio"
-												onClick="showType(this.value);"> 期刊</label></td>
-									</tr>
-									<tr valign="middle">
-										<td class="t_01"><img
-											src="<c:url value = '/'/>resources/images/txt_02.png"></td>
-										<td class="t_02">
+<table width="100%" border="0" cellpadding="0" cellspacing="0"
+	class="table_container">
+	<tr valign="top">
+		<td class="L">
+			<div id="main_box">
+				<!-- 內容開始 -->
+				<s:form action="apply.database.focus" namespace="/crud"
+					method="post" onsubmit="return false;">
+					<table width="100%" border="0" cellpadding="0" cellspacing="0"
+						class="table_02">
+						<tr valign="middle">
+							<td class="t_01"><img
+								src="<c:url value = '/'/>resources/images/txt_01.png"></td>
+							<td class="t_02"><label><input name="type"
+									class="v_type" value="database" type="radio"
+									onClick="showType(this.value);" checked> 資料庫</label> <label><input
+									name="type" class="v_type" value="ebook" type="radio"
+									onClick="showType(this.value);"> 電子書</label> <label><input
+									name="type" class="v_type" value="journal" type="radio"
+									onClick="showType(this.value);"> 期刊</label></td>
+						</tr>
+						<tr valign="middle">
+							<td class="t_01"><img
+								src="<c:url value = '/'/>resources/images/txt_02.png"></td>
+							<td class="t_02">
 
-											<table border="0" cellpadding="0" cellspacing="0">
-												<tr>
-													<td>
-														<div class="select_01 select_database">
-															<input type="hidden" value="中文題名" name="option"
-																id="database" />
-															<div>
-																<a href="javascript:void(0);">中文題名</a>
-															</div>
-															<ul>
-																<li><a href="javascript:void(0);"
-																	onClick="clickItem(this);">中文題名</a></li>
-																<li><a href="javascript:void(0);"
-																	onClick="clickItem(this);">英文題名</a></li>
-																<li><a href="javascript:void(0);"
-																	onClick="clickItem(this);">出版社</a></li>
-																<li><a href="javascript:void(0);"
-																	onClick="clickItem(this);">內容描述</a></li>
-															</ul>
-														</div>
+								<table border="0" cellpadding="0" cellspacing="0">
+									<tr>
+										<td>
+											<div class="select_01 select_database">
+												<input type="hidden" value="中文題名" name="option"
+													id="database" />
+												<div>
+													<a href="javascript:void(0);">中文題名</a>
+												</div>
+												<ul>
+													<li><a href="javascript:void(0);"
+														onClick="clickItem(this);">中文題名</a></li>
+													<li><a href="javascript:void(0);"
+														onClick="clickItem(this);">英文題名</a></li>
+													<li><a href="javascript:void(0);"
+														onClick="clickItem(this);">出版社</a></li>
+													<li><a href="javascript:void(0);"
+														onClick="clickItem(this);">內容描述</a></li>
+												</ul>
+											</div>
 
-														<div class="select_01 select_ebook">
-															<input type="hidden" value="書名" id="ebook" />
-															<div>
-																<a href="javascript:void(0);">書名</a>
-															</div>
-															<ul>
-																<li><a href="javascript:void(0);"
-																	onClick="clickItem(this);">書名</a></li>
-																<li><a href="javascript:void(0);"
-																	onClick="clickItem(this);">ISBN</a></li>
-																<li><a href="javascript:void(0);"
-																	onClick="clickItem(this);">出版社</a></li>
-																<li><a href="javascript:void(0);"
-																	onClick="clickItem(this);">作者</a></li>
-															</ul>
-														</div>
+											<div class="select_01 select_ebook">
+												<input type="hidden" value="書名" id="ebook" />
+												<div>
+													<a href="javascript:void(0);">書名</a>
+												</div>
+												<ul>
+													<li><a href="javascript:void(0);"
+														onClick="clickItem(this);">書名</a></li>
+													<li><a href="javascript:void(0);"
+														onClick="clickItem(this);">ISBN</a></li>
+													<li><a href="javascript:void(0);"
+														onClick="clickItem(this);">出版社</a></li>
+													<li><a href="javascript:void(0);"
+														onClick="clickItem(this);">作者</a></li>
+												</ul>
+											</div>
 
-														<div class="select_01 select_journal">
-															<input type="hidden" value="中文刊名" id="journal" />
-															<div>
-																<a href="javascript:void(0);">中文刊名</a>
-															</div>
-															<ul>
-																<li><a href="javascript:void(0);"
-																	onClick="clickItem(this);">中文刊名</a></li>
-																<li><a href="javascript:void(0);"
-																	onClick="clickItem(this);">英文刊名</a></li>
-																<li><a href="javascript:void(0);"
-																	onClick="clickItem(this);">英文縮寫</a></li>
-																<li><a href="javascript:void(0);"
-																	onClick="clickItem(this);">出版商</a></li>
-																<li><a href="javascript:void(0);"
-																	onClick="clickItem(this);">ISSN</a></li>
-															</ul>
-														</div>
-
-													</td>
-													<td><div class="input_01">
-															<span><input class="v_keyword" type="text"
-																name="keywords" /></span>
-														</div></td>
-												</tr>
-											</table>
+											<div class="select_01 select_journal">
+												<input type="hidden" value="中文刊名" id="journal" />
+												<div>
+													<a href="javascript:void(0);">中文刊名</a>
+												</div>
+												<ul>
+													<li><a href="javascript:void(0);"
+														onClick="clickItem(this);">中文刊名</a></li>
+													<li><a href="javascript:void(0);"
+														onClick="clickItem(this);">英文刊名</a></li>
+													<li><a href="javascript:void(0);"
+														onClick="clickItem(this);">英文縮寫</a></li>
+													<li><a href="javascript:void(0);"
+														onClick="clickItem(this);">出版商</a></li>
+													<li><a href="javascript:void(0);"
+														onClick="clickItem(this);">ISSN</a></li>
+												</ul>
+											</div>
 
 										</td>
-									</tr>
-									<tr valign="middle">
-										<td class="t_03" colspan="2" align="center"><a
-											class="btn_01" href="javascript:void(0);"
-											onClick="form_reset();">重 新 填 寫</a> <a class="btn_01"
-											href="#" onClick="form_sumbit();">開 始 查 詢</a></td>
+										<td><div class="input_01">
+												<span><input class="v_keyword" type="text"
+													name="keywords" /></span>
+											</div></td>
 									</tr>
 								</table>
-							</s:form>
 
-							<!-- 內容結束 -->
-						</div>
-					</td>
-					<td class="R"><jsp:include
-							page="/WEB-INF/jsp/layout/sideBox.jsp" /></td>
-				</tr>
-			</table>
+							</td>
+						</tr>
+						<tr valign="middle">
+							<td class="t_03" colspan="2" align="center"><a
+								class="btn_01" href="javascript:void(0);"
+								onClick="form_reset();">重 新 填 寫</a> <a class="btn_01" href="#"
+								onClick="form_sumbit();">開 始 查 詢</a></td>
+						</tr>
+					</table>
+				</s:form>
+
+				<!-- 內容結束 -->
+			</div>
+		</td>
+		<td class="R"><jsp:include page="/WEB-INF/jsp/layout/sideBox.jsp" /></td>
+	</tr>
+</table>
