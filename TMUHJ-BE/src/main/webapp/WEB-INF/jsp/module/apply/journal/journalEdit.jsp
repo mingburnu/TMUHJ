@@ -50,6 +50,18 @@
 		        this.checked = true;
 		    }
 		});
+		
+		$("input#apply_journal_update_resourcesBuyers_rCategory").each(function(){
+			if ($(this).val()=="未註明"){
+		        this.checked = true;
+		    }
+		});
+		
+		$("input#apply_journal_update_resourcesBuyers_rType").each(function(){
+			if ($(this).val()=="期刊"){
+		        this.checked = true;
+		    }
+		});
 	});
 	
 	$(document).ready(function() {
@@ -295,23 +307,23 @@ input#customer_name {
 					</tr>
 					<tr>
 						<th width="130">資源類型</th>
-						<td>
-						<c:forEach var="item" items="${categoryList}" varStatus="status">						
-						<input type="radio" name="resourcesBuyers.rCategory"
-							id="apply_journal_save_resourcesBuyers_rCategory" value="${item.category }"> <label
-							for="apply_journal_save_resourcesBuyers_rCategory">${item.category }</label>
-						</c:forEach>
-						</td>
+						<td><c:forEach var="item" items="${categoryList}"
+								varStatus="status">
+								<input type="radio" name="rCategory"
+									id="apply_journal_save_resourcesBuyers_rCategory"
+									value="${item.category }">
+								<label for="apply_journal_save_resourcesBuyers_rCategory">${item.category }</label>
+							</c:forEach></td>
 					</tr>
 					<tr>
 						<th width="130">資源種類</th>
-						<td>
-						<c:forEach var="item" items="${typeList}" varStatus="status">
-						<input type="radio" name="resourcesBuyers.rType"
-							id="apply_journal_save_resourcesBuyers_rType" value="${item.type }"> <label
-							for="apply_journal_save_resourcesBuyers_rType">${item.type }</label> 
-						</c:forEach>
-						</td>
+						<td><c:forEach var="item" items="${typeList}"
+								varStatus="status">
+								<input type="radio" name="rType"
+									id="apply_journal_save_resourcesBuyers_rType"
+									value="${item.type }">
+								<label for="apply_journal_save_resourcesBuyers_rType">${item.type }</label>
+							</c:forEach></td>
 					</tr>
 					<tr>
 						<th width="130">資料庫中文題名</th>
@@ -332,14 +344,14 @@ input#customer_name {
 								items="${entity.customers}" varStatus="status2">
 								<div style="">
 									<input class="input_text" disabled="disabled"
-										value="${item.name}"><img id="minus"
+										value='<c:out value="${item.name}"/>'><img id="minus"
 										src="<c:url value = '/'/>resources/images/minus.png"><input
 										id="unit" type="hidden" value="${item.serNo }" name="cusSerNo">
 								</div>
 							</c:forEach> <c:forEach var="item" items="${allCustomers}" varStatus="status">
 								<div style="display: none;">
 									<input class="input_text" disabled="disabled"
-										value="${item.name}"><img id="minus"
+										value='<c:out value="${item.name}"/>'><img id="minus"
 										src="<c:url value = '/'/>resources/images/minus.png"><input
 										id="unit" type="hidden" value="${item.serNo }">
 								</div>
@@ -393,17 +405,16 @@ input#customer_name {
 		<c:otherwise>
 			<%
 				ArrayList<?> allCustomers = (ArrayList<?>) request.getAttribute("allCustomers");
-										ArrayList<?> entityCustomers = (ArrayList<?>) request.getAttribute("entity.customers");
-										Object[] allCustomerArray=allCustomers.toArray();
-										if (entityCustomers.size() > 0) {
-											for (int j = 0; j < entityCustomers.size(); j++) {
-													if (allCustomers.contains(entityCustomers.get(j))) {
-														allCustomers.remove(entityCustomers.get(j));
-														}
-												}
-											}
-										
-										request.setAttribute("allCustomers", allCustomers);
+					ArrayList<?> entityCustomers = (ArrayList<?>) request.getAttribute("entity.customers");	
+					Object[] allCustomerArray=allCustomers.toArray();
+					if (entityCustomers.size() > 0) {
+						for (int j = 0; j < entityCustomers.size(); j++) {
+							if (allCustomers.contains(entityCustomers.get(j))) {
+								allCustomers.remove(entityCustomers.get(j));
+								}
+							}
+						}
+					request.setAttribute("allCustomers", allCustomers);
 			%>
 			<s:form namespace="/crud" action="apply.journal.update">
 				<table cellspacing="1" class="detail-table">
@@ -463,23 +474,23 @@ input#customer_name {
 					</tr>
 					<tr>
 						<th width="130">資源類型</th>
-						<td>
-						<c:forEach var="item" items="${categoryList}" varStatus="status">						
-						<input type="radio" name="resourcesBuyers.rCategory"
-							id="apply_journal_update_resourcesBuyers_rCategory" value="${item.category }"> <label
-							for="apply_journal_update_resourcesBuyers_rCategory">${item.category }</label>
-						</c:forEach>
-						</td>
+						<td><c:forEach var="item" items="${categoryList}"
+								varStatus="status">
+								<input type="radio" name="rCategory"
+									id="apply_journal_update_resourcesBuyers_rCategory"
+									value="${item.category }">
+								<label for="apply_journal_update_resourcesBuyers_rCategory">${item.category }</label>
+							</c:forEach></td>
 					</tr>
 					<tr>
 						<th width="130">資源種類</th>
-						<td>
-						<c:forEach var="item" items="${typeList}" varStatus="status">
-						<input type="radio" name="resourcesBuyers.rType"
-							id="apply_journal_update_resourcesBuyers_rType" value="${item.type }"> <label
-							for="apply_journal_update_resourcesBuyers_rType">${item.type }</label> 
-						</c:forEach>
-						</td>
+						<td><c:forEach var="item" items="${typeList}"
+								varStatus="status">
+								<input type="radio" name="rType"
+									id="apply_journal_update_resourcesBuyers_rType"
+									value="${item.type }">
+								<label for="apply_journal_update_resourcesBuyers_rType">${item.type }</label>
+							</c:forEach></td>
 					</tr>
 					<tr>
 						<th width="130">資料庫中文題名</th>
@@ -500,14 +511,14 @@ input#customer_name {
 								items="${entity.customers}" varStatus="status2">
 								<div style="">
 									<input class="input_text" disabled="disabled"
-										value="${item.name}"><img id="minus"
+										value='<c:out value="${item.name}"/>'><img id="minus"
 										src="<c:url value = '/'/>resources/images/minus.png"><input
 										id="unit" type="hidden" value="${item.serNo }" name="cusSerNo">
 								</div>
 							</c:forEach> <c:forEach var="item" items="${allCustomers}" varStatus="status">
 								<div style="display: none;">
 									<input class="input_text" disabled="disabled"
-										value="${item.name}"><img id="minus"
+										value='<c:out value="${item.name}"/>'><img id="minus"
 										src="<c:url value = '/'/>resources/images/minus.png"><input
 										id="unit" type="hidden" value="${item.serNo }">
 								</div>
@@ -535,7 +546,7 @@ input#customer_name {
 		<script language="javascript" type="text/javascript">
 			var msg = "";
 			<s:iterator value="actionErrors">
-			msg += '<s:property escape="false"/><br>';
+			msg += '<s:property escape="true"/><br>';
 			</s:iterator>;
 			goAlert('訊息', msg);
 		</script>

@@ -78,6 +78,15 @@ public class FeLogsAction extends GenericCRUDActionLog<FeLogs> {
 	public String list() throws Exception {
 		String startDate = getRequest().getParameter("start");
 		String endDate = getRequest().getParameter("end");
+		
+		if (startDate != null){
+			startDate = startDate.trim();
+		}
+		
+		if (endDate != null){
+			endDate = endDate.trim();
+		}
+		
 		String customerName = getRequest().getParameter("customer");
 		
 		String cusSerNo = getRequest().getParameter("cusSerNo");
@@ -112,7 +121,7 @@ public class FeLogsAction extends GenericCRUDActionLog<FeLogs> {
 			ds.setPager(Pager.getChangedPager(
 					getRequest().getParameter("recordPerPage"), getRequest()
 							.getParameter("recordPoint"), ds.getPager()));
-
+			
 			getRequest().setAttribute("endDate", endDate);
 
 			if (Long.parseLong(cusSerNo) > 0) {
@@ -161,10 +170,19 @@ public class FeLogsAction extends GenericCRUDActionLog<FeLogs> {
 	public String exports() throws Exception {
 		String startDate = getRequest().getParameter("start");
 		String endDate = getRequest().getParameter("end");
+		
+		if (startDate != null){
+			startDate = startDate.trim();
+		}
+		
+		if (endDate != null){
+			endDate = endDate.trim();
+		}
+		
 		String customerName = getRequest().getParameter("customer");
 		
 		String cusSerNo = getRequest().getParameter("cusSerNo");
-		if(getLoginUser().getRole().equals(Role.管理員)){
+		if (getLoginUser().getRole().equals(Role.管理員)){
 			cusSerNo=String.valueOf(getLoginUser().getCustomer().getSerNo());
 		}
 

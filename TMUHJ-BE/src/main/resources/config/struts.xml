@@ -123,6 +123,7 @@
 			</result>
 			<result name="json">/WEB-INF/jsp/module/apply/{1}/{1}Json.jsp
 			</result>
+			<result name="*"></result>
 		</action>
 	</package>
 

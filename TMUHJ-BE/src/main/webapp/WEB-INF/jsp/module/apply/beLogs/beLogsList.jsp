@@ -80,12 +80,12 @@ function goExport(){
 	if($("input#customerSerno").attr("checked")){
 	var customerSerno=$("input#customerSerno").val();
 	if(customerSerno!=null && customerSerno>0){
-		window.open(url, "iframe1"); 
+		window.open(url, "export"); 
 	}else{
 		goAlert("訊息", "請正確填寫機構名稱");
 	}
 	}else{
-		window.open(url, "iframe1"); 
+		window.open(url, "export"); 
 	}
 }
 
@@ -108,17 +108,12 @@ function goExport(){
 							<th align="right">查詢統計範圍：</th>
 							<td align="left"><input type="text" name="start"
 								class="input_text" id="cal-field1"
-								value="<%if (request.getAttribute("startDate") != null) {
-					out.print(request.getAttribute("startDate").toString());
-				}%>">
-								<script type="text/javascript">
+								value='<c:out value="${startDate }"></c:out>'> <script
+									type="text/javascript">
 	 Calendar.setup({
          inputField    : "cal-field1"
        });</script> 至&nbsp;&nbsp;<input type="text" name="end" class="input_text"
-								id="cal-field2"
-								value="<%if (request.getAttribute("endDate") != null) {
-					out.print(request.getAttribute("endDate").toString());
-				}%>">
+								id="cal-field2" value='<c:out value="${endDate }"></c:out>'>
 								<script type="text/javascript">
 	 Calendar.setup({
          inputField    : "cal-field2"
@@ -144,27 +139,20 @@ function goExport(){
 									<td><c:choose>
 											<c:when test="${0 eq cusSerNo}">
 												<input type="radio" name="cusSerNo" id="customerSerno"
-													value="<%if (request.getAttribute("cusSerNo") != null) {
-									out.print(request.getAttribute("cusSerNo")
-											.toString());
-								}%>" />
+													value="0" />
 											</c:when>
 											<c:otherwise>
-
+												<c:set var="cusSerNo">
+													<c:out value="${cusSerNo }" />
+												</c:set>
 												<input type="radio" name="cusSerNo" id="customerSerno"
-													value="<%if (request.getAttribute("cusSerNo") != null) {
-									out.print(request.getAttribute("cusSerNo")
-											.toString());
-								}%>"
-													checked />
+													value="${cusSerNo }" checked />
 											</c:otherwise>
-										</c:choose> <input type="text" id="customerName" class="input_text"
-										name="customer"
-										value="<%if (request.getAttribute("customer") != null) {
-							out.print(request.getAttribute("customer")
-									.toString());
-						}%>">
-										<a class="state-default" onclick="goSearch()">查詢</a></td>
+										</c:choose> <c:set var="customer">
+											<c:out value="${customer }" />
+										</c:set><input type="text" id="customerName" class="input_text"
+										name="customer" value="${customer }"> <a
+										class="state-default" onclick="goSearch()">查詢</a></td>
 								</tr>
 							</c:when>
 							<c:otherwise>
@@ -212,12 +200,14 @@ function goExport(){
 					</tr>
 					<c:forEach var="item" items="${ds.results}" varStatus="status">
 						<tr>
-							<td><%=request.getAttribute("startDate").toString()%>~<%=request.getAttribute("endDate").toString()%></td>
+							<td><c:out value="${startDate }" />~<c:out
+									value="${endDate }" /></td>
 							<td align="center">${item.rank }</td>
 							<td>${item.accountNumber.userId }</td>
-							<td align="center">${item.accountNumber.userName }</td>
+							<td align="center"><c:out
+									value="${item.accountNumber.userName }" /></td>
 							<td align="center">${item.accountNumber.role.role }</td>
-							<td align="center">${item.customer.name }</td>
+							<td align="center"><c:out value="${item.customer.name }" /></td>
 							<td>${item.accountNumber.status.status }</td>
 							<td>${item.count }</td>
 						</tr>
@@ -281,10 +271,10 @@ function goExport(){
 	<s:if test="hasActionErrors()">
 		<script language="javascript" type="text/javascript">
 			var msg = "";
-			<s:iterator value="actionErrors">msg += '<s:property escape="false"/><br>';</s:iterator>;
+			<s:iterator value="actionErrors">msg += '<s:property escape="true"/><br>';</s:iterator>;
 			goAlert('訊息', msg);
 		</script>
 	</s:if>
-	<iframe name="iframe" style="display: none;"></iframe>
+	<iframe name="export" style="display: none;"></iframe>
 </body>
 </html>

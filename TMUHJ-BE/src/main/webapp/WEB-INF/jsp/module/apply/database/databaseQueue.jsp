@@ -138,7 +138,7 @@ function closeDetail() {
 					<c:forEach var="item" items="${cellNames}" varStatus="status">
 						<c:if
 							test="${(0 eq status.index) || (1 eq status.index)||(6 eq status.index)||(9 eq status.index)||(10 eq status.index)||(11 eq status.index)}">
-							<th>${item}</th>
+							<th><c:out value="${item}" /></th>
 						</c:if>
 					</c:forEach>
 					<th></th>
@@ -155,15 +155,15 @@ function closeDetail() {
 									<input type="checkbox" disabled="disabled">
 								</c:otherwise>
 							</c:choose></td>
-						<td>${item.dbChtTitle }</td>
-						<td>${item.dbEngTitle }</td>
-						<td>${item.url }</td>
+						<td><c:out value="${item.dbChtTitle }" /></td>
+						<td><c:out value="${item.dbEngTitle }" /></td>
+						<td><c:out value="${item.url }" /></td>
 						<td>${item.resourcesBuyers.rCategory.category }</td>
 						<td>${item.resourcesBuyers.rType.type }</td>
 						<td align="center"><c:forEach var="customer"
 								items="${item.customers}" varStatus="status">
-				${customer.name }
-				</c:forEach></td>
+								<c:out value="${customer.name }" />
+							</c:forEach></td>
 						<td align="center">${item.existStatus }</td>
 					</tr>
 				</c:forEach>
@@ -216,7 +216,7 @@ function closeDetail() {
 	<s:if test="hasActionErrors()">
 		<script language="javascript" type="text/javascript">
 			var msg = "";
-			<s:iterator value="actionErrors">msg += '<s:property escape="false"/><br>';
+			<s:iterator value="actionErrors">msg += '<s:property escape="true"/><br>';
 			</s:iterator>;
 			goAlert('訊息', msg);
 		</script>

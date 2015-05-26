@@ -117,6 +117,19 @@ public class Pager implements Serializable {
 
 			return pager;
 		} else if (recordPerPage != null && NumberUtils.isDigits(recordPerPage)
+				&& Integer.parseInt(recordPerPage) > 0 && recordPoint != null
+				&& !NumberUtils.isDigits(recordPoint)) {
+
+			if (Integer.parseInt(recordPerPage) <= 50) {
+				pager.setRecordPerPage(Integer.parseInt(recordPerPage));
+			} else {
+				pager.setRecordPerPage(50);
+			}
+
+			pager.setRecordPerPage(Integer.parseInt(recordPerPage));
+			pager.setRecordPoint(pager.getOffset());
+			return pager;
+		} else if (recordPerPage != null && NumberUtils.isDigits(recordPerPage)
 				&& Integer.parseInt(recordPerPage) > 0 && recordPoint == null) {
 
 			if (Integer.parseInt(recordPerPage) <= 50) {

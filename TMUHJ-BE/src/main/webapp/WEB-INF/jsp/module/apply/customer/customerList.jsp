@@ -5,7 +5,7 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <c:if test="${login.role.role == '管理員'}">
 	<%
-		response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+		response.sendError(HttpServletResponse.SC_FORBIDDEN);
 	%>
 </c:if>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
@@ -22,7 +22,7 @@ $(document).ready(function() {
 });
 
 $(document).ready(function() {
-	$("select#listForm_searchCondition").val('<%=request.getParameter("option")%>');
+	$("select#listForm_searchCondition").val('${option }');
 });
 
 //IE press Enter GoPage
@@ -69,7 +69,7 @@ $(document).ready(function() {
 			var f = {
                     trueText:'是',
                     trueFunc:function(){
-                            var url = '<%=request.getContextPath()%>/crud/apply.customer.deleteChecked.action';
+                            var url = '<c:url value="/crud/apply.customer.delete.action"/>';
                             var data = $('#apply_customer_list').serialize()+'&pager.offset='+'${ds.pager.offset}'+'&pager.currentPage='+'${ds.pager.currentPage}'+'&pager.offsetPoint='+'${ds.pager.offset}';
                             console.log(data);
                             goMain(url,'',data);
@@ -108,7 +108,7 @@ $(document).ready(function() {
 		var f = {
 			trueText:'是',
 			trueFunc:function(){
-	                        var url = '<c:url value = '/'/>crud/apply.customer.deleteChecked.action';
+	                        var url = '<c:url value = "/crud/apply.customer.delete.action"/>';
 	                        var data =$('#apply_customer_list').serialize()+'&pager.offset='+'${ds.pager.offset}'+'&pager.currentPage='+'${ds.pager.currentPage}'+'&pager.offsetPoint='+'${ds.pager.offset}'+'&checkItem='+serNo;
 	                        console.log(data);
 	                        goMain(url,'',data);
@@ -174,6 +174,7 @@ $(document).ready(function() {
 </script>
 </head>
 <body>
+	<c:url value="" />
 	<s:form action="apply.customer.list" namespace="/crud" method="post"
 		onsubmit="return false;">
 		<div class="tabs-box">
@@ -193,17 +194,17 @@ $(document).ready(function() {
 									<option value="entity.engName">英文名稱</option>
 							</select></td>
 							<c:set var="option">
-								<%=request.getParameter("option")%>
+								<c:out value="${option }" />
 							</c:set>
 							<c:choose>
 								<c:when test="${not empty option }">
+									<c:set var="find">
+										<c:out
+											value='<%=request.getParameter(request
+									.getAttribute("option").toString())%>' />
+									</c:set>
 									<td align="left"><input type="text" name="${option }"
-										maxlength="20" id="search" class="input_text"
-										value="<%if (request
-								.getParameter(request.getParameter("option")) != null) {
-							out.print(request.getParameter(request
-									.getParameter("option")));
-						}%>">
+										maxlength="20" id="search" class="input_text" value="${find }">
 									</td>
 								</c:when>
 								<c:otherwise>
@@ -267,9 +268,9 @@ $(document).ready(function() {
 										</c:otherwise>
 									</c:choose></td>
 							</c:if>
-							<td>${item.name }</td>
-							<td align="center">${item.tel }</td>
-							<td>${item.address }</td>
+							<td><c:out value="${item.name}" /></td>
+							<td align="center"><c:out value="${item.tel }" /></td>
+							<td><c:out value="${item.address }" /></td>
 							<td align="center"><c:choose>
 									<c:when test="${9 eq  item.serNo }">
 										<a class="state-default2" onclick="goView(${item.serNo });"><span
@@ -342,14 +343,14 @@ $(document).ready(function() {
 	<s:if test="hasActionMessages()">
 		<script language="javascript" type="text/javascript">
             var msg = "";
-            <s:iterator value="actionMessages">msg += '<s:property escape="false"/><br>';</s:iterator>;
+            <s:iterator value="actionMessages">msg += '<s:property escape="true"/><br>';</s:iterator>;
             goAlert('訊息', msg);
         </script>
 	</s:if>
 	<s:if test="hasActionErrors()">
 		<script language="javascript" type="text/javascript">
 			var msg = "";
-			<s:iterator value="actionErrors">msg += '<s:property escape="false"/><br>';
+			<s:iterator value="actionErrors">msg += '<s:property escape="true"/><br>';
 			</s:iterator>;
 			goAlert('訊息', msg);
 		</script>

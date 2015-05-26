@@ -4,6 +4,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.struts2.ServletActionContext;
@@ -45,7 +46,7 @@ public class SearchActionInterceptor extends AbstractInterceptor {
 			HttpServletRequest request = ServletActionContext.getRequest();
 			if (request.getParameter("keywords") == null
 					|| request.getParameter("keywords").trim().equals("")) {
-				return "search";
+				return "query";
 			}
 		}
 
@@ -53,7 +54,7 @@ public class SearchActionInterceptor extends AbstractInterceptor {
 			HttpServletRequest request = ServletActionContext.getRequest();
 			if (request.getParameter("keywords") == null
 					|| request.getParameter("keywords").trim().equals("")) {
-				return "query";
+				return "adv_query";
 			}
 		}
 
@@ -61,9 +62,8 @@ public class SearchActionInterceptor extends AbstractInterceptor {
 
 		if (method.equals("query")) {
 			HttpServletRequest request = ServletActionContext.getRequest();
-			if (request.getParameter("keywords") == null
-					|| request.getParameter("keywords").trim().equals("")) {
-				return "search";
+			if (StringUtils.isEmpty(request.getParameter("keywords"))) {
+				return "query";
 			}
 
 			Map<String, Object> session = ActionContext.getContext()
@@ -74,13 +74,15 @@ public class SearchActionInterceptor extends AbstractInterceptor {
 					&& request.getParameter("recordPoint") == null) {
 				if (accountNumber.getSerNo() != null) {
 					feLogsService.save(
-							new FeLogs(Act.綜合查詢, request.getParameter("keywords"),
-								accountNumber.getCustomer(), accountNumber, 0L, 0L, 0L),
+							new FeLogs(Act.綜合查詢, request
+									.getParameter("keywords"), accountNumber
+									.getCustomer(), accountNumber, 0L, 0L, 0L),
 							accountNumber);
 				} else {
 					feLogsService.save(
-							new FeLogs(Act.綜合查詢, request.getParameter("keywords"),
-									accountNumber.getCustomer(), null, 0L, 0L, 0L),
+							new FeLogs(Act.綜合查詢, request
+									.getParameter("keywords"), accountNumber
+									.getCustomer(), null, 0L, 0L, 0L),
 							accountNumber);
 				}
 
@@ -89,9 +91,8 @@ public class SearchActionInterceptor extends AbstractInterceptor {
 
 		if (method.equals("focus")) {
 			HttpServletRequest request = ServletActionContext.getRequest();
-			if (request.getParameter("keywords") == null
-					|| request.getParameter("keywords").trim().equals("")) {
-				return "query";
+			if (StringUtils.isEmpty(request.getParameter("keywords"))) {
+				return "adv_query";
 			}
 
 			Map<String, Object> session = ActionContext.getContext()
@@ -102,13 +103,15 @@ public class SearchActionInterceptor extends AbstractInterceptor {
 					&& request.getParameter("recordPoint") == null) {
 				if (accountNumber.getSerNo() != null) {
 					feLogsService.save(
-							new FeLogs(Act.項目查詢, request.getParameter("keywords"),
-								accountNumber.getCustomer(), accountNumber, 0L, 0L, 0L),
+							new FeLogs(Act.項目查詢, request
+									.getParameter("keywords"), accountNumber
+									.getCustomer(), accountNumber, 0L, 0L, 0L),
 							accountNumber);
 				} else {
 					feLogsService.save(
-							new FeLogs(Act.項目查詢, request.getParameter("keywords"),
-									accountNumber.getCustomer(), null, 0L, 0L, 0L),
+							new FeLogs(Act.項目查詢, request
+									.getParameter("keywords"), accountNumber
+									.getCustomer(), null, 0L, 0L, 0L),
 							accountNumber);
 				}
 			}

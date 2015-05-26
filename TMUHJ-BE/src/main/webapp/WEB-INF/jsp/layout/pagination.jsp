@@ -14,6 +14,9 @@
 <c:set var="goToPage">
 	<c:url value="${param.namespace}/${param.action}.action" />
 </c:set>
+<c:set var="goToPage">
+	<c:out value="${goToPage }"></c:out>
+</c:set>
 
 <pg:pager url="${goToPage}" items="${totalRecord}"
 	maxPageItems="${recordPerPage}" maxIndexPages="5">

@@ -75,42 +75,47 @@ public class EbookAction extends GenericCRUDActionFull<Ebook> {
 
 	@Override
 	public String list() throws Exception {
-		if (StringUtils.isBlank(getRequest().getParameter("serNo")) 
-				|| !NumberUtils.isDigits(getRequest().getParameter("serNo"))){
+		if (StringUtils.isBlank(getRequest().getParameter("serNo"))
+				|| !NumberUtils.isDigits(getRequest().getParameter("serNo"))) {
 			addActionError("serNo Error");
 		} else {
-			if (ebookService.getBySerNo(Long.parseLong(getRequest().getParameter("serNo"))) == null) {
-				addActionError("Object Null");	
-			}
-		}
-		
-		if (!hasActionErrors()){
-		ebook = ebookService.getBySerNo(Long.parseLong(getRequest()
-				.getParameter("serNo")));
-
-		List<ResourcesUnion> ebookResourcesUnionList = resourcesUnionService
-				.getByEbkSerNo(Long.parseLong(getRequest()
-						.getParameter("serNo")));
-
-		List<String> ownerNameList = new ArrayList<String>();
-
-		Iterator<ResourcesUnion> iterator = ebookResourcesUnionList.iterator();
-
-		while (iterator.hasNext()) {
-			ResourcesUnion datResourcesUnion = iterator.next();
-			customer = datResourcesUnion.getCustomer();
-			if(customer != null){
-			ownerNameList.add(customer.getName());
+			if (ebookService.getBySerNo(Long.parseLong(getRequest()
+					.getParameter("serNo"))) == null) {
+				addActionError("Object Null");
 			}
 		}
 
-		String ownerNames = ownerNameList.toString().replace("[", "")
-				.replace("]", "");
-		getRequest().setAttribute("ebook", ebook);
-		getRequest().setAttribute("ownerNames", ownerNames);
-		
-		if (StringUtils.isNotBlank(getRequest().getParameter("currentURL"))){
-			getRequest().setAttribute("backURL", getRequest().getParameter("currentURL").replace("@@@", "?").replace("^^^", "&"));
+		if (!hasActionErrors()) {
+			ebook = ebookService.getBySerNo(Long.parseLong(getRequest()
+					.getParameter("serNo")));
+
+			List<ResourcesUnion> ebookResourcesUnionList = resourcesUnionService
+					.getByEbkSerNo(Long.parseLong(getRequest().getParameter(
+							"serNo")));
+
+			List<String> ownerNameList = new ArrayList<String>();
+
+			Iterator<ResourcesUnion> iterator = ebookResourcesUnionList
+					.iterator();
+
+			while (iterator.hasNext()) {
+				ResourcesUnion datResourcesUnion = iterator.next();
+				customer = datResourcesUnion.getCustomer();
+				if (customer != null) {
+					ownerNameList.add(customer.getName());
+				}
+			}
+
+			String ownerNames = ownerNameList.toString().replace("[", "")
+					.replace("]", "");
+			getRequest().setAttribute("ebook", ebook);
+			getRequest().setAttribute("ownerNames", ownerNames);
+
+			if (StringUtils.isNotBlank(getRequest().getParameter("currentURL"))) {
+				getRequest().setAttribute(
+						"backURL",
+						getRequest().getParameter("currentURL")
+								.replace("@@@", "?").replace("^^^", "&"));
 			}
 		}
 		return "e-detail";
@@ -164,7 +169,7 @@ public class EbookAction extends GenericCRUDActionFull<Ebook> {
 
 		getEntity().setOption(option);
 		getEntity().setKeywords(keywords);
-		
+
 		DataSet<Ebook> ds = initDataSet();
 		ds.setPager(Pager.getChangedPager(
 				getRequest().getParameter("recordPerPage"), getRequest()

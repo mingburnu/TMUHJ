@@ -8,47 +8,49 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title></title>
 <c:choose>
-<c:when test="${empty viewSerNo}">
-<script type="text/javascript">
-	//關閉並更新上一層資料
-	function closeDetail_ToQuery() {
-		$("#div_Detail").hide();
-		UI_Resize();
-		if ($("form#apply_accountNumber_list input#listForm_currentPageHeader")
-				.val() != null) {
-			gotoPage($(
-					"form#apply_accountNumber_list input#listForm_currentPageHeader")
-					.val());
-			resetCloseDetail();
-		} else {
-			goSearch();
-			resetCloseDetail();
-		}
-	}
+	<c:when test="${empty viewSerNo}">
+		<script type="text/javascript">
+			//關閉並更新上一層資料
+			function closeDetail_ToQuery() {
+				$("#div_Detail").hide();
+				UI_Resize();
+				if ($(
+						"form#apply_accountNumber_list input#listForm_currentPageHeader")
+						.val() != null) {
+					gotoPage($(
+							"form#apply_accountNumber_list input#listForm_currentPageHeader")
+							.val());
+					resetCloseDetail();
+				} else {
+					goSearch();
+					resetCloseDetail();
+				}
+			}
 
-	function closeDetail() {
-		$("#div_Detail").hide();
-		UI_Resize();
-		if ($("form#apply_accountNumber_list input#listForm_currentPageHeader")
-				.val() != null) {
-			gotoPage($(
-					"form#apply_accountNumber_list input#listForm_currentPageHeader")
-					.val());
-			resetCloseDetail();
-		} else {
-			goSearch();
-			resetCloseDetail();
-		}
-	}
-</script>
-</c:when>
-<c:otherwise>
-<script type="text/javascript">
-	function closeDetail_ToQuery() {
-		closeDetail();
-	}
-</script>	
-</c:otherwise>
+			function closeDetail() {
+				$("#div_Detail").hide();
+				UI_Resize();
+				if ($(
+						"form#apply_accountNumber_list input#listForm_currentPageHeader")
+						.val() != null) {
+					gotoPage($(
+							"form#apply_accountNumber_list input#listForm_currentPageHeader")
+							.val());
+					resetCloseDetail();
+				} else {
+					goSearch();
+					resetCloseDetail();
+				}
+			}
+		</script>
+	</c:when>
+	<c:otherwise>
+		<script type="text/javascript">
+			function closeDetail_ToQuery() {
+				closeDetail();
+			}
+		</script>
+	</c:otherwise>
 </c:choose>
 </head>
 <body>
@@ -58,16 +60,16 @@
 				<tbody>
 					<tr>
 						<th width="130">用戶代碼</th>
-						<td>${entity.userId }</td>
+						<td><c:out value="${entity.userId }" /></td>
 
 					</tr>
 					<tr>
 						<th width="130">用戶姓名</th>
-						<td>${entity.userName }</td>
+						<td><c:out value="${entity.userName }" /></td>
 					</tr>
 					<tr>
 						<th width="130">客戶名稱</th>
-						<td>${entity.customer.name }</td>
+						<td><c:out value="${entity.customer.name }" /></td>
 					</tr>
 					<tr>
 						<th width="130">Email</th>
@@ -94,7 +96,7 @@
 	<s:if test="hasActionMessages()">
 		<script language="javascript" type="text/javascript">
 			var msg = "";
-			<s:iterator value="actionMessages">msg += '<s:property escape="false"/>\n';
+			<s:iterator value="actionMessages">msg += '<s:property escape="true"/>\n';
 			</s:iterator>;
 			goAlert('訊息', msg);
 		</script>

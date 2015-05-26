@@ -8,45 +8,49 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title></title>
 <c:choose>
-<c:when test="${empty viewSerNo}">
-<script type="text/javascript">
-	//關閉並更新上一層資料
-	function closeDetail_ToQuery() {
-		$("#div_Detail").hide();
-		UI_Resize();
-		if ($("form#apply_journal_list input#listForm_currentPageHeader").val() != null) {
-			gotoPage($(
-					"form#apply_journal_list input#listForm_currentPageHeader")
-					.val());
-			resetCloseDetail();
-		} else {
-			goSearch();
-			resetCloseDetail();
-		}
-	}
-	
-	function closeDetail() {
-		$("#div_Detail").hide();
-		UI_Resize();
-		if ($("form#apply_journal_list input#listForm_currentPageHeader").val() != null) {
-			gotoPage($(
-					"form#apply_journal_list input#listForm_currentPageHeader")
-					.val());
-			resetCloseDetail();
-		} else {
-			goSearch();
-			resetCloseDetail();
-		}
-	}
-</script>
-</c:when>
-<c:otherwise>
-<script type="text/javascript">
-	function closeDetail_ToQuery() {
-		closeDetail();
-	}
-</script>	
-</c:otherwise>
+	<c:when test="${empty viewSerNo}">
+		<script type="text/javascript">
+			//關閉並更新上一層資料
+			function closeDetail_ToQuery() {
+				$("#div_Detail").hide();
+				UI_Resize();
+				if ($(
+						"form#apply_journal_list input#listForm_currentPageHeader")
+						.val() != null) {
+					gotoPage($(
+							"form#apply_journal_list input#listForm_currentPageHeader")
+							.val());
+					resetCloseDetail();
+				} else {
+					goSearch();
+					resetCloseDetail();
+				}
+			}
+
+			function closeDetail() {
+				$("#div_Detail").hide();
+				UI_Resize();
+				if ($(
+						"form#apply_journal_list input#listForm_currentPageHeader")
+						.val() != null) {
+					gotoPage($(
+							"form#apply_journal_list input#listForm_currentPageHeader")
+							.val());
+					resetCloseDetail();
+				} else {
+					goSearch();
+					resetCloseDetail();
+				}
+			}
+		</script>
+	</c:when>
+	<c:otherwise>
+		<script type="text/javascript">
+			function closeDetail_ToQuery() {
+				closeDetail();
+			}
+		</script>
+	</c:otherwise>
 </c:choose>
 </head>
 <body>
@@ -56,47 +60,47 @@
 				<tbody>
 					<tr>
 						<th width="130">中文刊名</th>
-						<td>${entity.chineseTitle }</td>
+						<td><c:out value="${entity.chineseTitle }" /></td>
 					</tr>
 					<tr>
 						<th width="130">英文刊名<span class="required">(&#8226;)</span></th>
-						<td>${entity.englishTitle }</td>
+						<td><c:out value="${entity.englishTitle }" /></td>
 					</tr>
 					<tr>
 						<th width="130">英文縮寫刊名</th>
-						<td>${entity.abbreviationTitle }</td>
+						<td><c:out value="${entity.abbreviationTitle }" /></td>
 					</tr>
 					<tr>
 						<th width="130">ISSN<span class="required">(&#8226;)</span></th>
-						<td>${entity.issn }</td>
+						<td><c:out value="${entity.issn }" /></td>
 					</tr>
 					<tr>
 						<th width="130">語文</th>
-						<td>${entity.languages }</td>
+						<td><c:out value="${entity.languages }" /></td>
 					</tr>
 					<tr>
 						<th width="130">出版項</th>
-						<td>${entity.publishName }</td>
+						<td><c:out value="${entity.publishName }" /></td>
 					</tr>
 					<tr>
 						<th width="130">出版年</th>
-						<td>${entity.publishYear }</td>
+						<td><c:out value="${entity.publishYear }" /></td>
 					</tr>
 					<tr>
 						<th width="130">刊別</th>
-						<td>${entity.publication }</td>
+						<td><c:out value="${entity.publication }" /></td>
 					</tr>
 					<tr>
 						<th width="130">國會分類號</th>
-						<td>${entity.congressClassification }</td>
+						<td><c:out value="${entity.congressClassification }" /></td>
 					</tr>
 					<tr>
 						<th width="130">起始日</th>
-						<td>${entity.resourcesBuyers.startDate}</td>
+						<td><c:out value="${entity.resourcesBuyers.startDate}" /></td>
 					</tr>
 					<tr>
 						<th width="130">到期日</th>
-						<td>${entity.resourcesBuyers.maturityDate}</td>
+						<td><c:out value="${entity.resourcesBuyers.maturityDate}" /></td>
 					</tr>
 					<tr>
 						<th width="130">資源類型</th>
@@ -108,17 +112,19 @@
 					</tr>
 					<tr>
 						<th width="130">資料庫中文題名</th>
-						<td>${entity.resourcesBuyers.dbChtTitle}</td>
+						<td><c:out value="${entity.resourcesBuyers.dbChtTitle}" /></td>
 					</tr>
 					<tr>
 						<th width="130">資料庫英文題名</th>
-						<td>${entity.resourcesBuyers.dbEngTitle}</td>
+						<td><c:out value="${entity.resourcesBuyers.dbEngTitle}" /></td>
 					</tr>
 					<tr>
 						<th width="130">購買單位名稱</th>
 						<td><c:forEach var="item" items="${entity.customers}"
 								varStatus="status">
-								<div>${item.name}</div>
+								<div>
+									<c:out value="${item.name}" />
+								</div>
 							</c:forEach></td>
 					</tr>
 
@@ -135,7 +141,7 @@
 	<s:if test="hasActionMessages()">
 		<script language="javascript" type="text/javascript">
 			var msg = "";
-			<s:iterator value="actionMessages">msg += '<s:property escape="false"/>\n';
+			<s:iterator value="actionMessages">msg += '<s:property escape="true"/>\n';
 			</s:iterator>;
 			goAlert('訊息', msg);
 		</script>

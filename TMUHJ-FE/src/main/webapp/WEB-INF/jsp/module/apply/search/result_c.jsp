@@ -17,10 +17,10 @@ function view(serNo){
 	}
 </script>
 <style>
-.list td a:hover{
+.list td a:hover {
 	cursor: pointer;
 }
-</style>	
+</style>
 <div id="main_b_box">
 	<!-- 內容開始 -->
 	<div class="result">
@@ -44,6 +44,9 @@ function view(serNo){
 										<option value="50">50</option>
 										<option value="100">100</option>
 									</select>
+									<c:set var="keywords">
+										<c:out value="${keywords }"></c:out>
+									</c:set>
 									<input type="hidden" name="keywords" value="${keywords }" />
 								</s:form></td>
 							<td align="right" class="p_02"><c:if
@@ -112,6 +115,12 @@ function view(serNo){
 										<option value="50">50</option>
 										<option value="100">100</option>
 									</select>
+									<c:set var="option">
+										<c:out value="${option }"></c:out>
+									</c:set>
+									<c:set var="keywords">
+										<c:out value="${keywords }"></c:out>
+									</c:set>
 									<input type="hidden" name="option" value="${option }" />
 									<input type="hidden" name="keywords" value="${keywords }" />
 								</s:form></td>
@@ -150,18 +159,24 @@ function view(serNo){
 								<td>${orderInt}</td>
 								<c:choose>
 									<c:when test="${not empty item.englishTitle}">
-										<td><a onclick="view(${item.serNo})">${item.englishTitle}</a></td>
+										<td><a onclick="view(${item.serNo})"><c:out
+													value="${item.englishTitle}" /></a></td>
 									</c:when>
 									<c:otherwise>
-										<td><a onclick="view(${item.serNo})">${item.chineseTitle}</a></td>
+										<td><a onclick="view(${item.serNo})"><c:out
+													value="${item.chineseTitle}" /></a></td>
 									</c:otherwise>
 								</c:choose>
 								<td><c:choose>
-										<c:when test="${not empty item.publishName}">${item.publishName}</c:when>
+										<c:when test="${not empty item.publishName}">
+											<c:out value="${item.publishName}" />
+										</c:when>
 										<c:otherwise>N/A</c:otherwise>
 									</c:choose></td>
 								<td><c:choose>
-										<c:when test="${not empty item.publishYear}">${item.publishYear}</c:when>
+										<c:when test="${not empty item.publishYear}">
+											<c:out value="${item.publishYear}" />
+										</c:when>
 										<c:otherwise>N/A</c:otherwise>
 									</c:choose></td>
 							</tr>
@@ -171,18 +186,24 @@ function view(serNo){
 								<td>${orderInt}</td>
 								<c:choose>
 									<c:when test="${not empty item.englishTitle}">
-										<td><a onclick="view(${item.serNo})">${item.englishTitle}</a></td>
+										<td><a onclick="view(${item.serNo})"><c:out
+													value="${item.englishTitle}" /></a></td>
 									</c:when>
 									<c:otherwise>
-										<td><a onclick="view(${item.serNo})">>${item.chineseTitle}</a></td>
+										<td><a onclick="view(${item.serNo})"><c:out
+													value="${item.chineseTitle}" /></a></td>
 									</c:otherwise>
 								</c:choose>
 								<td><c:choose>
-										<c:when test="${not empty item.publishName}">${item.publishName}</c:when>
+										<c:when test="${not empty item.publishName}">
+											<c:out value="${item.publishName}" />
+										</c:when>
 										<c:otherwise>N/A</c:otherwise>
 									</c:choose></td>
 								<td><c:choose>
-										<c:when test="${not empty item.publishYear}">${item.publishYear}</c:when>
+										<c:when test="${not empty item.publishYear}">
+											<c:out value="${item.publishYear}" />
+										</c:when>
 										<c:otherwise>N/A</c:otherwise>
 									</c:choose></td>
 							</tr>
@@ -211,6 +232,9 @@ function view(serNo){
 										<option value="50">50</option>
 										<option value="100">100</option>
 									</select>
+									<c:set var="keywords">
+										<c:out value="${keywords }"></c:out>
+									</c:set>
 									<input type="hidden" name="keywords" value="${keywords }" />
 								</s:form></td>
 							<td align="right" class="p_02"><c:if
@@ -279,6 +303,12 @@ function view(serNo){
 										<option value="50">50</option>
 										<option value="100">100</option>
 									</select>
+									<c:set var="option">
+										<c:out value="${option }"></c:out>
+									</c:set>
+									<c:set var="keywords">
+										<c:out value="${keywords }"></c:out>
+									</c:set>
 									<input type="hidden" name="option" value="${option }" />
 									<input type="hidden" name="keywords" value="${keywords }" />
 								</s:form></td>

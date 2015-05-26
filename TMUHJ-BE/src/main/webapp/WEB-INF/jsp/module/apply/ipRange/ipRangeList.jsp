@@ -8,6 +8,9 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title></title>
+<c:set var="customerSerNo">
+	<c:out value='<%=request.getParameter("entity.customer.serNo")%>'></c:out>
+</c:set>
 <script type="text/javascript">
 //刪除後引導頁面
 $(document).ready(function() {
@@ -26,7 +29,7 @@ $(document).ready(function() {
 	//新增IP Range
 	function goAdd_detail() {
 		var url = "<c:url value = '/'/>/crud/apply.ipRange.query.action";
-		var data ='entity.customer.serNo='+'<%=request.getParameter("entity.customer.serNo")%>';
+		var data ='entity.customer.serNo='+'${customerSerNo }';
 		goDetail_2(url, 'IP Range管理-新增', data);
 	}
 
@@ -105,7 +108,7 @@ $(document).ready(function() {
 <body>
 	<s:form action="apply.ipRange.list" namespace="/crud" method="post">
 		<input type="hidden" name="entity.customer.serNo"
-			value="<%=request.getParameter("entity.customer.serNo")%>" />
+			value="${customerSerNo }" />
 		<div class="list-box">
 			<div class="list-buttons">
 				<a class="state-default" onclick="goAdd_detail();">新增</a>
@@ -188,7 +191,7 @@ $(document).ready(function() {
 		<script language="javascript" type="text/javascript">
 			var msg = "";
 			<s:iterator value="actionErrors">
-			msg += '<s:property escape="false"/><br>';
+			msg += '<s:property escape="true"/><br>';
 			</s:iterator>;
 			goAlert('訊息', msg);
 		</script>

@@ -17,10 +17,10 @@ function view(serNo){
 	}
 </script>
 <style>
-.list td a:hover{
+.list td a:hover {
 	cursor: pointer;
 }
-</style>	
+</style>
 <div id="main_b_box">
 	<!-- 內容開始 -->
 	<div class="result">
@@ -44,6 +44,9 @@ function view(serNo){
 										<option value="50">50</option>
 										<option value="100">100</option>
 									</select>
+									<c:set var="keywords">
+										<c:out value="${keywords }"></c:out>
+									</c:set>
 									<input type="hidden" name="keywords" value="${keywords }" />
 								</s:form></td>
 							<td align="right" class="p_02"><c:if
@@ -112,6 +115,12 @@ function view(serNo){
 										<option value="50">50</option>
 										<option value="100">100</option>
 									</select>
+									<c:set var="option">
+										<c:out value="${option }"></c:out>
+									</c:set>
+									<c:set var="keywords">
+										<c:out value="${keywords }"></c:out>
+									</c:set>
 									<input type="hidden" name="option" value="${option }" />
 									<input type="hidden" name="keywords" value="${keywords }" />
 								</s:form></td>
@@ -148,17 +157,17 @@ function view(serNo){
 						<c:when test="${num > 0}">
 							<tr valign="top">
 								<td>${orderInt}</td>
-								<td><a onclick="view(${item.serNo})">${item.bookName}</a></td>
-								<td>${item.autherName}</td>
-								<td>${item.publishName}</td>
+								<td><a onclick="view(${item.serNo})"><c:out value="${item.bookName}"/></a></td>
+								<td><c:out value="${item.autherName}"/></td>
+								<td><c:out value="${item.publishName}"/></td>
 							</tr>
 						</c:when>
 						<c:otherwise>
 							<tr valign="top" class="odd">
 								<td>${orderInt}</td>
-								<td><a onclick="view(${item.serNo})">${item.bookName}</a></td>
-								<td>${item.autherName}</td>
-								<td>${item.publishName}</td>
+								<td><a onclick="view(${item.serNo})"><c:out value="${item.bookName}"/></a></td>
+								<td><c:out value="${item.autherName}"/></td>
+								<td><c:out value="${item.publishName}"/></td>
 							</tr>
 						</c:otherwise>
 					</c:choose>
@@ -185,6 +194,9 @@ function view(serNo){
 										<option value="50">50</option>
 										<option value="100">100</option>
 									</select>
+									<c:set var="keywords">
+										<c:out value="${keywords }"></c:out>
+									</c:set>
 									<input type="hidden" name="keywords" value="${keywords }" />
 								</s:form></td>
 							<td align="right" class="p_02"><c:if
@@ -253,6 +265,12 @@ function view(serNo){
 										<option value="50">50</option>
 										<option value="100">100</option>
 									</select>
+									<c:set var="option">
+										<c:out value="${option }"></c:out>
+									</c:set>
+									<c:set var="keywords">
+										<c:out value="${keywords }"></c:out>
+									</c:set>
 									<input type="hidden" name="option" value="${option }" />
 									<input type="hidden" name="keywords" value="${keywords }" />
 								</s:form></td>

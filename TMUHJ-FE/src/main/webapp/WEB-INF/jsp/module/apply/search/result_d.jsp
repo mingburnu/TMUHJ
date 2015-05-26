@@ -3,15 +3,17 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="s" uri="/struts-tags"%>
 <script type="text/javascript">
-function owner(url){
-		$.ajax({url: url, success: function(result){
-	        $("#container").html(result);
-	    }
+	function owner(url) {
+		$.ajax({
+			url : url,
+			success : function(result) {
+				$("#container").html(result);
+			}
 		});
 	}
-</script>	
+</script>
 <style>
-.list td a:hover{
+.list td a:hover {
 	cursor: pointer;
 }
 </style>
@@ -37,6 +39,9 @@ function owner(url){
 									<option value="50">50</option>
 									<option value="100">100</option>
 								</select>
+								<c:set var="keywords">
+									<c:out value="${keywords }"></c:out>
+								</c:set>
 								<input type="hidden" name="keywords" value="${keywords }" />
 							</s:form></td>
 						<td align="right" class="p_02"><c:if
@@ -87,10 +92,18 @@ function owner(url){
 						<c:when test="${num > 0}">
 							<tr valign="top">
 								<td>${orderInt}</td>
-								<td><div>${item.name}</div>
-									<div>${item.contactUserName}</div></td>
-								<td><div>${item.tel}</div>
-									<div>${item.email}</div></td>
+								<td><div>
+										<c:out value="${item.name}" />
+									</div>
+									<div>
+										<c:out value="${item.contactUserName}" />
+									</div></td>
+								<td><div>
+										<c:out value="${item.tel}" />
+									</div>
+									<div>
+										<c:out value="${item.email}" />
+									</div></td>
 								<td><c:choose>
 										<c:when test="${item.dbAmount > 0 }">
 											<a onclick="owner('${ownDb}')">${item.dbAmount}</a>
@@ -114,10 +127,18 @@ function owner(url){
 						<c:otherwise>
 							<tr valign="top" class="odd">
 								<td>${orderInt}</td>
-								<td><div>${item.name}</div>
-									<div>${item.contactUserName}</div></td>
-								<td><div>${item.tel}</div>
-									<div>${item.email}</div></td>
+								<td><div>
+										<c:out value="${item.name}" />
+									</div>
+									<div>
+										<c:out value="${item.contactUserName}" />
+									</div></td>
+								<td><div>
+										<c:out value="${item.tel}" />
+									</div>
+									<div>
+										<c:out value="${item.email}" />
+									</div></td>
 								<td><c:choose>
 										<c:when test="${item.dbAmount > 0 }">
 											<a onclick="owner('${ownDb}')">${item.dbAmount}</a>
@@ -161,6 +182,9 @@ function owner(url){
 									<option value="50">50</option>
 									<option value="100">100</option>
 								</select>
+								<c:set var="keywords">
+									<c:out value="${keywords }"></c:out>
+								</c:set>
 								<input type="hidden" name="keywords" value="${keywords }" />
 							</s:form></td>
 						<td align="right" class="p_02"><c:if

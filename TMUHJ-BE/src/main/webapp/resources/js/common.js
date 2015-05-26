@@ -43,7 +43,7 @@ function goURL(argURL) {
 		async : true,
 		cache : false,
 		error : function(msq) {
-			// $("#div-contain").html('<div class="message">連結失敗!</div>');
+			$("#div-contain").html('<div class="message">連結失敗!</div>');
 			goAlert("結果", "連結失敗.");
 			closeLoading();
 		},
@@ -64,8 +64,10 @@ function goDetail(argURL, argTitle, argData) {
 		async : true,
 		cache : false,
 		error : function(XMLHttpRequest, textStatus, errorThrown) {
-			//$("#div_Detail .content > .contain").html('<div class="message">連結失敗!</div>');
-			goAlert("結果", XMLHttpRequest.responseText);
+			var response = XMLHttpRequest.responseText;
+			var text = response.replace("<style>", "").replace("</style>","");
+			$("div#div_Detail").hide();
+			goAlert("結果", text);
 			closeLoading();
 		},
 		success : function(msg) {
@@ -92,9 +94,10 @@ function goDetail_import(argURL, argTitle, argData, argFormId) {
 		async : true,
 		cache : false,
 		error : function(XMLHttpRequest, textStatus, errorThrown) {
-			// $("#div_Detail .content > .contain").html('<div
-			// class="message">連結失敗!</div>');
-			goAlert("結果", XMLHttpRequest.responseText);
+			var response = XMLHttpRequest.responseText;
+			var text = response.replace("<style>", "").replace("</style>","");
+			$("div#div_Detail").hide();
+			goAlert("結果", text);
 			closeLoading();
 		},
 		success : function(msg) {
@@ -145,7 +148,9 @@ function goDetail_2(argURL, argTitle, argData) {
 		async : true,
 		cache : false,
 		error : function(XMLHttpRequest, textStatus, errorThrown) {
-			goAlert("結果", XMLHttpRequest.responseText);
+			var response = XMLHttpRequest.responseText;
+			var text = response.replace("<style>", "").replace("</style>","");
+			goAlert("結果", text);
 			closeLoading();
 		},
 		success : function(msg) {
@@ -383,16 +388,20 @@ function initAutoComplete(url, serNoId, nameId) {
 
 function resetCloseDetail() {
 	$("#div_Detail .content .header .title").html("");
-	$("#div_Detail .content .contain").html(
-			"<" + "script>"
-					+ "function closeDetail(){$('#div_Detail').hide();UI_Resize();}"
-					+ "</" + "script>");
+	$("#div_Detail .content .contain")
+			.html(
+					"<"
+							+ "script>"
+							+ "function closeDetail(){$('#div_Detail').hide();UI_Resize();}"
+							+ "</" + "script>");
 }
 
 function resetCloseDetail_2() {
 	$("#div_Detail_2 .content .header .title").html("");
-	$("#div_Detail_2 .content .contain").html(
-			"<" + "script>"
-					+ "function closeDetail_2(){$('#div_Detail_2').hide();UI_Resize();}"
-					+ "</" + "script>");
+	$("#div_Detail_2 .content .contain")
+			.html(
+					"<"
+							+ "script>"
+							+ "function closeDetail_2(){$('#div_Detail_2').hide();UI_Resize();}"
+							+ "</" + "script>");
 }

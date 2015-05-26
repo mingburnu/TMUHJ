@@ -18,45 +18,52 @@
 		updateForm = $("form#apply_accountNumber_update").html();
 		importForm = $("form#apply_accountNumber_queue").html();
 	});
-	
-	$(document).ready(function() {
-		$("select#apply_accountNumber_save_cusSerNo").children().each(function(){
-		    if ($(this).val()=="${entity.customer.serNo}"){
-		        this.selected = true; 
-		    }
-		});
-		
-		$("select#apply_accountNumber_save_role").children().each(function(){
-		    if ($(this).text()=="${entity.role.role}"){
-		        this.selected = true; 
-		    }
-		});
-		
-		$("select#apply_accountNumber_save_status").children().each(function(){
-		    if ($(this).text()=="${entity.status.status}"){
-		        this.selected = true; 
-		    }
-		});
-		
-		$("select#apply_accountNumber_update_cusSerNo").children().each(function(){
-		    if ($(this).val()=="${entity.customer.serNo}"){
-		        this.selected = true; 
-		    }
-		});
-		
-		$("select#apply_accountNumber_update_role").children().each(function(){
-		    if ($(this).text()=="${entity.role.role}"){
-		        this.selected = true; 
-		    }
-		});
-		
-		$("select#apply_accountNumber_update_status").children().each(function(){
-		    if ($(this).text()=="${entity.status.status}"){
-		        this.selected = true; 
-		    }
-		});
-	});
-	
+
+	$(document).ready(
+			function() {
+				$("select#apply_accountNumber_save_cusSerNo").children().each(
+						function() {
+							if ($(this).val() == "${entity.customer.serNo}") {
+								this.selected = true;
+							}
+						});
+
+				$("select#apply_accountNumber_save_role").children().each(
+						function() {
+							if ($(this).text() == "${entity.role.role}") {
+								this.selected = true;
+							}
+						});
+
+				$("select#apply_accountNumber_save_status").children().each(
+						function() {
+							if ($(this).text() == "${entity.status.status}") {
+								this.selected = true;
+							}
+						});
+
+				$("select#apply_accountNumber_update_cusSerNo").children()
+						.each(function() {
+							if ($(this).val() == "${entity.customer.serNo}") {
+								this.selected = true;
+							}
+						});
+
+				$("select#apply_accountNumber_update_role").children().each(
+						function() {
+							if ($(this).text() == "${entity.role.role}") {
+								this.selected = true;
+							}
+						});
+
+				$("select#apply_accountNumber_update_status").children().each(
+						function() {
+							if ($(this).text() == "${entity.status.status}") {
+								this.selected = true;
+							}
+						});
+			});
+
 	//重設所有欄位(清空)
 	function resetData() {
 		$("form#apply_accountNumber_save").html(saveForm);
@@ -141,7 +148,7 @@
 					closeLoading();
 				}
 			});
-			
+
 		} else //for olden browsers
 		{
 			//generate a random id
@@ -172,10 +179,10 @@
 		}
 
 	}
-	
+
 	//匯出範本
-	function goExport(){
-		var url='<%=request.getContextPath()%>/crud/apply.accountNumber.exports.action';
+	function goExport() {
+		var url = "<%=request.getContextPath()%>/crud/apply.accountNumber.exports.action";
 		window.open(url, "_top");
 	}
 </script>
@@ -280,7 +287,7 @@
 				<table cellspacing="1" class="detail-table">
 					<tr>
 						<th width="130">用戶代碼<span class="required">(&#8226;)</span></th>
-						<td>${entity.userId }</td>
+						<td><c:out value="${entity.userId }" /></td>
 					</tr>
 					<tr>
 						<th width="130">用戶密碼</th>
@@ -343,7 +350,7 @@
 	<s:if test="hasActionErrors()">
 		<script language="javascript" type="text/javascript">
 			var msg = "";
-			<s:iterator value="actionErrors">msg += '<s:property escape="false"/><br>';
+			<s:iterator value="actionErrors">msg += '<s:property escape="true"/><br>';
 			</s:iterator>;
 			goAlert('訊息', msg);
 		</script>
