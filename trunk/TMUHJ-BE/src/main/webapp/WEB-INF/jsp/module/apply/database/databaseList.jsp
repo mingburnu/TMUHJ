@@ -34,7 +34,7 @@ function goSearch(){
 
 //新增
 function goAdd(){
-        goDetail('<%=request.getContextPath()%>/crud/apply.database.query.action','資料庫-新增');
+        goDetail('<%=request.getContextPath()%>/crud/apply.database.edit.action','資料庫-新增');
 }
 
 //刪除多筆資料之函式
@@ -85,7 +85,7 @@ function goView(serNo){
 function goUpdate(serNo) {
 	var isNum = /^\d+$/.test(serNo);
 	if (isNum && parseInt(serNo) > 0){
-	goDetail('<%=request.getContextPath()%>/crud/apply.database.query.action?'+'entity.serNo='+serNo,'資料庫-修改');
+	goDetail('<%=request.getContextPath()%>/crud/apply.database.edit.action?'+'entity.serNo='+serNo,'資料庫-修改');
 	}
 }
 
@@ -120,7 +120,7 @@ function chagePageSize(recordPerPage,recordPoint){
 
 //批次匯入
 function goImport(){
-	goDetail('<%=request.getContextPath()%>/crud/apply.database.query.action?'+'goQueue=yes','資料庫-匯入');
+	goDetail('<%=request.getContextPath()%>/crud/apply.database.imports.action','資料庫-匯入');
 }
 </script>
 </head>

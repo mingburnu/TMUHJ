@@ -2,13 +2,9 @@
 	pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="s" uri="/struts-tags"%>
-<c:set var="backURL">
-	<c:out value="${backURL}"></c:out>
-</c:set>
 <script type="text/javascript">
 	function goBack() {
 		var url = "${backURL}";
-		console.log(url);
 		$.ajax({
 			url : url,
 			success : function(result) {

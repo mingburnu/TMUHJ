@@ -47,19 +47,20 @@ public class AuthorizationAction extends GenericWebActionFull<AccountNumber> {
 	@Autowired
 	private DataSet<AccountNumber> ds;
 
-	public void validateLogin() throws Exception {
+	protected void validateLogin() throws Exception {
 		boolean checkLogin = true;
-		if (StringUtils.isEmpty(user.getUserId())) {
-			addActionError("請輸入帳號");
+		if (StringUtils.isBlank(user.getUserId())) {
+			addActionError("請輸入帳號。");
 			checkLogin = false;
 		}
 
-		if (StringUtils.isEmpty(user.getUserPw())) {
-			addActionError("請輸入密碼");
+		if (StringUtils.isBlank(user.getUserPw())) {
+			addActionError("請輸入密碼。");
 			checkLogin = false;
 		}
 
-		if (checkLogin) { // 帳號密碼皆有輸入時才進行檢核
+		// 帳號密碼皆有輸入時才進行檢核
+		if (checkLogin) {
 			boolean isValidUser = false;
 			try {
 				isValidUser = userService.checkUser(user);
@@ -69,11 +70,11 @@ public class AuthorizationAction extends GenericWebActionFull<AccountNumber> {
 			}
 
 			if (!isValidUser) {
-				addActionError("帳號密碼錯誤，請重新輸入");
+				addActionError("帳號密碼錯誤，請重新輸入。");
 			}
 
 			if (!userService.isValidStatus(user)) {
-				addActionError("帳號未生效或審核中");
+				addActionError("帳號未生效或審核中。");
 			}
 		}
 	}
@@ -129,16 +130,22 @@ public class AuthorizationAction extends GenericWebActionFull<AccountNumber> {
 	 * @throws Exception
 	 */
 	public String login() throws Exception {
-		try {
-			ds.setEntity(user);
-			ds = userService.getByRestrictions(ds);
-		} catch (Exception e) {
-			log.error(ExceptionUtils.getStackTrace(e));
-			throw new Exception(e);
-		}
+		validateLogin();
 
-		getSession().put(LOGIN, ds.getResults().get(0));
-		return INDEX;
+		if (!hasActionErrors()) {
+			try {
+				ds.setEntity(user);
+				ds = userService.getByRestrictions(ds);
+			} catch (Exception e) {
+				log.error(ExceptionUtils.getStackTrace(e));
+				throw new Exception(e);
+			}
+
+			getSession().put(LOGIN, ds.getResults().get(0));
+			return LOGIN;
+		} else {
+			return INPUT;
+		}
 	}
 
 	/**
@@ -163,14 +170,14 @@ public class AuthorizationAction extends GenericWebActionFull<AccountNumber> {
 				log.error(ExceptionUtils.getStackTrace(e));
 				throw new Exception(e);
 			}
-			
+
 			customer.setContactUserName("訪客");
 			getSession().put(LOGIN, user);
-			return INDEX;
-		} else if (getLoginUser() != null) {
-			return INDEX;
-		} else {
 			return LOGIN;
+		} else if (getLoginUser() != null) {
+			return LOGIN;
+		} else {
+			return INPUT;
 		}
 
 	}
@@ -183,8 +190,9 @@ public class AuthorizationAction extends GenericWebActionFull<AccountNumber> {
 	 */
 	public String logout() throws Exception {
 		if (getSession().get(LOGIN) != null) {
-			getSession().put(LOGIN, null);
+			getSession().clear();
 		}
+
 		String ip = getRequest().getRemoteAddr();
 		List<IpRange> allipList = ipRangeService.getAllIpList();
 		if (validateIp(ip, allipList) && getLoginUser() == null) {
@@ -198,12 +206,12 @@ public class AuthorizationAction extends GenericWebActionFull<AccountNumber> {
 				log.error(ExceptionUtils.getStackTrace(e));
 				throw new Exception(e);
 			}
-			
+
 			customer.setContactUserName("訪客");
 			getSession().put(LOGIN, user);
-			return INDEX;
-		} else {
 			return LOGIN;
+		} else {
+			return INPUT;
 		}
 	}
 

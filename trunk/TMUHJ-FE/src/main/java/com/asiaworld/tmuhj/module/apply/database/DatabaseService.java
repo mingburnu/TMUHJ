@@ -2,6 +2,7 @@ package com.asiaworld.tmuhj.module.apply.database;
 
 import java.util.List;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -43,7 +44,7 @@ public class DatabaseService extends GenericServiceFull<Database> {
 		Database entity = ds.getEntity();
 
 		String keywords = entity.getKeywords();
-		if (keywords == null || keywords.trim().equals("")) {
+		if (StringUtils.isBlank(keywords)) {
 			Pager pager = ds.getPager();
 			pager.setTotalRecord(0L);
 			ds.setPager(pager);
@@ -52,7 +53,7 @@ public class DatabaseService extends GenericServiceFull<Database> {
 
 		String option = entity.getOption();
 
-		if (option == null) {
+		if (StringUtils.isBlank(option)) {
 			option = "";
 		} else if (option.equals("中文題名")) {
 			option = "DBchttitle";
@@ -66,7 +67,7 @@ public class DatabaseService extends GenericServiceFull<Database> {
 			option = "";
 		}
 
-		if (StringUtils.isNotEmpty(keywords)) {
+		if (StringUtils.isNotBlank(keywords)) {
 			char[] cArray = keywords.toCharArray();
 			StringBuilder keywordsBuilder = new StringBuilder();
 			for (int i = 0; i < cArray.length; i++) {
@@ -118,14 +119,14 @@ public class DatabaseService extends GenericServiceFull<Database> {
 
 		DsRestrictions restrictions = DsBeanFactory.getDsRestrictions();
 
-		if (keywords == null || keywords.trim().equals("")) {
+		if (StringUtils.isBlank(keywords)) {
 			Pager pager = ds.getPager();
 			pager.setTotalRecord(0L);
 			ds.setPager(pager);
 			return ds;
 		}
 
-		if (StringUtils.isNotEmpty(keywords)) {
+		if (StringUtils.isNotBlank(keywords)) {
 			char[] cArray = keywords.toCharArray();
 			StringBuilder keywordsBuilder = new StringBuilder();
 			for (int i = 0; i < cArray.length; i++) {
@@ -182,8 +183,7 @@ public class DatabaseService extends GenericServiceFull<Database> {
 			resourcesUnionList = resourcesUnionService.totalDb(customer, pager);
 		}
 
-		if (resourcesUnionList != null && !resourcesUnionList.isEmpty()
-				&& resourcesUnionList.size() > 0) {
+		if (CollectionUtils.isNotEmpty(resourcesUnionList)) {
 			StringBuilder sqlBuilder = new StringBuilder();
 			for (int i = 0; i < resourcesUnionList.size(); i++) {
 				sqlBuilder.append("serNo="
@@ -197,8 +197,8 @@ public class DatabaseService extends GenericServiceFull<Database> {
 			ds.setPager(pager);
 			return ds;
 		}
-		
-		List<Database> results =dao.findByRestrictions(restrictions);
+
+		List<Database> results = dao.findByRestrictions(restrictions);
 		pager.setTotalRecord(resourcesUnionService.countTotalDb(customer));
 		ds.setResults(results);
 		ds.setPager(pager);

@@ -2,6 +2,7 @@ package com.asiaworld.tmuhj.module.apply.journal;
 
 import java.util.List;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,13 +25,13 @@ public class JournalService extends GenericServiceFull<Journal> {
 
 	@Autowired
 	private Customer customer;
-	
+
 	@Autowired
 	private JournalDao dao;
 
 	@Autowired
 	private ResourcesUnionService resourcesUnionService;
-	
+
 	@Autowired
 	private CustomerService customerService;
 
@@ -44,7 +45,7 @@ public class JournalService extends GenericServiceFull<Journal> {
 		Journal entity = ds.getEntity();
 
 		String keywords = entity.getKeywords();
-		if (keywords == null || keywords.trim().equals("")) {
+		if (StringUtils.isBlank(keywords)) {
 			Pager pager = ds.getPager();
 			pager.setTotalRecord(0L);
 			ds.setPager(pager);
@@ -53,7 +54,7 @@ public class JournalService extends GenericServiceFull<Journal> {
 
 		String option = entity.getOption();
 
-		if (option == null) {
+		if (StringUtils.isBlank(option)) {
 			option = "";
 		} else if (option.equals("中文刊名")) {
 			option = "chinesetitle";
@@ -69,7 +70,7 @@ public class JournalService extends GenericServiceFull<Journal> {
 			option = "";
 		}
 
-		if (StringUtils.isNotEmpty(keywords)) {
+		if (StringUtils.isNotBlank(keywords)) {
 			char[] cArray = keywords.toCharArray();
 			StringBuilder keywordsBuilder = new StringBuilder();
 			for (int i = 0; i < cArray.length; i++) {
@@ -139,14 +140,14 @@ public class JournalService extends GenericServiceFull<Journal> {
 
 		DsRestrictions restrictions = DsBeanFactory.getDsRestrictions();
 
-		if (keywords == null || keywords.trim().equals("")) {
+		if (StringUtils.isBlank(keywords)) {
 			Pager pager = ds.getPager();
 			pager.setTotalRecord(0L);
 			ds.setPager(pager);
 			return ds;
 		}
 
-		if (StringUtils.isNotEmpty(keywords)) {
+		if (StringUtils.isNotBlank(keywords)) {
 			char[] cArray = keywords.toCharArray();
 			StringBuilder keywordsBuilder = new StringBuilder();
 			for (int i = 0; i < cArray.length; i++) {
@@ -214,16 +215,16 @@ public class JournalService extends GenericServiceFull<Journal> {
 
 		DsRestrictions restrictions = DsBeanFactory.getDsRestrictions();
 		Pager pager = ds.getPager();
-		
+
 		customer = customerService.getBySerNo(cusSerNo);
-		
+
 		List<ResourcesUnion> resourcesUnionList = null;
 		if (cusSerNo > 0) {
-			resourcesUnionList = resourcesUnionService.totalJournal(customer, pager);
+			resourcesUnionList = resourcesUnionService.totalJournal(customer,
+					pager);
 		}
 
-		if (resourcesUnionList != null && !resourcesUnionList.isEmpty()
-				&& resourcesUnionList.size() > 0) {
+		if (CollectionUtils.isNotEmpty(resourcesUnionList)) {
 			StringBuilder sqlBuilder = new StringBuilder();
 			for (int i = 0; i < resourcesUnionList.size(); i++) {
 				sqlBuilder.append("serNo="
@@ -232,14 +233,14 @@ public class JournalService extends GenericServiceFull<Journal> {
 
 			String sql = sqlBuilder.toString();
 			restrictions.sqlQuery(sql.substring(0, sql.length() - 4));
-		
+
 		} else {
 			pager.setTotalRecord(0L);
 			ds.setPager(pager);
 			return ds;
 		}
-		
-		List<Journal> results =dao.findByRestrictions(restrictions);
+
+		List<Journal> results = dao.findByRestrictions(restrictions);
 		pager.setTotalRecord(resourcesUnionService.countTotalJournal(customer));
 		ds.setResults(results);
 		ds.setPager(pager);

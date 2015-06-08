@@ -14,8 +14,8 @@ import com.asiaworld.tmuhj.core.apply.accountNumber.AccountNumber;
 import com.asiaworld.tmuhj.core.apply.enums.Act;
 import com.asiaworld.tmuhj.core.apply.feLogs.FeLogs;
 import com.asiaworld.tmuhj.core.apply.feLogs.FeLogsService;
-import com.opensymphony.xwork2.ActionContext;
 import com.opensymphony.xwork2.ActionInvocation;
+import com.opensymphony.xwork2.ValidationAware;
 import com.opensymphony.xwork2.interceptor.AbstractInterceptor;
 
 /**
@@ -40,34 +40,42 @@ public class SearchActionInterceptor extends AbstractInterceptor {
 
 	@Override
 	public String intercept(ActionInvocation invocation) throws Exception {
+		HttpServletRequest request = ServletActionContext.getRequest();
+
+		Map<String, Object> session = invocation.getInvocationContext()
+				.getSession();
+
 		String method = invocation.getProxy().getMethod();
 
-		if (method.equals("query")) {
-			HttpServletRequest request = ServletActionContext.getRequest();
-			if (request.getParameter("keywords") == null
-					|| request.getParameter("keywords").trim().equals("")) {
+		if (method.equals("list")) {
+			if (StringUtils.isBlank(request.getParameter("keywords"))) {
+				request.setAttribute("type", request.getParameter("type"));
+				addActionError(invocation, "．請輸入關鍵字。");
 				return "query";
 			}
 		}
 
 		if (method.equals("focus")) {
-			HttpServletRequest request = ServletActionContext.getRequest();
-			if (request.getParameter("keywords") == null
-					|| request.getParameter("keywords").trim().equals("")) {
+			if (StringUtils.isBlank(request.getParameter("keywords"))
+					|| StringUtils.isBlank(request.getParameter("option"))) {
+				request.setAttribute("type", request.getParameter("type"));
+				request.setAttribute("option", request.getParameter("option"));
+				addActionError(invocation, "．請輸入關鍵字。");
+
+				if (StringUtils.isBlank(request.getParameter("option"))) {
+					request.setAttribute("type", "database");
+					request.setAttribute("option", "中文題名");
+					addActionError(invocation, "．請輸入選項。");
+				}
+
 				return "adv_query";
 			}
 		}
 
 		String result = invocation.invoke();
 
-		if (method.equals("query")) {
-			HttpServletRequest request = ServletActionContext.getRequest();
-			if (StringUtils.isEmpty(request.getParameter("keywords"))) {
-				return "query";
-			}
+		if (method.equals("list")) {
 
-			Map<String, Object> session = ActionContext.getContext()
-					.getSession();
 			accountNumber = (AccountNumber) session.get("login");
 
 			if (request.getParameter("recordPerPage") == null
@@ -90,13 +98,7 @@ public class SearchActionInterceptor extends AbstractInterceptor {
 		}
 
 		if (method.equals("focus")) {
-			HttpServletRequest request = ServletActionContext.getRequest();
-			if (StringUtils.isEmpty(request.getParameter("keywords"))) {
-				return "adv_query";
-			}
 
-			Map<String, Object> session = ActionContext.getContext()
-					.getSession();
 			accountNumber = (AccountNumber) session.get("login");
 
 			if (request.getParameter("recordPerPage") == null
@@ -120,4 +122,10 @@ public class SearchActionInterceptor extends AbstractInterceptor {
 		return result;
 	}
 
+	private void addActionError(ActionInvocation invocation, String message) {
+		Object action = invocation.getAction();
+		if (action instanceof ValidationAware) {
+			((ValidationAware) action).addActionError(message);
+		}
+	}
 }

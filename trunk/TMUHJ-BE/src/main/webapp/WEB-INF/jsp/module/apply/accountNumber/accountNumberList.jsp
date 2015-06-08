@@ -23,7 +23,7 @@ function goSearch(){
 
 //新增
 function goAdd(){
-    goDetail('<%=request.getContextPath()%>/crud/apply.accountNumber.query.action','帳戶-新增');
+    goDetail('<%=request.getContextPath()%>/crud/apply.accountNumber.edit.action','帳戶-新增');
 }
 
 //失效多筆資料之函式
@@ -106,7 +106,7 @@ function goView(serNo){
 function goUpdate(serNo) {
 	var isNum = /^\d+$/.test(serNo);
 	if (isNum && parseInt(serNo) > 0){
-	goDetail('<%=request.getContextPath()%>/crud/apply.accountNumber.query.action?'+'entity.serNo='+serNo,'帳戶-修改');
+	goDetail('<%=request.getContextPath()%>/crud/apply.accountNumber.edit.action?'+'entity.serNo='+serNo,'帳戶-修改');
 	}
 }
 
@@ -141,7 +141,7 @@ function chagePageSize(recordPerPage,recordPoint){
 
 //批次匯入
 function goImport(){
-	goDetail('<%=request.getContextPath()%>/crud/apply.accountNumber.query.action?'+'goQueue=yes','帳戶-匯入');
+	goDetail('<%=request.getContextPath()%>/crud/apply.accountNumber.imports.action','帳戶-匯入');
 }
 </script>
 </head>

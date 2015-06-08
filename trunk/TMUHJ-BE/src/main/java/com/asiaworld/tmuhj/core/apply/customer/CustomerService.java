@@ -74,7 +74,7 @@ public class CustomerService extends GenericServiceFull<Customer> {
 
 	public long getCusSerNoByName(String name) throws Exception {
 		DsRestrictions restrictions = DsBeanFactory.getDsRestrictions();
-		restrictions.eq("name", name.trim());
+		restrictions.eq("name", name);
 
 		if (dao.findByRestrictions(restrictions).size() > 0) {
 			return dao.findByRestrictions(restrictions).get(0).getSerNo();

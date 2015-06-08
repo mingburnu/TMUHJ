@@ -1,18 +1,22 @@
 package com.asiaworld.tmuhj.test;
 
 import java.io.IOException;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.MapUtils;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.math.NumberUtils;
-import org.joda.time.LocalDateTime;
+import org.jasypt.util.password.StrongPasswordEncryptor;
+
+import com.asiaworld.tmuhj.core.apply.customer.Customer;
 
 public class Test {
 
-	@SuppressWarnings("unused")
 	public static void main(String[] args) throws IOException {
 
 		String[] sql = {
@@ -94,20 +98,78 @@ public class Test {
 			sql[i] = sql[i].replace(",   '		", ",   '");
 			// System.out.println(sql[i]);
 		}
-		
-		System.out.println(System.getProperty("java.version"));
-		
-		String regex="[<>&'"+'"'+"]";
-		Pattern pattern=Pattern.compile(regex);
-		
-		String url="123>&<'"+'"';
-		Matcher matcher=pattern.matcher(url);
-		System.out.println(matcher.matches());
-		
-		System.out.print(url.replaceAll(regex, "*"));
-		
 
-	
+		System.out.println(System.getProperty("java.version"));
+
+		String regex = "[<>&'" + '"' + "]";
+		Pattern pattern = Pattern.compile(regex);
+
+		String url = "123>&<'" + '"';
+		Matcher matcher = pattern.matcher(url);
+		System.out.println(matcher.matches());
+
+		System.out.println(url.replaceAll(regex, "*"));
+
+		String[][] strArray = new String[2][2];
+		System.out.println(ArrayUtils.isEmpty(strArray));
+		System.out.println(MapUtils.isEmpty(new TreeMap<String, String>()));
+		System.out.println(CollectionUtils.isEmpty(new ArrayList<String>()));
+
+		for (int i = 0; i < 190000; i++) {
+			// System.out.print(i);
+			if (i % 10000 == 0) {
+				System.out.print(i / 10000);
+			}
+
+			if (i == 190001) {
+				break;
+			}
+		}
+
+		System.out.println("Over");
+
+		TreeMap<String, Integer> tm = new TreeMap<String, Integer>();
+		tm.put("1", 1);
+		tm.put("2", 2);
+		tm.put("1", 3);
+		System.out.println(tm);
+
+		System.out.println(StringUtils.isEmpty("  "));
+
+		String[] strArr = new String[0];
+		System.out.println(ArrayUtils.isEmpty(strArr));
+		strArr = new String[0];
+		System.out.println(ArrayUtils.isEmpty(strArr));
+		
+		List<String> list =null;
+		System.out.println(CollectionUtils.isEmpty(list));
+		list =new ArrayList<String>();
+		System.out.println(CollectionUtils.isEmpty(list));
+		list.add("hello");
+		System.out.println(CollectionUtils.isEmpty(list));
+		list.remove("hello");
+		System.out.println(CollectionUtils.isEmpty(list));
+		String str =" ";
+		System.out.println(str.isEmpty());
+		
+		String whiteTest = "  AA　　"; 
+		System.out.println(Character.isWhitespace(whiteTest.charAt(0)));
+		System.out.println(Character.isWhitespace(whiteTest.charAt(whiteTest.length()-1)));
+		System.out.println(Character.isLetter(whiteTest.charAt(whiteTest.length()-1)));
+		System.out.println(Character.isLetter(whiteTest.charAt(whiteTest.length()-1)));
+		System.out.println(Character.isLetterOrDigit(whiteTest.charAt(whiteTest.length()-1)));
+		System.out.println('c'>'a');
+		System.out.println(whiteTest.replaceAll("[a-zA-Z0-9]", ""));
+		System.out.println(whiteTest.replaceAll("[a-zA-Z0-9]", "").length());
+		Customer customer = new Customer("AAA", "", "", "", "", "", "", "");
+		List<Customer> customers=new ArrayList<Customer>();
+		customers.add(customer);
+		customers.get(0).setName("BBB");
+		System.out.println(customers.get(0).getName());
+		System.out.println(customer.getName());
+		
+		StrongPasswordEncryptor encryptor = new StrongPasswordEncryptor();
+		System.out.println(encryptor.checkPassword("admin", "8w5y4CYvLHP69kq5Wm2vHDVfPX1IOcrpskUugS/4KZN6budffcIYbfhpEL6HmNZ0"));
 	
 	}
 }

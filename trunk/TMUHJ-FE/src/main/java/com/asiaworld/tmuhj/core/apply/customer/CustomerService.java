@@ -35,14 +35,14 @@ public class CustomerService extends GenericServiceFull<Customer> {
 
 		DsRestrictions restrictions = DsBeanFactory.getDsRestrictions();
 
-		if (keywords == null || keywords.trim().equals("")) {
+		if (StringUtils.isBlank(keywords)) {
 			Pager pager = ds.getPager();
 			pager.setTotalRecord(0L);
 			ds.setPager(pager);
 			return ds;
 		}
 
-		if (StringUtils.isNotEmpty(keywords)) {
+		if (StringUtils.isNotBlank(keywords)) {
 			char[] cArray = keywords.toCharArray();
 			StringBuilder keywordsBuilder = new StringBuilder();
 			for (int i = 0; i < cArray.length; i++) {
@@ -61,7 +61,7 @@ public class CustomerService extends GenericServiceFull<Customer> {
 
 			StringBuilder sqlBuilder = new StringBuilder();
 			for (int i = 0; i < wordArray.length; i++) {
-				if (wordArray[i].isEmpty() == false) {
+				if (!wordArray[i].isEmpty()) {
 					sqlBuilder.append("LOWER(name) like LOWER('%"
 							+ wordArray[i]
 							+ "%') or  LOWER(engName) like LOWER('%"

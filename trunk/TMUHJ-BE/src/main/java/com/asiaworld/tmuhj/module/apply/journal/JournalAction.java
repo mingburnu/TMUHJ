@@ -14,10 +14,12 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeMap;
+import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -39,6 +41,7 @@ import com.asiaworld.tmuhj.core.model.DataSet;
 import com.asiaworld.tmuhj.core.model.ExcelWorkSheet;
 import com.asiaworld.tmuhj.core.model.Pager;
 import com.asiaworld.tmuhj.core.web.GenericCRUDActionFull;
+import com.asiaworld.tmuhj.module.apply.database.Database;
 import com.asiaworld.tmuhj.module.apply.enums.Category;
 import com.asiaworld.tmuhj.module.apply.enums.Type;
 import com.asiaworld.tmuhj.module.apply.resourcesBuyers.ResourcesBuyers;
@@ -55,11 +58,11 @@ public class JournalAction extends GenericCRUDActionFull<Journal> {
 
 	private String[] cusSerNo;
 
-	private File file;
+	private File[] file;
 
-	private String fileFileName;
+	private String[] fileFileName;
 
-	private String fileContentType;
+	private String[] fileContentType;
 
 	@Autowired
 	private Journal journal;
@@ -87,164 +90,172 @@ public class JournalAction extends GenericCRUDActionFull<Journal> {
 
 	private ExcelWorkSheet<Journal> excelWorkSheet;
 
-	private String importSerNo;
-
 	private String[] importSerNos;
 
 	private InputStream inputStream;
 
 	private String reportFile;
-	
-	private List<String> actionErrors;
 
 	@Override
-	public void validateSave() throws Exception {
-		actionErrors = new ArrayList<String>();
-		
-		List<Category> categoryList=new ArrayList<Category>(Arrays.asList(Category.values()));
-		categoryList.remove(categoryList.size()-1);
-				
-		List<Type> typeList=new ArrayList<Type>(Arrays.asList(Type.values()));
-						
+	protected void validateSave() throws Exception {
+		List<Category> categoryList = new ArrayList<Category>(
+				Arrays.asList(Category.values()));
+		categoryList.remove(categoryList.size() - 1);
+
+		List<Type> typeList = new ArrayList<Type>(Arrays.asList(Type.values()));
+
 		if (StringUtils.isBlank(getEntity().getEnglishTitle())) {
-			actionErrors.add("英文刊名不得空白");
+			errorMessages.add("英文刊名不得空白");
 		}
 
 		if (StringUtils.isBlank(getEntity().getIssn())) {
-			actionErrors.add("ISSN不得空白");
+			errorMessages.add("ISSN不得空白");
 		} else {
 			if (!isIssn(getEntity().getIssn())) {
-				actionErrors.add("ISSN不正確");
+				errorMessages.add("ISSN不正確");
 			} else {
-				if (journalService.getJouSerNoByIssn(getEntity().getIssn()) != 0 ){
-					actionErrors.add("ISSN不可重複");
+				if (journalService.getJouSerNoByIssn(getEntity().getIssn()) != 0) {
+					errorMessages.add("ISSN不可重複");
 				}
 			}
 		}
 
 		if (cusSerNo == null || cusSerNo.length == 0) {
-			actionErrors.add("至少選擇一筆以上購買單位");
+			errorMessages.add("至少選擇一筆以上購買單位");
 		} else {
 			int i = 0;
 			while (i < cusSerNo.length) {
 				if (!NumberUtils.isDigits(String.valueOf(cusSerNo[i]))
 						|| Long.parseLong(cusSerNo[i]) < 1
-						|| customerService.getBySerNo(Long.parseLong(cusSerNo[i])) == null) {
-					actionErrors.add(cusSerNo[i] + "為不可利用的流水號");
+						|| customerService.getBySerNo(Long
+								.parseLong(cusSerNo[i])) == null) {
+					errorMessages.add(cusSerNo[i] + "為不可利用的流水號");
 				}
 				i++;
 			}
 		}
-		
-		boolean isLegalCategory=false;
-		for (int i=0; i < categoryList.size(); i++){
-			if(getRequest().getParameter("rCategory") != null
-					&& getRequest().getParameter("rCategory").equals(categoryList.get(i).getCategory())){
-				isLegalCategory=true;
+
+		boolean isLegalCategory = false;
+		for (int i = 0; i < categoryList.size(); i++) {
+			if (getRequest().getParameter("rCategory") != null
+					&& getRequest().getParameter("rCategory").equals(
+							categoryList.get(i).getCategory())) {
+				isLegalCategory = true;
 			}
 		}
-		
-		if(isLegalCategory){
-			getRequest().setAttribute("rType", getRequest().getParameter("rCategory"));
-		} else{
-			actionErrors.add("資源類型錯誤");
-		}
-		
-		boolean isLegalType=false;
-		for (int i=0; i < categoryList.size(); i++){
-			if(getRequest().getParameter("rType") != null
-					&& getRequest().getParameter("rType").equals(typeList.get(i).getType())){
-				isLegalType=true;
-			}
-		}
-		
-		if(isLegalType){
-			getRequest().setAttribute("rType", getRequest().getParameter("rType"));
+
+		if (isLegalCategory) {
+			getRequest().setAttribute("rType",
+					getRequest().getParameter("rCategory"));
 		} else {
-			actionErrors.add("資源種類錯誤");
+			errorMessages.add("資源類型錯誤");
+		}
+
+		boolean isLegalType = false;
+		for (int i = 0; i < categoryList.size(); i++) {
+			if (getRequest().getParameter("rType") != null
+					&& getRequest().getParameter("rType").equals(
+							typeList.get(i).getType())) {
+				isLegalType = true;
+			}
+		}
+
+		if (isLegalType) {
+			getRequest().setAttribute("rType",
+					getRequest().getParameter("rType"));
+		} else {
+			errorMessages.add("資源種類錯誤");
 		}
 	}
 
 	@Override
-	public void validateUpdate() throws Exception {
-		actionErrors = new ArrayList<String>();
-		
-		List<Category> categoryList=new ArrayList<Category>(Arrays.asList(Category.values()));
-		categoryList.remove(categoryList.size()-1);
-				
-		List<Type> typeList=new ArrayList<Type>(Arrays.asList(Type.values()));
-						
+	protected void validateUpdate() throws Exception {
+		List<Category> categoryList = new ArrayList<Category>(
+				Arrays.asList(Category.values()));
+		categoryList.remove(categoryList.size() - 1);
+
+		List<Type> typeList = new ArrayList<Type>(Arrays.asList(Type.values()));
+
+		if (!hasEntity()) {
+			errorMessages.add("Target must not be null");
+		}
+
 		if (StringUtils.isBlank(getEntity().getEnglishTitle())) {
-			actionErrors.add("英文刊名不得空白");
+			errorMessages.add("英文刊名不得空白");
 		}
 
 		if (StringUtils.isBlank(getEntity().getIssn())) {
-			actionErrors.add("ISSN不得空白");
+			errorMessages.add("ISSN不得空白");
 		} else {
 			if (!isIssn(getEntity().getIssn())) {
-				actionErrors.add("ISSN不正確");
+				errorMessages.add("ISSN不正確");
 			} else {
-				if (journalService.getJouSerNoByIssn(getEntity().getIssn()) != 0 ){
-					actionErrors.add("ISSN不可重複");
+				long jouSerNo = journalService.getJouSerNoByIssn(getEntity()
+						.getIssn().trim().replace("-", ""));
+				if (jouSerNo != 0 && jouSerNo != getEntity().getSerNo()) {
+					errorMessages.add("ISSN不可重複");
 				}
 			}
 		}
 
 		if (cusSerNo == null || cusSerNo.length == 0) {
-			actionErrors.add("至少選擇一筆以上購買單位");
+			errorMessages.add("至少選擇一筆以上購買單位");
 		} else {
 			int i = 0;
 			while (i < cusSerNo.length) {
 				if (!NumberUtils.isDigits(String.valueOf(cusSerNo[i]))
 						|| Long.parseLong(cusSerNo[i]) < 1
-						|| customerService.getBySerNo(Long.parseLong(cusSerNo[i])) == null) {
-					actionErrors.add(cusSerNo[i] + "為不可利用的流水號");
+						|| customerService.getBySerNo(Long
+								.parseLong(cusSerNo[i])) == null) {
+					errorMessages.add(cusSerNo[i] + "為不可利用的流水號");
 				}
 				i++;
 			}
 		}
-		
-		boolean isLegalCategory=false;
-		for (int i=0; i < categoryList.size(); i++){
-			if(getRequest().getParameter("rCategory") != null
-					&& getRequest().getParameter("rCategory").equals(categoryList.get(i).getCategory())){
-				isLegalCategory=true;
+
+		boolean isLegalCategory = false;
+		for (int i = 0; i < categoryList.size(); i++) {
+			if (getRequest().getParameter("rCategory") != null
+					&& getRequest().getParameter("rCategory").equals(
+							categoryList.get(i).getCategory())) {
+				isLegalCategory = true;
 			}
 		}
-		
-		if(isLegalCategory){
-			getRequest().setAttribute("rType", getRequest().getParameter("rCategory"));
-		} else{
-			actionErrors.add("資源類型錯誤");
-		}
-		
-		boolean isLegalType=false;
-		for (int i=0; i < categoryList.size(); i++){
-			if(getRequest().getParameter("rType") != null
-					&& getRequest().getParameter("rType").equals(typeList.get(i).getType())){
-				isLegalType=true;
-			}
-		}
-		
-		if(isLegalType){
-			getRequest().setAttribute("rType", getRequest().getParameter("rType"));
+
+		if (isLegalCategory) {
+			getRequest().setAttribute("rType",
+					getRequest().getParameter("rCategory"));
 		} else {
-			actionErrors.add("資源種類錯誤");
+			errorMessages.add("資源類型錯誤");
+		}
+
+		boolean isLegalType = false;
+		for (int i = 0; i < categoryList.size(); i++) {
+			if (getRequest().getParameter("rType") != null
+					&& getRequest().getParameter("rType").equals(
+							typeList.get(i).getType())) {
+				isLegalType = true;
+			}
+		}
+
+		if (isLegalType) {
+			getRequest().setAttribute("rType",
+					getRequest().getParameter("rType"));
+		} else {
+			errorMessages.add("資源種類錯誤");
 		}
 	}
 
 	@Override
-	public void validateDelete() throws Exception {
-		actionErrors = new ArrayList<String>();
-		
+	protected void validateDelete() throws Exception {
 		if (checkItem == null || checkItem.length == 0) {
-			actionErrors.add("請選擇一筆或一筆以上的資料");
+			errorMessages.add("請選擇一筆或一筆以上的資料");
 		} else {
 			int i = 0;
 			while (i < checkItem.length) {
 				if (!NumberUtils.isDigits(String.valueOf(checkItem[i]))
 						|| Long.parseLong(checkItem[i]) < 1) {
-					actionErrors.add(checkItem[i] + "為不可利用的流水號");
+					errorMessages.add(checkItem[i] + "為不可利用的流水號");
 				}
 				i++;
 			}
@@ -252,46 +263,44 @@ public class JournalAction extends GenericCRUDActionFull<Journal> {
 	}
 
 	@Override
-	public String query() throws Exception {
-		List<Category> categoryList=new ArrayList<Category>(Arrays.asList(Category.values()));
-		categoryList.remove(categoryList.size()-1);
+	public String edit() throws Exception {
+		List<Category> categoryList = new ArrayList<Category>(
+				Arrays.asList(Category.values()));
+		categoryList.remove(categoryList.size() - 1);
 		getRequest().setAttribute("categoryList", categoryList);
-		
-		List<Type> typeList=new ArrayList<Type>(Arrays.asList(Type.values()));
+
+		List<Type> typeList = new ArrayList<Type>(Arrays.asList(Type.values()));
 		getRequest().setAttribute("typeList", typeList);
-		
+
 		getRequest().setAttribute("allCustomers",
 				customerService.getAllCustomers());
 		if (getEntity().getSerNo() != null) {
 			journal = journalService.getBySerNo(getEntity().getSerNo());
-			
-			if (journal != null){
-			Iterator<ResourcesUnion> iterator = resourcesUnionService
-					.getResourcesUnionsByObj(getEntity(), Journal.class)
-					.iterator();
 
-			List<Customer> customers = new ArrayList<Customer>();
+			if (journal != null) {
+				Iterator<ResourcesUnion> iterator = resourcesUnionService
+						.getResourcesUnionsByObj(getEntity(), Journal.class)
+						.iterator();
 
-			while (iterator.hasNext()) {
-				resourcesUnion = iterator.next();
-				customer = resourcesUnion.getCustomer();
-				if (customer != null){
-				customers.add(customer);
+				List<Customer> customers = new ArrayList<Customer>();
+
+				while (iterator.hasNext()) {
+					resourcesUnion = iterator.next();
+					customer = resourcesUnion.getCustomer();
+					if (customer != null) {
+						customers.add(customer);
+					}
 				}
-			}
 
-			resourcesBuyers = resourcesUnion.getResourcesBuyers();
-			getRequest().setAttribute("rCategory", resourcesBuyers.getrCategory().getCategory());
-			getRequest().setAttribute("rType", resourcesBuyers.getrType().getType());
-			journal.setCustomers(customers);
+				resourcesBuyers = resourcesUnion.getResourcesBuyers();
+				getRequest().setAttribute("rCategory",
+						resourcesBuyers.getrCategory().getCategory());
+				getRequest().setAttribute("rType",
+						resourcesBuyers.getrType().getType());
+				journal.setCustomers(customers);
+			} 
 			
-			}
 			setEntity(journal);
-			
-		} else if (getRequest().getParameter("goQueue") != null
-				&& getRequest().getParameter("goQueue").equals("yes")) {
-			getRequest().setAttribute("goQueue",
-					getRequest().getParameter("goQueue"));
 		} else {
 			List<Customer> customers = new ArrayList<Customer>();
 			journal.setCustomers(customers);
@@ -303,18 +312,22 @@ public class JournalAction extends GenericCRUDActionFull<Journal> {
 	@Override
 	public String list() throws Exception {
 		if (StringUtils.isNotEmpty(getRequest().getParameter("option"))) {
-			if (getRequest().getParameter("option").equals("entity.chineseTitle") ||
-					getRequest().getParameter("option").equals("entity.englishTitle") ||
-					getRequest().getParameter("option").equals("entity.issn")) {
-				getRequest().setAttribute("option", getRequest().getParameter("option"));
-				
+			if (getRequest().getParameter("option").equals(
+					"entity.chineseTitle")
+					|| getRequest().getParameter("option").equals(
+							"entity.englishTitle")
+					|| getRequest().getParameter("option")
+							.equals("entity.issn")) {
+				getRequest().setAttribute("option",
+						getRequest().getParameter("option"));
+
 			} else {
-					getRequest().setAttribute("option", "entity.chineseTitle");
-			}
-			
-		} else {
 				getRequest().setAttribute("option", "entity.chineseTitle");
-				
+			}
+
+		} else {
+			getRequest().setAttribute("option", "entity.chineseTitle");
+
 		}
 
 		DataSet<Journal> ds = initDataSet();
@@ -328,8 +341,9 @@ public class JournalAction extends GenericCRUDActionFull<Journal> {
 		int i = 0;
 		while (i < results.size()) {
 			results.get(i).setResourcesBuyers(
-					resourcesUnionService.getByObjSerNo(results.get(i).getSerNo(),
-							Journal.class).getResourcesBuyers());
+					resourcesUnionService.getByObjSerNo(
+							results.get(i).getSerNo(), Journal.class)
+							.getResourcesBuyers());
 			i++;
 		}
 
@@ -340,39 +354,36 @@ public class JournalAction extends GenericCRUDActionFull<Journal> {
 
 	@Override
 	public String save() throws Exception {
-		List<Category> categoryList=new ArrayList<Category>(Arrays.asList(Category.values()));
-		categoryList.remove(categoryList.size()-1);
-				
-		List<Type> typeList=new ArrayList<Type>(Arrays.asList(Type.values()));
-		
+		List<Category> categoryList = new ArrayList<Category>(
+				Arrays.asList(Category.values()));
+		categoryList.remove(categoryList.size() - 1);
+
+		List<Type> typeList = new ArrayList<Type>(Arrays.asList(Type.values()));
+
 		validateSave();
-		Iterator<String> iteratorMsg = actionErrors.iterator();
-		while(iteratorMsg.hasNext()){
-			addActionError(iteratorMsg.next());
-		}
-		
+		setActionErrors(errorMessages);
+
 		if (!hasActionErrors()) {
 			journal = getEntity();
-			journal.setIssn(getEntity().getIssn().toUpperCase());
+			journal.setIssn(getEntity().getIssn().trim().replace("-", "")
+					.toUpperCase());
 			journal = journalService.save(journal, getLoginUser());
 
-			resourcesBuyers = resourcesBuyersService.save(new ResourcesBuyers(getRequest().getParameter(
-							"resourcesBuyers.startDate"), getRequest()
-							.getParameter("resourcesBuyers.maturityDate"),
-							Category.valueOf(getRequest().getParameter(
-									"rCategory")), Type
-									.valueOf(getRequest().getParameter(
-											"rType")),
-							getRequest().getParameter(
-									"resourcesBuyers.dbChtTitle"), getRequest()
-									.getParameter("resourcesBuyers.dbEngTitle")),
-							getLoginUser());
+			resourcesBuyers = resourcesBuyersService.save(new ResourcesBuyers(
+					getRequest().getParameter("resourcesBuyers.startDate"),
+					getRequest().getParameter("resourcesBuyers.maturityDate"),
+					Category.valueOf(getRequest().getParameter("rCategory")),
+					Type.valueOf(getRequest().getParameter("rType")),
+					getRequest().getParameter("resourcesBuyers.dbChtTitle"),
+					getRequest().getParameter("resourcesBuyers.dbEngTitle")),
+					getLoginUser());
 
 			int i = 0;
 			while (i < cusSerNo.length) {
-				resourcesUnionService.save(new ResourcesUnion(customerService.getBySerNo(Long.parseLong(cusSerNo[i])),
-								resourcesBuyers, 0L, 0L, journal
-										.getSerNo()), getLoginUser());
+				resourcesUnionService.save(
+						new ResourcesUnion(customerService.getBySerNo(Long
+								.parseLong(cusSerNo[i])), resourcesBuyers, 0L,
+								0L, journal.getSerNo()), getLoginUser());
 
 				i++;
 			}
@@ -405,9 +416,10 @@ public class JournalAction extends GenericCRUDActionFull<Journal> {
 			if (cusSerNo != null && cusSerNo.length != 0) {
 				int i = 0;
 				while (i < cusSerNo.length) {
-					if (cusSerNo[i] != null 
-							&& NumberUtils.isDigits(cusSerNo[i])){
-						if(customerService.getBySerNo(Long.parseLong(cusSerNo[i])) != null){
+					if (cusSerNo[i] != null
+							&& NumberUtils.isDigits(cusSerNo[i])) {
+						if (customerService.getBySerNo(Long
+								.parseLong(cusSerNo[i])) != null) {
 							customers.add(customerService.getBySerNo(Long
 									.parseLong(cusSerNo[i])));
 						}
@@ -425,40 +437,42 @@ public class JournalAction extends GenericCRUDActionFull<Journal> {
 
 	@Override
 	public String update() throws Exception {
-		List<Category> categoryList=new ArrayList<Category>(Arrays.asList(Category.values()));
-		categoryList.remove(categoryList.size()-1);
-				
-		List<Type> typeList=new ArrayList<Type>(Arrays.asList(Type.values()));
-		
-		boolean isLegalCategory=false;
-		for (int i=0; i < categoryList.size(); i++){
-			if(getRequest().getParameter("rCategory") != null
-					&& getRequest().getParameter("rCategory").equals(categoryList.get(i).getCategory())){
-				isLegalCategory=true;
+		List<Category> categoryList = new ArrayList<Category>(
+				Arrays.asList(Category.values()));
+		categoryList.remove(categoryList.size() - 1);
+
+		List<Type> typeList = new ArrayList<Type>(Arrays.asList(Type.values()));
+
+		boolean isLegalCategory = false;
+		for (int i = 0; i < categoryList.size(); i++) {
+			if (getRequest().getParameter("rCategory") != null
+					&& getRequest().getParameter("rCategory").equals(
+							categoryList.get(i).getCategory())) {
+				isLegalCategory = true;
 			}
 		}
-		
-		if(isLegalCategory){
-			getRequest().setAttribute("rCategory", getRequest().getParameter("rCategory"));
+
+		if (isLegalCategory) {
+			getRequest().setAttribute("rCategory",
+					getRequest().getParameter("rCategory"));
 		}
-		
-		boolean isLegalType=false;
-		for (int i=0; i < categoryList.size(); i++){
-			if(getRequest().getParameter("rType") != null
-					&& getRequest().getParameter("rType").equals(typeList.get(i).getType())){
-				isLegalType=true;
+
+		boolean isLegalType = false;
+		for (int i = 0; i < categoryList.size(); i++) {
+			if (getRequest().getParameter("rType") != null
+					&& getRequest().getParameter("rType").equals(
+							typeList.get(i).getType())) {
+				isLegalType = true;
 			}
 		}
-		
-		if(isLegalType){
-			getRequest().setAttribute("rType", getRequest().getParameter("rType"));
+
+		if (isLegalType) {
+			getRequest().setAttribute("rType",
+					getRequest().getParameter("rType"));
 		}
-		
-		validateSave();
-		Iterator<String> iteratorMsg = actionErrors.iterator();
-		while(iteratorMsg.hasNext()){
-			addActionError(iteratorMsg.next());
-		}
+
+		validateUpdate();
+		setActionErrors(errorMessages);
 
 		if (!hasActionErrors()) {
 			journal = getEntity();
@@ -466,7 +480,7 @@ public class JournalAction extends GenericCRUDActionFull<Journal> {
 			journal = journalService.update(journal, getLoginUser());
 
 			resourcesBuyers = resourcesUnionService.getByObjSerNo(
-							journal.getSerNo(), Journal.class).getResourcesBuyers();
+					journal.getSerNo(), Journal.class).getResourcesBuyers();
 			resourcesBuyers.setStartDate(getRequest().getParameter(
 					"resourcesBuyers.startDate"));
 			resourcesBuyers.setMaturityDate(getRequest().getParameter(
@@ -504,9 +518,11 @@ public class JournalAction extends GenericCRUDActionFull<Journal> {
 			while (i < cusSerNo.length) {
 				if (!resourcesUnionService.isExist(journal, Journal.class,
 						Long.parseLong(cusSerNo[i]))) {
-					resourcesUnionService.save(new ResourcesUnion(customerService.getBySerNo(Long.parseLong(cusSerNo[i])),
-									resourcesBuyers, 0L, 0L, journal
-											.getSerNo()), getLoginUser());
+					resourcesUnionService
+							.save(new ResourcesUnion(customerService
+									.getBySerNo(Long.parseLong(cusSerNo[i])),
+									resourcesBuyers, 0L, 0L, journal.getSerNo()),
+									getLoginUser());
 				}
 
 				i++;
@@ -557,10 +573,7 @@ public class JournalAction extends GenericCRUDActionFull<Journal> {
 	@Override
 	public String delete() throws Exception {
 		validateDelete();
-		Iterator<String> iteratorMsg = actionErrors.iterator();
-		while(iteratorMsg.hasNext()){
-			addActionError(iteratorMsg.next());
-		}
+		setActionErrors(errorMessages);
 
 		if (!hasActionErrors()) {
 			int j = 0;
@@ -572,26 +585,30 @@ public class JournalAction extends GenericCRUDActionFull<Journal> {
 									Journal.class);
 					resourcesUnion = resourcesUnions.get(0);
 
-					Iterator<ResourcesUnion> iterator = resourcesUnions.iterator();
+					Iterator<ResourcesUnion> iterator = resourcesUnions
+							.iterator();
 					while (iterator.hasNext()) {
 						resourcesUnion = iterator.next();
 						resourcesUnionService.deleteBySerNo(resourcesUnion
 								.getSerNo());
 					}
-					resourcesBuyersService.deleteBySerNo(resourcesUnion.getResourcesBuyers().getSerNo());
+					resourcesBuyersService.deleteBySerNo(resourcesUnion
+							.getResourcesBuyers().getSerNo());
 					journalService.deleteBySerNo(Long.parseLong(checkItem[j]));
 				}
 				j++;
 			}
 
-			DataSet<Journal> ds = journalService.getByRestrictions(initDataSet());
+			DataSet<Journal> ds = journalService
+					.getByRestrictions(initDataSet());
 			List<Journal> results = ds.getResults();
 
 			int i = 0;
 			while (i < results.size()) {
 				results.get(i).setResourcesBuyers(
-						resourcesUnionService.getByObjSerNo(results.get(i).getSerNo(),
-								Journal.class).getResourcesBuyers());
+						resourcesUnionService.getByObjSerNo(
+								results.get(i).getSerNo(), Journal.class)
+								.getResourcesBuyers());
 				i++;
 			}
 
@@ -599,14 +616,16 @@ public class JournalAction extends GenericCRUDActionFull<Journal> {
 			addActionMessage("刪除成功");
 			return LIST;
 		} else {
-			DataSet<Journal> ds = journalService.getByRestrictions(initDataSet());
+			DataSet<Journal> ds = journalService
+					.getByRestrictions(initDataSet());
 			List<Journal> results = ds.getResults();
 
 			int i = 0;
 			while (i < results.size()) {
 				results.get(i).setResourcesBuyers(
-						resourcesUnionService.getByObjSerNo(results.get(i).getSerNo(),
-								Journal.class).getResourcesBuyers());
+						resourcesUnionService.getByObjSerNo(
+								results.get(i).getSerNo(), Journal.class)
+								.getResourcesBuyers());
 				i++;
 			}
 
@@ -616,61 +635,68 @@ public class JournalAction extends GenericCRUDActionFull<Journal> {
 	}
 
 	public String view() throws NumberFormatException, Exception {
-		getRequest().setAttribute("viewSerNo", getRequest().getParameter("viewSerNo"));
-		
-		if (getRequest().getParameter("viewSerNo") == null 
-				|| !NumberUtils.isDigits(getRequest().getParameter("viewSerNo"))){
+		getRequest().setAttribute("viewSerNo",
+				getRequest().getParameter("viewSerNo"));
+
+		if (getRequest().getParameter("viewSerNo") == null
+				|| !NumberUtils
+						.isDigits(getRequest().getParameter("viewSerNo"))) {
 			addActionError("流水號不正確");
 		} else {
 			journal = journalService.getBySerNo(Long.parseLong(getRequest()
 					.getParameter("viewSerNo")));
-			if (journal == null){
+			if (journal == null) {
 				addActionError("期刊不存在");
-				} else {
-					resourcesUnion = resourcesUnionService.getByObjSerNo(
-							journal.getSerNo(), Journal.class);
-					}
+			} else {
+				resourcesUnion = resourcesUnionService.getByObjSerNo(
+						journal.getSerNo(), Journal.class);
 			}
-		
-		if(!hasActionErrors()){
-		
-		journal.setResourcesBuyers(resourcesUnion.getResourcesBuyers());
-
-		List<ResourcesUnion> resourceUnions = resourcesUnionService.getResourcesUnionsByObj(
-				journal, Journal.class);
-		List<Customer> customers = new ArrayList<Customer>();
-
-		Iterator<ResourcesUnion> iterator = resourceUnions.iterator();
-		while (iterator.hasNext()) {
-			resourcesUnion = iterator.next();
-			customers.add(resourcesUnion.getCustomer());
 		}
-		
-		journal.setCustomers(customers);
-		setEntity(journal);
+
+		if (!hasActionErrors()) {
+
+			journal.setResourcesBuyers(resourcesUnion.getResourcesBuyers());
+
+			List<ResourcesUnion> resourceUnions = resourcesUnionService
+					.getResourcesUnionsByObj(journal, Journal.class);
+			List<Customer> customers = new ArrayList<Customer>();
+
+			Iterator<ResourcesUnion> iterator = resourceUnions.iterator();
+			while (iterator.hasNext()) {
+				resourcesUnion = iterator.next();
+				customers.add(resourcesUnion.getCustomer());
+			}
+
+			journal.setCustomers(customers);
+			setEntity(journal);
 		}
 		return VIEW;
 	}
+	
+	public String imports() {
+		return IMPORT;
+	}
 
 	public String queue() throws Exception {
-		if (file == null || !file.isFile()) {
+		if (file == null || !file[0].isFile()) {
 			addActionError("請選擇檔案");
 		} else {
-			if (createWorkBook(new FileInputStream(file)) == null) {
+			if (createWorkBook(new FileInputStream(file[0])) == null) {
 				addActionError("檔案格式錯誤");
 			}
 		}
 
 		if (!hasActionErrors()) {
-			getSession().remove("importList");
-			getSession().remove("checkItemMap");
-			Workbook book = createWorkBook(new FileInputStream(file));
+			Workbook book = createWorkBook(new FileInputStream(file[0]));
 			// book.getNumberOfSheets(); 判斷Excel文件有多少個sheet
 			Sheet sheet = book.getSheetAt(0);
 			excelWorkSheet = new ExcelWorkSheet<Journal>();
 
 			// 保存工作單名稱
 			Row firstRow = sheet.getRow(0);
+			if (firstRow == null) {
+				firstRow = sheet.createRow(0);
+			}
 
 			// 保存列名
 			List<String> cellNames = new ArrayList<String>();
@@ -730,6 +756,9 @@ public class JournalAction extends GenericCRUDActionFull<Journal> {
 			LinkedHashSet<Journal> originalData = new LinkedHashSet<Journal>();
 			for (int i = 1; i <= sheet.getLastRowNum(); i++) {
 				Row row = sheet.getRow(i);
+				if (row == null) {
+					continue;
+				}
 
 				String[] rowValues = new String[17];
 				int k = 0;
@@ -779,66 +808,59 @@ public class JournalAction extends GenericCRUDActionFull<Journal> {
 					k++;
 				}
 
-				List<Category> categoryList=new ArrayList<Category>(Arrays.asList(Category.values()));
-				categoryList.remove(categoryList.size()-1);
-				
+				List<Category> categoryList = new ArrayList<Category>(
+						Arrays.asList(Category.values()));
+				categoryList.remove(categoryList.size() - 1);
+
 				String category = "";
-				if(rowValues[11] == null ||
-						rowValues[11].trim().equals("")){
+				if (rowValues[11] == null || rowValues[11].trim().equals("")) {
 					category = Category.未註明.getCategory();
 				} else {
-					boolean isLegalCategory=false;
-					for (int j=0; j < categoryList.size(); j++){
-						if(rowValues[11].trim().equals(categoryList.get(j).getCategory())){
+					boolean isLegalCategory = false;
+					for (int j = 0; j < categoryList.size(); j++) {
+						if (rowValues[11].trim().equals(
+								categoryList.get(j).getCategory())) {
 							category = categoryList.get(j).getCategory();
-							isLegalCategory=true;
+							isLegalCategory = true;
 						}
 					}
-					
-					if (!isLegalCategory){
+
+					if (!isLegalCategory) {
 						category = Category.不明.getCategory();
-					}	
+					}
 				}
-				
-				List<Type> typeList=new ArrayList<Type>(Arrays.asList(Type.values()));
+
+				List<Type> typeList = new ArrayList<Type>(Arrays.asList(Type
+						.values()));
 				String type = "";
-				if(rowValues[12] == null ||
-						rowValues[12].trim().equals("")){
+				if (rowValues[12] == null || rowValues[12].trim().equals("")) {
 					type = Type.期刊.getType();
 				} else {
-					boolean isLegalType=false;
-					for (int j=0; j < typeList.size(); j++){
-						if(rowValues[12].trim().equals(typeList.get(j).getType())){
+					boolean isLegalType = false;
+					for (int j = 0; j < typeList.size(); j++) {
+						if (rowValues[12].trim().equals(
+								typeList.get(j).getType())) {
 							type = typeList.get(j).getType();
-							isLegalType=true;
+							isLegalType = true;
 						}
 					}
-					
-					if (!isLegalType){
+
+					if (!isLegalType) {
 						type = Type.期刊.getType();
-					}	
-				}				
+					}
+				}
 
 				resourcesBuyers = new ResourcesBuyers(rowValues[9],
-						rowValues[10], Category.valueOf(category), Type.valueOf(type),
-						rowValues[13], rowValues[14]);
+						rowValues[10], Category.valueOf(category),
+						Type.valueOf(type), rowValues[13], rowValues[14]);
 
-				String issn = rowValues[3].trim().toUpperCase();
-				String[] issnSplit = issn.split("-");
-
-				StringBuilder stringBuilder= new StringBuilder("");
-				int j = 0;
-				while (j < issnSplit.length) {
-					stringBuilder.append(issnSplit[j]);
-					j++;
-				}
-				
-				issn = stringBuilder.toString();
+				String issn = rowValues[3].trim().replace("-", "")
+						.toUpperCase();
 
 				journal = new Journal(rowValues[0], rowValues[1], rowValues[2],
 						"", issn, rowValues[4], rowValues[5], rowValues[6], "",
-						"", "", rowValues[7], rowValues[8], null, resourcesBuyers,
-						null, "");
+						"", "", rowValues[7], rowValues[8], null,
+						resourcesBuyers, null, "");
 
 				customer = new Customer();
 				customer.setName(rowValues[15].trim());
@@ -847,7 +869,7 @@ public class JournalAction extends GenericCRUDActionFull<Journal> {
 				List<Customer> customers = new ArrayList<Customer>();
 				customers.add(customer);
 				journal.setCustomers(customers);
-				
+
 				if (isIssn(issn)) {
 					long jouSerNo = journalService.getJouSerNoByIssn(issn
 							.toUpperCase());
@@ -880,9 +902,9 @@ public class JournalAction extends GenericCRUDActionFull<Journal> {
 				}
 				originalData.add(journal);
 			}
-			
+
 			Iterator<Journal> setIterator = originalData.iterator();
-			
+
 			int normal = 0;
 			while (setIterator.hasNext()) {
 				journal = setIterator.next();
@@ -891,22 +913,24 @@ public class JournalAction extends GenericCRUDActionFull<Journal> {
 					normal = normal + 1;
 				}
 			}
-			
+
 			DataSet<Journal> ds = initDataSet();
-			List<Journal> results=ds.getResults();
-			
-			ds.getPager().setTotalRecord((long)excelWorkSheet.getData().size());
+			List<Journal> results = ds.getResults();
+
+			ds.getPager()
+					.setTotalRecord((long) excelWorkSheet.getData().size());
 			ds.getPager().setRecordPoint(0);
-			
-			if(excelWorkSheet.getData().size() < ds.getPager().getRecordPerPage()){
-				int i=0;
-				while(i < excelWorkSheet.getData().size()){
+
+			if (excelWorkSheet.getData().size() < ds.getPager()
+					.getRecordPerPage()) {
+				int i = 0;
+				while (i < excelWorkSheet.getData().size()) {
 					results.add(excelWorkSheet.getData().get(i));
 					i++;
 				}
 			} else {
-				int i=0;
-				while(i < ds.getPager().getRecordPerPage()){
+				int i = 0;
+				while (i < ds.getPager().getRecordPerPage()) {
 					results.add(excelWorkSheet.getData().get(i));
 					i++;
 				}
@@ -920,29 +944,26 @@ public class JournalAction extends GenericCRUDActionFull<Journal> {
 
 			return QUEUE;
 		} else {
-			getRequest().setAttribute("goQueue", "yes");
-			return EDIT;
+			return IMPORT;
 		}
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	public String paginate() throws Exception {
+		List<Journal> importList = (List<Journal>) getSession().get(
+				"importList");
+		if (importList == null) {
+			return null;
+		}
+
 		clearCheckedItem();
 
-		List<Journal> importList = (List<Journal>) getSession().get("importList");
-		
 		DataSet<Journal> ds = initDataSet();
 		ds.setPager(Pager.getChangedPager(
 				getRequest().getParameter("recordPerPage"), getRequest()
 						.getParameter("recordPoint"), ds.getPager()));
+		ds.getPager().setTotalRecord((long) importList.size());
 
-		if (importList == null){
-			return null;
-		} else {
-			ds.getPager().setTotalRecord((long) importList.size());
-			
-		}
-		
 		int first = ds.getPager().getRecordPerPage()
 				* (ds.getPager().getCurrentPage() - 1);
 		int last = first + ds.getPager().getRecordPerPage();
@@ -963,105 +984,130 @@ public class JournalAction extends GenericCRUDActionFull<Journal> {
 	}
 
 	@SuppressWarnings("unchecked")
-	public void getCheckedItem() {
-		Map<String, Object> checkItemMap;
-		if (getSession().containsKey("checkItemMap")) {
-			checkItemMap = (TreeMap<String, Object>) getSession().get(
-					"checkItemMap");
-		} else {
-			checkItemMap = new TreeMap<String, Object>();
+	public String getCheckedItem() {
+		if (getSession().get("importList") == null) {
+			return null;
 		}
 
-		if (!checkItemMap.containsKey(this.importSerNo)) {
-			checkItemMap.put(this.importSerNo, this.importSerNo);
+		Set<Integer> checkItem;
+		if (getSession().containsKey("checkItem")) {
+			checkItem = (TreeSet<Integer>) getSession().get("checkItem");
 		} else {
-			checkItemMap.remove(this.importSerNo);
+			checkItem = new TreeSet<Integer>();
 		}
-		getSession().put("checkItemMap", checkItemMap);
+
+		if (ArrayUtils.isNotEmpty(importSerNos)) {
+			if (NumberUtils.isDigits(importSerNos[0])) {
+				if (!checkItem.contains(Integer.parseInt(importSerNos[0]))) {
+					checkItem.add(Integer.parseInt(importSerNos[0]));
+				} else {
+					checkItem.remove(Integer.parseInt(importSerNos[0]));
+				}
+			}
+		}
+
+		getSession().put("checkItem", checkItem);
+
+		return null;
 	}
 
-	public void allCheckedItem() {
-		Map<String, Object> checkItemMap = new TreeMap<String, Object>();
-
-		int i = 0;
-		while (i < importSerNos.length) {
-			checkItemMap.put(importSerNos[i], importSerNos[i]);
-			i++;
+	@SuppressWarnings("unchecked")
+	public String allCheckedItem() {
+		List<Database> importList = (List<Database>) getSession().get(
+				"importList");
+		if (importList == null) {
+			return null;
 		}
 
-		getSession().put("checkItemMap", checkItemMap);
+		Set<Integer> checkItem = new TreeSet<Integer>();
+
+		if (ArrayUtils.isNotEmpty(importSerNos)) {
+			int i = 0;
+			while (i < importSerNos.length) {
+				if (NumberUtils.isDigits(importSerNos[i])) {
+					if (Long.parseLong(importSerNos[i]) < importList.size()) {
+						checkItem.add(Integer.parseInt(importSerNos[i]));
+					}
+
+					if (checkItem.size() == importList.size()) {
+						break;
+					}
+				}
+				i++;
+			}
+		}
+
+		getSession().put("checkItem", checkItem);
+		return null;
 	}
 
-	public void clearCheckedItem() {
-		Map<String, Object> checkItemMap = new TreeMap<String, Object>();
-		getSession().put("checkItemMap", checkItemMap);
+	public String clearCheckedItem() {
+		if (getSession().get("importList") == null) {
+			return null;
+		}
+
+		Set<Integer> checkItem = new TreeSet<Integer>();
+		getSession().put("checkItem", checkItem);
+		return null;
 	}
 
 	@SuppressWarnings("unchecked")
 	public String importData() throws Exception {
-		List<Journal> importList = (List<Journal>) getSession().get("importList");
+		List<Journal> importList = (List<Journal>) getSession().get(
+				"importList");
 
-		Map<String, Object> checkItemMap = (TreeMap<String, Object>) getSession()
-				.get("checkItemMap");
+		if (importList == null) {
+			return null;
+		}
 
-		if (checkItemMap == null || checkItemMap.size() == 0) {
+		Set<Integer> checkItem = (TreeSet<Integer>) getSession().get(
+				"checkItem");
+
+		if (CollectionUtils.isEmpty(checkItem)) {
 			addActionError("請選擇一筆或一筆以上的資料");
 		}
 
 		if (!hasActionErrors()) {
-			Iterator<?> it = checkItemMap.values().iterator();
-			List<Journal> importIndexs = new ArrayList<Journal>();
+			Iterator<Integer> it = checkItem.iterator();
+			int successCount = 0;
 			while (it.hasNext()) {
-				String index = it.next().toString();
-				
-				if(NumberUtils.isDigits(index)){
-					if(Integer.parseInt(index) >=0 && Integer.parseInt(index) < importList.size()){
-						importIndexs.add(importList.get(Integer.parseInt(index)));
-				}
+				int index = it.next();
+				journal = importList.get(index);
+
+				if (journal.getExistStatus().equals("正常")) {
+					long jouSerNo = journalService.getJouSerNoByIssn(journal
+							.getIssn());
+					long cusSerNo = customerService.getCusSerNoByName(journal
+							.getCustomers().get(0).getName());
+
+					if (jouSerNo == 0) {
+						resourcesBuyers = resourcesBuyersService.save(
+								journal.getResourcesBuyers(), getLoginUser());
+						journal = journalService.save(journal, getLoginUser());
+
+						resourcesUnionService.save(new ResourcesUnion(
+								customerService.getBySerNo(cusSerNo),
+								resourcesBuyers, 0L, 0L, journal.getSerNo()),
+								getLoginUser());
+					} else {
+						resourcesUnion = resourcesUnionService.getByObjSerNo(
+								jouSerNo, Journal.class);
+						resourcesUnionService.save(new ResourcesUnion(
+								customerService.getBySerNo(cusSerNo),
+								resourcesUnion.getResourcesBuyers(), 0L, 0L,
+								jouSerNo), getLoginUser());
 					}
-			}
 
-			for (int i = 0; i < importIndexs.size(); i++) {
-				long jouSerNo = journalService.getJouSerNoByIssn(importIndexs
-						.get(i).getIssn());
-				long cusSerNo = customerService.getCusSerNoByName(importIndexs
-						.get(i).getCustomers().get(0).getName());
-
-				if (jouSerNo == 0) {
-					resourcesBuyers = resourcesBuyersService.save(importIndexs
-							.get(i).getResourcesBuyers(), getLoginUser());
-					journal = journalService.save(importIndexs.get(i),
-							getLoginUser());
-
-					resourcesUnionService.save(new ResourcesUnion(customerService.getBySerNo(cusSerNo), 
-							resourcesBuyers, 0L, 0L, journal.getSerNo()),
-							getLoginUser());
-				} else {
-					resourcesUnion = resourcesUnionService.getByObjSerNo(
-							jouSerNo, Journal.class);
-					resourcesUnionService.save(new ResourcesUnion(customerService.getBySerNo(cusSerNo),
-							resourcesUnion.getResourcesBuyers(), 0L, 0L, jouSerNo),
-							getLoginUser());
-
+					successCount = successCount + 1;
 				}
 			}
 
-			clearCheckedItem();
-			getRequest().setAttribute("successCount", importIndexs.size());
+			getRequest().setAttribute("successCount", successCount);
 			return VIEW;
 		} else {
 			paginate();
 			return QUEUE;
 		}
-	}
-	
-	public void removeSessionObj() {
-		getSession().remove("cellNames");
-		getSession().remove("importList");
-		getSession().remove("total");
-		getSession().remove("normal");
-		getSession().remove("abnormal");
-		getSession().remove("checkItemMap");
 	}
 
 	public boolean isIssn(String issn) {
@@ -1104,7 +1150,7 @@ public class JournalAction extends GenericCRUDActionFull<Journal> {
 		return true;
 	}
 
-	public String exports() throws Exception {
+	public String example() throws Exception {
 		reportFile = "journal_sample.xlsx";
 
 		// Create blank workbook
@@ -1146,18 +1192,32 @@ public class JournalAction extends GenericCRUDActionFull<Journal> {
 		workbook.write(boas);
 		setInputStream(new ByteArrayInputStream(boas.toByteArray()));
 
-		return SUCCESS;
+		return XLSX;
 	}
 
 	// 判斷文件類型
 	public Workbook createWorkBook(InputStream is) throws IOException {
-		if (fileFileName.toLowerCase().endsWith("xls")) {
+		if (fileFileName[0].toLowerCase().endsWith("xls")) {
 			return new HSSFWorkbook(is);
 		}
-		if (fileFileName.toLowerCase().endsWith("xlsx")) {
+		if (fileFileName[0].toLowerCase().endsWith("xlsx")) {
 			return new XSSFWorkbook(is);
 		}
 		return null;
+	}
+
+	public boolean hasEntity() throws Exception {
+		if (getEntity().getSerNo() == null) {
+			getEntity().setSerNo(-1L);
+			return false;
+		}
+
+		journal = journalService.getBySerNo(getEntity().getSerNo());
+		if (journal == null) {
+			return false;
+		}
+
+		return true;
 	}
 
 	/**
@@ -1208,7 +1268,7 @@ public class JournalAction extends GenericCRUDActionFull<Journal> {
 	/**
 	 * @return the file
 	 */
-	public File getFile() {
+	public File[] getFile() {
 		return file;
 	}
 
@@ -1216,14 +1276,14 @@ public class JournalAction extends GenericCRUDActionFull<Journal> {
 	 * @param file
 	 *            the file to set
 	 */
-	public void setFile(File file) {
+	public void setFile(File[] file) {
 		this.file = file;
 	}
 
 	/**
 	 * @return the fileFileName
 	 */
-	public String getFileFileName() {
+	public String[] getFileFileName() {
 		return fileFileName;
 	}
 
@@ -1231,14 +1291,14 @@ public class JournalAction extends GenericCRUDActionFull<Journal> {
 	 * @param fileFileName
 	 *            the fileFileName to set
 	 */
-	public void setFileFileName(String fileFileName) {
+	public void setFileFileName(String[] fileFileName) {
 		this.fileFileName = fileFileName;
 	}
 
 	/**
 	 * @return the fileContentType
 	 */
-	public String getFileContentType() {
+	public String[] getFileContentType() {
 		return fileContentType;
 	}
 
@@ -1246,7 +1306,7 @@ public class JournalAction extends GenericCRUDActionFull<Journal> {
 	 * @param fileContentType
 	 *            the fileContentType to set
 	 */
-	public void setFileContentType(String fileContentType) {
+	public void setFileContentType(String[] fileContentType) {
 		this.fileContentType = fileContentType;
 	}
 
@@ -1263,21 +1323,6 @@ public class JournalAction extends GenericCRUDActionFull<Journal> {
 	 */
 	public void setExcelWorkSheet(ExcelWorkSheet<Journal> excelWorkSheet) {
 		this.excelWorkSheet = excelWorkSheet;
-	}
-
-	/**
-	 * @return the importSerNo
-	 */
-	public String getImportSerNo() {
-		return importSerNo;
-	}
-
-	/**
-	 * @param importSerNo
-	 *            the importSerNo to set
-	 */
-	public void setImportSerNo(String importSerNo) {
-		this.importSerNo = importSerNo;
 	}
 
 	/**
@@ -1314,7 +1359,11 @@ public class JournalAction extends GenericCRUDActionFull<Journal> {
 	 * @return the reportFile
 	 */
 	public String getReportFile() {
-		return reportFile;
+		if (reportFile.equals("journal_sample.xlsx")) {
+			return reportFile;
+		} else {
+			return reportFile;
+		}
 	}
 
 	/**

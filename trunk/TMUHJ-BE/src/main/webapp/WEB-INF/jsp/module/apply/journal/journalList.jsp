@@ -34,7 +34,7 @@ function goSearch(){
 
 //新增
 function goAdd(){
-        goDetail('<%=request.getContextPath()%>/crud/apply.journal.query.action','期刊-新增');
+        goDetail('<%=request.getContextPath()%>/crud/apply.journal.edit.action','期刊-新增');
 }
 
 //刪除多筆資料之函式
@@ -80,7 +80,7 @@ function goView(serNo){
 
 //更新資料
 function goUpdate(serNo) {
-	goDetail('<%=request.getContextPath()%>/crud/apply.journal.query.action?'+'entity.serNo='+serNo,'期刊-修改');
+	goDetail('<%=request.getContextPath()%>/crud/apply.journal.edit.action?'+'entity.serNo='+serNo,'期刊-修改');
 }
 
 //GoPage
@@ -114,7 +114,7 @@ function chagePageSize(recordPerPage,recordPoint){
 
 //批次匯入
 function goImport(){
-	goDetail('<%=request.getContextPath()%>/crud/apply.journal.query.action?'+'goQueue=yes','期刊-匯入');
+	goDetail('<%=request.getContextPath()%>/crud/apply.journal.imports.action','期刊-匯入');
 }
 </script>
 

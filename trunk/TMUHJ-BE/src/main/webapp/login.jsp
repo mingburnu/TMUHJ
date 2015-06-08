@@ -102,10 +102,13 @@
 												class="input_text"></td>
 										</tr>
 										<tr>
-											<td align="center" colspan="2"><c:if
-													test="${(not empty error)||(not empty idPwNull)}">
-													<font color="red">${idPwNull }${error }</font>
-												</c:if></td>
+											<td align="center" colspan="2"><s:if
+													test="hasActionErrors()">
+													<s:iterator value="actionErrors">
+														<font color="red"> <s:property escape="true" />
+														</font>
+													</s:iterator>
+												</s:if></td>
 										</tr>
 									</tbody>
 								</table>

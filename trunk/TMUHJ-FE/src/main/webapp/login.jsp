@@ -98,10 +98,19 @@ input:-webkit-autofill {
 </style>
 <script type="text/javascript"
 	src="<c:url value = '/'/>resources/js/jquery-1.7.2.min.js"></script>
+<s:if test="hasActionErrors()">
+	<script type="text/javascript">
+		$(document)
+				.ready(
+						function() {
+							var msg = "";
+							<s:iterator value="actionErrors">msg += '<s:property escape="true"/>\r\n';
+							</s:iterator>;
+							alert(msg);
+						});
+	</script>
+</s:if>
 <script type="text/javascript">
-	$(document).ready(function() {
-		//
-	});
 	function form_sumbit() {
 		var msg = "";
 		if ($(".v_username").val() == "") {
@@ -113,6 +122,8 @@ input:-webkit-autofill {
 		if (msg != "") {
 			alert(msg);
 			return false;
+		} else {
+			$('#login').submit();
 		}
 	}
 </script>
@@ -150,8 +161,7 @@ input:-webkit-autofill {
 				</tr>
 				<tr>
 					<td colspan="2" align="center"><a class="btn_01"
-						href="javascript:$('#login').submit();" onClick="form_sumbit();">登
-							入</a></td>
+						onClick="form_sumbit();">登 入</a></td>
 				</tr>
 			</table>
 		</s:form>

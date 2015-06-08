@@ -85,7 +85,7 @@ function getCheckedItem(index) {
 				type : "POST",
 				url : "<c:url value = '/'/>crud/apply.journal.getCheckedItem.action",
 				dataType : "html",
-				data : "importSerNo=" + index,
+				data : "importSerNos=" + index,
 				success : function(message) {
 
 				}
@@ -116,14 +116,6 @@ function clearCheckedItem() {
 
 				}
 			});
-}
-
-function closeDetail() {
-	 $("#div_Detail").hide();
-     UI_Resize();
-     $.ajax({url: "<c:url value = '/'/>crud/apply.journal.removeSessionObj.action", success: function(result){
- 	}
- 	});
 }
 </script>
 </head>

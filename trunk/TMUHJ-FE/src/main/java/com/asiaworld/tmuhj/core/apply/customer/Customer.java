@@ -22,7 +22,7 @@ public class Customer extends GenericEntityFull {
 	private static final long serialVersionUID = 5508975058661670537L;
 
 	// 姓名
-	@Column(name = "name")
+	@Column(name = "name", unique = true)
 	private String name;
 
 	// 英文姓名

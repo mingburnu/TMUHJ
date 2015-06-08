@@ -4,13 +4,15 @@
 <%@ taglib prefix="s" uri="/struts-tags"%>
 <script type="text/javascript">
 function view(serNo){
-		var action=$("form:eq(0)").attr("action");
-		var pageParameter="?pager.currentPage="+"${ds.pager.currentPage}"+"&pager.offset="+"${ds.pager.offset}";
-		var data=$("form:eq(0)").serialize();
-		var backURL=action+pageParameter+"&"+data;
-		backURL=backURL.replace("action?","action@@@").replace(/\&/g,"^^^");
-		var url="<%=request.getContextPath()%>"+"/crud/apply.journal.list.action?serNo="+serNo+"&currentURL="+backURL;
-		$.ajax({url: url, success: function(result){
+	var action=$("form:eq(0)").attr("action");
+	var pageParameter="?pager.currentPage="+"${ds.pager.currentPage}"+"&pager.offset="+"${ds.pager.offset}";
+	var data=$("form:eq(0)").serialize();
+	var backURL=action.concat(pageParameter,"&",data);
+	backURL=backURL.replace(/\?/g,"？").replace(/\&/g,"＆");
+	var url="<%=request.getContextPath()%>"+"/crud/apply.journal.view.action?serNo="+serNo+"&currentURL="+backURL;
+		$.ajax({
+			url: url,
+			success: function(result){
 	        $("#container").html(result);
 	    }
 		});
@@ -26,16 +28,16 @@ function view(serNo){
 	<div class="result">
 
 		<c:choose>
-			<c:when test="${not empty query}">
+			<c:when test="${not empty list}">
 				<div class="pager">
 					<table width="100%" border="0" cellpadding="0" cellspacing="0">
 						<tr>
 							<td align="left" class="p_01"><s:form
-									action="apply.journal.query.action">
+									action="apply.journal.list.action">
 									<input type="hidden" name="recordPoint"
 										value="${ds.pager.recordPoint}">共 <strong>${ds.pager.totalRecord}</strong>
 												筆記錄， 每頁顯示筆數 <select name="recordPerPage"
-										id="apply_journal_query_action_recordPerPage"
+										id="apply_journal_list_action_recordPerPage"
 										onchange="upperChangeSize(this.value);">
 										<option value="${ds.pager.recordPerPage}">${ds.pager.recordPerPage}</option>
 										<option value="5">5</option>
@@ -53,7 +55,7 @@ function view(serNo){
 									test="${ds.pager.totalRecord > 0 }"><jsp:include
 										page="/WEB-INF/jsp/layout/pagination.jsp">
 										<jsp:param name="namespace" value="/crud" />
-										<jsp:param name="action" value="apply.journal.query" />
+										<jsp:param name="action" value="apply.journal.list" />
 										<jsp:param name="pager" value="${ds.pager}" />
 										<jsp:param name="keywords" value="${keywords}" />
 										<jsp:param name="recordPerPage"
@@ -214,16 +216,16 @@ function view(serNo){
 		</div>
 
 		<c:choose>
-			<c:when test="${not empty query}">
+			<c:when test="${not empty list}">
 				<div class="pager">
 					<table width="100%" border="0" cellpadding="0" cellspacing="0">
 						<tr>
 							<td align="left" class="p_01"><s:form
-									action="apply.journal.query.action">
+									action="apply.journal.list.action">
 									<input type="hidden" name="recordPoint"
 										value="${ds.pager.recordPoint}">共 <strong>${ds.pager.totalRecord}</strong>
 									筆記錄， 每頁顯示筆數 <select name="recordPerPage"
-										id="apply_journal_query_action_recordPerPage"
+										id="apply_journal_list_action_recordPerPage"
 										onchange="bottomChangeSize(this.value);">
 										<option value="${ds.pager.recordPerPage}">${ds.pager.recordPerPage}</option>
 										<option value="5">5</option>
@@ -241,7 +243,7 @@ function view(serNo){
 									test="${ds.pager.totalRecord > 0 }"><jsp:include
 										page="/WEB-INF/jsp/layout/pagination.jsp">
 										<jsp:param name="namespace" value="/crud" />
-										<jsp:param name="action" value="apply.journal.query" />
+										<jsp:param name="action" value="apply.journal.list" />
 										<jsp:param name="pager" value="${ds.pager}" />
 										<jsp:param name="keywords" value="${keywords}" />
 										<jsp:param name="recordPerPage"
@@ -256,7 +258,7 @@ function view(serNo){
 					<table width="100%" border="0" cellpadding="0" cellspacing="0">
 						<tr>
 							<td align="left" class="p_01"><s:form
-									action="apply.journal.query.action">
+									action="apply.journal.list.action">
 									<input type="hidden" name="recordPoint"
 										value="${ds.pager.recordPoint}">共 <strong>${ds.pager.totalRecord}</strong>
 									筆記錄， 每頁顯示筆數 <select name="recordPerPage"

@@ -27,29 +27,35 @@ public class CustomerAction extends GenericCRUDActionFull<Customer> {
 	private ResourcesUnionService resourcesUnionService;
 
 	@Override
-	public void validateSave() throws Exception {
+	protected void validateSave() throws Exception {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void validateUpdate() throws Exception {
+	protected void validateUpdate() throws Exception {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void validateDelete() throws Exception {
+	protected void validateDelete() throws Exception {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public String query() throws Exception {
+	public String edit() throws Exception {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	@Override
+	public String list() throws Exception {
 		String keywords = getRequest().getParameter("keywords");
 
 		getRequest().setAttribute("keywords", keywords);
-		getRequest().setAttribute("query", "apply.customer.query.action");
+		getRequest().setAttribute("list", "apply.customer.list.action");
 
 		DataSet<Customer> ds = initDataSet();
 		ds.setPager(Pager.getChangedPager(
@@ -74,12 +80,6 @@ public class CustomerAction extends GenericCRUDActionFull<Customer> {
 	}
 
 	@Override
-	public String list() throws Exception {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
 	public String save() throws Exception {
 		// TODO Auto-generated method stub
 		return null;
@@ -96,5 +96,5 @@ public class CustomerAction extends GenericCRUDActionFull<Customer> {
 		// TODO Auto-generated method stub
 		return null;
 	}
-
+	
 }

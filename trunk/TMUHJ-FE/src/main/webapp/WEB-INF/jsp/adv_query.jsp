@@ -2,6 +2,18 @@
 	pageEncoding="UTF-8"%>
 <%@ taglib prefix="s" uri="/struts-tags"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<s:if test="hasActionErrors()">
+	<script type="text/javascript">
+		$(document)
+				.ready(
+						function() {
+							var msg = "";
+							<s:iterator value="actionErrors">msg += '<s:property escape="true"/>\r\n';
+							</s:iterator>;
+							alert(msg);
+						});
+	</script>
+</s:if>
 <script type="text/javascript">
 	$(document).ready(
 			function() {
@@ -24,12 +36,34 @@
 		showType('database');
 	});
 
+	$(document).ready(function() {
+		$("input.v_type").each(function(){
+			if ($(this).val()=="${type}"){
+		        this.checked = true;
+		        var item = $("input[name='type']:checked").val();
+				$("form").attr("id", "apply_" + item + "_focus");
+				$("form").attr("name", "apply_" + item + "_focus");
+				$("form").attr(
+						"action",
+						"<c:url value = '/'/>" + "crud/apply."
+								+ item + ".focus.action");
+				$("input[type='hidden']").removeAttr("name");
+				$('input#' + item).attr("name", "option");
+				
+				showType("${type}");
+				$("[id=" + "${type}" + "]").val("${option}");
+				$("[id=" + "${type}" + "]").next().children().html("${option}");
+			}
+		});
+	});
+	
 	function clickItem(arg) {
 		var currentValue = $(arg).html();
 		$(arg).parent().parent().parent().find('input[type="hidden"]').attr(
 				"value", currentValue);
 		$(arg).parent().parent().parent().find("div a").html(currentValue);
 	}
+
 	function do_event() {
 		$('.select_01 div a').click(function(e) {
 			$('.select_01 ul').hide();
@@ -42,6 +76,7 @@
 			$('.select_01 ul').hide();
 		});
 	}
+	
 	function showType(arg) {
 		$('.select_database').hide();
 		$('.select_ebook').hide();
@@ -53,25 +88,15 @@
 	function form_reset() {
 		$("input[name='keywords']").val("");
 	}
+
 	function form_sumbit() {
-		var msg = "";
-		if ($(".v_keyword").val().trim() == "") {
-			msg += "．請輸入關鍵字。";
-		}
-		if (msg != "") {
-			$(".v_keyword").val("");
-			alert(msg);
-		} else {
-			//$("form").submit();
-			var url = $("form").attr("action") + "?" + $("form").serialize();
-			alert(url);
-			$.ajax({
-				url : url,
-				success : function(result) {
-					$("#container").html(result);
-				}
-			});
-		}
+		var url = $("form").attr("action") + "?" + $("form").serialize();
+		$.ajax({
+			url : url,
+			success : function(result) {
+				$("#container").html(result);
+			}
+		});
 	}
 </script>
 <table width="100%" border="0" cellpadding="0" cellspacing="0"

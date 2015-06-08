@@ -46,7 +46,7 @@ $(document).ready(function() {
 	
 	//新增
 	function goAdd(){
-	        goDetail('<%=request.getContextPath()%>/crud/apply.customer.query.action','客戶-新增');
+	        goDetail('<%=request.getContextPath()%>/crud/apply.customer.edit.action','客戶-新增');
 	}
 	
 	
@@ -99,7 +99,7 @@ $(document).ready(function() {
 	function goUpdate(serNo) {
 		var isNum = /^\d+$/.test(serNo);
 		if (isNum && parseInt(serNo) > 0){
-			goDetail('<%=request.getContextPath()%>/crud/apply.customer.query.action?'+'entity.serNo='+serNo,'客戶-修改');
+			goDetail('<%=request.getContextPath()%>/crud/apply.customer.edit.action?'+'entity.serNo='+serNo,'客戶-修改');
 		}
 	}
 	
@@ -168,7 +168,7 @@ $(document).ready(function() {
 	
   //批次匯入
     function goImport(){
-    	goDetail('<%=request.getContextPath()%>/crud/apply.customer.query.action?'+'goQueue=yes','客戶-匯入');
+    	goDetail('<%=request.getContextPath()%>/crud/apply.customer.imports.action?','客戶-匯入');
     }
 	
 </script>

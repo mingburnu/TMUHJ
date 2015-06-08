@@ -24,9 +24,9 @@ public class PageInterceptor extends AbstractInterceptor {
 			session.remove("total");
 			session.remove("normal");
 			session.remove("abnormal");
-			session.remove("checkItemMap");
+			session.remove("checkItemSet");
 		}
-		
+
 		return invocation.invoke();
 	}
 }

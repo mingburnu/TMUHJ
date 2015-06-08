@@ -86,7 +86,7 @@ function getCheckedItem(index) {
 				type : "POST",
 				url : "<c:url value = '/'/>crud/apply.database.getCheckedItem.action",
 				dataType : "html",
-				data : "importSerNo=" + index,
+				data : "importSerNos=" + index,
 				success : function(message) {
 
 				}
@@ -118,14 +118,6 @@ function clearCheckedItem() {
 				}
 			});
 }
-
-function closeDetail() {
-	 $("#div_Detail").hide();
-    UI_Resize();
-    $.ajax({url: "<c:url value = '/'/>crud/apply.database.removeSessionObj.action", success: function(result){
-	}
-	});
-}
 </script>
 </head>
 <body>
@@ -147,7 +139,7 @@ function closeDetail() {
 					<tr>
 						<td><c:choose>
 								<c:when test="${item.existStatus=='正常'}">
-									<input type="checkbox" class="checkbox queue" name="checkItem"
+									<input type="checkbox" class="checkbox queue"
 										value="${(ds.pager.currentPage-1) * ds.pager.recordPerPage + status.index }"
 										onclick="getCheckedItem(this.value)">
 								</c:when>
