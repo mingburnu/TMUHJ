@@ -22,7 +22,7 @@ public class Customer extends GenericEntityFull {
 	private static final long serialVersionUID = 5508975058661670537L;
 
 	// 姓名
-	@Column(name = "name")
+	@Column(name = "name", unique = true)
 	private String name;
 
 	// 英文姓名
@@ -52,9 +52,9 @@ public class Customer extends GenericEntityFull {
 
 	@Transient
 	private String existStatus;
-	
-//	@OneToMany(cascade=CascadeType.ALL, mappedBy="customer")
-//	private Set<AccountNumber> accountNumbers;
+
+	// @OneToMany(cascade=CascadeType.ALL, mappedBy="customer")
+	// private Set<AccountNumber> accountNumbers;
 
 	/**
 	 * @return the name
@@ -176,19 +176,19 @@ public class Customer extends GenericEntityFull {
 		this.existStatus = existStatus;
 	}
 
-//	/**
-//	 * @return the accountNumbers
-//	 */
-//	public Set<AccountNumber> getAccountNumbers() {
-//		return accountNumbers;
-//	}
-//
-//	/**
-//	 * @param accountNumbers the accountNumbers to set
-//	 */
-//	public void setAccountNumbers(Set<AccountNumber> accountNumbers) {
-//		this.accountNumbers = accountNumbers;
-//	}
+	// /**
+	// * @return the accountNumbers
+	// */
+	// public Set<AccountNumber> getAccountNumbers() {
+	// return accountNumbers;
+	// }
+	//
+	// /**
+	// * @param accountNumbers the accountNumbers to set
+	// */
+	// public void setAccountNumbers(Set<AccountNumber> accountNumbers) {
+	// this.accountNumbers = accountNumbers;
+	// }
 
 	/*
 	 * (non-Javadoc)

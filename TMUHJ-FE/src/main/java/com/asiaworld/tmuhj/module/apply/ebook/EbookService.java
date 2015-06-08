@@ -2,6 +2,7 @@ package com.asiaworld.tmuhj.module.apply.ebook;
 
 import java.util.List;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,7 +44,7 @@ public class EbookService extends GenericServiceFull<Ebook> {
 		Ebook entity = ds.getEntity();
 
 		String keywords = entity.getKeywords();
-		if (keywords == null || keywords.trim().equals("")) {
+		if (StringUtils.isBlank(keywords)) {
 			Pager pager = ds.getPager();
 			pager.setTotalRecord(0L);
 			ds.setPager(pager);
@@ -52,7 +53,7 @@ public class EbookService extends GenericServiceFull<Ebook> {
 
 		String option = entity.getOption();
 
-		if (option == null) {
+		if (StringUtils.isBlank(option)) {
 			option = "";
 		} else if (option.equals("書名")) {
 			option = "bookname";
@@ -66,7 +67,7 @@ public class EbookService extends GenericServiceFull<Ebook> {
 			option = "";
 		}
 
-		if (StringUtils.isNotEmpty(keywords)) {
+		if (StringUtils.isNotBlank(keywords)) {
 			char[] cArray = keywords.toCharArray();
 			StringBuilder keywordsBuilder = new StringBuilder();
 			for (int i = 0; i < cArray.length; i++) {
@@ -125,14 +126,14 @@ public class EbookService extends GenericServiceFull<Ebook> {
 
 		DsRestrictions restrictions = DsBeanFactory.getDsRestrictions();
 
-		if (keywords == null || keywords.trim().equals("")) {
+		if (StringUtils.isBlank(keywords)) {
 			Pager pager = ds.getPager();
 			pager.setTotalRecord(0L);
 			ds.setPager(pager);
 			return ds;
 		}
 
-		if (StringUtils.isNotEmpty(keywords)) {
+		if (StringUtils.isNotBlank(keywords)) {
 			char[] cArray = keywords.toCharArray();
 			StringBuilder keywordsBuilder = new StringBuilder();
 			for (int i = 0; i < cArray.length; i++) {
@@ -193,11 +194,11 @@ public class EbookService extends GenericServiceFull<Ebook> {
 
 		List<ResourcesUnion> resourcesUnionList = null;
 		if (cusSerNo > 0) {
-			resourcesUnionList = resourcesUnionService.totalEbook(customer, pager);
+			resourcesUnionList = resourcesUnionService.totalEbook(customer,
+					pager);
 		}
 
-		if (resourcesUnionList != null && !resourcesUnionList.isEmpty()
-				&& resourcesUnionList.size() > 0) {
+		if (CollectionUtils.isNotEmpty(resourcesUnionList)) {
 			StringBuilder sqlBuilder = new StringBuilder();
 			for (int i = 0; i < resourcesUnionList.size(); i++) {
 				sqlBuilder.append("serNo="

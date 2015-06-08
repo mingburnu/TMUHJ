@@ -2,46 +2,60 @@
 	pageEncoding="UTF-8"%>
 <%@ taglib prefix="s" uri="/struts-tags"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<s:if test="hasActionErrors()">
+	<script type="text/javascript">
+		$(document)
+				.ready(
+						function() {
+							var msg = "";
+							<s:iterator value="actionErrors">msg += '<s:property escape="true"/>\r\n';
+							</s:iterator>;
+							alert(msg);
+						});
+	</script>
+</s:if>
 <script type="text/javascript">
 	$(document).ready(
 			function() {
 				$("input[name='type']").change(
 						function() {
 							var item = $("input[name='type']:checked").val();
-							$("form").attr("id", "apply_" + item + "_query");
-							$("form").attr("name", "apply_" + item + "_query");
+							$("form").attr("id", "apply_" + item + "_list");
+							$("form").attr("name", "apply_" + item + "_list");
 							$("form").attr(
 									"action",
 									"<c:url value = '/'/>" + "crud/apply."
-											+ item + ".query.action");
+											+ item + ".list.action");
 						});
 			});
+	
+	$(document).ready(function() {
+		$("input.v_type").each(function(){
+			if ($(this).val()=="${type}"){
+		        this.checked = true;
+		    	var item = $("input[name='type']:checked").val();
+				$("form").attr("id", "apply_" + item + "_list");
+				$("form").attr("name", "apply_" + item + "_list");
+				$("form").attr(
+						"action",
+						"<c:url value = '/'/>" + "crud/apply."
+								+ item + ".list.action");
+		    }
+		});
+	});
 
 	function form_reset() {
 		$("input[name='keywords']").val("");
 	}
-	function form_sumbit() {
-		var msg = "";
-		if ($(".v_keyword").val().trim() == "") {
-			msg += "．請輸入關鍵字。";
-		}
-		if (msg != "") {
-			$(".v_keyword").val("");
-			alert(msg);
-		} else {
-			//$("form").submit();
-			var url = $("form").attr("action") + "?" + $("form").serialize();
-			$.ajax({
-				url : url,
-				success : function(result) {
-					$("#container").html(result);
-				}
-			});
-		}
-	}
 
-	function goTop() {
-		alert("Hello");
+	function form_sumbit() {
+		var url = $("form").attr("action") + "?" + $("form").serialize();
+		$.ajax({
+			url : url,
+			success : function(result) {
+				$("#container").html(result);
+			}
+		});
 	}
 </script>
 <table width="100%" border="0" cellpadding="0" cellspacing="0"
@@ -50,8 +64,8 @@
 		<td class="L">
 			<div id="main_box">
 				<!-- 內容開始 -->
-				<s:form action="apply.database.query" namespace="/crud"
-					method="post" onsubmit="return false;">
+				<s:form action="apply.database.list" namespace="/crud" method="post"
+					onsubmit="return false;">
 					<table width="100%" border="0" cellpadding="0" cellspacing="0"
 						class="table_02">
 						<tr valign="middle">

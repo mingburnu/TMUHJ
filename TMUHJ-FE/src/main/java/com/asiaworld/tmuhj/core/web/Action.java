@@ -11,12 +11,4 @@ public interface Action<T extends Entity> {
 
 	public final static String INDEX = "index";
 
-	public final static String SECTION = "section";
-	
-	public final static String EDIT = "edit";
-	
-	public final static String DELETE = "delete";
-	
-	public final static String LIST = "list";
-
 }

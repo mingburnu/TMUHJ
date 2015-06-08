@@ -86,7 +86,7 @@ function changePageSize_detail(recordPerPage,recordPoint) {
 					type : "POST",
 					url : "<c:url value = '/'/>crud/apply.customer.getCheckedItem.action",
 					dataType : "html",
-					data : "importSerNo=" + index,
+					data : "importSerNos=" + index,
 					success : function(message) {
 
 					}

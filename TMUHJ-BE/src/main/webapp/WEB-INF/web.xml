@@ -38,6 +38,10 @@
 			<param-name>struts.ui.theme</param-name>
 			<param-value>simple</param-value>
 		</init-param>
+		<init-param>
+			<param-name>struts.enable.DynamicMethodInvocation</param-name>
+			<param-value>false</param-value>
+		</init-param>
 	</filter>
 	<filter-mapping>
 		<filter-name>struts2</filter-name>

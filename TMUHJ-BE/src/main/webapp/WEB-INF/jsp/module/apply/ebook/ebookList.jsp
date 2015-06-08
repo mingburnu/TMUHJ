@@ -34,7 +34,7 @@ function goSearch(){
 
 //新增
 function goAdd(){
-        goDetail('<%=request.getContextPath()%>/crud/apply.ebook.query.action','電子書-新增');
+        goDetail('<%=request.getContextPath()%>/crud/apply.ebook.edit.action','電子書-新增');
 }
 
 //刪除多筆資料之函式
@@ -85,7 +85,7 @@ function goView(serNo){
 function goUpdate(serNo) {
 	var isNum = /^\d+$/.test(serNo);
 	if (isNum && parseInt(serNo) > 0){
-		goDetail('<%=request.getContextPath()%>/crud/apply.ebook.query.action?'+'entity.serNo='+serNo,'電子書-修改');
+		goDetail('<%=request.getContextPath()%>/crud/apply.ebook.edit.action?'+'entity.serNo='+serNo,'電子書-修改');
 	}
 }
 
@@ -120,7 +120,7 @@ function chagePageSize(recordPerPage,recordPoint){
 
 //批次匯入
 function goImport(){
-	goDetail('<%=request.getContextPath()%>/crud/apply.ebook.query.action?'+'goQueue=yes','電子書-匯入');
+	goDetail('<%=request.getContextPath()%>/crud/apply.ebook.imports.action','電子書-匯入');
 }
 
 </script>

@@ -25,7 +25,7 @@ public class IpRangeService extends GenericServiceFull<IpRange> {
 		Assert.notNull(ds.getEntity());
 		IpRange entity = ds.getEntity();
 		DsRestrictions restrictions = DsBeanFactory.getDsRestrictions();
-		
+
 		if (entity.getCustomer().getSerNo() > 0) {
 			restrictions.eq("customer.serNo", entity.getCustomer().getSerNo());
 		}
@@ -39,12 +39,31 @@ public class IpRangeService extends GenericServiceFull<IpRange> {
 		// TODO Auto-generated method stub
 		return dao;
 	}
-	
+
 	public List<IpRange> getAllIpList(long ipRangeSerNo) throws Exception {
 		DsRestrictions restrictions = DsBeanFactory.getDsRestrictions();
 		restrictions.ne("serNo", ipRangeSerNo);
-		
-		return dao.findByRestrictions(restrictions);	
+
+		return dao.findByRestrictions(restrictions);
 	}
-	
+
+	public boolean isLegalEntity(DataSet<IpRange> ds) throws Exception {
+		Assert.notNull(ds);
+		Assert.notNull(ds.getEntity());
+		IpRange entity = ds.getEntity();
+		DsRestrictions restrictions = DsBeanFactory.getDsRestrictions();
+		restrictions.eq("serNo", entity.getSerNo());
+		if (entity.getCustomer() != null) {
+			restrictions.eq("customer.serNo", entity.getCustomer().getSerNo());
+		} else {
+			restrictions.eq("customer.serNo", -1L);
+		}
+
+		if (dao.findByRestrictions(restrictions).size() == 0) {
+			return false;
+		}
+
+		return true;
+	}
+
 }

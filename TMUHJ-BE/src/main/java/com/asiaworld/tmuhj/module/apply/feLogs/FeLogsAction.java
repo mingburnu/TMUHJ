@@ -51,25 +51,25 @@ public class FeLogsAction extends GenericCRUDActionLog<FeLogs> {
 	private String reportFile;
 
 	@Override
-	public void validateSave() throws Exception {
+	protected void validateSave() throws Exception {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void validateUpdate() throws Exception {
+	protected void validateUpdate() throws Exception {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void validateDelete() throws Exception {
+	protected void validateDelete() throws Exception {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public String query() throws Exception {
+	public String edit() throws Exception {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -300,7 +300,11 @@ public class FeLogsAction extends GenericCRUDActionLog<FeLogs> {
 	 * @return the reportFile
 	 */
 	public String getReportFile() {
-		return reportFile;
+		if (reportFile.equals("feLogs.xlsx")){
+			return reportFile;
+		} else {
+			return null;
+		}
 	}
 
 	/**

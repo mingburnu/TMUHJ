@@ -88,7 +88,7 @@ $(document).ready(function() {
 					type : "POST",
 					url : "<c:url value = '/'/>crud/apply.ebook.getCheckedItem.action",
 					dataType : "html",
-					data : "importSerNo=" + index,
+					data : "importSerNos=" + index,
 					success : function(message) {
 
 					}
@@ -122,14 +122,6 @@ $(document).ready(function() {
 
 					}
 				});
-	}
-	
-	function closeDetail() {
-		 $("#div_Detail").hide();
-	     UI_Resize();
-	     $.ajax({url: "<c:url value = '/'/>crud/apply.ebook.removeSessionObj.action", success: function(result){
-	 	}
-	 	});
 	}
 </script>
 </head>

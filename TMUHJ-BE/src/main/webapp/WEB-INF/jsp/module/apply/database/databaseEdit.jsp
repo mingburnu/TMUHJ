@@ -11,11 +11,9 @@
 <script type="text/javascript">
 	var saveForm = "";
 	var updateForm = "";
-	var importForm = "";
 	$(document).ready(function() {
 		saveForm = $("form#apply_database_save").html();
 		updateForm = $("form#apply_database_update").html();
-		importForm = $("form#apply_database_queue").html();
 	});
 
 	$(document).ready(
@@ -95,7 +93,6 @@
 		clearCustomers();
 		$("form#apply_database_save").html(saveForm);
 		$("form#apply_database_update").html(updateForm);
-		$("form#apply_database_queue").html(importForm);
 	}
 
 	//遞交表單
@@ -110,7 +107,7 @@
 		} else {
 			data = $('#apply_database_update').serialize();
 			goDetail("<c:url value = '/'/>crud/apply.database.update.action?entity.serNo=${entity.serNo}",
-					'資料庫-新增', data);
+					'資料庫-修改', data);
 		}
 	}
 
@@ -131,103 +128,6 @@
 		$("#div_Customers .content .header .title").html("");
 		$("#div_Customers .content .contain").html("");
 	}
-	
-	//Excel列表
-	function goQueue() {
-		function getDoc(frame) {
-			var doc = null;
-
-			// IE8 cascading access check
-			try {
-				if (frame.contentWindow) {
-					doc = frame.contentWindow.document;
-				}
-			} catch (err) {
-			}
-
-			if (doc) { // successful getting content
-				return doc;
-			}
-
-			try { // simply checking may throw in ie8 under ssl or mismatched protocol
-				doc = frame.contentDocument ? frame.contentDocument
-						: frame.document;
-			} catch (err) {
-				// last attempt
-				doc = frame.document;
-			}
-			return doc;
-		}
-
-		showLoading();
-		var formObj = $("form#apply_database_queue");
-		var formURL = $("form#apply_database_queue").attr("action");
-
-		if (window.FormData !== undefined) // for HTML5 browsers
-		//			if(false)
-		{
-
-			var formData = new FormData(document
-					.getElementById("apply_database_queue"));
-			$.ajax({
-				url : formURL,
-				type : 'POST',
-				data : formData,
-				mimeType : "multipart/form-data",
-				contentType : false,
-				cache : false,
-				processData : false,
-				success : function(data, textStatus, jqXHR) {
-					$("#div_Detail").show();
-					UI_Resize();
-					$(window).scrollTop(0);
-					$("#div_Detail .content > .header > .title").html("資料庫-匯入");
-					$("#div_Detail .content > .contain").empty().html(data);
-					closeLoading();
-					
-				},
-				error : function(jqXHR, textStatus, errorThrown) {
-					goAlert("結果", XMLHttpRequest.responseText);
-					closeLoading();
-				}
-			});
-			
-		} else //for olden browsers
-		{
-			//generate a random id
-			var iframeId = 'unique' + (new Date().getTime());
-
-			//create an empty iframe
-			var iframe = $('<iframe src="javascript:false;" name="'+iframeId+'" />');
-
-			//hide it
-			iframe.hide();
-
-			//set form target to iframe
-			formObj.attr('target', iframeId);
-
-			//Add iframe to body
-			iframe.appendTo('body');
-			iframe.load(function(e) {
-				var doc = getDoc(iframe[0]);
-				var docRoot = doc.body ? doc.body : doc.documentElement;
-				var data = docRoot.innerHTML;
-				$("#div_Detail").show();
-				UI_Resize();
-				$(window).scrollTop(0);
-				$("#div_Detail .content > .header > .title").html("資料庫-匯入");
-				$("#div_Detail .content > .contain").empty().html(data);
-				closeLoading();
-			});
-		}
-
-	}
-	
-	//匯出範本
-	function goExport(){
-		var url='<%=request.getContextPath()%>/crud/apply.database.exports.action';
-		window.open(url, "_top");
-	}
 </script>
 <style type="text/css">
 #div_Detail_2 {
@@ -247,7 +147,7 @@ input#customer_name {
 </head>
 <body>
 	<c:choose>
-		<c:when test="${(empty entity.serNo) && (empty goQueue) }">
+		<c:when test="${empty entity.serNo }">
 			<s:form namespace="/crud" action="apply.database.save">
 				<table cellspacing="1" class="detail-table">
 					<tr>
@@ -351,35 +251,6 @@ input#customer_name {
 				</div>
 			</s:form>
 		</c:when>
-
-		<c:when test="${not empty goQueue}">
-			<s:form namespace="/crud" action="apply.database.queue"
-				enctype="multipart/form-data" method="post">
-				<table cellspacing="1" class="detail-table">
-					<tr>
-						<th width="130">匯入檔案<span class="required">(•)</span>(<a
-							href="#" onclick="goExport();">範例</a>)
-						</th>
-						<td><input type="file" id="file" name="file" size="50"></td>
-					</tr>
-				</table>
-				<div class="button_box">
-					<div class="detail-func-button">
-						<a class="state-default" onclick="clearCustomers();closeDetail();">取消</a>
-						&nbsp;<a class="state-default" onclick="resetData();">重置</a>&nbsp;<a
-							id="ports" class="state-default" onclick="goQueue();">下一步</a>
-					</div>
-				</div>
-				<div class="detail_note">
-					<div class="detail_note_title">Note</div>
-					<div class="detail_note_content">
-						<span class="required">(&#8226;)</span>為必填欄位
-					</div>
-				</div>
-			</s:form>
-
-		</c:when>
-
 		<c:otherwise>
 			<%
 				ArrayList<?> allCustomers = (ArrayList<?>) request.getAttribute("allCustomers");

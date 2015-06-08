@@ -40,29 +40,35 @@ public class EbookAction extends GenericCRUDActionFull<Ebook> {
 	private CustomerService customerService;
 
 	@Override
-	public void validateSave() throws Exception {
+	protected void validateSave() throws Exception {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void validateUpdate() throws Exception {
+	protected void validateUpdate() throws Exception {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void validateDelete() throws Exception {
+	protected void validateDelete() throws Exception {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public String query() throws Exception {
+	public String edit() throws Exception {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String list() throws Exception {
 		String keywords = getRequest().getParameter("keywords");
 
 		getRequest().setAttribute("keywords", keywords);
-		getRequest().setAttribute("query", "apply.ebook.query.action");
+		getRequest().setAttribute("list", "apply.ebook.list.action");
 		DataSet<Ebook> ds = initDataSet();
 		ds.setPager(Pager.getChangedPager(
 				getRequest().getParameter("recordPerPage"), getRequest()
@@ -74,7 +80,73 @@ public class EbookAction extends GenericCRUDActionFull<Ebook> {
 	}
 
 	@Override
-	public String list() throws Exception {
+	public String save() throws Exception {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String update() throws Exception {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String delete() throws Exception {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public String owner() throws Exception {
+		long cusSerNo = 0;
+		if (NumberUtils.isDigits(getRequest().getParameter("cusSerNo"))
+				&& Long.parseLong(getRequest().getParameter("cusSerNo")) > 0) {
+			cusSerNo = Long.parseLong(getRequest().getParameter("cusSerNo"));
+		}
+
+		if (customerService.getBySerNo(cusSerNo) == null) {
+			addActionError("Customer Null");
+		}
+
+		if (!hasActionErrors()) {
+			getRequest().setAttribute("cusSerNo", cusSerNo);
+			getRequest().setAttribute("owner", "apply.ebook.owner.action");
+
+			DataSet<Ebook> ds = initDataSet();
+			ds.setPager(Pager.getChangedPager(
+					getRequest().getParameter("recordPerPage"), getRequest()
+							.getParameter("recordPoint"), ds.getPager()));
+			ds = ebookService.getByCusSerNo(ds, cusSerNo);
+			setDs(ds);
+
+		}
+		
+		return "ebook";
+
+	}
+
+	public String focus() throws Exception {
+		String option = getRequest().getParameter("option");
+		String keywords = getRequest().getParameter("keywords");
+
+		getRequest().setAttribute("keywords", keywords);
+		getRequest().setAttribute("option", option);
+		getRequest().setAttribute("focus", "apply.ebook.focus.action");
+
+		getEntity().setOption(option);
+		getEntity().setKeywords(keywords);
+
+		DataSet<Ebook> ds = initDataSet();
+		ds.setPager(Pager.getChangedPager(
+				getRequest().getParameter("recordPerPage"), getRequest()
+						.getParameter("recordPoint"), ds.getPager()));
+		ds = ebookService.getByRestrictions(ds);
+		setDs(ds);
+		
+		return "ebook";
+	}
+
+	public String view() throws Exception {
 		if (StringUtils.isBlank(getRequest().getParameter("serNo"))
 				|| !NumberUtils.isDigits(getRequest().getParameter("serNo"))) {
 			addActionError("serNo Error");
@@ -115,67 +187,10 @@ public class EbookAction extends GenericCRUDActionFull<Ebook> {
 				getRequest().setAttribute(
 						"backURL",
 						getRequest().getParameter("currentURL")
-								.replace("@@@", "?").replace("^^^", "&"));
+								.replace("？", "?").replace("＆", "&"));
 			}
 		}
+		
 		return "e-detail";
-	}
-
-	@Override
-	public String save() throws Exception {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public String update() throws Exception {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public String delete() throws Exception {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public String owner() throws Exception {
-		long cusSerNo = 0;
-		if (NumberUtils.isDigits(getRequest().getParameter("cusSerNo"))
-				&& Long.parseLong(getRequest().getParameter("cusSerNo")) > 0) {
-			cusSerNo = Long.parseLong(getRequest().getParameter("cusSerNo"));
-		}
-
-		getRequest().setAttribute("cusSerNo", cusSerNo);
-		getRequest().setAttribute("owner", "apply.ebook.owner.action");
-
-		DataSet<Ebook> ds = initDataSet();
-		ds.setPager(Pager.getChangedPager(
-				getRequest().getParameter("recordPerPage"), getRequest()
-						.getParameter("recordPoint"), ds.getPager()));
-		ds = ebookService.getByCusSerNo(ds, cusSerNo);
-		setDs(ds);
-
-		return "ebook";
-	}
-
-	public String focus() throws Exception {
-		String option = getRequest().getParameter("option");
-		String keywords = getRequest().getParameter("keywords");
-
-		getRequest().setAttribute("keywords", keywords);
-		getRequest().setAttribute("option", option);
-		getRequest().setAttribute("focus", "apply.ebook.focus.action");
-
-		getEntity().setOption(option);
-		getEntity().setKeywords(keywords);
-
-		DataSet<Ebook> ds = initDataSet();
-		ds.setPager(Pager.getChangedPager(
-				getRequest().getParameter("recordPerPage"), getRequest()
-						.getParameter("recordPoint"), ds.getPager()));
-		ds = ebookService.getByRestrictions(ds);
-		setDs(ds);
-		return "ebook";
 	}
 }

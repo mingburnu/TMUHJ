@@ -21,16 +21,16 @@
 	<!-- 內容開始 -->
 	<div class="result">
 
-		<c:if test="${not empty query}">
+		<c:if test="${not empty list}">
 			<div class="pager">
 				<table width="100%" border="0" cellpadding="0" cellspacing="0">
 					<tr>
 						<td align="left" class="p_01"><s:form
-								action="apply.customer.query.action">
+								action="apply.customer.list.action">
 								<input type="hidden" name="recordPoint"
 									value="${ds.pager.recordPoint}">共 <strong>${ds.pager.totalRecord}</strong>
 											筆記錄， 每頁顯示筆數 <select name="recordPerPage"
-									id="apply_customer_query_action_recordPerPage"
+									id="apply_customer_list_action_recordPerPage"
 									onchange="upperChangeSize(this.value);">
 									<option value="${ds.pager.recordPerPage}">${ds.pager.recordPerPage}</option>
 									<option value="5">5</option>
@@ -48,7 +48,7 @@
 								test="${ds.pager.totalRecord > 0 }"><jsp:include
 									page="/WEB-INF/jsp/layout/pagination.jsp">
 									<jsp:param name="namespace" value="/crud" />
-									<jsp:param name="action" value="apply.customer.query" />
+									<jsp:param name="action" value="apply.customer.list" />
 									<jsp:param name="pager" value="${ds.pager}" />
 									<jsp:param name="keywords" value="${keywords}" />
 									<jsp:param name="recordPerPage"
@@ -164,16 +164,16 @@
 			</table>
 		</div>
 
-		<c:if test="${not empty query}">
+		<c:if test="${not empty list}">
 			<div class="pager">
 				<table width="100%" border="0" cellpadding="0" cellspacing="0">
 					<tr>
 						<td align="left" class="p_01"><s:form
-								action="apply.customer.query.action">
+								action="apply.customer.list.action">
 								<input type="hidden" name="recordPoint"
 									value="${ds.pager.recordPoint}">共 <strong>${ds.pager.totalRecord}</strong>
 											筆記錄， 每頁顯示筆數 <select name="recordPerPage"
-									id="apply_customer_query_action_recordPerPage"
+									id="apply_customer_list_action_recordPerPage"
 									onchange="bottomChangeSize(this.value);">
 									<option value="${ds.pager.recordPerPage}">${ds.pager.recordPerPage}</option>
 									<option value="5">5</option>
@@ -191,7 +191,7 @@
 								test="${ds.pager.totalRecord > 0 }"><jsp:include
 									page="/WEB-INF/jsp/layout/pagination.jsp">
 									<jsp:param name="namespace" value="/crud" />
-									<jsp:param name="action" value="apply.customer.query" />
+									<jsp:param name="action" value="apply.customer." />
 									<jsp:param name="pager" value="${ds.pager}" />
 									<jsp:param name="keywords" value="${keywords}" />
 									<jsp:param name="recordPerPage"

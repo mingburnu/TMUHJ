@@ -40,11 +40,10 @@ public class AuthorizationAction extends GenericWebActionFull<AccountNumber> {
 	@Autowired
 	private DataSet<AccountNumber> ds;
 
-	public void validateLogin() throws Exception {
+	protected void validateLogin() throws Exception {
 		boolean checkLogin = true;
-		if (StringUtils.isEmpty(user.getUserId())
-				|| StringUtils.isEmpty(user.getUserPw())) {
-			getRequest().setAttribute("idPwNull", "請輸入帳號和密碼。");
+		if (StringUtils.isBlank(user.getUserId())
+				|| StringUtils.isBlank(user.getUserPw())) {
 			addActionError("請輸入帳號和密碼。");
 			checkLogin = false;
 		}
@@ -61,13 +60,12 @@ public class AuthorizationAction extends GenericWebActionFull<AccountNumber> {
 				throw new Exception(e);
 			}
 
+			// 使用者存在才進行密碼檢核
 			if (isTrueUserId) {
-				if (!isTrueUserPw) {// 使用者存在才進行密碼檢核
-					getRequest().setAttribute("error", "您輸入的密碼不正確，請重新輸入。");
+				if (!isTrueUserPw) {
 					addActionError("您輸入的密碼不正確，請重新輸入。");
 				}
 			} else {
-				getRequest().setAttribute("error", "您輸入的帳號名稱不正確，請重新輸入。");
 				addActionError("您輸入的帳號名稱不正確，請重新輸入。");
 			}
 		}
@@ -80,16 +78,24 @@ public class AuthorizationAction extends GenericWebActionFull<AccountNumber> {
 	 * @throws Exception
 	 */
 	public String login() throws Exception {
-		try {
-			ds.setEntity(user);
-			ds = userService.getByRestrictions(ds);
-		} catch (Exception e) {
-			log.error(ExceptionUtils.getStackTrace(e));
-			throw new Exception(e);
+		validateLogin();
+
+		if (!hasActionErrors()) {
+			try {
+				ds.setEntity(user);
+				ds = userService.getByRestrictions(ds);
+			} catch (Exception e) {
+				log.error(ExceptionUtils.getStackTrace(e));
+				throw new Exception(e);
+			}
+
+			getSession().put(LOGIN, ds.getResults().get(0));
+			return LOGIN;
+
+		} else {
+			return INPUT;
 		}
-	
-		getSession().put(LOGIN, ds.getResults().get(0));
-		return INDEX;
+
 	}
 
 	/**
@@ -103,7 +109,7 @@ public class AuthorizationAction extends GenericWebActionFull<AccountNumber> {
 			getSession().clear();
 		}
 
-		return LOGIN;
+		return INPUT;
 	}
 
 	public AccountNumber getUser() {

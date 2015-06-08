@@ -59,25 +59,25 @@ public class BeLogsAction extends GenericCRUDActionLog<BeLogs> {
 	private String reportFile;
 
 	@Override
-	public void validateSave() throws Exception {
+	protected void validateSave() throws Exception {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void validateUpdate() throws Exception {
+	protected void validateUpdate() throws Exception {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void validateDelete() throws Exception {
+	protected void validateDelete() throws Exception {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public String query() throws Exception {
+	public String edit() throws Exception {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -279,7 +279,7 @@ public class BeLogsAction extends GenericCRUDActionLog<BeLogs> {
 			ByteArrayOutputStream boas = new ByteArrayOutputStream();
 			workbook.write(boas);
 			setInputStream(new ByteArrayInputStream(boas.toByteArray()));
-			return SUCCESS;
+			return XLSX;
 		} else {
 			getRequest().setAttribute("startDate", startDate);
 			getRequest().setAttribute("endDate", endDate);
@@ -290,7 +290,7 @@ public class BeLogsAction extends GenericCRUDActionLog<BeLogs> {
 
 	}
 
-	private boolean isDate(String date) {
+	public boolean isDate(String date) {
 		Pattern pattern = Pattern.compile("((19|20)\\d\\d)-(0?[1-9]|1[012])-(0?[1-9]|[12][0-9]|3[01])");
 		Matcher matcher = pattern.matcher(date);
 		return matcher.matches();
@@ -315,7 +315,11 @@ public class BeLogsAction extends GenericCRUDActionLog<BeLogs> {
 	 * @return the reportFile
 	 */
 	public String getReportFile() {
-		return reportFile;
+		if (reportFile.equals("beLogs.xlsx")){
+			return reportFile;
+		} else {
+			return null;
+		}
 	}
 
 	/**

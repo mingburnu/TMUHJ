@@ -14,10 +14,13 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeMap;
+import java.util.TreeSet;
 
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
@@ -37,7 +40,6 @@ import com.asiaworld.tmuhj.core.apply.customer.CustomerService;
 import com.asiaworld.tmuhj.core.apply.enums.Role;
 import com.asiaworld.tmuhj.core.apply.enums.Status;
 import com.asiaworld.tmuhj.core.model.DataSet;
-import com.asiaworld.tmuhj.core.model.ExcelWorkSheet;
 import com.asiaworld.tmuhj.core.model.Pager;
 import com.asiaworld.tmuhj.core.web.GenericCRUDActionFull;
 
@@ -54,11 +56,11 @@ public class AccountNumberAction extends GenericCRUDActionFull<AccountNumber> {
 
 	private String[] checkItem;
 
-	private File file;
+	private File[] file;
 
-	private String fileFileName;
+	private String[] fileFileName;
 
-	private String fileContentType;
+	private String[] fileContentType;
 
 	@Autowired
 	private AccountNumber accountNumber;
@@ -75,178 +77,187 @@ public class AccountNumberAction extends GenericCRUDActionFull<AccountNumber> {
 	@Autowired
 	private DataSet<Customer> dsCustomer;
 
-	private ExcelWorkSheet<AccountNumber> excelWorkSheet;
-
-	private String importSerNo;
-
 	private String[] importSerNos;
 
 	private InputStream inputStream;
 
 	private String reportFile;
-	
-	private List<String> actionErrors;
-	
+
 	@Override
-	public void validateSave() throws Exception {
-		actionErrors = new ArrayList<String>();
-		
-		List<Role> roleList= new ArrayList<Role>(Arrays.asList(Role.values()));
-		List<Role> tempList= new ArrayList<Role>();
-		roleList.remove(roleList.size()-1);
+	protected void validateSave() throws Exception {
+		List<Role> roleList = new ArrayList<Role>(Arrays.asList(Role.values()));
+		List<Role> tempList = new ArrayList<Role>();
+		roleList.remove(roleList.size() - 1);
 
-		int roleCode=roleList.indexOf(getLoginUser().getRole());
-				
-		for (int i = 0; i < roleCode; i++){
-		tempList.add(roleList.get(i));
+		int roleCode = roleList.indexOf(getLoginUser().getRole());
+
+		for (int i = 0; i < roleCode; i++) {
+			tempList.add(roleList.get(i));
 		}
-		
+
 		roleList.removeAll(tempList);
-		
-		boolean isLegalRole=false;
-		for (int i=0; i < roleList.size(); i++){
-			if(getRequest().getParameter("role") != null 
-					&& getRequest().getParameter("role").equals(roleList.get(i).getRole())){
-				isLegalRole=true;
-			}
-		}
-		
-		List<Status> statusList=new ArrayList<Status>(Arrays.asList(Status.values()));
-		
-		boolean isLegalStatus=false;
-		for (int i=0; i < statusList.size(); i++){
-			if(getRequest().getParameter("status") != null
-					&& getRequest().getParameter("status").equals(statusList.get(i).getStatus())){
-				isLegalStatus=true;
-			}
-		}
-		
-		if(isLegalRole){
-			getEntity().setRole(Role.valueOf(getRequest().getParameter("role")));
-		} else {
-			actionErrors.add("角色錯誤");
-		}
-		
-		if(isLegalStatus){
-			getEntity().setStatus(Status.valueOf(getRequest().getParameter("status")));
-		} else {
-			actionErrors.add("狀態錯誤");
-		}
-				
-		if (getEntity().getUserId() == null
-				|| getEntity().getUserId().trim().equals("")) {
-			actionErrors.add("用戶代碼不得空白");
-			}
-			
-		if (getEntity().getUserPw() == null
-				|| getEntity().getUserPw().trim().equals("")) {
-			actionErrors.add("用戶密碼不得空白");
-			}
-			
-		if (getEntity().getUserName() == null
-				|| getEntity().getUserName().trim().equals("")) {
-			actionErrors.add("用戶姓名不得空白");
-			}
 
-		if (getRequest().getParameter("cusSerNo") == null
+		boolean isLegalRole = false;
+		for (int i = 0; i < roleList.size(); i++) {
+			if (StringUtils.isNotBlank(getRequest().getParameter("role"))
+					&& getRequest().getParameter("role").equals(
+							roleList.get(i).getRole())) {
+				isLegalRole = true;
+			}
+		}
+
+		List<Status> statusList = new ArrayList<Status>(Arrays.asList(Status
+				.values()));
+
+		boolean isLegalStatus = false;
+		for (int i = 0; i < statusList.size(); i++) {
+			if (StringUtils.isNotBlank(getRequest().getParameter("status"))
+					&& getRequest().getParameter("status").equals(
+							statusList.get(i).getStatus())) {
+				isLegalStatus = true;
+			}
+		}
+
+		if (isLegalRole) {
+			getEntity()
+					.setRole(Role.valueOf(getRequest().getParameter("role")));
+		} else {
+			errorMessages.add("角色錯誤");
+		}
+
+		if (isLegalStatus) {
+			getEntity().setStatus(
+					Status.valueOf(getRequest().getParameter("status")));
+		} else {
+			errorMessages.add("狀態錯誤");
+		}
+
+		if (StringUtils.isBlank(getEntity().getUserId())) {
+			errorMessages.add("用戶代碼不得空白");
+		} else {
+			if (getEntity().getUserId().replaceAll("[0-9a-zA-Z]", "").length() != 0) {
+				errorMessages.add("用戶代碼請使用英文字母及數字");
+			} else {
+				if (accountNumberService.getSerNoByUserId(getEntity()
+						.getUserId()) != 0) {
+					errorMessages.add("用戶代碼已存在");
+				}
+
+				if (getEntity().getUserId().equals("guest")) {
+					errorMessages.add("不可使用guest作為用戶代碼");
+				}
+			}
+		}
+
+		if (StringUtils.isBlank(getEntity().getUserPw())) {
+			errorMessages.add("用戶密碼不得空白");
+		}
+
+		if (StringUtils.isBlank(getEntity().getUserName())) {
+			errorMessages.add("用戶姓名不得空白");
+		}
+
+		if (StringUtils.isBlank(getRequest().getParameter("cusSerNo"))
 				|| !NumberUtils.isDigits(getRequest().getParameter("cusSerNo"))
 				|| Long.parseLong(getRequest().getParameter("cusSerNo")) < 1
-				|| customerService.getBySerNo(Long.parseLong(getRequest().getParameter("cusSerNo"))) == null){
-			actionErrors.add("用戶名稱必選");
-			} else {
-				getEntity().setCustomer(customerService.getBySerNo(Long.parseLong(getRequest().getParameter("cusSerNo"))));
-				
-				if(getLoginUser().getRole().equals(Role.管理員)){
-					if (getLoginUser().getCustomer().getSerNo() != getEntity().getCustomer().getSerNo()){
-						actionErrors.add("用戶名稱不正確");
-					}
+				|| customerService.getBySerNo(Long.parseLong(getRequest()
+						.getParameter("cusSerNo"))) == null) {
+			errorMessages.add("用戶名稱必選");
+		} else {
+			getEntity().setCustomer(
+					customerService.getBySerNo(Long.parseLong(getRequest()
+							.getParameter("cusSerNo"))));
+
+			if (getLoginUser().getRole().equals(Role.管理員)) {
+				if (getLoginUser().getCustomer().getSerNo() != getEntity()
+						.getCustomer().getSerNo()) {
+					errorMessages.add("用戶名稱不正確");
 				}
 			}
-
-		if (getEntity().getUserId() != null
-				&& !getEntity().getUserId().trim().equals("")) {
-			if (accountNumberService.getSerNoByUserId(getEntity().getUserId()) != 0) {
-				actionErrors.add("用戶代碼已存在");
-				}
-
-			if (getEntity().getUserId().trim().equals("guest")) {
-				actionErrors.add("不可使用guest作為用戶代碼");
-				}
-			}
+		}
 
 	}
 
 	@Override
-	public void validateUpdate() throws Exception {
-		actionErrors = new ArrayList<String>();
-		
-		List<Status> statusList=new ArrayList<Status>(Arrays.asList(Status.values()));
-		List<Role> roleList= new ArrayList<Role>(Arrays.asList(Role.values()));
-		List<Role> tempList= new ArrayList<Role>();
-		roleList.remove(roleList.size()-1);
+	protected void validateUpdate() throws Exception {
+		List<Status> statusList = new ArrayList<Status>(Arrays.asList(Status
+				.values()));
+		List<Role> roleList = new ArrayList<Role>(Arrays.asList(Role.values()));
+		List<Role> tempList = new ArrayList<Role>();
+		roleList.remove(roleList.size() - 1);
 
-		int roleCode=roleList.indexOf(getLoginUser().getRole());
-				
-		for (int i = 0; i < roleCode; i++){
-		tempList.add(roleList.get(i));
+		int roleCode = roleList.indexOf(getLoginUser().getRole());
+
+		for (int i = 0; i < roleCode; i++) {
+			tempList.add(roleList.get(i));
 		}
-		
+
 		roleList.removeAll(tempList);
-		
-		if (getEntity().getSerNo() != null && isEntity(getEntity().getSerNo())){
-			if (!roleList.contains(accountNumberService.getBySerNo(getEntity().getSerNo()).getRole())){
-				actionErrors.add("權限不足");
+
+		if (!hasEntity()) {
+			errorMessages.add("Target must not be null");
+
+		} else {
+			if (!roleList.contains(accountNumberService.getBySerNo(
+					getEntity().getSerNo()).getRole())) {
+				errorMessages.add("權限不足");
 				getResponse().sendError(HttpServletResponse.SC_FORBIDDEN);
 			}
-		} else {
-			getResponse().sendError(HttpServletResponse.SC_NOT_FOUND);
-		}
-		
-		if (actionErrors.size() == 0) {
-		boolean isLegalRole=false;
-		for (int i=0; i < roleList.size(); i++){
-			if(getRequest().getParameter("role") != null 
-					&& getRequest().getParameter("role").equals(roleList.get(i).getRole())){
-				isLegalRole=true;
-			}
-		}
-		
-		boolean isLegalStatus=false;
-		for (int i=0; i < statusList.size(); i++){
-			if(getRequest().getParameter("status") != null
-					&& getRequest().getParameter("status").equals(statusList.get(i).getStatus())){
-				isLegalStatus=true;
-			}
-		}
-		
-		if(isLegalRole){
-			getEntity().setRole(Role.valueOf(getRequest().getParameter("role")));
-		} else {
-			actionErrors.add("角色錯誤");
-		}
-		
-		if(isLegalStatus){
-			getEntity().setStatus(Status.valueOf(getRequest().getParameter("status")));
-		} else {
-			actionErrors.add("狀態錯誤");
-		}
-		
-		if (getEntity().getUserName() == null
-				|| getEntity().getUserName().trim().equals("")) {
-			actionErrors.add("用戶姓名不得空白");
 		}
 
-		if (getRequest().getParameter("cusSerNo") == null
-				|| !NumberUtils.isDigits(getRequest().getParameter("cusSerNo"))
-				|| Long.parseLong(getRequest().getParameter("cusSerNo")) < 1
-				|| customerService.getBySerNo(Long.parseLong(getRequest().getParameter("cusSerNo"))) == null){
-			actionErrors.add("用戶名稱必選");
+		if (errorMessages.size() == 0) {
+			boolean isLegalRole = false;
+			for (int i = 0; i < roleList.size(); i++) {
+				if (StringUtils.isNotBlank(getRequest().getParameter("role"))
+						&& getRequest().getParameter("role").equals(
+								roleList.get(i).getRole())) {
+					isLegalRole = true;
+				}
+			}
+
+			boolean isLegalStatus = false;
+			for (int i = 0; i < statusList.size(); i++) {
+				if (StringUtils.isNotBlank(getRequest().getParameter("status"))
+						&& getRequest().getParameter("status").equals(
+								statusList.get(i).getStatus())) {
+					isLegalStatus = true;
+				}
+			}
+
+			if (isLegalRole) {
+				getEntity().setRole(
+						Role.valueOf(getRequest().getParameter("role")));
 			} else {
-				getEntity().setCustomer(customerService.getBySerNo(Long.parseLong(getRequest().getParameter("cusSerNo"))));
-				
-				if(getLoginUser().getRole().equals(Role.管理員)){
-					if (getLoginUser().getCustomer().getSerNo() != getEntity().getCustomer().getSerNo()){
-						actionErrors.add("用戶名稱不正確");
+				errorMessages.add("角色錯誤");
+			}
+
+			if (isLegalStatus) {
+				getEntity().setStatus(
+						Status.valueOf(getRequest().getParameter("status")));
+			} else {
+				errorMessages.add("狀態錯誤");
+			}
+
+			if (StringUtils.isBlank(getEntity().getUserName())) {
+				errorMessages.add("用戶姓名不得空白");
+			}
+
+			if (StringUtils.isBlank(getRequest().getParameter("cusSerNo"))
+					|| !NumberUtils.isDigits(getRequest().getParameter(
+							"cusSerNo"))
+					|| Long.parseLong(getRequest().getParameter("cusSerNo")) < 1
+					|| customerService.getBySerNo(Long.parseLong(getRequest()
+							.getParameter("cusSerNo"))) == null) {
+				errorMessages.add("用戶名稱必選");
+			} else {
+				getEntity().setCustomer(
+						customerService.getBySerNo(Long.parseLong(getRequest()
+								.getParameter("cusSerNo"))));
+
+				if (getLoginUser().getRole().equals(Role.管理員)) {
+					if (getLoginUser().getCustomer().getSerNo() != getEntity()
+							.getCustomer().getSerNo()) {
+						errorMessages.add("用戶名稱不正確");
 					}
 				}
 			}
@@ -254,67 +265,66 @@ public class AccountNumberAction extends GenericCRUDActionFull<AccountNumber> {
 	}
 
 	@Override
-	public void validateDelete() throws Exception {
+	protected void validateDelete() throws Exception {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public String query() throws Exception {
-		List<Role> roleList= new ArrayList<Role>(Arrays.asList(Role.values()));
-		List<Role> tempList= new ArrayList<Role>();
-		roleList.remove(roleList.size()-1);
+	public String edit() throws Exception {
+		List<Role> roleList = new ArrayList<Role>(Arrays.asList(Role.values()));
+		List<Role> tempList = new ArrayList<Role>();
+		roleList.remove(roleList.size() - 1);
 
-		int roleCode=roleList.indexOf(getLoginUser().getRole());
-				
-		for (int i = 0; i < roleCode; i++){
-		tempList.add(roleList.get(i));
+		int roleCode = roleList.indexOf(getLoginUser().getRole());
+
+		for (int i = 0; i < roleCode; i++) {
+			tempList.add(roleList.get(i));
 		}
-		
+
 		roleList.removeAll(tempList);
-		
+
 		getRequest().setAttribute("roleList", roleList);
-		
-		List<Status> statusList=new ArrayList<Status>(Arrays.asList(Status.values()));
+
+		List<Status> statusList = new ArrayList<Status>(Arrays.asList(Status
+				.values()));
 		getRequest().setAttribute("statusList", statusList);
-		
-		if (getLoginUser().getRole().equals(Role.管理員)){
+
+		if (getLoginUser().getRole().equals(Role.管理員)) {
 			customer.setSerNo(getLoginUser().getCustomer().getSerNo());
 
 		}
-		
+
 		dsCustomer.setEntity(customer);
 		dsCustomer = customerService.getByRestrictions(dsCustomer);
-		
+
 		if (getEntity().getSerNo() != null) {
-			boolean isLegalRole=false;
-			accountNumber = accountNumberService.getBySerNo(getEntity().getSerNo());
-			
-			if(accountNumber != null){
-					if(roleList.contains(accountNumber.getRole())){
-						isLegalRole=true;
-						}
-					}
-			
-			if(isLegalRole){
-				if (getLoginUser().getRole().equals(Role.管理員)){
-					if (accountNumber.getCustomer().getName().equals(getLoginUser().getCustomer().getName())){
+			boolean isLegalRole = false;
+			accountNumber = accountNumberService.getBySerNo(getEntity()
+					.getSerNo());
+
+			if (accountNumber != null) {
+				if (roleList.contains(accountNumber.getRole())) {
+					isLegalRole = true;
+				}
+			}
+
+			if (isLegalRole) {
+				if (getLoginUser().getRole().equals(Role.管理員)) {
+					if (accountNumber.getCustomer().getName()
+							.equals(getLoginUser().getCustomer().getName())) {
 						setEntity(accountNumber);
-						} else {
-							getResponse().sendError(HttpServletResponse.SC_FORBIDDEN);
-						}
 					} else {
-						setEntity(accountNumber);
-						}
-				
+						getResponse().sendError(
+								HttpServletResponse.SC_FORBIDDEN);
+					}
+				} else {
+					setEntity(accountNumber);
+				}
+
 			} else {
 				getResponse().sendError(HttpServletResponse.SC_FORBIDDEN);
 			}
-		} else if (getRequest().getParameter("goQueue") != null
-				&& getRequest().getParameter("goQueue").equals("yes")) {
-			getRequest().setAttribute("goQueue",
-					getRequest().getParameter("goQueue"));
-			
 		}
 
 		return EDIT;
@@ -326,7 +336,7 @@ public class AccountNumberAction extends GenericCRUDActionFull<AccountNumber> {
 		ds.setPager(Pager.getChangedPager(
 				getRequest().getParameter("recordPerPage"), getRequest()
 						.getParameter("recordPoint"), ds.getPager()));
-				
+
 		ds = accountNumberService.getByRestrictions(ds, getLoginUser());
 
 		setDs(ds);
@@ -335,27 +345,27 @@ public class AccountNumberAction extends GenericCRUDActionFull<AccountNumber> {
 
 	@Override
 	public String save() throws Exception {
-		List<Role> roleList= new ArrayList<Role>(Arrays.asList(Role.values()));
-		List<Role> tempList= new ArrayList<Role>();
-		roleList.remove(roleList.size()-1);
+		List<Role> roleList = new ArrayList<Role>(Arrays.asList(Role.values()));
+		List<Role> tempList = new ArrayList<Role>();
+		roleList.remove(roleList.size() - 1);
 
-		int roleCode=roleList.indexOf(getLoginUser().getRole());
-				
-		for (int i = 0; i < roleCode; i++){
-		tempList.add(roleList.get(i));
+		int roleCode = roleList.indexOf(getLoginUser().getRole());
+
+		for (int i = 0; i < roleCode; i++) {
+			tempList.add(roleList.get(i));
 		}
-		
+
 		roleList.removeAll(tempList);
-		
-		List<Status> statusList=new ArrayList<Status>(Arrays.asList(Status.values()));
-		
+
+		List<Status> statusList = new ArrayList<Status>(Arrays.asList(Status
+				.values()));
+
 		validateSave();
-		Iterator<String> iteratorMsg = actionErrors.iterator();
-		while(iteratorMsg.hasNext()){
-			addActionError(iteratorMsg.next());
-		}
+		setActionErrors(errorMessages);
 
 		if (!hasActionErrors()) {
+			getEntity().setUserId(getEntity().getUserId());
+			getEntity().setUserName(getEntity().getUserName());
 			accountNumber = accountNumberService.save(getEntity(),
 					getLoginUser());
 			accountNumber.setCustomer(accountNumber.getCustomer());
@@ -365,11 +375,11 @@ public class AccountNumberAction extends GenericCRUDActionFull<AccountNumber> {
 			getRequest().setAttribute("roleList", roleList);
 			getRequest().setAttribute("statusList", statusList);
 			setEntity(getEntity());
-			if (getLoginUser().getRole().equals(Role.管理員)){
+			if (getLoginUser().getRole().equals(Role.管理員)) {
 				customer.setSerNo(getLoginUser().getCustomer().getSerNo());
-				
+
 			}
-			
+
 			dsCustomer.setEntity(customer);
 			dsCustomer = customerService.getByRestrictions(dsCustomer);
 			setEntity(getEntity());
@@ -379,28 +389,26 @@ public class AccountNumberAction extends GenericCRUDActionFull<AccountNumber> {
 
 	@Override
 	public String update() throws Exception {
-		List<Status> statusList=new ArrayList<Status>(Arrays.asList(Status.values()));
-		List<Role> roleList= new ArrayList<Role>(Arrays.asList(Role.values()));
-		List<Role> tempList= new ArrayList<Role>();
-		roleList.remove(roleList.size()-1);
+		List<Status> statusList = new ArrayList<Status>(Arrays.asList(Status
+				.values()));
+		List<Role> roleList = new ArrayList<Role>(Arrays.asList(Role.values()));
+		List<Role> tempList = new ArrayList<Role>();
+		roleList.remove(roleList.size() - 1);
 
-		int roleCode=roleList.indexOf(getLoginUser().getRole());
-				
-		for (int i = 0; i < roleCode; i++){
-		tempList.add(roleList.get(i));
+		int roleCode = roleList.indexOf(getLoginUser().getRole());
+
+		for (int i = 0; i < roleCode; i++) {
+			tempList.add(roleList.get(i));
 		}
-		
+
 		roleList.removeAll(tempList);
-		
+
 		validateUpdate();
-		Iterator<String> iteratorMsg = actionErrors.iterator();
-		while(iteratorMsg.hasNext()){
-			addActionError(iteratorMsg.next());
-		}
-		
+		setActionErrors(errorMessages);
+
 		if (!hasActionErrors()) {
-			if (getEntity().getUserPw() == null
-					|| getEntity().getUserPw().trim().equals("")) {
+			getEntity().setUserName(getEntity().getUserName());
+			if (StringUtils.isBlank(getEntity().getUserPw())) {
 				accountNumberService.updateLog(getEntity());
 				accountNumber = accountNumberService.update(getEntity(),
 						getLoginUser(), "userId", "userPw");
@@ -416,14 +424,18 @@ public class AccountNumberAction extends GenericCRUDActionFull<AccountNumber> {
 		} else {
 			getRequest().setAttribute("roleList", roleList);
 			getRequest().setAttribute("statusList", statusList);
-			getEntity().setSerNo(getEntity().getSerNo());
-			getEntity().setUserId(accountNumberService.getBySerNo(getEntity().getSerNo()).getUserId());
-			
-			if (getLoginUser().getRole().equals(Role.管理員)){
-				customer.setSerNo(getLoginUser().getCustomer().getSerNo());
-				
+
+			if (hasEntity()) {
+				getEntity().setUserId(
+						accountNumberService.getBySerNo(getEntity().getSerNo())
+								.getUserId());
 			}
-			
+
+			if (getLoginUser().getRole().equals(Role.管理員)) {
+				customer.setSerNo(getLoginUser().getCustomer().getSerNo());
+
+			}
+
 			dsCustomer.setEntity(customer);
 			dsCustomer = customerService.getByRestrictions(dsCustomer);
 			return EDIT;
@@ -437,7 +449,7 @@ public class AccountNumberAction extends GenericCRUDActionFull<AccountNumber> {
 	}
 
 	public String deauthorize() throws Exception {
-		if (checkItem == null || checkItem.length == 0) {
+		if (ArrayUtils.isEmpty(checkItem)) {
 			addActionError("請選擇一筆或一筆以上的資料");
 		} else {
 			int i = 0;
@@ -449,33 +461,35 @@ public class AccountNumberAction extends GenericCRUDActionFull<AccountNumber> {
 				i++;
 			}
 		}
-		
-		if(!hasActionErrors()) {
-			List<Role> roleList=new ArrayList<Role>(Arrays.asList(Role.values()));
-			List<Role> tempList= new ArrayList<Role>();
 
-			roleList.remove(roleList.size()-1);
+		if (!hasActionErrors()) {
+			List<Role> roleList = new ArrayList<Role>(Arrays.asList(Role
+					.values()));
+			List<Role> tempList = new ArrayList<Role>();
 
-			int roleCode=roleList.indexOf(getLoginUser().getRole());
-					
-			for (int i = 0; i < roleCode; i++){
-			tempList.add(roleList.get(i));
+			roleList.remove(roleList.size() - 1);
+
+			int roleCode = roleList.indexOf(getLoginUser().getRole());
+
+			for (int i = 0; i < roleCode; i++) {
+				tempList.add(roleList.get(i));
 			}
-			
+
 			roleList.removeAll(tempList);
-			
-			for(int j = 0; j < checkItem.length; j++){
-				boolean isLegalRole= false;
-				accountNumber=accountNumberService.getBySerNo(Long.parseLong(checkItem[j]));
-				if(accountNumber != null 
-						&& roleList.contains(accountNumber.getRole())){
+
+			for (int j = 0; j < checkItem.length; j++) {
+				boolean isLegalRole = false;
+				accountNumber = accountNumberService.getBySerNo(Long
+						.parseLong(checkItem[j]));
+				if (accountNumber != null
+						&& roleList.contains(accountNumber.getRole())) {
 					isLegalRole = true;
-					}
-				
-				if(!isLegalRole){
+				}
+
+				if (!isLegalRole) {
 					addActionError(checkItem[j] + "權限不可變更");
 				}
-				
+
 			}
 		}
 
@@ -484,26 +498,27 @@ public class AccountNumberAction extends GenericCRUDActionFull<AccountNumber> {
 			while (j < checkItem.length) {
 				if (accountNumberService.getBySerNo(Long
 						.parseLong(checkItem[j])) != null) {
-					accountNumber = accountNumberService.getBySerNo(Long.parseLong(checkItem[j]));
+					accountNumber = accountNumberService.getBySerNo(Long
+							.parseLong(checkItem[j]));
 					accountNumber.setStatus(Status.不生效);
 					accountNumberService.update(accountNumber, getLoginUser());
 				}
 				j++;
 			}
-			
+
 			DataSet<AccountNumber> ds = initDataSet();
 			ds.setPager(Pager.getChangedPager(
 					getRequest().getParameter("recordPerPage"), getRequest()
 							.getParameter("recordPoint"), ds.getPager()));
-					
+
 			ds = accountNumberService.getByRestrictions(ds, getLoginUser());
 
 			setDs(ds);
 			addActionMessage("更新成功");
 			return LIST;
 		} else {
-			DataSet<AccountNumber> ds = accountNumberService
-					.getByRestrictions(initDataSet(), getLoginUser());
+			DataSet<AccountNumber> ds = accountNumberService.getByRestrictions(
+					initDataSet(), getLoginUser());
 			List<AccountNumber> results = ds.getResults();
 
 			ds.setResults(results);
@@ -514,7 +529,7 @@ public class AccountNumberAction extends GenericCRUDActionFull<AccountNumber> {
 	}
 
 	public String authorize() throws Exception {
-		if (checkItem == null || checkItem.length == 0) {
+		if (ArrayUtils.isEmpty(checkItem)) {
 			addActionError("請選擇一筆或一筆以上的資料");
 		} else {
 			int i = 0;
@@ -526,33 +541,35 @@ public class AccountNumberAction extends GenericCRUDActionFull<AccountNumber> {
 				i++;
 			}
 		}
-		
-		if(!hasActionErrors()) {
-			List<Role> roleList=new ArrayList<Role>(Arrays.asList(Role.values()));
-			List<Role> tempList= new ArrayList<Role>();
 
-			roleList.remove(roleList.size()-1);
+		if (!hasActionErrors()) {
+			List<Role> roleList = new ArrayList<Role>(Arrays.asList(Role
+					.values()));
+			List<Role> tempList = new ArrayList<Role>();
 
-			int roleCode=roleList.indexOf(getLoginUser().getRole());
-					
-			for (int i = 0; i < roleCode; i++){
-			tempList.add(roleList.get(i));
+			roleList.remove(roleList.size() - 1);
+
+			int roleCode = roleList.indexOf(getLoginUser().getRole());
+
+			for (int i = 0; i < roleCode; i++) {
+				tempList.add(roleList.get(i));
 			}
-			
+
 			roleList.removeAll(tempList);
-			
-			for(int j = 0; j < checkItem.length; j++){
-				boolean isLegalRole= false;
-				accountNumber=accountNumberService.getBySerNo(Long.parseLong(checkItem[j]));
-				if(accountNumber != null 
-						&& roleList.contains(accountNumber.getRole())){
+
+			for (int j = 0; j < checkItem.length; j++) {
+				boolean isLegalRole = false;
+				accountNumber = accountNumberService.getBySerNo(Long
+						.parseLong(checkItem[j]));
+				if (accountNumber != null
+						&& roleList.contains(accountNumber.getRole())) {
 					isLegalRole = true;
-					}
-				
-				if(!isLegalRole){
+				}
+
+				if (!isLegalRole) {
 					addActionError(checkItem[j] + "權限不可變更");
 				}
-				
+
 			}
 		}
 
@@ -573,15 +590,15 @@ public class AccountNumberAction extends GenericCRUDActionFull<AccountNumber> {
 			ds.setPager(Pager.getChangedPager(
 					getRequest().getParameter("recordPerPage"), getRequest()
 							.getParameter("recordPoint"), ds.getPager()));
-					
+
 			ds = accountNumberService.getByRestrictions(ds, getLoginUser());
 
 			setDs(ds);
 			addActionMessage("更新成功");
 			return LIST;
 		} else {
-			DataSet<AccountNumber> ds = accountNumberService
-					.getByRestrictions(initDataSet(), getLoginUser());
+			DataSet<AccountNumber> ds = accountNumberService.getByRestrictions(
+					initDataSet(), getLoginUser());
 			List<AccountNumber> results = ds.getResults();
 
 			ds.setResults(results);
@@ -592,36 +609,43 @@ public class AccountNumberAction extends GenericCRUDActionFull<AccountNumber> {
 	}
 
 	public String view() throws Exception {
-		getRequest().setAttribute("viewSerNo", getRequest().getParameter("viewSerNo"));	
-		
-		if (getRequest().getParameter("viewSerNo") != null
-				&& NumberUtils.isDigits(getRequest().getParameter("viewSerNo"))){
-		
-			accountNumber = accountNumberService.getBySerNo(Long.parseLong(getRequest().getParameter("viewSerNo")));
-			if (accountNumber != null){
+		getRequest().setAttribute("viewSerNo",
+				getRequest().getParameter("viewSerNo"));
+
+		if (StringUtils.isNotBlank(getRequest().getParameter("viewSerNo"))
+				&& NumberUtils.isDigits(getRequest().getParameter("viewSerNo"))) {
+
+			accountNumber = accountNumberService.getBySerNo(Long
+					.parseLong(getRequest().getParameter("viewSerNo")));
+			if (accountNumber != null) {
 				setEntity(accountNumber);
-				}
 			}
-		return VIEW;
 		}
+		return VIEW;
+	}
+
+	public String imports() {
+		return IMPORT;
+	}
 
 	public String queue() throws Exception {
-		if (file == null || !file.isFile()) {
+		if (ArrayUtils.isEmpty(file) || !file[0].isFile()) {
 			addActionError("請選擇檔案");
 		} else {
-			if (createWorkBook(new FileInputStream(file)) == null) {
+			if (createWorkBook(new FileInputStream(file[0])) == null) {
 				addActionError("檔案格式錯誤");
 			}
 		}
 
 		if (!hasActionErrors()) {
-			Workbook book = createWorkBook(new FileInputStream(file));
+			Workbook book = createWorkBook(new FileInputStream(file[0]));
 			// book.getNumberOfSheets(); 判斷Excel文件有多少個sheet
 			Sheet sheet = book.getSheetAt(0);
-			excelWorkSheet = new ExcelWorkSheet<AccountNumber>();
 
-			// 保存工作單名稱
 			Row firstRow = sheet.getRow(0);
+			if (firstRow == null) {
+				firstRow = sheet.createRow(0);
+			}
 
 			// 保存列名
 			List<String> cellNames = new ArrayList<String>();
@@ -641,13 +665,11 @@ public class AccountNumberAction extends GenericCRUDActionFull<AccountNumber> {
 						break;
 
 					case 1:
-						rowTitles[n] = firstRow.getCell(n).getStringCellValue()
-								.trim();
+						rowTitles[n] = firstRow.getCell(n).getStringCellValue();
 						break;
 
 					case 2:
-						rowTitles[n] = firstRow.getCell(n).getCellFormula()
-								.trim();
+						rowTitles[n] = firstRow.getCell(n).getCellFormula();
 						break;
 
 					case 3:
@@ -676,8 +698,13 @@ public class AccountNumberAction extends GenericCRUDActionFull<AccountNumber> {
 			}
 
 			LinkedHashSet<AccountNumber> originalData = new LinkedHashSet<AccountNumber>();
+			Map<String, AccountNumber> checkRepeatRow = new LinkedHashMap<String, AccountNumber>();
+			
 			for (int i = 1; i <= sheet.getLastRowNum(); i++) {
 				Row row = sheet.getRow(i);
+				if (row == null) {
+					continue;
+				}
 
 				String[] rowValues = new String[6];
 				int k = 0;
@@ -695,13 +722,11 @@ public class AccountNumberAction extends GenericCRUDActionFull<AccountNumber> {
 							break;
 
 						case 1:
-							rowValues[k] = row.getCell(k).getStringCellValue()
-									.trim();
+							rowValues[k] = row.getCell(k).getStringCellValue();
 							break;
 
 						case 2:
-							rowValues[k] = row.getCell(k).getCellFormula()
-									.trim();
+							rowValues[k] = row.getCell(k).getCellFormula();
 							break;
 
 						case 3:
@@ -728,159 +753,186 @@ public class AccountNumberAction extends GenericCRUDActionFull<AccountNumber> {
 				}
 
 				String role = "";
-				List<Role> roleList=new ArrayList<Role>(Arrays.asList(Role.values()));
-				List<Role> tempList= new ArrayList<Role>();
-				for (int j=0; j < roleList.size(); j++){
-					if (rowValues[4].trim().equals(roleList.get(j).getRole())){
+				List<Role> roleList = new ArrayList<Role>(Arrays.asList(Role
+						.values()));
+				List<Role> tempList = new ArrayList<Role>();
+				for (int j = 0; j < roleList.size(); j++) {
+					if (rowValues[4].trim().equals(roleList.get(j).getRole())) {
 						role = roleList.get(j).getRole();
 					}
 				}
 
-				if (role.equals("")){
+				if (role.equals("")) {
 					role = Role.不明.getRole();
 				}
-				
-				int roleCode=roleList.indexOf(getLoginUser().getRole());
-				
-				for (int j = 0; j < roleCode; j++){
-				tempList.add(roleList.get(j));
+
+				int roleCode = roleList.indexOf(getLoginUser().getRole());
+
+				for (int j = 0; j < roleCode; j++) {
+					tempList.add(roleList.get(j));
 				}
-				
+
 				roleList.removeAll(tempList);
-				
-				boolean isLegalRole=false;
-				roleList.remove(roleList.size()-1);
-				for (int j=0; j < roleList.size(); j++){
-					if(role.equals(roleList.get(j).getRole())){
-						isLegalRole=true;
+
+				boolean isLegalRole = false;
+				roleList.remove(roleList.size() - 1);
+				for (int j = 0; j < roleList.size(); j++) {
+					if (role.equals(roleList.get(j).getRole())) {
+						isLegalRole = true;
 					}
 				}
 
-				List<Status> statusList=new ArrayList<Status>(Arrays.asList(Status.values()));
-				String status="";
-				for (int j=0; j < statusList.size(); j++){
-					if(rowValues[5].trim().equals(statusList.get(j).getStatus())){
+				List<Status> statusList = new ArrayList<Status>(
+						Arrays.asList(Status.values()));
+				String status = "";
+				for (int j = 0; j < statusList.size(); j++) {
+					if (rowValues[5].trim().equals(
+							statusList.get(j).getStatus())) {
 						status = statusList.get(j).getStatus();
 					}
 				}
-				
-				if(status.equals("")){
+
+				if (status.equals("")) {
 					status = Status.審核中.getStatus();
 				}
-				
-				accountNumber = new AccountNumber(
-						
-						rowValues[0].trim(), rowValues[1].trim(),
-						rowValues[2].trim(), Role.valueOf(role), Status.valueOf(status),
-						null, "");
 
-				if (customerService.getCusSerNoByName(rowValues[3].trim()) != 0){
-					customer = customerService.getBySerNo(customerService.getCusSerNoByName(rowValues[3].trim()));
+				accountNumber = new AccountNumber(rowValues[0], rowValues[1],
+						rowValues[2], Role.valueOf(role),
+						Status.valueOf(status), null, "");
+
+				if (customerService.getCusSerNoByName(rowValues[3].trim()) != 0) {
+					customer = customerService.getBySerNo(customerService
+							.getCusSerNoByName(rowValues[3].trim()));
 					accountNumber.setCustomer(customer);
 				}
-				
-				long serNo = accountNumberService
-						.getSerNoByUserId(accountNumber.getUserId());
-				if (serNo != 0) {
-					accountNumber.setExistStatus("已存在");
-				} else {						
-					if(getLoginUser().getRole().equals(Role.管理員)){
-						if (accountNumber.getUserId().isEmpty()
-								|| accountNumber.getUserPw().isEmpty()
-								|| accountNumber.getCustomer() == null
-								|| !isLegalRole
-								|| !getLoginUser().getCustomer().equals(accountNumber.getCustomer())) {
-							customer = new Customer();
-							customer.setName(rowValues[3].trim());
-							accountNumber.setCustomer(customer);
-							accountNumber.setExistStatus("資料錯誤");
-							} else {
-								accountNumber.setExistStatus("正常");			
-								
-							}
+
+				if (StringUtils.isBlank(accountNumber.getUserId())) {
+					accountNumber.setExistStatus("帳號空白");
+				} else {
+					if (accountNumber.getUserId().replaceAll("[0-9a-zA-Z]", "")
+							.length() != 0) {
+						accountNumber.setExistStatus("帳號必須英數");
 					} else {
-						if (accountNumber.getUserId().isEmpty()
-								|| accountNumber.getUserPw().isEmpty()
-								|| accountNumber.getCustomer() == null
-								|| !isLegalRole) {
-							customer = new Customer();
-							customer.setName(rowValues[3].trim());
-							accountNumber.setCustomer(customer);
-							accountNumber.setExistStatus("資料錯誤");
+						long serNo = accountNumberService
+								.getSerNoByUserId(accountNumber.getUserId());
+						if (serNo != 0) {
+							accountNumber.setExistStatus("已存在");
+						} else {
+							if (getLoginUser().getRole().equals(Role.管理員)) {
+								if (StringUtils.isBlank(accountNumber
+										.getUserId())
+										|| StringUtils.isBlank(accountNumber
+												.getUserPw())
+										|| accountNumber.getCustomer() == null
+										|| !isLegalRole
+										|| !getLoginUser().getCustomer()
+												.equals(accountNumber
+														.getCustomer())) {
+									customer = new Customer();
+									customer.setName(rowValues[3]);
+									accountNumber.setCustomer(customer);
+									accountNumber.setExistStatus("資料錯誤");
+								} else {
+									accountNumber.setExistStatus("正常");
+
+								}
 							} else {
-								accountNumber.setExistStatus("正常");			
-								
+								if (StringUtils.isBlank(accountNumber
+										.getUserId())
+										|| accountNumber.getUserId()
+												.replaceAll("[0-9a-zA-Z]", "")
+												.length() != 0
+										|| StringUtils.isBlank(accountNumber
+												.getUserPw())
+										|| accountNumber.getCustomer() == null
+										|| !isLegalRole) {
+									customer = new Customer();
+									customer.setName(rowValues[3]);
+									accountNumber.setCustomer(customer);
+									accountNumber.setExistStatus("資料錯誤");
+								} else {
+									accountNumber.setExistStatus("正常");
+
+								}
 							}
 						}
 					}
+				}
+				
+				if (accountNumber.getExistStatus().equals("正常") && !originalData.contains(accountNumber)) {
+					if (checkRepeatRow.containsKey(accountNumber.getUserId())) {
+						checkRepeatRow.get(accountNumber.getUserId()).setExistStatus(
+								"帳號重複");
+						customer.setExistStatus("帳號重複");
+						checkRepeatRow.put(accountNumber.getUserId(), accountNumber);
+					} else {
+						checkRepeatRow.put(accountNumber.getUserId(), accountNumber);
+					}
+				}
 
 				originalData.add(accountNumber);
 			}
 
-			Iterator<AccountNumber> setIterator = originalData.iterator();
-			
+			Iterator<AccountNumber> iterator = originalData.iterator();
+			List<AccountNumber> excelData = new ArrayList<AccountNumber>();
 			int normal = 0;
-			while (setIterator.hasNext()) {
-				accountNumber = setIterator.next();
-				excelWorkSheet.getData().add(accountNumber);
+			while (iterator.hasNext()) {
+				accountNumber = iterator.next();
+				excelData.add(accountNumber);
 				if (accountNumber.getExistStatus().equals("正常")) {
 					normal = normal + 1;
 				}
 			}
-			
+
 			DataSet<AccountNumber> ds = initDataSet();
-			List<AccountNumber> results=ds.getResults();
-			
-			ds.getPager().setTotalRecord((long)excelWorkSheet.getData().size());
+			List<AccountNumber> results = ds.getResults();
+
+			ds.getPager().setTotalRecord((long) excelData.size());
 			ds.getPager().setRecordPoint(0);
-			
-			if(excelWorkSheet.getData().size() < ds.getPager().getRecordPerPage()){
-				int i=0;
-				while(i < excelWorkSheet.getData().size()){
-					results.add(excelWorkSheet.getData().get(i));
+
+			if (excelData.size() < ds.getPager().getRecordPerPage()) {
+				int i = 0;
+				while (i < excelData.size()) {
+					results.add(excelData.get(i));
 					i++;
 				}
 			} else {
-				int i=0;
-				while(i < ds.getPager().getRecordPerPage()){
-					results.add(excelWorkSheet.getData().get(i));
+				int i = 0;
+				while (i < ds.getPager().getRecordPerPage()) {
+					results.add(excelData.get(i));
 					i++;
 				}
 			}
 
 			getSession().put("cellNames", cellNames);
-			getSession().put("importList", excelWorkSheet.getData());
-			getSession().put("total", excelWorkSheet.getData().size());
+			getSession().put("importList", excelData);
+			getSession().put("total", excelData.size());
 			getSession().put("normal", normal);
-			getSession().put("abnormal",
-					excelWorkSheet.getData().size() - normal);
-			
+			getSession().put("abnormal", excelData.size() - normal);
+
 			setDs(ds);
 			return QUEUE;
 		} else {
-			getRequest().setAttribute("goQueue", "yes");
-			return EDIT;
+			return IMPORT;
 		}
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	public String paginate() throws Exception {
+		List<AccountNumber> importList = (List<AccountNumber>) getSession()
+				.get("importList");
+		if (importList == null) {
+			return null;
+		}
+
 		clearCheckedItem();
-		
-		List<AccountNumber> importList = (List<AccountNumber>) getSession().get("importList");
-		
+
 		DataSet<AccountNumber> ds = initDataSet();
 		ds.setPager(Pager.getChangedPager(
 				getRequest().getParameter("recordPerPage"), getRequest()
 						.getParameter("recordPoint"), ds.getPager()));
+		ds.getPager().setTotalRecord((long) importList.size());
 
-		if (importList == null){
-			return null;
-		} else {
-			ds.getPager().setTotalRecord((long) importList.size());
-			
-		}
-		
 		int first = ds.getPager().getRecordPerPage()
 				* (ds.getPager().getCurrentPage() - 1);
 		int last = first + ds.getPager().getRecordPerPage();
@@ -901,38 +953,71 @@ public class AccountNumberAction extends GenericCRUDActionFull<AccountNumber> {
 	}
 
 	@SuppressWarnings("unchecked")
-	public void getCheckedItem() {
-		Map<String, Object> checkItemMap;
-		if (getSession().containsKey("checkItemMap")) {
-			checkItemMap = (TreeMap<String, Object>) getSession().get(
-					"checkItemMap");
-		} else {
-			checkItemMap = new TreeMap<String, Object>();
+	public String getCheckedItem() {
+		if (getSession().get("importList") == null) {
+			return null;
 		}
 
-		if (!checkItemMap.containsKey(this.importSerNo)) {
-			checkItemMap.put(this.importSerNo, this.importSerNo);
+		Set<Integer> checkItemSet;
+		if (getSession().containsKey("checkItemSet")) {
+			checkItemSet = (TreeSet<Integer>) getSession().get("checkItemSet");
 		} else {
-			checkItemMap.remove(this.importSerNo);
+			checkItemSet = new TreeSet<Integer>();
 		}
-		getSession().put("checkItemMap", checkItemMap);
+
+		if (ArrayUtils.isNotEmpty(importSerNos)) {
+			if (NumberUtils.isDigits(importSerNos[0])) {
+				if (!checkItemSet.contains(Integer.parseInt(importSerNos[0]))) {
+					checkItemSet.add(Integer.parseInt(importSerNos[0]));
+				} else {
+					checkItemSet.remove(Integer.parseInt(importSerNos[0]));
+				}
+			}
+		}
+
+		getSession().put("checkItemSet", checkItemSet);
+
+		return null;
 	}
 
-	public void allCheckedItem() {
-		Map<String, Object> checkItemMap = new TreeMap<String, Object>();
-
-		int i = 0;
-		while (i < importSerNos.length) {
-			checkItemMap.put(importSerNos[i], importSerNos[i]);
-			i++;
+	@SuppressWarnings("unchecked")
+	public String allCheckedItem() {
+		List<AccountNumber> importList = (List<AccountNumber>) getSession()
+				.get("importList");
+		if (importList == null) {
+			return null;
 		}
 
-		getSession().put("checkItemMap", checkItemMap);
+		Set<Integer> checkItemSet = new TreeSet<Integer>();
+
+		if (ArrayUtils.isNotEmpty(importSerNos)) {
+			int i = 0;
+			while (i < importSerNos.length) {
+				if (NumberUtils.isDigits(importSerNos[i])) {
+					if (Long.parseLong(importSerNos[i]) < importList.size()) {
+						checkItemSet.add(Integer.parseInt(importSerNos[i]));
+					}
+
+					if (checkItemSet.size() == importList.size()) {
+						break;
+					}
+				}
+				i++;
+			}
+		}
+
+		getSession().put("checkItemSet", checkItemSet);
+		return null;
 	}
 
-	public void clearCheckedItem() {
-		Map<String, Object> checkItemMap = new TreeMap<String, Object>();
-		getSession().put("checkItemMap", checkItemMap);
+	public String clearCheckedItem() {
+		if (getSession().get("importList") == null) {
+			return null;
+		}
+
+		Set<Integer> checkItemSet = new TreeSet<Integer>();
+		getSession().put("checkItemSet", checkItemSet);
+		return null;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -940,43 +1025,39 @@ public class AccountNumberAction extends GenericCRUDActionFull<AccountNumber> {
 		List<AccountNumber> importList = (List<AccountNumber>) getSession()
 				.get("importList");
 
-		Map<String, Object> checkItemMap = (TreeMap<String, Object>) getSession()
-				.get("checkItemMap");
+		if (importList == null) {
+			return null;
+		}
 
-		if (checkItemMap == null || checkItemMap.size() == 0) {
+		Set<Integer> checkItemSet = (TreeSet<Integer>) getSession().get(
+				"checkItemSet");
+
+		if (CollectionUtils.isEmpty(checkItemSet)) {
 			addActionError("請選擇一筆或一筆以上的資料");
 		}
 
 		if (!hasActionErrors()) {
-			Iterator<?> it = checkItemMap.values().iterator();
-			List<AccountNumber> importIndexs = new ArrayList<AccountNumber>();
-			while (it.hasNext()) {
-				String index = it.next().toString();
-				
-				if(NumberUtils.isDigits(index)){
-					if(Integer.parseInt(index) >=0 && Integer.parseInt(index) < importList.size()){
-						importIndexs.add(importList.get(Integer.parseInt(index)));
+			Iterator<Integer> iterator = checkItemSet.iterator();
+			int successCount = 0;
+			while (iterator.hasNext()) {
+				int index = iterator.next();
+				accountNumber = importList.get(index);
+				if (accountNumber.getExistStatus().equals("正常")) {
+					accountNumberService.save(accountNumber, getLoginUser());
+					successCount = successCount + 1;
 				}
-					}
+
 			}
 
-			for (int i = 0; i < importIndexs.size(); i++) {
-				
-				if (importIndexs.get(i).getExistStatus().equals("正常")) {
-					
-					accountNumberService.save(importIndexs.get(i), getLoginUser());
-				}
-			}
-
-			getRequest().setAttribute("successCount", importIndexs.size());
+			getRequest().setAttribute("successCount", successCount);
 			return VIEW;
 		} else {
 			paginate();
 			return QUEUE;
 		}
 	}
-	
-	public String exports() throws Exception {
+
+	public String example() throws Exception {
 		reportFile = "account_sample.xlsx";
 
 		// Create blank workbook
@@ -990,8 +1071,8 @@ public class AccountNumberAction extends GenericCRUDActionFull<AccountNumber> {
 		empinfo.put("1", new Object[] { "userID/使用者", "userPW/使用者密碼",
 				"userName/姓名", "fk_name/用戶名稱", "role/角色", "status/狀態" });
 
-		empinfo.put("2", new Object[] { "cdc", "cdc", "XXX","疾病管制局", "管理員",
-				 "生效" });
+		empinfo.put("2", new Object[] { "cdc", "cdc", "XXX", "疾病管制局", "管理員",
+				"生效" });
 
 		// Iterate over data and write to sheet
 		Set<String> keyid = empinfo.keySet();
@@ -1010,26 +1091,31 @@ public class AccountNumberAction extends GenericCRUDActionFull<AccountNumber> {
 		workbook.write(boas);
 		setInputStream(new ByteArrayInputStream(boas.toByteArray()));
 
-		return SUCCESS;
+		return XLSX;
 	}
 
 	// 判斷文件類型
 	public Workbook createWorkBook(InputStream is) throws IOException {
-		if (fileFileName.toLowerCase().endsWith("xls")) {
+		if (fileFileName[0].toLowerCase().endsWith("xls")) {
 			return new HSSFWorkbook(is);
 		}
-		if (fileFileName.toLowerCase().endsWith("xlsx")) {
+		if (fileFileName[0].toLowerCase().endsWith("xlsx")) {
 			return new XSSFWorkbook(is);
 		}
 		return null;
 	}
-	
-	private boolean isEntity(long serNo) throws Exception{
-		accountNumber = accountNumberService.getBySerNo(serNo);
-		if (accountNumber == null){
+
+	public boolean hasEntity() throws Exception {
+		if (getEntity().getSerNo() == null) {
+			getEntity().setSerNo(-1L);
 			return false;
 		}
-		
+
+		accountNumber = accountNumberService.getBySerNo(getEntity().getSerNo());
+		if (accountNumber == null) {
+			return false;
+		}
+
 		return true;
 	}
 
@@ -1066,7 +1152,7 @@ public class AccountNumberAction extends GenericCRUDActionFull<AccountNumber> {
 	/**
 	 * @return the file
 	 */
-	public File getFile() {
+	public File[] getFile() {
 		return file;
 	}
 
@@ -1074,14 +1160,14 @@ public class AccountNumberAction extends GenericCRUDActionFull<AccountNumber> {
 	 * @param file
 	 *            the file to set
 	 */
-	public void setFile(File file) {
+	public void setFile(File[] file) {
 		this.file = file;
 	}
 
 	/**
 	 * @return the fileFileName
 	 */
-	public String getFileFileName() {
+	public String[] getFileFileName() {
 		return fileFileName;
 	}
 
@@ -1089,14 +1175,14 @@ public class AccountNumberAction extends GenericCRUDActionFull<AccountNumber> {
 	 * @param fileFileName
 	 *            the fileFileName to set
 	 */
-	public void setFileFileName(String fileFileName) {
+	public void setFileFileName(String[] fileFileName) {
 		this.fileFileName = fileFileName;
 	}
 
 	/**
 	 * @return the fileContentType
 	 */
-	public String getFileContentType() {
+	public String[] getFileContentType() {
 		return fileContentType;
 	}
 
@@ -1104,38 +1190,8 @@ public class AccountNumberAction extends GenericCRUDActionFull<AccountNumber> {
 	 * @param fileContentType
 	 *            the fileContentType to set
 	 */
-	public void setFileContentType(String fileContentType) {
+	public void setFileContentType(String[] fileContentType) {
 		this.fileContentType = fileContentType;
-	}
-
-	/**
-	 * @return the excelWorkSheet
-	 */
-	public ExcelWorkSheet<AccountNumber> getExcelWorkSheet() {
-		return excelWorkSheet;
-	}
-
-	/**
-	 * @param excelWorkSheet
-	 *            the excelWorkSheet to set
-	 */
-	public void setExcelWorkSheet(ExcelWorkSheet<AccountNumber> excelWorkSheet) {
-		this.excelWorkSheet = excelWorkSheet;
-	}
-
-	/**
-	 * @return the importSerNo
-	 */
-	public String getImportSerNo() {
-		return importSerNo;
-	}
-
-	/**
-	 * @param importSerNo
-	 *            the importSerNo to set
-	 */
-	public void setImportSerNo(String importSerNo) {
-		this.importSerNo = importSerNo;
 	}
 
 	/**
@@ -1172,7 +1228,11 @@ public class AccountNumberAction extends GenericCRUDActionFull<AccountNumber> {
 	 * @return the reportFile
 	 */
 	public String getReportFile() {
-		return reportFile;
+		if (reportFile.equals("account_sample.xlsx")) {
+			return reportFile;
+		} else {
+			return null;
+		}
 	}
 
 	/**

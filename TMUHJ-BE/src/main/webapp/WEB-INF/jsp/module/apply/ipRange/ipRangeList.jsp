@@ -28,7 +28,7 @@ $(document).ready(function() {
 	
 	//新增IP Range
 	function goAdd_detail() {
-		var url = "<c:url value = '/'/>/crud/apply.ipRange.query.action";
+		var url = "<c:url value = '/'/>/crud/apply.ipRange.edit.action";
 		var data ='entity.customer.serNo='+'${customerSerNo }';
 		goDetail_2(url, 'IP Range管理-新增', data);
 	}
@@ -38,8 +38,8 @@ $(document).ready(function() {
 		var isNum = /^\d+$/.test(serNo);
 		var islistNo = /^\d+$/.test(listNo);
 		if (isNum && islistNo &&parseInt(serNo) > 0){
-		var url = "<c:url value = '/'/>crud/apply.ipRange.query.action";
-		var data = 'entity.serNo=' + serNo +'&entity.listNo='+listNo;
+		var url = "<c:url value = '/'/>crud/apply.ipRange.edit.action";
+		var data = 'entity.serNo=' + serNo +'&entity.listNo='+listNo+'&entity.customer.serNo='+'${customerSerNo }';
 		goDetail_2(url, 'IP Range管理-修改', data); 
 		}
 	}

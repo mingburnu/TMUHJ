@@ -86,7 +86,7 @@ function getCheckedItem(index) {
 				type : "POST",
 				url : "<c:url value = '/'/>crud/apply.accountNumber.getCheckedItem.action",
 				dataType : "html",
-				data : "importSerNo=" + index,
+				data : "importSerNos=" + index,
 				success : function(message) {
 
 				}
@@ -139,7 +139,7 @@ function clearCheckedItem() {
 					<tr>
 						<td><c:choose>
 								<c:when test="${item.existStatus=='正常'}">
-									<input type="checkbox" class="checkbox queue" name="checkItem"
+									<input type="checkbox" class="checkbox queue"
 										value="${(ds.pager.currentPage-1) * ds.pager.recordPerPage + status.index }"
 										onclick="getCheckedItem(this.value)">
 								</c:when>

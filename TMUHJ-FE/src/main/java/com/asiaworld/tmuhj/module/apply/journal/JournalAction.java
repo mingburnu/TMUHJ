@@ -51,29 +51,35 @@ public class JournalAction extends GenericCRUDActionFull<Journal> {
 	private CustomerService customerService;
 
 	@Override
-	public void validateSave() throws Exception {
+	protected void validateSave() throws Exception {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void validateUpdate() throws Exception {
+	protected void validateUpdate() throws Exception {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void validateDelete() throws Exception {
+	protected void validateDelete() throws Exception {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public String query() throws Exception {
+	public String edit() throws Exception {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String list() throws Exception {
 		String keywords = getRequest().getParameter("keywords");
 
 		getRequest().setAttribute("keywords", keywords);
-		getRequest().setAttribute("query", "apply.journal.query.action");
+		getRequest().setAttribute("list", "apply.journal.list.action");
 		DataSet<Journal> ds = initDataSet();
 		ds.setPager(Pager.getChangedPager(
 				getRequest().getParameter("recordPerPage"), getRequest()
@@ -82,57 +88,6 @@ public class JournalAction extends GenericCRUDActionFull<Journal> {
 		ds = journalService.getBySql(ds, keywords);
 		setDs(ds);
 		return "journal";
-	}
-
-	@Override
-	public String list() throws Exception {
-		if (StringUtils.isBlank(getRequest().getParameter("serNo")) 
-				|| !NumberUtils.isDigits(getRequest().getParameter("serNo"))){
-			addActionError("serNo Error");
-		} else {
-			if (journalService.getBySerNo(Long.parseLong(getRequest().getParameter("serNo"))) == null) {
-				addActionError("Object Null");	
-			}
-		}
-		
-		if (!hasActionErrors()){
-		journal = journalService.getBySerNo(Long.parseLong(getRequest()
-				.getParameter("serNo")));
-
-		resourcesUnion = resourcesUnionService.getByObjSerNo(
-				Long.parseLong(getRequest().getParameter("serNo")),
-				journal.getClass());
-
-		resourcesBuyers = resourcesUnion.getResourcesBuyers();
-
-		List<ResourcesUnion> journalResourcesUnionList = resourcesUnionService
-				.getByJouSerNo(Long.parseLong(getRequest()
-						.getParameter("serNo")));
-
-		List<String> ownerNameList = new ArrayList<String>();
-
-		Iterator<ResourcesUnion> iterator = journalResourcesUnionList.iterator();
-
-		while (iterator.hasNext()) {
-			ResourcesUnion jouResourcesUnion = iterator.next();
-			customer = jouResourcesUnion.getCustomer();
-			if(customer!=null){
-			ownerNameList.add(customer.getName());
-			}
-		}
-
-		String ownerNames = ownerNameList.toString().replace("[", "")
-				.replace("]", "");
-
-		getRequest().setAttribute("journal", journal);
-		getRequest().setAttribute("resourcesBuyers", resourcesBuyers);
-		getRequest().setAttribute("ownerNames", ownerNames);
-		
-		if (StringUtils.isNotBlank(getRequest().getParameter("currentURL"))){
-			getRequest().setAttribute("backURL", getRequest().getParameter("currentURL").replace("@@@", "?").replace("^^^", "&"));
-			}
-		}
-		return "j-detail";
 	}
 
 	@Override
@@ -160,15 +115,22 @@ public class JournalAction extends GenericCRUDActionFull<Journal> {
 			cusSerNo = Long.parseLong(getRequest().getParameter("cusSerNo"));
 		}
 
-		getRequest().setAttribute("cusSerNo", cusSerNo);
-		getRequest().setAttribute("owner", "apply.journal.owner.action");
+		if (customerService.getBySerNo(cusSerNo) == null) {
+			addActionError("Customer Null");
+		}
 
-		DataSet<Journal> ds = initDataSet();
-		ds.setPager(Pager.getChangedPager(
-				getRequest().getParameter("recordPerPage"), getRequest()
-						.getParameter("recordPoint"), ds.getPager()));
-		ds = journalService.getByCusSerNo(ds, cusSerNo);
-		setDs(ds);
+		if (!hasActionErrors()) {
+			getRequest().setAttribute("cusSerNo", cusSerNo);
+			getRequest().setAttribute("owner", "apply.journal.owner.action");
+
+			DataSet<Journal> ds = initDataSet();
+			ds.setPager(Pager.getChangedPager(
+					getRequest().getParameter("recordPerPage"), getRequest()
+							.getParameter("recordPoint"), ds.getPager()));
+			ds = journalService.getByCusSerNo(ds, cusSerNo);
+			setDs(ds);
+
+		}
 
 		return "journal";
 	}
@@ -183,13 +145,70 @@ public class JournalAction extends GenericCRUDActionFull<Journal> {
 
 		getEntity().setOption(option);
 		getEntity().setKeywords(keywords);
-		
+
 		DataSet<Journal> ds = initDataSet();
 		ds.setPager(Pager.getChangedPager(
 				getRequest().getParameter("recordPerPage"), getRequest()
 						.getParameter("recordPoint"), ds.getPager()));
 		ds = journalService.getByRestrictions(ds);
 		setDs(ds);
+
 		return "journal";
+	}
+
+	public String view() throws Exception {
+		if (StringUtils.isBlank(getRequest().getParameter("serNo"))
+				|| !NumberUtils.isDigits(getRequest().getParameter("serNo"))) {
+			addActionError("serNo Error");
+		} else {
+			if (journalService.getBySerNo(Long.parseLong(getRequest()
+					.getParameter("serNo"))) == null) {
+				addActionError("Object Null");
+			}
+		}
+
+		if (!hasActionErrors()) {
+			journal = journalService.getBySerNo(Long.parseLong(getRequest()
+					.getParameter("serNo")));
+
+			resourcesUnion = resourcesUnionService.getByObjSerNo(
+					Long.parseLong(getRequest().getParameter("serNo")),
+					journal.getClass());
+
+			resourcesBuyers = resourcesUnion.getResourcesBuyers();
+
+			List<ResourcesUnion> journalResourcesUnionList = resourcesUnionService
+					.getByJouSerNo(Long.parseLong(getRequest().getParameter(
+							"serNo")));
+
+			List<String> ownerNameList = new ArrayList<String>();
+
+			Iterator<ResourcesUnion> iterator = journalResourcesUnionList
+					.iterator();
+
+			while (iterator.hasNext()) {
+				ResourcesUnion jouResourcesUnion = iterator.next();
+				customer = jouResourcesUnion.getCustomer();
+				if (customer != null) {
+					ownerNameList.add(customer.getName());
+				}
+			}
+
+			String ownerNames = ownerNameList.toString().replace("[", "")
+					.replace("]", "");
+
+			getRequest().setAttribute("journal", journal);
+			getRequest().setAttribute("resourcesBuyers", resourcesBuyers);
+			getRequest().setAttribute("ownerNames", ownerNames);
+
+			if (StringUtils.isNotBlank(getRequest().getParameter("currentURL"))) {
+				getRequest().setAttribute(
+						"backURL",
+						getRequest().getParameter("currentURL")
+								.replace("？", "?").replace("＆", "&"));
+			}
+		}
+
+		return "j-detail";
 	}
 }

@@ -3,7 +3,6 @@ package com.asiaworld.tmuhj.module.apply.database;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,29 +50,35 @@ public class DatabaseAction extends GenericCRUDActionFull<Database> {
 	private CustomerService customerService;
 
 	@Override
-	public void validateSave() throws Exception {
+	protected void validateSave() throws Exception {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void validateUpdate() throws Exception {
+	protected void validateUpdate() throws Exception {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void validateDelete() throws Exception {
+	protected void validateDelete() throws Exception {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public String query() throws Exception {
+	public String edit() throws Exception {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String list() throws Exception {
 		String keywords = getRequest().getParameter("keywords");
 
 		getRequest().setAttribute("keywords", keywords);
-		getRequest().setAttribute("query", "apply.database.query.action");
+		getRequest().setAttribute("list", "apply.database.list.action");
 
 		DataSet<Database> ds = initDataSet();
 		ds.setPager(Pager.getChangedPager(
@@ -83,56 +88,6 @@ public class DatabaseAction extends GenericCRUDActionFull<Database> {
 		ds = databaseService.getBySql(ds, keywords);
 		setDs(ds);
 		return "database";
-	}
-
-	@Override
-	public String list() throws Exception {
-		if (StringUtils.isBlank(getRequest().getParameter("serNo")) 
-				|| !NumberUtils.isDigits(getRequest().getParameter("serNo"))){
-			addActionError("serNo Error");
-		} else {
-			if (databaseService.getBySerNo(Long.parseLong(getRequest().getParameter("serNo"))) == null) {
-				addActionError("Object Null");	
-			}
-		}
-		
-		if (!hasActionErrors()){
-		database = databaseService.getBySerNo(Long.parseLong(getRequest()
-				.getParameter("serNo")));
-
-		resourcesUnion = resourcesUnionService.getByObjSerNo(
-				Long.parseLong(getRequest().getParameter("serNo")),
-				database.getClass());
-
-		resourcesBuyers = resourcesUnion.getResourcesBuyers();
-
-		List<ResourcesUnion> dbResourcesUnionList = resourcesUnionService.getByDatSerNo(Long
-				.parseLong(getRequest().getParameter("serNo")));
-
-		List<String> ownerNameList = new ArrayList<String>();
-
-		Iterator<ResourcesUnion> iterator = dbResourcesUnionList.iterator();
-
-		while (iterator.hasNext()) {
-			ResourcesUnion datResourcesUnion = iterator.next();
-			customer = datResourcesUnion.getCustomer();
-			if(customer!=null){
-			ownerNameList.add(customer.getName());
-			}
-		}
-
-		String ownerNames = ownerNameList.toString().replace("[", "")
-				.replace("]", "");
-
-		getRequest().setAttribute("database", database);
-		getRequest().setAttribute("resourcesBuyers", resourcesBuyers);
-		getRequest().setAttribute("ownerNames", ownerNames);
-		
-		if (StringUtils.isNotBlank(getRequest().getParameter("currentURL"))){
-			getRequest().setAttribute("backURL", getRequest().getParameter("currentURL").replace("@@@", "?").replace("^^^", "&"));
-			}
-		}
-		return "d-detail";
 	}
 
 	@Override
@@ -160,17 +115,25 @@ public class DatabaseAction extends GenericCRUDActionFull<Database> {
 			cusSerNo = Long.parseLong(getRequest().getParameter("cusSerNo"));
 		}
 
-		getRequest().setAttribute("cusSerNo", cusSerNo);
-		getRequest().setAttribute("owner", "apply.database.owner.action");
+		if (customerService.getBySerNo(cusSerNo) == null) {
+			addActionError("Customer Null");
+		}
 
-		DataSet<Database> ds = initDataSet();
-		ds.setPager(Pager.getChangedPager(
-				getRequest().getParameter("recordPerPage"), getRequest()
-						.getParameter("recordPoint"), ds.getPager()));
-		ds = databaseService.getByCusSerNo(ds, cusSerNo);
-		setDs(ds);
+		if (!hasActionErrors()) {
+			getRequest().setAttribute("cusSerNo", cusSerNo);
+			getRequest().setAttribute("owner", "apply.database.owner.action");
+
+			DataSet<Database> ds = initDataSet();
+			ds.setPager(Pager.getChangedPager(
+					getRequest().getParameter("recordPerPage"), getRequest()
+							.getParameter("recordPoint"), ds.getPager()));
+			ds = databaseService.getByCusSerNo(ds, cusSerNo);
+			setDs(ds);
+
+		}
 
 		return "database";
+
 	}
 
 	public String focus() throws Exception {
@@ -183,13 +146,70 @@ public class DatabaseAction extends GenericCRUDActionFull<Database> {
 
 		getEntity().setOption(option);
 		getEntity().setKeywords(keywords);
-		
+
 		DataSet<Database> ds = initDataSet();
 		ds.setPager(Pager.getChangedPager(
 				getRequest().getParameter("recordPerPage"), getRequest()
 						.getParameter("recordPoint"), ds.getPager()));
 		ds = databaseService.getByRestrictions(ds);
 		setDs(ds);
+		
 		return "database";
 	}
+
+	public String view() throws Exception {
+		if (StringUtils.isBlank(getRequest().getParameter("serNo"))
+				|| !NumberUtils.isDigits(getRequest().getParameter("serNo"))) {
+			addActionError("serNo Error");
+		} else {
+			if (databaseService.getBySerNo(Long.parseLong(getRequest()
+					.getParameter("serNo"))) == null) {
+				addActionError("Object Null");
+			}
+		}
+
+		if (!hasActionErrors()) {
+			database = databaseService.getBySerNo(Long.parseLong(getRequest()
+					.getParameter("serNo")));
+
+			resourcesUnion = resourcesUnionService.getByObjSerNo(
+					Long.parseLong(getRequest().getParameter("serNo")),
+					database.getClass());
+
+			resourcesBuyers = resourcesUnion.getResourcesBuyers();
+
+			List<ResourcesUnion> dbResourcesUnionList = resourcesUnionService
+					.getByDatSerNo(Long.parseLong(getRequest().getParameter(
+							"serNo")));
+
+			List<String> ownerNameList = new ArrayList<String>();
+
+			Iterator<ResourcesUnion> iterator = dbResourcesUnionList.iterator();
+
+			while (iterator.hasNext()) {
+				ResourcesUnion datResourcesUnion = iterator.next();
+				customer = datResourcesUnion.getCustomer();
+				if (customer != null) {
+					ownerNameList.add(customer.getName());
+				}
+			}
+
+			String ownerNames = ownerNameList.toString().replace("[", "")
+					.replace("]", "");
+
+			getRequest().setAttribute("database", database);
+			getRequest().setAttribute("resourcesBuyers", resourcesBuyers);
+			getRequest().setAttribute("ownerNames", ownerNames);
+
+			if (StringUtils.isNotBlank(getRequest().getParameter("currentURL"))) {
+				getRequest().setAttribute(
+						"backURL",
+						getRequest().getParameter("currentURL")
+								.replace("？", "?").replace("＆", "&"));
+			}
+		}
+		
+		return "d-detail";
+	}
+
 }

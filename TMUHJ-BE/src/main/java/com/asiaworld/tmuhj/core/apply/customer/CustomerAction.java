@@ -13,11 +13,13 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeMap;
+import java.util.TreeSet;
 import java.util.regex.Pattern;
 
 import net.sf.json.JSONObject;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -37,7 +39,6 @@ import com.asiaworld.tmuhj.core.apply.enums.Role;
 import com.asiaworld.tmuhj.core.apply.ipRange.IpRange;
 import com.asiaworld.tmuhj.core.apply.ipRange.IpRangeService;
 import com.asiaworld.tmuhj.core.model.DataSet;
-import com.asiaworld.tmuhj.core.model.ExcelWorkSheet;
 import com.asiaworld.tmuhj.core.model.Pager;
 import com.asiaworld.tmuhj.core.web.GenericCRUDActionFull;
 
@@ -48,11 +49,11 @@ public class CustomerAction extends GenericCRUDActionFull<Customer> {
 
 	private String[] checkItem;
 
-	private File file;
+	private File[] file;
 
-	private String fileFileName;
+	private String[] fileFileName;
 
-	private String fileContentType;
+	private String[] fileContentType;
 
 	@Autowired
 	private Customer customer;
@@ -66,100 +67,83 @@ public class CustomerAction extends GenericCRUDActionFull<Customer> {
 	@Autowired
 	private IpRangeService ipRangeService;
 
-	@Autowired
-	private ExcelWorkSheet<Customer> excelWorkSheet;
-
-	private String importSerNo;
-
 	private String[] importSerNos;
 
 	private InputStream inputStream;
 
 	private String reportFile;
 
-	private String jsonString;
-	
-	private List<String> actionErrors;
+	private String[] jsonString;
 
 	@Override
-	public void validateSave() throws Exception {
-		actionErrors = new ArrayList<String>();
-		
-		String xmlPattern = "[<>&'"+'"'+"]";
-		
+	protected void validateSave() throws Exception {
 		String emailPattern = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@"
 				+ "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
-		if (StringUtils.isEmpty(getEntity().getName())) {
-			actionErrors.add("用戶名稱不可空白");
-		}
-		
-		if (StringUtils.isNotEmpty(getEntity().getName())) {
-			String name = getEntity().getName().trim().replaceAll(xmlPattern,"<<<");
-			if (name.contains("<<<")) {
-				actionErrors.add("用戶名稱請勿使用&、<、>、單雙引號字元");
-			}
-		}
-		
-		if (StringUtils.isNotEmpty(getEntity().getName())) {
-			if(customerService.getCusSerNoByName(getEntity().getName()) != 0){
-				actionErrors.add("用戶名稱已存在");
+		if (StringUtils.isBlank(getEntity().getName())) {
+			errorMessages.add("用戶名稱不可空白");
+		} else {
+			if (getEntity().getName()
+					.replaceAll("[a-zA-Z0-9\u4e00-\u9fa5]", "").length() != 0) {
+				errorMessages.add("用戶名稱必須是英、數或漢字");
+			} else {
+				if (customerService.getCusSerNoByName(getEntity().getName()) != 0) {
+					errorMessages.add("用戶名稱已存在");
 				}
 			}
+		}
 
 		if (StringUtils.isNotEmpty(getEntity().getEmail())) {
 			if (!Pattern.compile(emailPattern).matcher(getEntity().getEmail())
 					.matches()) {
-				actionErrors.add("email格式不正確");
+				errorMessages.add("email格式不正確");
 			}
 		}
 	}
 
 	@Override
-	public void validateUpdate() throws Exception {
-		actionErrors = new ArrayList<String>();
-		
+	protected void validateUpdate() throws Exception {
 		String emailPattern = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@"
 				+ "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
 
-		if (StringUtils.isNotBlank(getEntity().getEmail())) {
+		if (!hasEntity()) {
+			errorMessages.add("Target must not be null");
+		}
+
+		if (StringUtils.isNotEmpty(getEntity().getEmail())) {
 			if (!Pattern.compile(emailPattern).matcher(getEntity().getEmail())
 					.matches()) {
-				actionErrors.add("email格式不正確");
+				errorMessages.add("email格式不正確");
 			}
+		}
+
+	}
+
+	@Override
+	protected void validateDelete() throws Exception {
+		if (getLoginUser().getRole().equals(Role.系統管理員)) {
+			if (ArrayUtils.isEmpty(checkItem)) {
+				errorMessages.add("請選擇一筆或一筆以上的資料");
+			} else {
+				int i = 0;
+				while (i < checkItem.length) {
+					if (!NumberUtils.isDigits(String.valueOf(checkItem[i]))
+							|| Long.parseLong(checkItem[i]) < 1
+							|| Long.parseLong(checkItem[i]) == 9) {
+						errorMessages.add(checkItem[i] + "為不可利用的流水號");
+					}
+					i++;
+				}
+			}
+		} else {
+			errorMessages.add("權限不足");
 		}
 	}
 
 	@Override
-	public void validateDelete() throws Exception {
-		actionErrors = new ArrayList<String>();
-		
-		if(getLoginUser().getRole().equals(Role.系統管理員)){
-			if (checkItem == null || checkItem.length == 0) {
-				actionErrors.add("請選擇一筆或一筆以上的資料");
-				} else {
-					int i = 0;
-					while (i < checkItem.length) {
-						if (!NumberUtils.isDigits(String.valueOf(checkItem[i]))
-								|| Long.parseLong(checkItem[i]) < 1 || Long.parseLong(checkItem[i]) == 9) {
-							actionErrors.add(checkItem[i] + "為不可利用的流水號");
-							}
-						i++;
-						}
-					}
-			} else {
-				actionErrors.add("權限不足");
-			}
-	}
-
-	@Override
-	public String query() throws Exception {
+	public String edit() throws Exception {
 		if (getEntity().getSerNo() != null) {
 			customer = customerService.getBySerNo(getEntity().getSerNo());
 			setEntity(customer);
-		} else if (getRequest().getParameter("goQueue") != null
-				&& getRequest().getParameter("goQueue").equals("yes")) {
-			getRequest().setAttribute("goQueue",
-					getRequest().getParameter("goQueue"));
 		}
 
 		return EDIT;
@@ -167,21 +151,23 @@ public class CustomerAction extends GenericCRUDActionFull<Customer> {
 
 	@Override
 	public String list() throws Exception {
-		if (StringUtils.isNotEmpty(getRequest().getParameter("option"))) {
-			if (getRequest().getParameter("option").equals("entity.name") 
-					|| getRequest().getParameter("option").equals("entity.engName")) {
-				getRequest().setAttribute("option", getRequest().getParameter("option"));
+		if (StringUtils.isNotBlank(getRequest().getParameter("option"))) {
+			if (getRequest().getParameter("option").equals("entity.name")
+					|| getRequest().getParameter("option").equals(
+							"entity.engName")) {
+				getRequest().setAttribute("option",
+						getRequest().getParameter("option"));
 			} else {
 				getRequest().setAttribute("option", "entity.name");
 			}
 		} else {
 			getRequest().setAttribute("option", "entity.name");
 		}
-		
+
 		DataSet<Customer> ds = initDataSet();
 		ds.setPager(Pager.getChangedPager(
 				getRequest().getParameter("recordPerPage"), getRequest()
-				.getParameter("recordPoint"), ds.getPager()));
+						.getParameter("recordPoint"), ds.getPager()));
 		ds = customerService.getByRestrictions(ds);
 
 		setDs(ds);
@@ -191,13 +177,9 @@ public class CustomerAction extends GenericCRUDActionFull<Customer> {
 	@Override
 	public String save() throws Exception {
 		validateSave();
-		Iterator<String> iteratorMsg = actionErrors.iterator();
-		while(iteratorMsg.hasNext()){
-			addActionError(iteratorMsg.next());
-		}
+		setActionErrors(errorMessages);
 
 		if (!hasActionErrors()) {
-			getEntity().setName(getEntity().getName().trim());
 			customer = customerService.save(getEntity(), getLoginUser());
 			setEntity(customer);
 
@@ -212,10 +194,7 @@ public class CustomerAction extends GenericCRUDActionFull<Customer> {
 	@Override
 	public String update() throws Exception {
 		validateUpdate();
-		Iterator<String> iteratorMsg = actionErrors.iterator();
-		while(iteratorMsg.hasNext()){
-			addActionError(iteratorMsg.next());
-		}
+		setActionErrors(errorMessages);
 
 		if (!hasActionErrors()) {
 			customer = customerService.update(getEntity(), getLoginUser(),
@@ -224,7 +203,12 @@ public class CustomerAction extends GenericCRUDActionFull<Customer> {
 			addActionMessage("修改成功");
 			return VIEW;
 		} else {
-			getEntity().setName(customerService.getBySerNo(getEntity().getSerNo()).getName());
+			if (hasEntity()) {
+				getEntity().setName(
+						customerService.getBySerNo(getEntity().getSerNo())
+								.getName());
+			}
+
 			setEntity(getEntity());
 			return EDIT;
 		}
@@ -233,32 +217,33 @@ public class CustomerAction extends GenericCRUDActionFull<Customer> {
 	@Override
 	public String delete() throws Exception {
 		validateDelete();
-		Iterator<String> iteratorMsg = actionErrors.iterator();
-		while(iteratorMsg.hasNext()){
-			addActionError(iteratorMsg.next());
-		}
+		setActionErrors(errorMessages);
 
 		if (!hasActionErrors()) {
 			int i = 0;
 			while (i < checkItem.length) {
 				if (customerService.getBySerNo(Long.parseLong(checkItem[i])) != null) {
-					String name = customerService.getBySerNo(Long.parseLong(checkItem[i])).getName();
-					if (customerService.deleteOwnerObj(Long.parseLong(checkItem[i]))) {
-						customerService.deleteBySerNo(Long.parseLong(checkItem[i]));
-						addActionMessage(name+"刪除成功");
+					String name = customerService.getBySerNo(
+							Long.parseLong(checkItem[i])).getName();
+					if (customerService.deleteOwnerObj(Long
+							.parseLong(checkItem[i]))) {
+						customerService.deleteBySerNo(Long
+								.parseLong(checkItem[i]));
+						addActionMessage(name + "刪除成功");
 					} else {
-						addActionMessage(name+"資源必須先刪除");
+						addActionMessage(name + "資源必須先刪除");
 					}
 				}
 				i++;
 			}
+
 			DataSet<Customer> ds = initDataSet();
 			ds.setPager(Pager.getChangedPager(
 					getRequest().getParameter("recordPerPage"), getRequest()
 							.getParameter("recordPoint"), ds.getPager()));
 			ds = customerService.getByRestrictions(ds);
 			setDs(ds);
-			
+
 			return LIST;
 		} else {
 			DataSet<Customer> ds = initDataSet();
@@ -273,16 +258,17 @@ public class CustomerAction extends GenericCRUDActionFull<Customer> {
 	}
 
 	public String view() throws Exception {
-		if (NumberUtils.isDigits(getRequest().getParameter("viewSerNo")) 
-				&& Long.parseLong(getRequest().getParameter("viewSerNo")) != 0){
+		if (NumberUtils.isDigits(getRequest().getParameter("viewSerNo"))
+				&& Long.parseLong(getRequest().getParameter("viewSerNo")) != 0) {
 			customer = customerService.getBySerNo(Long.parseLong(getRequest()
 					.getParameter("viewSerNo")));
-			} 
-		
-		setEntity(customer);
-		getRequest().setAttribute("viewSerNo", getRequest().getParameter("viewSerNo"));
-		return VIEW;
 		}
+
+		setEntity(customer);
+		getRequest().setAttribute("viewSerNo",
+				getRequest().getParameter("viewSerNo"));
+		return VIEW;
+	}
 
 	public String ajax() throws Exception {
 		getRequest().setAttribute("customerUnits",
@@ -291,46 +277,47 @@ public class CustomerAction extends GenericCRUDActionFull<Customer> {
 	}
 
 	public String json() throws Exception {
-		List<Customer> customers=customerService.getAllCustomers();
-		List<JSONObject> objArray=new ArrayList<JSONObject>();
+		List<Customer> customers = customerService.getAllCustomers();
+		List<JSONObject> objArray = new ArrayList<JSONObject>();
 
-		int i=0;
-		while(i < customers.size()){
+		int i = 0;
+		while (i < customers.size()) {
 			JSONObject obj = new JSONObject();
-			customer=customers.get(i);
-			
+			customer = customers.get(i);
+
 			obj.put("name", customer.getName());
 			obj.put("value", customer.getSerNo());
 			objArray.add(obj);
 			i++;
 		}
 
-		jsonString=objArray.toString();
-		
+		jsonString = new String[1];
+		jsonString[0] = objArray.toString();
 		return JSON;
 	}
-	
-	 
+
+	public String imports() {
+		return IMPORT;
+	}
 
 	public String queue() throws Exception {
-		if (file == null || !file.isFile()) {
+		if (ArrayUtils.isEmpty(file) || !file[0].isFile()) {
 			addActionError("請選擇檔案");
 		} else {
-			if (createWorkBook(new FileInputStream(file)) == null) {
+			if (createWorkBook(new FileInputStream(file[0])) == null) {
 				addActionError("檔案格式錯誤");
 			}
 		}
 
 		if (!hasActionErrors()) {
-			getSession().remove("importList");
-			getSession().remove("checkItemMap");
-			Workbook book = createWorkBook(new FileInputStream(file));
+			Workbook book = createWorkBook(new FileInputStream(file[0]));
 			// book.getNumberOfSheets(); 判斷Excel文件有多少個sheet
 			Sheet sheet = book.getSheetAt(0);
-			excelWorkSheet = new ExcelWorkSheet<Customer>();
 
-			// 保存工作單名稱
 			Row firstRow = sheet.getRow(0);
+			if (firstRow == null) {
+				firstRow = sheet.createRow(0);
+			}
 
 			// 保存列名
 			List<String> cellNames = new ArrayList<String>();
@@ -350,13 +337,11 @@ public class CustomerAction extends GenericCRUDActionFull<Customer> {
 						break;
 
 					case 1:
-						rowTitles[n] = firstRow.getCell(n).getStringCellValue()
-								.trim();
+						rowTitles[n] = firstRow.getCell(n).getStringCellValue();
 						break;
 
 					case 2:
-						rowTitles[n] = firstRow.getCell(n).getCellFormula()
-								.trim();
+						rowTitles[n] = firstRow.getCell(n).getCellFormula();
 						break;
 
 					case 3:
@@ -384,12 +369,14 @@ public class CustomerAction extends GenericCRUDActionFull<Customer> {
 				n++;
 			}
 
-			getSession().put("cellNames", cellNames);
-			excelWorkSheet.setColumns(cellNames);
-
 			LinkedHashSet<Customer> originalData = new LinkedHashSet<Customer>();
+			Map<String, Customer> checkRepeatRow = new LinkedHashMap<String, Customer>();
+
 			for (int i = 1; i <= sheet.getLastRowNum(); i++) {
 				Row row = sheet.getRow(i);
+				if (row == null) {
+					continue;
+				}
 
 				String[] rowValues = new String[6];
 				int k = 0;
@@ -407,13 +394,11 @@ public class CustomerAction extends GenericCRUDActionFull<Customer> {
 							break;
 
 						case 1:
-							rowValues[k] = row.getCell(k).getStringCellValue()
-									.trim();
+							rowValues[k] = row.getCell(k).getStringCellValue();
 							break;
 
 						case 2:
-							rowValues[k] = row.getCell(k).getCellFormula()
-									.trim();
+							rowValues[k] = row.getCell(k).getCellFormula();
 							break;
 
 						case 3:
@@ -439,38 +424,63 @@ public class CustomerAction extends GenericCRUDActionFull<Customer> {
 					k++;
 				}
 
-				customer = new Customer(rowValues[0].trim(),
-						rowValues[1].trim(), rowValues[2], rowValues[5],
-						rowValues[4], rowValues[3], "", "");
+				customer = new Customer(rowValues[0], rowValues[1],
+						rowValues[2], rowValues[5], rowValues[4], rowValues[3],
+						"", "");
 
-				if (customer.getName().isEmpty()) {
-					customer.setExistStatus("資料錯誤");
+				if (StringUtils.isBlank(customer.getName())) {
+					customer.setExistStatus("名稱空白");
 				} else {
-					String xmlPattern = "[<>&'"+'"'+"]";				
-					String name = customer.getName().replaceAll(xmlPattern,"<<<");
-						if (name.contains("<<<")) {
-							customer.setExistStatus("字元異常");
+					if (customer.getName()
+							.replaceAll("[a-zA-Z0-9\u4e00-\u9fa5]", "")
+							.length() != 0) {
+						customer.setExistStatus("名稱字元異常");
+					} else {
+						long cusSerNo = customerService
+								.getCusSerNoByName(customer.getName());
+						if (cusSerNo != 0) {
+							customer.setExistStatus("已存在");
 						} else {
-							long cusSerNo = customerService.getCusSerNoByName(customer
-							.getName());
-							if (cusSerNo != 0) {
-								customer.setExistStatus("已存在");
+
+							if (StringUtils.isNotEmpty(customer.getEmail())) {
+								String emailPattern = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@"
+										+ "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
+								if (!Pattern.compile(emailPattern)
+										.matcher(customer.getEmail()).matches()) {
+									customer.setExistStatus("email錯誤");
 								} else {
 									customer.setExistStatus("正常");
-									}
+								}
+							} else {
+								customer.setExistStatus("正常");
 							}
 
-				}
-				originalData.add(customer);
+						}
+					}
 
+				}
+
+				if (customer.getExistStatus().equals("正常") && !originalData.contains(customer)) {
+					if (checkRepeatRow.containsKey(customer.getName())) {
+						checkRepeatRow.get(customer.getName()).setExistStatus(
+								"名稱重複");
+						customer.setExistStatus("名稱重複");
+						checkRepeatRow.put(customer.getName(), customer);
+					} else {
+						checkRepeatRow.put(customer.getName(), customer);
+					}
+				}
+
+				originalData.add(customer);
 			}
 
-			Iterator<Customer> setIterator = originalData.iterator();
+			Iterator<Customer> iterator = originalData.iterator();
+			List<Customer> excelData = new ArrayList<Customer>();
 
 			int normal = 0;
-			while (setIterator.hasNext()) {
-				customer = setIterator.next();
-				excelWorkSheet.getData().add(customer);
+			while (iterator.hasNext()) {
+				customer = iterator.next();
+				excelData.add(customer);
 				if (customer.getExistStatus().equals("正常")) {
 					normal = normal + 1;
 				}
@@ -479,60 +489,54 @@ public class CustomerAction extends GenericCRUDActionFull<Customer> {
 			DataSet<Customer> ds = initDataSet();
 			List<Customer> results = ds.getResults();
 
-			ds.getPager()
-					.setTotalRecord((long) excelWorkSheet.getData().size());
+			ds.getPager().setTotalRecord((long) excelData.size());
 			ds.getPager().setRecordPoint(0);
 
-			if (excelWorkSheet.getData().size() < ds.getPager()
-					.getRecordPerPage()) {
+			if (excelData.size() < ds.getPager().getRecordPerPage()) {
 				int i = 0;
-				while (i < excelWorkSheet.getData().size()) {
-					results.add(excelWorkSheet.getData().get(i));
+				while (i < excelData.size()) {
+					results.add(excelData.get(i));
 					i++;
 				}
 			} else {
 				int i = 0;
 				while (i < ds.getPager().getRecordPerPage()) {
-					results.add(excelWorkSheet.getData().get(i));
+					results.add(excelData.get(i));
 					i++;
 				}
 			}
 
 			ds.setResults(results);
 
-			getSession().put("importList", excelWorkSheet.getData());
-			getSession().put("total", excelWorkSheet.getData().size());
+			getSession().put("cellNames", cellNames);
+			getSession().put("importList", excelData);
+			getSession().put("total", excelData.size());
 			getSession().put("normal", normal);
-			getSession().put("abnormal",
-					excelWorkSheet.getData().size() - normal);
+			getSession().put("abnormal", excelData.size() - normal);
 
 			setDs(ds);
 			return QUEUE;
 		} else {
-			getRequest().setAttribute("goQueue", "yes");
-			return EDIT;
+			return IMPORT;
 		}
 	}
 
 	@SuppressWarnings("unchecked")
 	public String paginate() throws Exception {
-		clearCheckedItem();
-
 		List<Customer> importList = (List<Customer>) getSession().get(
 				"importList");
+		if (importList == null) {
+			return null;
+		}
+
+		clearCheckedItem();
 
 		DataSet<Customer> ds = initDataSet();
 		ds.setPager(Pager.getChangedPager(
 				getRequest().getParameter("recordPerPage"), getRequest()
 						.getParameter("recordPoint"), ds.getPager()));
+		ds.getPager().setTotalRecord((long) importList.size());
 
-		if (importList == null){
-			return null;
-		} else {
-			ds.getPager().setTotalRecord((long) importList.size());
-			
-		}
-		
 		int first = ds.getPager().getRecordPerPage()
 				* (ds.getPager().getCurrentPage() - 1);
 		int last = first + ds.getPager().getRecordPerPage();
@@ -553,38 +557,71 @@ public class CustomerAction extends GenericCRUDActionFull<Customer> {
 	}
 
 	@SuppressWarnings("unchecked")
-	public void getCheckedItem() {
-		Map<String, Object> checkItemMap;
-		if (getSession().containsKey("checkItemMap")) {
-			checkItemMap = (TreeMap<String, Object>) getSession().get(
-					"checkItemMap");
-		} else {
-			checkItemMap = new TreeMap<String, Object>();
+	public String getCheckedItem() {
+		if (getSession().get("importList") == null) {
+			return null;
 		}
 
-		if (!checkItemMap.containsKey(this.importSerNo)) {
-			checkItemMap.put(this.importSerNo, this.importSerNo);
+		Set<Integer> checkItemSet;
+		if (getSession().containsKey("checkItemSet")) {
+			checkItemSet = (TreeSet<Integer>) getSession().get("checkItemSet");
 		} else {
-			checkItemMap.remove(this.importSerNo);
+			checkItemSet = new TreeSet<Integer>();
 		}
-		getSession().put("checkItemMap", checkItemMap);
+
+		if (ArrayUtils.isNotEmpty(importSerNos)) {
+			if (NumberUtils.isDigits(importSerNos[0])) {
+				if (!checkItemSet.contains(Integer.parseInt(importSerNos[0]))) {
+					checkItemSet.add(Integer.parseInt(importSerNos[0]));
+				} else {
+					checkItemSet.remove(Integer.parseInt(importSerNos[0]));
+				}
+			}
+		}
+
+		getSession().put("checkItemSet", checkItemSet);
+
+		return null;
 	}
 
-	public void allCheckedItem() {
-		Map<String, Object> checkItemMap = new TreeMap<String, Object>();
-
-		int i = 0;
-		while (i < importSerNos.length) {
-			checkItemMap.put(importSerNos[i], importSerNos[i]);
-			i++;
+	@SuppressWarnings("unchecked")
+	public String allCheckedItem() {
+		List<Customer> importList = (List<Customer>) getSession().get(
+				"importList");
+		if (importList == null) {
+			return null;
 		}
 
-		getSession().put("checkItemMap", checkItemMap);
+		Set<Integer> checkItemSet = new TreeSet<Integer>();
+
+		if (ArrayUtils.isNotEmpty(importSerNos)) {
+			int i = 0;
+			while (i < importSerNos.length) {
+				if (NumberUtils.isDigits(importSerNos[i])) {
+					if (Long.parseLong(importSerNos[i]) < importList.size()) {
+						checkItemSet.add(Integer.parseInt(importSerNos[i]));
+					}
+
+					if (checkItemSet.size() == importList.size()) {
+						break;
+					}
+				}
+				i++;
+			}
+		}
+
+		getSession().put("checkItemSet", checkItemSet);
+		return null;
 	}
 
-	public void clearCheckedItem() {
-		Map<String, Object> checkItemMap = new TreeMap<String, Object>();
-		getSession().put("checkItemMap", checkItemMap);
+	public String clearCheckedItem() {
+		if (getSession().get("importList") == null) {
+			return null;
+		}
+
+		Set<Integer> checkItemSet = new TreeSet<Integer>();
+		getSession().put("checkItemSet", checkItemSet);
+		return null;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -592,35 +629,31 @@ public class CustomerAction extends GenericCRUDActionFull<Customer> {
 		List<Customer> importList = (List<Customer>) getSession().get(
 				"importList");
 
-		Map<String, Object> checkItemMap = (TreeMap<String, Object>) getSession()
-				.get("checkItemMap");
+		if (importList == null) {
+			return null;
+		}
 
-		if (checkItemMap == null || checkItemMap.size() == 0) {
+		Set<Integer> checkItemSet = (TreeSet<Integer>) getSession().get(
+				"checkItemSet");
+
+		if (CollectionUtils.isEmpty(checkItemSet)) {
 			addActionError("請選擇一筆或一筆以上的資料");
 		}
 
 		if (!hasActionErrors()) {
-			Iterator<?> it = checkItemMap.values().iterator();
-			List<Customer> importIndexs = new ArrayList<Customer>();
-			while (it.hasNext()) {
-				String index = it.next().toString();
-				
-				if(NumberUtils.isDigits(index)){
-					if(Integer.parseInt(index) >=0 && Integer.parseInt(index) < importList.size()){
-						importIndexs.add(importList.get(Integer.parseInt(index)));
+			Iterator<Integer> iterator = checkItemSet.iterator();
+			int successCount = 0;
+			while (iterator.hasNext()) {
+				int index = iterator.next();
+				customer = importList.get(index);
+				if (customer.getExistStatus().equals("正常")) {
+					customerService.save(customer, getLoginUser());
+					successCount = successCount + 1;
 				}
-					}
+
 			}
 
-			for (int i = 0; i < importIndexs.size(); i++) {
-
-				if (importIndexs.get(i).getExistStatus().equals("正常")) {
-					customerService.save(importIndexs.get(i), getLoginUser());
-				}
-			}
-
-			clearCheckedItem();
-			getRequest().setAttribute("successCount", importIndexs.size());
+			getRequest().setAttribute("successCount", successCount);
 			return VIEW;
 		} else {
 			paginate();
@@ -628,7 +661,7 @@ public class CustomerAction extends GenericCRUDActionFull<Customer> {
 		}
 	}
 
-	public String exports() throws Exception {
+	public String example() throws Exception {
 		reportFile = "customer_sample.xlsx";
 
 		// Create blank workbook
@@ -662,18 +695,32 @@ public class CustomerAction extends GenericCRUDActionFull<Customer> {
 		workbook.write(boas);
 		setInputStream(new ByteArrayInputStream(boas.toByteArray()));
 
-		return SUCCESS;
+		return XLSX;
 	}
 
 	// 判斷文件類型
 	public Workbook createWorkBook(InputStream is) throws IOException {
-		if (fileFileName.toLowerCase().endsWith("xls")) {
+		if (fileFileName[0].toLowerCase().endsWith("xls")) {
 			return new HSSFWorkbook(is);
 		}
-		if (fileFileName.toLowerCase().endsWith("xlsx")) {
+		if (fileFileName[0].toLowerCase().endsWith("xlsx")) {
 			return new XSSFWorkbook(is);
 		}
 		return null;
+	}
+
+	public boolean hasEntity() throws Exception {
+		if (getEntity().getSerNo() == null) {
+			getEntity().setSerNo(-1L);
+			return false;
+		}
+
+		customer = customerService.getBySerNo(getEntity().getSerNo());
+		if (customer == null) {
+			return false;
+		}
+
+		return true;
 	}
 
 	/**
@@ -694,7 +741,7 @@ public class CustomerAction extends GenericCRUDActionFull<Customer> {
 	/**
 	 * @return the file
 	 */
-	public File getFile() {
+	public File[] getFile() {
 		return file;
 	}
 
@@ -702,14 +749,14 @@ public class CustomerAction extends GenericCRUDActionFull<Customer> {
 	 * @param file
 	 *            the file to set
 	 */
-	public void setFile(File file) {
+	public void setFile(File[] file) {
 		this.file = file;
 	}
 
 	/**
 	 * @return the fileFileName
 	 */
-	public String getFileFileName() {
+	public String[] getFileFileName() {
 		return fileFileName;
 	}
 
@@ -717,14 +764,14 @@ public class CustomerAction extends GenericCRUDActionFull<Customer> {
 	 * @param fileFileName
 	 *            the fileFileName to set
 	 */
-	public void setFileFileName(String fileFileName) {
+	public void setFileFileName(String[] fileFileName) {
 		this.fileFileName = fileFileName;
 	}
 
 	/**
 	 * @return the fileContentType
 	 */
-	public String getFileContentType() {
+	public String[] getFileContentType() {
 		return fileContentType;
 	}
 
@@ -732,38 +779,8 @@ public class CustomerAction extends GenericCRUDActionFull<Customer> {
 	 * @param fileContentType
 	 *            the fileContentType to set
 	 */
-	public void setFileContentType(String fileContentType) {
+	public void setFileContentType(String[] fileContentType) {
 		this.fileContentType = fileContentType;
-	}
-
-	/**
-	 * @return the excelWorkSheet
-	 */
-	public ExcelWorkSheet<Customer> getExcelWorkSheet() {
-		return excelWorkSheet;
-	}
-
-	/**
-	 * @param excelWorkSheet
-	 *            the excelWorkSheet to set
-	 */
-	public void setExcelWorkSheet(ExcelWorkSheet<Customer> excelWorkSheet) {
-		this.excelWorkSheet = excelWorkSheet;
-	}
-
-	/**
-	 * @return the importSerNo
-	 */
-	public String getImportSerNo() {
-		return importSerNo;
-	}
-
-	/**
-	 * @param importSerNo
-	 *            the importSerNo to set
-	 */
-	public void setImportSerNo(String importSerNo) {
-		this.importSerNo = importSerNo;
 	}
 
 	/**
@@ -800,7 +817,11 @@ public class CustomerAction extends GenericCRUDActionFull<Customer> {
 	 * @return the reportFile
 	 */
 	public String getReportFile() {
-		return reportFile;
+		if (reportFile.equals("customer_sample.xlsx")) {
+			return reportFile;
+		} else {
+			return null;
+		}
 	}
 
 	/**
@@ -814,14 +835,15 @@ public class CustomerAction extends GenericCRUDActionFull<Customer> {
 	/**
 	 * @return the jsonString
 	 */
-	public String getJsonString() {
+	public String[] getJsonString() {
 		return jsonString;
 	}
 
 	/**
-	 * @param jsonString the jsonString to set
+	 * @param jsonString
+	 *            the jsonString to set
 	 */
-	public void setJsonString(String jsonString) {
+	public void setJsonString(String[] jsonString) {
 		this.jsonString = jsonString;
 	}
 
