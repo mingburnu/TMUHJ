@@ -75,7 +75,7 @@
 						<td><c:out value="${entity.languages }" /></td>
 					</tr>
 					<tr>
-						<th width="130">URL<span class="required">(&#8226;)</span></th>
+						<th width="130">URL</th>
 						<td><c:out value="${entity.url }" /></td>
 					</tr>
 					<tr>

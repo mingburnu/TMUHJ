@@ -38,10 +38,8 @@ import org.springframework.stereotype.Controller;
 import com.asiaworld.tmuhj.core.apply.customer.Customer;
 import com.asiaworld.tmuhj.core.apply.customer.CustomerService;
 import com.asiaworld.tmuhj.core.model.DataSet;
-import com.asiaworld.tmuhj.core.model.ExcelWorkSheet;
 import com.asiaworld.tmuhj.core.model.Pager;
 import com.asiaworld.tmuhj.core.web.GenericCRUDActionFull;
-import com.asiaworld.tmuhj.module.apply.database.Database;
 import com.asiaworld.tmuhj.module.apply.enums.Category;
 import com.asiaworld.tmuhj.module.apply.enums.Type;
 import com.asiaworld.tmuhj.module.apply.resourcesBuyers.ResourcesBuyers;
@@ -88,8 +86,6 @@ public class JournalAction extends GenericCRUDActionFull<Journal> {
 	@Autowired
 	private CustomerService customerService;
 
-	private ExcelWorkSheet<Journal> excelWorkSheet;
-
 	private String[] importSerNos;
 
 	private InputStream inputStream;
@@ -120,7 +116,7 @@ public class JournalAction extends GenericCRUDActionFull<Journal> {
 			}
 		}
 
-		if (cusSerNo == null || cusSerNo.length == 0) {
+		if (ArrayUtils.isEmpty(cusSerNo)) {
 			errorMessages.add("至少選擇一筆以上購買單位");
 		} else {
 			int i = 0;
@@ -198,7 +194,7 @@ public class JournalAction extends GenericCRUDActionFull<Journal> {
 			}
 		}
 
-		if (cusSerNo == null || cusSerNo.length == 0) {
+		if (ArrayUtils.isEmpty(cusSerNo)) {
 			errorMessages.add("至少選擇一筆以上購買單位");
 		} else {
 			int i = 0;
@@ -248,13 +244,15 @@ public class JournalAction extends GenericCRUDActionFull<Journal> {
 
 	@Override
 	protected void validateDelete() throws Exception {
-		if (checkItem == null || checkItem.length == 0) {
+		if (ArrayUtils.isEmpty(checkItem)) {
 			errorMessages.add("請選擇一筆或一筆以上的資料");
 		} else {
 			int i = 0;
 			while (i < checkItem.length) {
 				if (!NumberUtils.isDigits(String.valueOf(checkItem[i]))
-						|| Long.parseLong(checkItem[i]) < 1) {
+						|| Long.parseLong(checkItem[i]) < 1
+						|| journalService.getBySerNo(Long
+								.parseLong(checkItem[i])) == null) {
 					errorMessages.add(checkItem[i] + "為不可利用的流水號");
 				}
 				i++;
@@ -298,8 +296,8 @@ public class JournalAction extends GenericCRUDActionFull<Journal> {
 				getRequest().setAttribute("rType",
 						resourcesBuyers.getrType().getType());
 				journal.setCustomers(customers);
-			} 
-			
+			}
+
 			setEntity(journal);
 		} else {
 			List<Customer> customers = new ArrayList<Customer>();
@@ -365,8 +363,7 @@ public class JournalAction extends GenericCRUDActionFull<Journal> {
 
 		if (!hasActionErrors()) {
 			journal = getEntity();
-			journal.setIssn(getEntity().getIssn().trim().replace("-", "")
-					.toUpperCase());
+			journal.setIssn(getEntity().getIssn().toUpperCase());
 			journal = journalService.save(journal, getLoginUser());
 
 			resourcesBuyers = resourcesBuyersService.save(new ResourcesBuyers(
@@ -578,24 +575,21 @@ public class JournalAction extends GenericCRUDActionFull<Journal> {
 		if (!hasActionErrors()) {
 			int j = 0;
 			while (j < checkItem.length) {
-				if (journalService.getBySerNo(Long.parseLong(checkItem[j])) != null) {
-					List<ResourcesUnion> resourcesUnions = resourcesUnionService
-							.getResourcesUnionsByObj(journalService
-									.getBySerNo(Long.parseLong(checkItem[j])),
-									Journal.class);
-					resourcesUnion = resourcesUnions.get(0);
+				List<ResourcesUnion> resourcesUnions = resourcesUnionService
+						.getResourcesUnionsByObj(journalService.getBySerNo(Long
+								.parseLong(checkItem[j])), Journal.class);
+				resourcesUnion = resourcesUnions.get(0);
 
-					Iterator<ResourcesUnion> iterator = resourcesUnions
-							.iterator();
-					while (iterator.hasNext()) {
-						resourcesUnion = iterator.next();
-						resourcesUnionService.deleteBySerNo(resourcesUnion
-								.getSerNo());
-					}
-					resourcesBuyersService.deleteBySerNo(resourcesUnion
-							.getResourcesBuyers().getSerNo());
-					journalService.deleteBySerNo(Long.parseLong(checkItem[j]));
+				Iterator<ResourcesUnion> iterator = resourcesUnions.iterator();
+				while (iterator.hasNext()) {
+					resourcesUnion = iterator.next();
+					resourcesUnionService.deleteBySerNo(resourcesUnion
+							.getSerNo());
 				}
+				resourcesBuyersService.deleteBySerNo(resourcesUnion
+						.getResourcesBuyers().getSerNo());
+				journalService.deleteBySerNo(Long.parseLong(checkItem[j]));
+
 				j++;
 			}
 
@@ -672,13 +666,13 @@ public class JournalAction extends GenericCRUDActionFull<Journal> {
 		}
 		return VIEW;
 	}
-	
+
 	public String imports() {
 		return IMPORT;
 	}
 
 	public String queue() throws Exception {
-		if (file == null || !file[0].isFile()) {
+		if (ArrayUtils.isEmpty(file) || !file[0].isFile()) {
 			addActionError("請選擇檔案");
 		} else {
 			if (createWorkBook(new FileInputStream(file[0])) == null) {
@@ -690,9 +684,7 @@ public class JournalAction extends GenericCRUDActionFull<Journal> {
 			Workbook book = createWorkBook(new FileInputStream(file[0]));
 			// book.getNumberOfSheets(); 判斷Excel文件有多少個sheet
 			Sheet sheet = book.getSheetAt(0);
-			excelWorkSheet = new ExcelWorkSheet<Journal>();
 
-			// 保存工作單名稱
 			Row firstRow = sheet.getRow(0);
 			if (firstRow == null) {
 				firstRow = sheet.createRow(0);
@@ -716,13 +708,11 @@ public class JournalAction extends GenericCRUDActionFull<Journal> {
 						break;
 
 					case 1:
-						rowTitles[n] = firstRow.getCell(n).getStringCellValue()
-								.trim();
+						rowTitles[n] = firstRow.getCell(n).getStringCellValue();
 						break;
 
 					case 2:
-						rowTitles[n] = firstRow.getCell(n).getCellFormula()
-								.trim();
+						rowTitles[n] = firstRow.getCell(n).getCellFormula();
 						break;
 
 					case 3:
@@ -750,10 +740,10 @@ public class JournalAction extends GenericCRUDActionFull<Journal> {
 				n++;
 			}
 
-			getSession().put("cellNames", cellNames);
-			excelWorkSheet.setColumns(cellNames);
-
 			LinkedHashSet<Journal> originalData = new LinkedHashSet<Journal>();
+			Map<String, Journal> checkRepeatRow = new LinkedHashMap<String, Journal>();
+			int normal = 0;
+
 			for (int i = 1; i <= sheet.getLastRowNum(); i++) {
 				Row row = sheet.getRow(i);
 				if (row == null) {
@@ -883,15 +873,11 @@ public class JournalAction extends GenericCRUDActionFull<Journal> {
 									Journal.class, cusSerNo)) {
 
 								journal.setExistStatus("已存在");
-							} else {
-								journal.setExistStatus("正常");
 							}
 						} else {
 							if (journal.getResourcesBuyers().getrCategory()
 									.equals(Category.不明)) {
 								journal.setExistStatus("資源類型不明");
-							} else {
-								journal.setExistStatus("正常");
 							}
 						}
 					} else {
@@ -900,47 +886,55 @@ public class JournalAction extends GenericCRUDActionFull<Journal> {
 				} else {
 					journal.setExistStatus("ISSN異常");
 				}
+
+				if (journal.getExistStatus().equals("")) {
+					journal.setExistStatus("正常");
+				}
+
+				if (journal.getExistStatus().equals("正常")
+						&& !originalData.contains(journal)) {
+
+					if (checkRepeatRow.containsKey(journal.getIssn()
+							+ customer.getName())) {
+						journal.setExistStatus("資料重複");
+
+					} else {
+						checkRepeatRow
+								.put(journal.getIssn() + customer.getName(),
+										journal);
+						++normal;
+					}
+				}
+
 				originalData.add(journal);
 			}
 
-			Iterator<Journal> setIterator = originalData.iterator();
-
-			int normal = 0;
-			while (setIterator.hasNext()) {
-				journal = setIterator.next();
-				excelWorkSheet.getData().add(journal);
-				if (journal.getExistStatus().equals("正常")) {
-					normal = normal + 1;
-				}
-			}
+			List<Journal> excelData = new ArrayList<Journal>(originalData);
 
 			DataSet<Journal> ds = initDataSet();
 			List<Journal> results = ds.getResults();
 
-			ds.getPager()
-					.setTotalRecord((long) excelWorkSheet.getData().size());
+			ds.getPager().setTotalRecord((long) excelData.size());
 			ds.getPager().setRecordPoint(0);
 
-			if (excelWorkSheet.getData().size() < ds.getPager()
-					.getRecordPerPage()) {
+			if (excelData.size() < ds.getPager().getRecordPerPage()) {
 				int i = 0;
-				while (i < excelWorkSheet.getData().size()) {
-					results.add(excelWorkSheet.getData().get(i));
+				while (i < excelData.size()) {
+					results.add(excelData.get(i));
 					i++;
 				}
 			} else {
 				int i = 0;
 				while (i < ds.getPager().getRecordPerPage()) {
-					results.add(excelWorkSheet.getData().get(i));
+					results.add(excelData.get(i));
 					i++;
 				}
 			}
 
-			getSession().put("importList", excelWorkSheet.getData());
-			getSession().put("total", excelWorkSheet.getData().size());
+			getSession().put("cellNames", cellNames);
+			getSession().put("importList", excelData);
+			getSession().put("total", excelData.size());
 			getSession().put("normal", normal);
-			getSession().put("abnormal",
-					excelWorkSheet.getData().size() - normal);
 
 			return QUEUE;
 		} else {
@@ -985,51 +979,59 @@ public class JournalAction extends GenericCRUDActionFull<Journal> {
 
 	@SuppressWarnings("unchecked")
 	public String getCheckedItem() {
-		if (getSession().get("importList") == null) {
+		List<Journal> importList = (List<Journal>) getSession().get(
+				"importList");
+		if (importList == null) {
 			return null;
 		}
 
-		Set<Integer> checkItem;
-		if (getSession().containsKey("checkItem")) {
-			checkItem = (TreeSet<Integer>) getSession().get("checkItem");
+		Set<Integer> checkItemSet;
+		if (getSession().containsKey("checkItemSet")) {
+			checkItemSet = (TreeSet<Integer>) getSession().get("checkItemSet");
 		} else {
-			checkItem = new TreeSet<Integer>();
+			checkItemSet = new TreeSet<Integer>();
 		}
 
 		if (ArrayUtils.isNotEmpty(importSerNos)) {
 			if (NumberUtils.isDigits(importSerNos[0])) {
-				if (!checkItem.contains(Integer.parseInt(importSerNos[0]))) {
-					checkItem.add(Integer.parseInt(importSerNos[0]));
+				if (!checkItemSet.contains(Integer.parseInt(importSerNos[0]))) {
+					if (importList.get(Integer.parseInt(importSerNos[0]))
+							.getExistStatus().equals("正常")) {
+						checkItemSet.add(Integer.parseInt(importSerNos[0]));
+					}
 				} else {
-					checkItem.remove(Integer.parseInt(importSerNos[0]));
+					checkItemSet.remove(Integer.parseInt(importSerNos[0]));
 				}
 			}
 		}
 
-		getSession().put("checkItem", checkItem);
+		getSession().put("checkItemSet", checkItemSet);
 
 		return null;
 	}
 
 	@SuppressWarnings("unchecked")
 	public String allCheckedItem() {
-		List<Database> importList = (List<Database>) getSession().get(
+		List<Journal> importList = (List<Journal>) getSession().get(
 				"importList");
 		if (importList == null) {
 			return null;
 		}
 
-		Set<Integer> checkItem = new TreeSet<Integer>();
+		Set<Integer> checkItemSet = new TreeSet<Integer>();
 
 		if (ArrayUtils.isNotEmpty(importSerNos)) {
 			int i = 0;
 			while (i < importSerNos.length) {
 				if (NumberUtils.isDigits(importSerNos[i])) {
 					if (Long.parseLong(importSerNos[i]) < importList.size()) {
-						checkItem.add(Integer.parseInt(importSerNos[i]));
+						if (importList.get(Integer.parseInt(importSerNos[i]))
+								.getExistStatus().equals("正常")) {
+							checkItemSet.add(Integer.parseInt(importSerNos[i]));
+						}
 					}
 
-					if (checkItem.size() == importList.size()) {
+					if (checkItemSet.size() == importList.size()) {
 						break;
 					}
 				}
@@ -1037,7 +1039,7 @@ public class JournalAction extends GenericCRUDActionFull<Journal> {
 			}
 		}
 
-		getSession().put("checkItem", checkItem);
+		getSession().put("checkItemSet", checkItemSet);
 		return null;
 	}
 
@@ -1074,32 +1076,30 @@ public class JournalAction extends GenericCRUDActionFull<Journal> {
 				int index = it.next();
 				journal = importList.get(index);
 
-				if (journal.getExistStatus().equals("正常")) {
-					long jouSerNo = journalService.getJouSerNoByIssn(journal
-							.getIssn());
-					long cusSerNo = customerService.getCusSerNoByName(journal
-							.getCustomers().get(0).getName());
+				long jouSerNo = journalService.getJouSerNoByIssn(journal
+						.getIssn());
+				long cusSerNo = customerService.getCusSerNoByName(journal
+						.getCustomers().get(0).getName());
 
-					if (jouSerNo == 0) {
-						resourcesBuyers = resourcesBuyersService.save(
-								journal.getResourcesBuyers(), getLoginUser());
-						journal = journalService.save(journal, getLoginUser());
+				if (jouSerNo == 0) {
+					resourcesBuyers = resourcesBuyersService.save(
+							journal.getResourcesBuyers(), getLoginUser());
+					journal = journalService.save(journal, getLoginUser());
 
-						resourcesUnionService.save(new ResourcesUnion(
-								customerService.getBySerNo(cusSerNo),
-								resourcesBuyers, 0L, 0L, journal.getSerNo()),
-								getLoginUser());
-					} else {
-						resourcesUnion = resourcesUnionService.getByObjSerNo(
-								jouSerNo, Journal.class);
-						resourcesUnionService.save(new ResourcesUnion(
-								customerService.getBySerNo(cusSerNo),
-								resourcesUnion.getResourcesBuyers(), 0L, 0L,
-								jouSerNo), getLoginUser());
-					}
-
-					successCount = successCount + 1;
+					resourcesUnionService.save(new ResourcesUnion(
+							customerService.getBySerNo(cusSerNo),
+							resourcesBuyers, 0L, 0L, journal.getSerNo()),
+							getLoginUser());
+				} else {
+					resourcesUnion = resourcesUnionService.getByObjSerNo(
+							jouSerNo, Journal.class);
+					resourcesUnionService.save(new ResourcesUnion(
+							customerService.getBySerNo(cusSerNo),
+							resourcesUnion.getResourcesBuyers(), 0L, 0L,
+							jouSerNo), getLoginUser());
 				}
+
+				successCount = successCount + 1;
 			}
 
 			getRequest().setAttribute("successCount", successCount);
@@ -1308,21 +1308,6 @@ public class JournalAction extends GenericCRUDActionFull<Journal> {
 	 */
 	public void setFileContentType(String[] fileContentType) {
 		this.fileContentType = fileContentType;
-	}
-
-	/**
-	 * @return the excelWorkSheet
-	 */
-	public ExcelWorkSheet<Journal> getExcelWorkSheet() {
-		return excelWorkSheet;
-	}
-
-	/**
-	 * @param excelWorkSheet
-	 *            the excelWorkSheet to set
-	 */
-	public void setExcelWorkSheet(ExcelWorkSheet<Journal> excelWorkSheet) {
-		this.excelWorkSheet = excelWorkSheet;
 	}
 
 	/**

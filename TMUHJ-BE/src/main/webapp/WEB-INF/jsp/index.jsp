@@ -85,11 +85,11 @@
 	//全選之函式
 	function allSelect(action) {
 		$(document).ready(function() {
-			for (var i = 0; i < $(".checkbox").length; i++) {
+			for (var i = 0; i < $("[name='checkItem']").length; i++) {
 				if (action == 1) {
-					$(".checkbox").get(i).checked = true;
+					$("[name='checkItem']").get(i).checked = true;
 				} else {
-					$(".checkbox").get(i).checked = false;
+					$("[name='checkItem']").get(i).checked = false;
 				}
 			}
 		});
