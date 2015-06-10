@@ -180,7 +180,7 @@ input#customer_name {
 						<td><s:textfield name="entity.content" cssClass="input_text" /></td>
 					</tr>
 					<tr>
-						<th width="130">URL<span class="required">(&#8226;)</span></th>
+						<th width="130">URL</th>
 						<td><s:textfield name="entity.url" cssClass="input_text" /></td>
 					</tr>
 					<tr>
@@ -298,7 +298,7 @@ input#customer_name {
 						<td><s:textfield name="entity.content" cssClass="input_text" /></td>
 					</tr>
 					<tr>
-						<th width="130">URL<span class="required">(&#8226;)</span></th>
+						<th width="130">URL</th>
 						<td><s:textfield name="entity.url" cssClass="input_text" /></td>
 					</tr>
 					<tr>

@@ -2,7 +2,9 @@ package com.asiaworld.tmuhj.test;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -11,6 +13,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.jasypt.util.password.StrongPasswordEncryptor;
 
 import com.asiaworld.tmuhj.core.apply.customer.Customer;
@@ -140,36 +143,71 @@ public class Test {
 		System.out.println(ArrayUtils.isEmpty(strArr));
 		strArr = new String[0];
 		System.out.println(ArrayUtils.isEmpty(strArr));
-		
-		List<String> list =null;
+
+		List<String> list = null;
 		System.out.println(CollectionUtils.isEmpty(list));
-		list =new ArrayList<String>();
+		list = new ArrayList<String>();
 		System.out.println(CollectionUtils.isEmpty(list));
 		list.add("hello");
 		System.out.println(CollectionUtils.isEmpty(list));
 		list.remove("hello");
 		System.out.println(CollectionUtils.isEmpty(list));
-		String str =" ";
+		String str = " ";
 		System.out.println(str.isEmpty());
-		
-		String whiteTest = "  AA　　"; 
+
+		String whiteTest = "  AA　　";
 		System.out.println(Character.isWhitespace(whiteTest.charAt(0)));
-		System.out.println(Character.isWhitespace(whiteTest.charAt(whiteTest.length()-1)));
-		System.out.println(Character.isLetter(whiteTest.charAt(whiteTest.length()-1)));
-		System.out.println(Character.isLetter(whiteTest.charAt(whiteTest.length()-1)));
-		System.out.println(Character.isLetterOrDigit(whiteTest.charAt(whiteTest.length()-1)));
-		System.out.println('c'>'a');
+		System.out.println(Character.isWhitespace(whiteTest.charAt(whiteTest
+				.length() - 1)));
+		System.out.println(Character.isLetter(whiteTest.charAt(whiteTest
+				.length() - 1)));
+		System.out.println(Character.isLetter(whiteTest.charAt(whiteTest
+				.length() - 1)));
+		System.out.println(Character.isLetterOrDigit(whiteTest.charAt(whiteTest
+				.length() - 1)));
+		System.out.println('c' > 'a');
 		System.out.println(whiteTest.replaceAll("[a-zA-Z0-9]", ""));
 		System.out.println(whiteTest.replaceAll("[a-zA-Z0-9]", "").length());
 		Customer customer = new Customer("AAA", "", "", "", "", "", "", "");
-		List<Customer> customers=new ArrayList<Customer>();
+		List<Customer> customers = new ArrayList<Customer>();
 		customers.add(customer);
 		customers.get(0).setName("BBB");
 		System.out.println(customers.get(0).getName());
 		System.out.println(customer.getName());
-		
+
 		StrongPasswordEncryptor encryptor = new StrongPasswordEncryptor();
-		System.out.println(encryptor.checkPassword("admin", "8w5y4CYvLHP69kq5Wm2vHDVfPX1IOcrpskUugS/4KZN6budffcIYbfhpEL6HmNZ0"));
-	
+		System.out
+				.println(encryptor
+						.checkPassword("admin",
+								"8w5y4CYvLHP69kq5Wm2vHDVfPX1IOcrpskUugS/4KZN6budffcIYbfhpEL6HmNZ0"));
+
+		Set<String> setForList = new LinkedHashSet<String>();
+		for (int i = 0; i < 10; i++) {
+			setForList.add("" + i);
+		}
+
+		List<String> setToList = new ArrayList<String>(setForList);
+		System.out.println(setToList.size());
+		System.out.println(setToList.get(4));
+
+		// List<Journal> jList = new ArrayList<Journal>();
+		// Journal j1 = new Journal();
+		// Journal j2 = new Journal();
+		//
+		// j1.setExistStatus("normal");
+		// j2.setExistStatus("normal");
+
+		String tel = "";
+		tel = tel.replaceAll("[/()+-]", "").replace(" ", "");
+		System.out.println(tel);
+		System.out.println(NumberUtils.isDigits(tel));
+
+//		String cc = "^(?[A-Z]{1,3})" + "(?\\d{1,4})(\\ ?)"
+//				+ "(\\.(?\\d{1,3}))?" + "(?\\ [A-Za-z0-9]{1,4}\\ )?"
+//				+ "([\\ \\.](?[A-Z][0-9]{1,4}))" + "(\\ (?[A-Za-z0-9]{0,4}))?"
+//				+ "(\\.?(?[A-Z][0-9]{1,4}))?" + "(\\ (?\\w*)\\ ?)?"
+//				+ "(\\ (?\\w*)\\ ?)?" + "(\\ (?\\w*)\\ ?)?";
+//
+//		System.out.println(!Pattern.compile(cc).matcher("").matches());
 	}
 }

@@ -23,7 +23,6 @@ public class PageInterceptor extends AbstractInterceptor {
 			session.remove("importList");
 			session.remove("total");
 			session.remove("normal");
-			session.remove("abnormal");
 			session.remove("checkItemSet");
 		}
 

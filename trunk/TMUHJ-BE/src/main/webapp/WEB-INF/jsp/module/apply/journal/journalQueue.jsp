@@ -200,7 +200,7 @@ function clearCheckedItem() {
 		<div class="detail_note">
 			<div class="detail_note_title">Note</div>
 			<div class="detail_note_content">共${total }筆記錄(正常筆數 :${normal }
-				;異常筆數 :${abnormal })</div>
+				;異常筆數 :${total-normal })</div>
 		</div>
 	</s:form>
 	<s:if test="hasActionErrors()">

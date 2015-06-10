@@ -45,7 +45,6 @@ public class CrudActionInterceptor extends AbstractInterceptor {
 					request.getSession().removeAttribute("importList");
 					request.getSession().removeAttribute("total");
 					request.getSession().removeAttribute("normal");
-					request.getSession().removeAttribute("abnormal");
 					request.getSession().removeAttribute("checkItemSet");
 				}
 			}

@@ -129,8 +129,7 @@ function goImport(){
 		onsubmit="return false;">
 		<div class="tabs-box">
 			<div>
-				<a id="tabs-items_A" class="tabs-items-hover"
-					onclick="showTabsContain('A')"><span
+				<a id="tabs-items_A" class="tabs-items-hover"><span
 					class="tabs-items-hover-span">查詢</span></a>
 			</div>
 			<div id="TabsContain_A" class="tabs-contain">

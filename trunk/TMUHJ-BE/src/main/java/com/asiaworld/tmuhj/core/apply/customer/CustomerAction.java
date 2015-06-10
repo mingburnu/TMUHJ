@@ -98,6 +98,14 @@ public class CustomerAction extends GenericCRUDActionFull<Customer> {
 				errorMessages.add("email格式不正確");
 			}
 		}
+
+		if (StringUtils.isNotEmpty(getEntity().getTel())) {
+			String tel = getEntity().getTel().replaceAll("[/()+-]", "")
+					.replace(" ", "");
+			if (!NumberUtils.isDigits(tel)) {
+				errorMessages.add("電話格式不正確");
+			}
+		}
 	}
 
 	@Override
@@ -116,6 +124,14 @@ public class CustomerAction extends GenericCRUDActionFull<Customer> {
 			}
 		}
 
+		if (StringUtils.isNotEmpty(getEntity().getTel())) {
+			String tel = getEntity().getTel().replaceAll("[/()+-]", "")
+					.replace(" ", "");
+			if (!NumberUtils.isDigits(tel)) {
+				errorMessages.add("電話格式不正確");
+			}
+		}
+
 	}
 
 	@Override
@@ -128,7 +144,9 @@ public class CustomerAction extends GenericCRUDActionFull<Customer> {
 				while (i < checkItem.length) {
 					if (!NumberUtils.isDigits(String.valueOf(checkItem[i]))
 							|| Long.parseLong(checkItem[i]) < 1
-							|| Long.parseLong(checkItem[i]) == 9) {
+							|| Long.parseLong(checkItem[i]) == 9
+							|| customerService.getBySerNo(Long
+									.parseLong(checkItem[i])) == null) {
 						errorMessages.add(checkItem[i] + "為不可利用的流水號");
 					}
 					i++;
@@ -222,18 +240,16 @@ public class CustomerAction extends GenericCRUDActionFull<Customer> {
 		if (!hasActionErrors()) {
 			int i = 0;
 			while (i < checkItem.length) {
-				if (customerService.getBySerNo(Long.parseLong(checkItem[i])) != null) {
-					String name = customerService.getBySerNo(
-							Long.parseLong(checkItem[i])).getName();
-					if (customerService.deleteOwnerObj(Long
-							.parseLong(checkItem[i]))) {
-						customerService.deleteBySerNo(Long
-								.parseLong(checkItem[i]));
-						addActionMessage(name + "刪除成功");
-					} else {
-						addActionMessage(name + "資源必須先刪除");
-					}
+				String name = customerService.getBySerNo(
+						Long.parseLong(checkItem[i])).getName();
+				if (customerService
+						.deleteOwnerObj(Long.parseLong(checkItem[i]))) {
+					customerService.deleteBySerNo(Long.parseLong(checkItem[i]));
+					addActionMessage(name + "刪除成功");
+				} else {
+					addActionMessage(name + "資源必須先刪除");
 				}
+
 				i++;
 			}
 
@@ -258,15 +274,18 @@ public class CustomerAction extends GenericCRUDActionFull<Customer> {
 	}
 
 	public String view() throws Exception {
-		if (NumberUtils.isDigits(getRequest().getParameter("viewSerNo"))
-				&& Long.parseLong(getRequest().getParameter("viewSerNo")) != 0) {
-			customer = customerService.getBySerNo(Long.parseLong(getRequest()
-					.getParameter("viewSerNo")));
-		}
-
-		setEntity(customer);
 		getRequest().setAttribute("viewSerNo",
 				getRequest().getParameter("viewSerNo"));
+
+		if (StringUtils.isNotBlank(getRequest().getParameter("viewSerNo"))
+				&& NumberUtils.isDigits(getRequest().getParameter("viewSerNo"))) {
+
+			customer = customerService.getBySerNo(Long.parseLong(getRequest()
+					.getParameter("viewSerNo")));
+			if (customer != null) {
+				setEntity(customer);
+			}
+		}
 		return VIEW;
 	}
 
@@ -371,6 +390,7 @@ public class CustomerAction extends GenericCRUDActionFull<Customer> {
 
 			LinkedHashSet<Customer> originalData = new LinkedHashSet<Customer>();
 			Map<String, Customer> checkRepeatRow = new LinkedHashMap<String, Customer>();
+			int normal = 0;
 
 			for (int i = 1; i <= sheet.getLastRowNum(); i++) {
 				Row row = sheet.getRow(i);
@@ -440,51 +460,50 @@ public class CustomerAction extends GenericCRUDActionFull<Customer> {
 								.getCusSerNoByName(customer.getName());
 						if (cusSerNo != 0) {
 							customer.setExistStatus("已存在");
-						} else {
+						}
 
-							if (StringUtils.isNotEmpty(customer.getEmail())) {
-								String emailPattern = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@"
-										+ "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
-								if (!Pattern.compile(emailPattern)
-										.matcher(customer.getEmail()).matches()) {
-									customer.setExistStatus("email錯誤");
-								} else {
-									customer.setExistStatus("正常");
-								}
-							} else {
-								customer.setExistStatus("正常");
+						if (StringUtils.isNotEmpty(customer.getEmail())) {
+
+							String emailPattern = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@"
+									+ "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
+							if (!Pattern.compile(emailPattern)
+									.matcher(customer.getEmail()).matches()) {
+								customer.setEmail(null);
 							}
+						}
 
+						if (StringUtils.isNotEmpty(customer.getTel())) {
+							String tel = customer.getTel()
+									.replaceAll("[/()+-]", "").replace(" ", "");
+							if (!NumberUtils.isDigits(tel)) {
+								customer.setTel(null);
+							}
 						}
 					}
 
 				}
 
-				if (customer.getExistStatus().equals("正常") && !originalData.contains(customer)) {
+				if (customer.getExistStatus().equals("")) {
+					customer.setExistStatus("正常");
+				}
+
+				if (customer.getExistStatus().equals("正常")
+						&& !originalData.contains(customer)) {
+
 					if (checkRepeatRow.containsKey(customer.getName())) {
-						checkRepeatRow.get(customer.getName()).setExistStatus(
-								"名稱重複");
 						customer.setExistStatus("名稱重複");
-						checkRepeatRow.put(customer.getName(), customer);
+
 					} else {
 						checkRepeatRow.put(customer.getName(), customer);
+
+						++normal;
 					}
 				}
 
 				originalData.add(customer);
 			}
 
-			Iterator<Customer> iterator = originalData.iterator();
-			List<Customer> excelData = new ArrayList<Customer>();
-
-			int normal = 0;
-			while (iterator.hasNext()) {
-				customer = iterator.next();
-				excelData.add(customer);
-				if (customer.getExistStatus().equals("正常")) {
-					normal = normal + 1;
-				}
-			}
+			List<Customer> excelData = new ArrayList<Customer>(originalData);
 
 			DataSet<Customer> ds = initDataSet();
 			List<Customer> results = ds.getResults();
@@ -512,7 +531,6 @@ public class CustomerAction extends GenericCRUDActionFull<Customer> {
 			getSession().put("importList", excelData);
 			getSession().put("total", excelData.size());
 			getSession().put("normal", normal);
-			getSession().put("abnormal", excelData.size() - normal);
 
 			setDs(ds);
 			return QUEUE;
@@ -558,7 +576,9 @@ public class CustomerAction extends GenericCRUDActionFull<Customer> {
 
 	@SuppressWarnings("unchecked")
 	public String getCheckedItem() {
-		if (getSession().get("importList") == null) {
+		List<Customer> importList = (List<Customer>) getSession().get(
+				"importList");
+		if (importList == null) {
 			return null;
 		}
 
@@ -572,7 +592,10 @@ public class CustomerAction extends GenericCRUDActionFull<Customer> {
 		if (ArrayUtils.isNotEmpty(importSerNos)) {
 			if (NumberUtils.isDigits(importSerNos[0])) {
 				if (!checkItemSet.contains(Integer.parseInt(importSerNos[0]))) {
-					checkItemSet.add(Integer.parseInt(importSerNos[0]));
+					if (importList.get(Integer.parseInt(importSerNos[0]))
+							.getExistStatus().equals("正常")) {
+						checkItemSet.add(Integer.parseInt(importSerNos[0]));
+					}
 				} else {
 					checkItemSet.remove(Integer.parseInt(importSerNos[0]));
 				}
@@ -599,7 +622,10 @@ public class CustomerAction extends GenericCRUDActionFull<Customer> {
 			while (i < importSerNos.length) {
 				if (NumberUtils.isDigits(importSerNos[i])) {
 					if (Long.parseLong(importSerNos[i]) < importList.size()) {
-						checkItemSet.add(Integer.parseInt(importSerNos[i]));
+						if (importList.get(Integer.parseInt(importSerNos[i]))
+								.getExistStatus().equals("正常")) {
+							checkItemSet.add(Integer.parseInt(importSerNos[i]));
+						}
 					}
 
 					if (checkItemSet.size() == importList.size()) {
@@ -646,11 +672,8 @@ public class CustomerAction extends GenericCRUDActionFull<Customer> {
 			while (iterator.hasNext()) {
 				int index = iterator.next();
 				customer = importList.get(index);
-				if (customer.getExistStatus().equals("正常")) {
-					customerService.save(customer, getLoginUser());
-					successCount = successCount + 1;
-				}
-
+				customerService.save(customer, getLoginUser());
+				++successCount;
 			}
 
 			getRequest().setAttribute("successCount", successCount);

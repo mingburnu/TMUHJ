@@ -63,7 +63,7 @@ public class DatabaseService extends GenericServiceFull<Database> {
 		DsRestrictions restrictions = DsBeanFactory.getDsRestrictions();
 		
 		if (StringUtils.isNotBlank(dbChtTitle)) {
-			restrictions.likeIgnoreCase("dbChtTitle", dbChtTitle, MatchMode.EXACT);
+			restrictions.likeIgnoreCase("dbChtTitle", dbChtTitle.trim(), MatchMode.EXACT);
 		} else {
 			return 0;
 		}
@@ -79,7 +79,7 @@ public class DatabaseService extends GenericServiceFull<Database> {
 		DsRestrictions restrictions = DsBeanFactory.getDsRestrictions();
 		
 		if (StringUtils.isNotBlank(dbEngTitle)) {
-			restrictions.likeIgnoreCase("dbEngTitle", dbEngTitle, MatchMode.EXACT);
+			restrictions.likeIgnoreCase("dbEngTitle", dbEngTitle.trim(), MatchMode.EXACT);
 		} else {
 			return 0;
 		}

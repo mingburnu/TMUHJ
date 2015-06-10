@@ -118,14 +118,6 @@ function changePageSize_detail(recordPerPage,recordPoint) {
 					}
 				});
 	}
-	
-	function closeDetail() {
-		 $("#div_Detail").hide();
-	     UI_Resize();
-	     $.ajax({url: "<c:url value = '/'/>crud/apply.customer.removeSessionObj.action", success: function(result){
-	 	}
-	 	});
-	}
 </script>
 </head>
 <body>
@@ -208,7 +200,7 @@ function changePageSize_detail(recordPerPage,recordPoint) {
 		<div class="detail_note">
 			<div class="detail_note_title">Note</div>
 			<div class="detail_note_content">共${total }筆記錄(正常筆數 :${normal }
-				;異常筆數 :${abnormal })</div>
+				;異常筆數 :${total-normal })</div>
 		</div>
 	</s:form>
 

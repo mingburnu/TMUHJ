@@ -38,7 +38,6 @@ import org.springframework.stereotype.Controller;
 import com.asiaworld.tmuhj.core.apply.customer.Customer;
 import com.asiaworld.tmuhj.core.apply.customer.CustomerService;
 import com.asiaworld.tmuhj.core.model.DataSet;
-import com.asiaworld.tmuhj.core.model.ExcelWorkSheet;
 import com.asiaworld.tmuhj.core.model.Pager;
 import com.asiaworld.tmuhj.core.web.GenericCRUDActionFull;
 import com.asiaworld.tmuhj.module.apply.enums.Category;
@@ -87,9 +86,6 @@ public class DatabaseAction extends GenericCRUDActionFull<Database> {
 	@Autowired
 	private CustomerService customerService;
 
-	@Autowired
-	private ExcelWorkSheet<Database> excelWorkSheet;
-
 	private String[] importSerNos;
 
 	private InputStream inputStream;
@@ -107,9 +103,7 @@ public class DatabaseAction extends GenericCRUDActionFull<Database> {
 		if (StringUtils.isBlank(getEntity().getDbChtTitle())
 				&& StringUtils.isBlank(getEntity().getDbEngTitle())) {
 			errorMessages.add("沒有資料庫名稱");
-		}
-
-		if (errorMessages.size() == 0) {
+		} else {
 			if (databaseService.getDatSerNoByChtName(getEntity()
 					.getDbChtTitle()) != 0) {
 				errorMessages.add("資料庫中文名稱已存在");
@@ -121,9 +115,7 @@ public class DatabaseAction extends GenericCRUDActionFull<Database> {
 			}
 		}
 
-		if (StringUtils.isBlank(getEntity().getUrl())) {
-			errorMessages.add("URL必需填寫");
-		} else {
+		if (StringUtils.isNotEmpty(getEntity().getUrl())) {
 			String regex = "(@)?(href=')?(HREF=')?(HREF=\")?(href=\")?(http://)?(https://)?[a-zA-Z_0-9\\-]+(\\.\\w[`~!@#$%^&*()_-{[}]|;:<>?,./a-zA-Z0-9\u0000-\uffff\\+=]+)+(/[#&\\n\\-=?\\+\\%/\\.\\w]+)?";
 			Pattern pattern = Pattern.compile(regex);
 			Matcher matcher = pattern.matcher(getEntity().getUrl());
@@ -196,9 +188,7 @@ public class DatabaseAction extends GenericCRUDActionFull<Database> {
 		if (StringUtils.isBlank(getEntity().getDbChtTitle())
 				&& StringUtils.isBlank(getEntity().getDbEngTitle())) {
 			errorMessages.add("沒有資料庫名稱");
-		}
-
-		if (errorMessages.size() == 0) {
+		} else {
 			long datSerNo = databaseService.getDatSerNoByChtName(getEntity()
 					.getDbChtTitle());
 			if (datSerNo != 0 && datSerNo != getEntity().getSerNo()) {
@@ -212,9 +202,7 @@ public class DatabaseAction extends GenericCRUDActionFull<Database> {
 			}
 		}
 
-		if (StringUtils.isBlank(getEntity().getUrl())) {
-			errorMessages.add("URL必需填寫");
-		} else {
+		if (StringUtils.isNotEmpty(getEntity().getUrl())) {
 			String regex = "(@)?(href=')?(HREF=')?(HREF=\")?(href=\")?(http://)?(https://)?[a-zA-Z_0-9\\-]+(\\.\\w[`~!@#$%^&*()_-{[}]|;:<>?,./a-zA-Z0-9\u0000-\uffff\\+=]+)+(/[#&\\n\\-=?\\+\\%/\\.\\w]+)?";
 			Pattern pattern = Pattern.compile(regex);
 			Matcher matcher = pattern.matcher(getEntity().getUrl());
@@ -273,13 +261,15 @@ public class DatabaseAction extends GenericCRUDActionFull<Database> {
 
 	@Override
 	protected void validateDelete() throws Exception {
-		if (checkItem == null || checkItem.length == 0) {
+		if (ArrayUtils.isEmpty(checkItem)) {
 			errorMessages.add("請選擇一筆或一筆以上的資料");
 		} else {
 			int i = 0;
 			while (i < checkItem.length) {
 				if (!NumberUtils.isDigits(String.valueOf(checkItem[i]))
-						|| Long.parseLong(checkItem[i]) < 1) {
+						|| Long.parseLong(checkItem[i]) < 1
+						|| databaseService.getBySerNo(Long
+								.parseLong(checkItem[i])) == null) {
 					errorMessages.add(checkItem[i] + "為不可利用的流水號");
 				}
 				i++;
@@ -336,7 +326,7 @@ public class DatabaseAction extends GenericCRUDActionFull<Database> {
 
 	@Override
 	public String list() throws Exception {
-		if (StringUtils.isNotEmpty(getRequest().getParameter("option"))) {
+		if (StringUtils.isNotBlank(getRequest().getParameter("option"))) {
 			if (getRequest().getParameter("option").equals("entity.dbChtTitle")
 					|| getRequest().getParameter("option").equals(
 							"entity.dbEngTitle")) {
@@ -386,6 +376,14 @@ public class DatabaseAction extends GenericCRUDActionFull<Database> {
 		setActionErrors(errorMessages);
 
 		if (!hasActionErrors()) {
+			if (StringUtils.isNotEmpty(getEntity().getDbChtTitle())) {
+				getEntity().setDbChtTitle(getEntity().getDbChtTitle().trim());
+			}
+
+			if (StringUtils.isNotEmpty(getEntity().getDbEngTitle())) {
+				getEntity().setDbEngTitle(getEntity().getDbEngTitle().trim());
+			}
+
 			database = databaseService.save(getEntity(), getLoginUser());
 
 			resourcesBuyers = resourcesBuyersService
@@ -432,7 +430,7 @@ public class DatabaseAction extends GenericCRUDActionFull<Database> {
 					customerService.getAllCustomers());
 
 			List<Customer> customers = new ArrayList<Customer>();
-			if (cusSerNo != null && cusSerNo.length != 0) {
+			if (ArrayUtils.isNotEmpty(cusSerNo)) {
 				int i = 0;
 				while (i < cusSerNo.length) {
 					customers.add(customerService.getBySerNo(Long
@@ -460,6 +458,14 @@ public class DatabaseAction extends GenericCRUDActionFull<Database> {
 		setActionErrors(errorMessages);
 
 		if (!hasActionErrors()) {
+			if (StringUtils.isNotEmpty(getEntity().getDbChtTitle())) {
+				getEntity().setDbChtTitle(getEntity().getDbChtTitle().trim());
+			}
+
+			if (StringUtils.isNotEmpty(getEntity().getDbEngTitle())) {
+				getEntity().setDbEngTitle(getEntity().getDbEngTitle().trim());
+			}
+
 			database = databaseService.update(getEntity(), getLoginUser());
 
 			resourcesBuyers = resourcesUnionService.getByObjSerNo(
@@ -557,25 +563,23 @@ public class DatabaseAction extends GenericCRUDActionFull<Database> {
 		if (!hasActionErrors()) {
 			int j = 0;
 			while (j < checkItem.length) {
-				if (databaseService.getBySerNo(Long.parseLong(checkItem[j])) != null) {
-					List<ResourcesUnion> resourcesUnions = resourcesUnionService
-							.getResourcesUnionsByObj(databaseService
-									.getBySerNo(Long.parseLong(checkItem[j])),
-									Database.class);
-					resourcesUnion = resourcesUnions.get(0);
+				List<ResourcesUnion> resourcesUnions = resourcesUnionService
+						.getResourcesUnionsByObj(databaseService
+								.getBySerNo(Long.parseLong(checkItem[j])),
+								Database.class);
+				resourcesUnion = resourcesUnions.get(0);
 
-					Iterator<ResourcesUnion> iterator = resourcesUnions
-							.iterator();
-					while (iterator.hasNext()) {
-						resourcesUnion = iterator.next();
-						resourcesUnionService.deleteBySerNo(resourcesUnion
-								.getSerNo());
-					}
-
-					resourcesBuyersService.deleteBySerNo(resourcesUnion
-							.getResourcesBuyers().getSerNo());
-					databaseService.deleteBySerNo(Long.parseLong(checkItem[j]));
+				Iterator<ResourcesUnion> iterator = resourcesUnions.iterator();
+				while (iterator.hasNext()) {
+					resourcesUnion = iterator.next();
+					resourcesUnionService.deleteBySerNo(resourcesUnion
+							.getSerNo());
 				}
+
+				resourcesBuyersService.deleteBySerNo(resourcesUnion
+						.getResourcesBuyers().getSerNo());
+				databaseService.deleteBySerNo(Long.parseLong(checkItem[j]));
+
 				j++;
 			}
 
@@ -657,21 +661,19 @@ public class DatabaseAction extends GenericCRUDActionFull<Database> {
 	}
 
 	public String queue() throws Exception {
-		if (file == null || !file[0].isFile()) {
+		if (ArrayUtils.isEmpty(file) || !file[0].isFile()) {
 			addActionError("請選擇檔案");
 		} else {
 			if (createWorkBook(new FileInputStream(file[0])) == null) {
 				addActionError("檔案格式錯誤");
 			}
 		}
-		
+
 		if (!hasActionErrors()) {
 			Workbook book = createWorkBook(new FileInputStream(file[0]));
 			// book.getNumberOfSheets(); 判斷Excel文件有多少個sheet
 			Sheet sheet = book.getSheetAt(0);
-			excelWorkSheet = new ExcelWorkSheet<Database>();
 
-			// 保存工作單名稱
 			Row firstRow = sheet.getRow(0);
 			if (firstRow == null) {
 				firstRow = sheet.createRow(0);
@@ -695,13 +697,11 @@ public class DatabaseAction extends GenericCRUDActionFull<Database> {
 						break;
 
 					case 1:
-						rowTitles[n] = firstRow.getCell(n).getStringCellValue()
-								.trim();
+						rowTitles[n] = firstRow.getCell(n).getStringCellValue();
 						break;
 
 					case 2:
-						rowTitles[n] = firstRow.getCell(n).getCellFormula()
-								.trim();
+						rowTitles[n] = firstRow.getCell(n).getCellFormula();
 						break;
 
 					case 3:
@@ -729,15 +729,17 @@ public class DatabaseAction extends GenericCRUDActionFull<Database> {
 				n++;
 			}
 
-			getSession().put("cellNames", cellNames);
-
 			LinkedHashSet<Database> originalData = new LinkedHashSet<Database>();
+			Map<String, Database> checkRepeatRow = new LinkedHashMap<String, Database>();
+			Map<String, String> checkErrorRow = new LinkedHashMap<String, String>();
+			int normal = 0;
+
 			for (int i = 1; i <= sheet.getLastRowNum(); i++) {
 				Row row = sheet.getRow(i);
 				if (row == null) {
 					continue;
 				}
-				
+
 				String[] rowValues = new String[13];
 				int k = 0;
 				while (k < rowValues.length) {
@@ -754,13 +756,11 @@ public class DatabaseAction extends GenericCRUDActionFull<Database> {
 							break;
 
 						case 1:
-							rowValues[k] = row.getCell(k).getStringCellValue()
-									.trim();
+							rowValues[k] = row.getCell(k).getStringCellValue();
 							break;
 
 						case 2:
-							rowValues[k] = row.getCell(k).getCellFormula()
-									.trim();
+							rowValues[k] = row.getCell(k).getCellFormula();
 							break;
 
 						case 3:
@@ -862,31 +862,25 @@ public class DatabaseAction extends GenericCRUDActionFull<Database> {
 									.getBySerNo(datSerNoByChtName),
 									Database.class, cusSerNo)) {
 								database.setExistStatus("已存在");
-
-							} else {
-								database.setExistStatus("正常");
 							}
 
 						} else if (datSerNoByChtName != 0
 								&& datSerNoByEngName != 0
 								&& datSerNoByChtName != datSerNoByEngName) {
-							database.setExistStatus("資料庫名稱異常");
+							database.setExistStatus("資料庫名稱混亂");
 
 						} else if (datSerNoByChtName == 0
 								&& datSerNoByEngName != 0) {
 							if (databaseService.getDatSerNoByBothName(
 									database.getDbChtTitle(),
 									database.getDbEngTitle()) == 0) {
-								database.setExistStatus("資料庫名稱異常");
+								database.setExistStatus("資料庫名稱混亂");
 
 							} else if (resourcesUnionService.isExist(
 									databaseService
 											.getBySerNo(datSerNoByEngName),
 									Database.class, cusSerNo)) {
 								database.setExistStatus("已存在");
-
-							} else {
-								database.setExistStatus("正常");
 							}
 
 						} else if (datSerNoByChtName != 0
@@ -894,29 +888,24 @@ public class DatabaseAction extends GenericCRUDActionFull<Database> {
 							if (databaseService.getDatSerNoByBothName(
 									database.getDbChtTitle(),
 									database.getDbEngTitle()) == 0) {
-								database.setExistStatus("資料庫名稱異常");
+								database.setExistStatus("資料庫名稱混亂");
 
 							} else if (resourcesUnionService.isExist(
 									databaseService
 											.getBySerNo(datSerNoByChtName),
 									Database.class, cusSerNo)) {
 								database.setExistStatus("已存在");
-
-							} else {
-								database.setExistStatus("正常");
 							}
 
 						} else {
 							if (database.getResourcesBuyers().getrCategory()
 									.equals(Category.不明)) {
 								database.setExistStatus("資源類型不明");
-							} else {
-								database.setExistStatus("正常");
 							}
 						}
 
 					} else {
-						database.setExistStatus("資料庫名稱異常");
+						database.setExistStatus("資料庫名稱空白");
 
 					}
 				} else {
@@ -924,47 +913,91 @@ public class DatabaseAction extends GenericCRUDActionFull<Database> {
 
 				}
 
+				if (StringUtils.isNotEmpty(database.getUrl())) {
+						String regex = "(@)?(href=')?(HREF=')?(HREF=\")?(href=\")?(http://)?(https://)?[a-zA-Z_0-9\\-]+(\\.\\w[`~!@#$%^&*()_-{[}]|;:<>?,./a-zA-Z0-9\u0000-\uffff\\+=]+)+(/[#&\\n\\-=?\\+\\%/\\.\\w]+)?";
+						Pattern pattern = Pattern.compile(regex);
+						Matcher matcher = pattern.matcher(database.getUrl());
+						if (!matcher.matches()) {
+							database.setUrl(null);
+						}
+					}
+
+				if (database.getExistStatus().equals("")) {
+					database.setExistStatus("正常");
+				}
+
+				if (database.getExistStatus().equals("正常")
+						&& !originalData.contains(database)) {
+
+					if (checkRepeatRow.containsKey(database.getDbChtTitle()
+							+ database.getDbEngTitle() + customer.getName())) {
+						database.setExistStatus("資料重複");
+
+					} else if (checkErrorRow.containsKey(database
+							.getDbEngTitle())
+							&& !checkErrorRow.get(database.getDbEngTitle())
+									.equals(database.getDbChtTitle()
+											+ database.getDbEngTitle())) {
+						database.setExistStatus("不能新增");
+
+					} else if (checkErrorRow.containsKey(database
+							.getDbChtTitle())
+							&& !checkErrorRow.get(database.getDbChtTitle())
+									.equals(database.getDbChtTitle()
+											+ database.getDbEngTitle())) {
+						database.setExistStatus("不能新增");
+					} else {
+						checkRepeatRow.put(
+								database.getDbChtTitle()
+										+ database.getDbEngTitle()
+										+ customer.getName(), database);
+						if (StringUtils.isNotBlank(database.getDbEngTitle())) {
+							checkErrorRow.put(
+									database.getDbEngTitle(),
+									database.getDbChtTitle()
+											+ database.getDbEngTitle());
+						}
+
+						if (StringUtils.isNotBlank(database.getDbChtTitle())) {
+							checkErrorRow.put(
+									database.getDbChtTitle(),
+									database.getDbChtTitle()
+											+ database.getDbEngTitle());
+						}
+
+						++normal;
+					}
+				}
+
 				originalData.add(database);
 			}
 
-			Iterator<Database> setIterator = originalData.iterator();
-
-			int normal = 0;
-			while (setIterator.hasNext()) {
-				database = setIterator.next();
-				excelWorkSheet.getData().add(database);
-				if (database.getExistStatus().equals("正常")) {
-					normal = normal + 1;
-				}
-			}
+			List<Database> excelData = new ArrayList<Database>(originalData);
 
 			DataSet<Database> ds = initDataSet();
 			List<Database> results = ds.getResults();
 
-			ds.getPager()
-					.setTotalRecord((long) excelWorkSheet.getData().size());
+			ds.getPager().setTotalRecord((long) excelData.size());
 			ds.getPager().setRecordPoint(0);
 
-			if (excelWorkSheet.getData().size() < ds.getPager()
-					.getRecordPerPage()) {
+			if (excelData.size() < ds.getPager().getRecordPerPage()) {
 				int i = 0;
-				while (i < excelWorkSheet.getData().size()) {
-					results.add(excelWorkSheet.getData().get(i));
+				while (i < excelData.size()) {
+					results.add(excelData.get(i));
 					i++;
 				}
 			} else {
 				int i = 0;
 				while (i < ds.getPager().getRecordPerPage()) {
-					results.add(excelWorkSheet.getData().get(i));
+					results.add(excelData.get(i));
 					i++;
 				}
 			}
 
-			getSession().put("importList", excelWorkSheet.getData());
-			getSession().put("total", excelWorkSheet.getData().size());
+			getSession().put("cellNames", cellNames);
+			getSession().put("importList", excelData);
+			getSession().put("total", excelData.size());
 			getSession().put("normal", normal);
-			getSession().put("abnormal",
-					excelWorkSheet.getData().size() - normal);
 
 			setDs(ds);
 			return QUEUE;
@@ -1010,28 +1043,33 @@ public class DatabaseAction extends GenericCRUDActionFull<Database> {
 
 	@SuppressWarnings("unchecked")
 	public String getCheckedItem() {
-		if (getSession().get("importList") == null) {
+		List<Database> importList = (List<Database>) getSession().get(
+				"importList");
+		if (importList == null) {
 			return null;
 		}
 
-		Set<Integer> checkItem;
-		if (getSession().containsKey("checkItem")) {
-			checkItem = (TreeSet<Integer>) getSession().get("checkItem");
+		Set<Integer> checkItemSet;
+		if (getSession().containsKey("checkItemSet")) {
+			checkItemSet = (TreeSet<Integer>) getSession().get("checkItemSet");
 		} else {
-			checkItem = new TreeSet<Integer>();
+			checkItemSet = new TreeSet<Integer>();
 		}
 
 		if (ArrayUtils.isNotEmpty(importSerNos)) {
 			if (NumberUtils.isDigits(importSerNos[0])) {
-				if (!checkItem.contains(Integer.parseInt(importSerNos[0]))) {
-					checkItem.add(Integer.parseInt(importSerNos[0]));
+				if (!checkItemSet.contains(Integer.parseInt(importSerNos[0]))) {
+					if (importList.get(Integer.parseInt(importSerNos[0]))
+							.getExistStatus().equals("正常")) {
+						checkItemSet.add(Integer.parseInt(importSerNos[0]));
+					}
 				} else {
-					checkItem.remove(Integer.parseInt(importSerNos[0]));
+					checkItemSet.remove(Integer.parseInt(importSerNos[0]));
 				}
 			}
 		}
 
-		getSession().put("checkItem", checkItem);
+		getSession().put("checkItemSet", checkItemSet);
 
 		return null;
 	}
@@ -1044,17 +1082,20 @@ public class DatabaseAction extends GenericCRUDActionFull<Database> {
 			return null;
 		}
 
-		Set<Integer> checkItem = new TreeSet<Integer>();
+		Set<Integer> checkItemSet = new TreeSet<Integer>();
 
 		if (ArrayUtils.isNotEmpty(importSerNos)) {
 			int i = 0;
 			while (i < importSerNos.length) {
 				if (NumberUtils.isDigits(importSerNos[i])) {
 					if (Long.parseLong(importSerNos[i]) < importList.size()) {
-						checkItem.add(Integer.parseInt(importSerNos[i]));
+						if (importList.get(Integer.parseInt(importSerNos[i]))
+								.getExistStatus().equals("正常")) {
+							checkItemSet.add(Integer.parseInt(importSerNos[i]));
+						}
 					}
 
-					if (checkItem.size() == importList.size()) {
+					if (checkItemSet.size() == importList.size()) {
 						break;
 					}
 				}
@@ -1062,7 +1103,7 @@ public class DatabaseAction extends GenericCRUDActionFull<Database> {
 			}
 		}
 
-		getSession().put("checkItem", checkItem);
+		getSession().put("checkItemSet", checkItemSet);
 		return null;
 	}
 
@@ -1071,8 +1112,8 @@ public class DatabaseAction extends GenericCRUDActionFull<Database> {
 			return null;
 		}
 
-		Set<Integer> checkItem = new TreeSet<Integer>();
-		getSession().put("checkItem", checkItem);
+		Set<Integer> checkItemSet = new TreeSet<Integer>();
+		getSession().put("checkItemSet", checkItemSet);
 		return null;
 	}
 
@@ -1085,47 +1126,44 @@ public class DatabaseAction extends GenericCRUDActionFull<Database> {
 			return null;
 		}
 
-		Set<Integer> checkItem = (TreeSet<Integer>) getSession().get(
-				"checkItem");
+		Set<Integer> checkItemSet = (TreeSet<Integer>) getSession().get(
+				"checkItemSet");
 
-		if (CollectionUtils.isEmpty(checkItem)) {
+		if (CollectionUtils.isEmpty(checkItemSet)) {
 			addActionError("請選擇一筆或一筆以上的資料");
 		}
 
 		if (!hasActionErrors()) {
-			Iterator<Integer> it = checkItem.iterator();
+			Iterator<Integer> iterator = checkItemSet.iterator();
 			int successCount = 0;
-			while (it.hasNext()) {
-				int index = it.next();
+			while (iterator.hasNext()) {
+				int index = iterator.next();
 				database = importList.get(index);
 
-				if (database.getExistStatus().equals("正常")) {
-					long datSerNo = databaseService.getDatSerNoByBothName(
-							database.getDbChtTitle(), database.getDbEngTitle());
-					long cusSerNo = customerService.getCusSerNoByName(database
-							.getCustomers().get(0).getName());
+				long datSerNo = databaseService.getDatSerNoByBothName(
+						database.getDbChtTitle(), database.getDbEngTitle());
+				long cusSerNo = customerService.getCusSerNoByName(database
+						.getCustomers().get(0).getName());
 
-					if (datSerNo == 0) {
-						resourcesBuyers = resourcesBuyersService.save(
-								database.getResourcesBuyers(), getLoginUser());
-						database = databaseService.save(database,
-								getLoginUser());
+				if (datSerNo == 0) {
+					resourcesBuyers = resourcesBuyersService.save(
+							database.getResourcesBuyers(), getLoginUser());
+					database = databaseService.save(database, getLoginUser());
 
-						resourcesUnionService.save(new ResourcesUnion(
-								customerService.getBySerNo(cusSerNo),
-								resourcesBuyers, 0L, database.getSerNo(), 0L),
-								getLoginUser());
-					} else {
-						resourcesUnion = resourcesUnionService.getByObjSerNo(
-								datSerNo, Database.class);
-						resourcesUnionService.save(new ResourcesUnion(
-								customerService.getBySerNo(cusSerNo),
-								resourcesUnion.getResourcesBuyers(), 0L,
-								datSerNo, 0L), getLoginUser());
-					}
-
-					successCount = successCount + 1;
+					resourcesUnionService.save(new ResourcesUnion(
+							customerService.getBySerNo(cusSerNo),
+							resourcesBuyers, 0L, database.getSerNo(), 0L),
+							getLoginUser());
+				} else {
+					resourcesUnion = resourcesUnionService.getByObjSerNo(
+							datSerNo, Database.class);
+					resourcesUnionService.save(new ResourcesUnion(
+							customerService.getBySerNo(cusSerNo),
+							resourcesUnion.getResourcesBuyers(), 0L, datSerNo,
+							0L), getLoginUser());
 				}
+
+				++successCount;
 			}
 
 			getRequest().setAttribute("successCount", successCount);
@@ -1292,21 +1330,6 @@ public class DatabaseAction extends GenericCRUDActionFull<Database> {
 	 */
 	public void setFileContentType(String[] fileContentType) {
 		this.fileContentType = fileContentType;
-	}
-
-	/**
-	 * @return the excelWorkSheet
-	 */
-	public ExcelWorkSheet<Database> getExcelWorkSheet() {
-		return excelWorkSheet;
-	}
-
-	/**
-	 * @param excelWorkSheet
-	 *            the excelWorkSheet to set
-	 */
-	public void setExcelWorkSheet(ExcelWorkSheet<Database> excelWorkSheet) {
-		this.excelWorkSheet = excelWorkSheet;
 	}
 
 	/**

@@ -455,7 +455,9 @@ public class AccountNumberAction extends GenericCRUDActionFull<AccountNumber> {
 			int i = 0;
 			while (i < checkItem.length) {
 				if (!NumberUtils.isDigits(String.valueOf(checkItem[i]))
-						|| Long.parseLong(checkItem[i]) < 1) {
+						|| Long.parseLong(checkItem[i]) < 1
+						|| accountNumberService.getBySerNo(Long
+								.parseLong(checkItem[i])) == null) {
 					addActionError(checkItem[i] + "為不可利用的流水號");
 				}
 				i++;
@@ -496,13 +498,11 @@ public class AccountNumberAction extends GenericCRUDActionFull<AccountNumber> {
 		if (!hasActionErrors()) {
 			int j = 0;
 			while (j < checkItem.length) {
-				if (accountNumberService.getBySerNo(Long
-						.parseLong(checkItem[j])) != null) {
-					accountNumber = accountNumberService.getBySerNo(Long
-							.parseLong(checkItem[j]));
-					accountNumber.setStatus(Status.不生效);
-					accountNumberService.update(accountNumber, getLoginUser());
-				}
+				accountNumber = accountNumberService.getBySerNo(Long
+						.parseLong(checkItem[j]));
+				accountNumber.setStatus(Status.不生效);
+				accountNumberService.update(accountNumber, getLoginUser());
+
 				j++;
 			}
 
@@ -535,7 +535,9 @@ public class AccountNumberAction extends GenericCRUDActionFull<AccountNumber> {
 			int i = 0;
 			while (i < checkItem.length) {
 				if (!NumberUtils.isDigits(String.valueOf(checkItem[i]))
-						|| Long.parseLong(checkItem[i]) < 1) {
+						|| Long.parseLong(checkItem[i]) < 1
+						|| accountNumberService.getBySerNo(Long
+								.parseLong(checkItem[i])) == null) {
 					addActionError(checkItem[i] + "為不可利用的流水號");
 				}
 				i++;
@@ -576,13 +578,11 @@ public class AccountNumberAction extends GenericCRUDActionFull<AccountNumber> {
 		if (!hasActionErrors()) {
 			int j = 0;
 			while (j < checkItem.length) {
-				if (accountNumberService.getBySerNo(Long
-						.parseLong(checkItem[j])) != null) {
-					accountNumber = accountNumberService.getBySerNo(Long
-							.parseLong(checkItem[j]));
-					accountNumber.setStatus(Status.生效);
-					accountNumberService.update(accountNumber, getLoginUser());
-				}
+				accountNumber = accountNumberService.getBySerNo(Long
+						.parseLong(checkItem[j]));
+				accountNumber.setStatus(Status.生效);
+				accountNumberService.update(accountNumber, getLoginUser());
+
 				j++;
 			}
 
@@ -699,7 +699,8 @@ public class AccountNumberAction extends GenericCRUDActionFull<AccountNumber> {
 
 			LinkedHashSet<AccountNumber> originalData = new LinkedHashSet<AccountNumber>();
 			Map<String, AccountNumber> checkRepeatRow = new LinkedHashMap<String, AccountNumber>();
-			
+			int normal = 0;
+
 			for (int i = 1; i <= sheet.getLastRowNum(); i++) {
 				Row row = sheet.getRow(i);
 				if (row == null) {
@@ -832,9 +833,6 @@ public class AccountNumberAction extends GenericCRUDActionFull<AccountNumber> {
 									customer.setName(rowValues[3]);
 									accountNumber.setCustomer(customer);
 									accountNumber.setExistStatus("資料錯誤");
-								} else {
-									accountNumber.setExistStatus("正常");
-
 								}
 							} else {
 								if (StringUtils.isBlank(accountNumber
@@ -850,39 +848,35 @@ public class AccountNumberAction extends GenericCRUDActionFull<AccountNumber> {
 									customer.setName(rowValues[3]);
 									accountNumber.setCustomer(customer);
 									accountNumber.setExistStatus("資料錯誤");
-								} else {
-									accountNumber.setExistStatus("正常");
-
 								}
 							}
 						}
 					}
 				}
-				
-				if (accountNumber.getExistStatus().equals("正常") && !originalData.contains(accountNumber)) {
+
+				if (accountNumber.getExistStatus().equals("")) {
+					accountNumber.setExistStatus("正常");
+				}
+
+				if (accountNumber.getExistStatus().equals("正常")
+						&& !originalData.contains(accountNumber)) {
+
 					if (checkRepeatRow.containsKey(accountNumber.getUserId())) {
-						checkRepeatRow.get(accountNumber.getUserId()).setExistStatus(
-								"帳號重複");
-						customer.setExistStatus("帳號重複");
-						checkRepeatRow.put(accountNumber.getUserId(), accountNumber);
+						accountNumber.setExistStatus("帳號重複");
+
 					} else {
-						checkRepeatRow.put(accountNumber.getUserId(), accountNumber);
+						checkRepeatRow.put(accountNumber.getUserId(),
+								accountNumber);
+
+						++normal;
 					}
 				}
 
 				originalData.add(accountNumber);
 			}
 
-			Iterator<AccountNumber> iterator = originalData.iterator();
-			List<AccountNumber> excelData = new ArrayList<AccountNumber>();
-			int normal = 0;
-			while (iterator.hasNext()) {
-				accountNumber = iterator.next();
-				excelData.add(accountNumber);
-				if (accountNumber.getExistStatus().equals("正常")) {
-					normal = normal + 1;
-				}
-			}
+			List<AccountNumber> excelData = new ArrayList<AccountNumber>(
+					originalData);
 
 			DataSet<AccountNumber> ds = initDataSet();
 			List<AccountNumber> results = ds.getResults();
@@ -908,7 +902,6 @@ public class AccountNumberAction extends GenericCRUDActionFull<AccountNumber> {
 			getSession().put("importList", excelData);
 			getSession().put("total", excelData.size());
 			getSession().put("normal", normal);
-			getSession().put("abnormal", excelData.size() - normal);
 
 			setDs(ds);
 			return QUEUE;
@@ -954,7 +947,9 @@ public class AccountNumberAction extends GenericCRUDActionFull<AccountNumber> {
 
 	@SuppressWarnings("unchecked")
 	public String getCheckedItem() {
-		if (getSession().get("importList") == null) {
+		List<AccountNumber> importList = (List<AccountNumber>) getSession()
+				.get("importList");
+		if (importList == null) {
 			return null;
 		}
 
@@ -968,7 +963,10 @@ public class AccountNumberAction extends GenericCRUDActionFull<AccountNumber> {
 		if (ArrayUtils.isNotEmpty(importSerNos)) {
 			if (NumberUtils.isDigits(importSerNos[0])) {
 				if (!checkItemSet.contains(Integer.parseInt(importSerNos[0]))) {
-					checkItemSet.add(Integer.parseInt(importSerNos[0]));
+					if (importList.get(Integer.parseInt(importSerNos[0]))
+							.getExistStatus().equals("正常")) {
+						checkItemSet.add(Integer.parseInt(importSerNos[0]));
+					}
 				} else {
 					checkItemSet.remove(Integer.parseInt(importSerNos[0]));
 				}
@@ -995,7 +993,10 @@ public class AccountNumberAction extends GenericCRUDActionFull<AccountNumber> {
 			while (i < importSerNos.length) {
 				if (NumberUtils.isDigits(importSerNos[i])) {
 					if (Long.parseLong(importSerNos[i]) < importList.size()) {
-						checkItemSet.add(Integer.parseInt(importSerNos[i]));
+						if (importList.get(Integer.parseInt(importSerNos[i]))
+								.getExistStatus().equals("正常")) {
+							checkItemSet.add(Integer.parseInt(importSerNos[i]));
+						}
 					}
 
 					if (checkItemSet.size() == importList.size()) {
@@ -1042,11 +1043,8 @@ public class AccountNumberAction extends GenericCRUDActionFull<AccountNumber> {
 			while (iterator.hasNext()) {
 				int index = iterator.next();
 				accountNumber = importList.get(index);
-				if (accountNumber.getExistStatus().equals("正常")) {
-					accountNumberService.save(accountNumber, getLoginUser());
-					successCount = successCount + 1;
-				}
-
+				accountNumberService.save(accountNumber, getLoginUser());
+				++successCount;
 			}
 
 			getRequest().setAttribute("successCount", successCount);
