@@ -116,6 +116,12 @@ public class JournalAction extends GenericCRUDActionFull<Journal> {
 			}
 		}
 
+		if (StringUtils.isNotEmpty(getEntity().getCongressClassification())) {
+			if (!isLCC(getEntity().getCongressClassification())) {
+				errorMessages.add("國會分類號格式不正確");
+			}
+		}
+
 		if (ArrayUtils.isEmpty(cusSerNo)) {
 			errorMessages.add("至少選擇一筆以上購買單位");
 		} else {
@@ -191,6 +197,12 @@ public class JournalAction extends GenericCRUDActionFull<Journal> {
 				if (jouSerNo != 0 && jouSerNo != getEntity().getSerNo()) {
 					errorMessages.add("ISSN不可重複");
 				}
+			}
+		}
+
+		if (StringUtils.isNotEmpty(getEntity().getCongressClassification())) {
+			if (!isLCC(getEntity().getCongressClassification())) {
+				errorMessages.add("國會分類號格式不正確");
 			}
 		}
 
@@ -632,38 +644,31 @@ public class JournalAction extends GenericCRUDActionFull<Journal> {
 		getRequest().setAttribute("viewSerNo",
 				getRequest().getParameter("viewSerNo"));
 
-		if (getRequest().getParameter("viewSerNo") == null
-				|| !NumberUtils
-						.isDigits(getRequest().getParameter("viewSerNo"))) {
-			addActionError("流水號不正確");
-		} else {
+		if (StringUtils.isNotBlank(getRequest().getParameter("viewSerNo"))
+				&& NumberUtils.isDigits(getRequest().getParameter("viewSerNo"))) {
 			journal = journalService.getBySerNo(Long.parseLong(getRequest()
 					.getParameter("viewSerNo")));
-			if (journal == null) {
-				addActionError("期刊不存在");
-			} else {
+			if (journal != null) {
 				resourcesUnion = resourcesUnionService.getByObjSerNo(
 						journal.getSerNo(), Journal.class);
+
+				journal.setResourcesBuyers(resourcesUnion.getResourcesBuyers());
+
+				List<ResourcesUnion> resourceUnions = resourcesUnionService
+						.getResourcesUnionsByObj(journal, Journal.class);
+				List<Customer> customers = new ArrayList<Customer>();
+
+				Iterator<ResourcesUnion> iterator = resourceUnions.iterator();
+				while (iterator.hasNext()) {
+					resourcesUnion = iterator.next();
+					customers.add(resourcesUnion.getCustomer());
+				}
+
+				journal.setCustomers(customers);
+				setEntity(journal);
 			}
 		}
 
-		if (!hasActionErrors()) {
-
-			journal.setResourcesBuyers(resourcesUnion.getResourcesBuyers());
-
-			List<ResourcesUnion> resourceUnions = resourcesUnionService
-					.getResourcesUnionsByObj(journal, Journal.class);
-			List<Customer> customers = new ArrayList<Customer>();
-
-			Iterator<ResourcesUnion> iterator = resourceUnions.iterator();
-			while (iterator.hasNext()) {
-				resourcesUnion = iterator.next();
-				customers.add(resourcesUnion.getCustomer());
-			}
-
-			journal.setCustomers(customers);
-			setEntity(journal);
-		}
 		return VIEW;
 	}
 
@@ -885,6 +890,12 @@ public class JournalAction extends GenericCRUDActionFull<Journal> {
 					}
 				} else {
 					journal.setExistStatus("ISSN異常");
+				}
+
+				if (StringUtils.isNotEmpty(journal.getCongressClassification())) {
+					if (!isLCC(journal.getCongressClassification())) {
+						journal.setCongressClassification(null);
+					}
 				}
 
 				if (journal.getExistStatus().equals("")) {
@@ -1110,46 +1121,6 @@ public class JournalAction extends GenericCRUDActionFull<Journal> {
 		}
 	}
 
-	public boolean isIssn(String issn) {
-		String regex = "\\d{7}[\\dX]";
-		Pattern pattern = Pattern.compile(regex);
-
-		Matcher matcher = pattern.matcher(issn.toUpperCase());
-		if (matcher.matches()) {
-			int sum = Integer.parseInt(issn.substring(0, 1)) * 8
-					+ Integer.parseInt(issn.substring(1, 2)) * 7
-					+ Integer.parseInt(issn.substring(2, 3)) * 6
-					+ Integer.parseInt(issn.substring(3, 4)) * 5
-					+ Integer.parseInt(issn.substring(4, 5)) * 4
-					+ Integer.parseInt(issn.substring(5, 6)) * 3
-					+ Integer.parseInt(issn.substring(6, 7)) * 2;
-
-			int remainder = sum % 11;
-
-			if (remainder == 0) {
-				if (!issn.substring(7).equals("0")) {
-					return false;
-				}
-			} else {
-				if (11 - remainder == 10) {
-					if (!issn.substring(7).toUpperCase().equals("X")) {
-						return false;
-					}
-				} else {
-					if (issn.substring(7).equals("X")
-							|| issn.substring(7).equals("x")
-							|| Integer.parseInt(issn.substring(7)) != 11 - remainder) {
-						return false;
-					}
-				}
-			}
-
-		} else {
-			return false;
-		}
-		return true;
-	}
-
 	public String example() throws Exception {
 		reportFile = "journal_sample.xlsx";
 
@@ -1193,6 +1164,52 @@ public class JournalAction extends GenericCRUDActionFull<Journal> {
 		setInputStream(new ByteArrayInputStream(boas.toByteArray()));
 
 		return XLSX;
+	}
+
+	public boolean isIssn(String issn) {
+		String regex = "\\d{7}[\\dX]";
+		Pattern pattern = Pattern.compile(regex);
+
+		Matcher matcher = pattern.matcher(issn.toUpperCase());
+		if (matcher.matches()) {
+			int sum = Integer.parseInt(issn.substring(0, 1)) * 8
+					+ Integer.parseInt(issn.substring(1, 2)) * 7
+					+ Integer.parseInt(issn.substring(2, 3)) * 6
+					+ Integer.parseInt(issn.substring(3, 4)) * 5
+					+ Integer.parseInt(issn.substring(4, 5)) * 4
+					+ Integer.parseInt(issn.substring(5, 6)) * 3
+					+ Integer.parseInt(issn.substring(6, 7)) * 2;
+
+			int remainder = sum % 11;
+
+			if (remainder == 0) {
+				if (!issn.substring(7).equals("0")) {
+					return false;
+				}
+			} else {
+				if (11 - remainder == 10) {
+					if (!issn.substring(7).toUpperCase().equals("X")) {
+						return false;
+					}
+				} else {
+					if (issn.substring(7).equals("X")
+							|| issn.substring(7).equals("x")
+							|| Integer.parseInt(issn.substring(7)) != 11 - remainder) {
+						return false;
+					}
+				}
+			}
+
+		} else {
+			return false;
+		}
+		return true;
+	}
+
+	public boolean isLCC(String LCC) {
+		String LCCPattern = "([A-Z]{1,3})((\\d+)(\\.?)(\\d+))";
+
+		return Pattern.compile(LCCPattern).matcher(LCC).matches();
 	}
 
 	// 判斷文件類型

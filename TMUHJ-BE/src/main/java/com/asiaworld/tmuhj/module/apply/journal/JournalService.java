@@ -26,22 +26,17 @@ public class JournalService extends GenericServiceFull<Journal> {
 		Journal entity = ds.getEntity();
 		DsRestrictions restrictions = DsBeanFactory.getDsRestrictions();
 
-		if (StringUtils.isNotEmpty(entity.getChineseTitle())
-				&& StringUtils.isNotBlank(entity.getChineseTitle())) {
+		if (StringUtils.isNotBlank(entity.getChineseTitle())) {
 			restrictions.likeIgnoreCase("chineseTitle",
 					entity.getChineseTitle(), MatchMode.ANYWHERE);
-		}
-		if (StringUtils.isNotEmpty(entity.getEnglishTitle())
-				&& StringUtils.isNotBlank(entity.getEnglishTitle())) {
+		} else if (StringUtils.isNotBlank(entity.getEnglishTitle())) {
 			restrictions.likeIgnoreCase("englishTitle",
 					entity.getEnglishTitle(), MatchMode.ANYWHERE);
-		}
-		if (StringUtils.isNotEmpty(entity.getIssn())
-				&& StringUtils.isNotBlank(entity.getIssn())) {
+		} else if (StringUtils.isNotBlank(entity.getIssn())) {
 
 			String[] issnSpilt = entity.getIssn().split("-");
 
-			StringBuilder issn = new StringBuilder(""); 
+			StringBuilder issn = new StringBuilder("");
 			int i = 0;
 			while (i < issnSpilt.length) {
 				issn.append(issnSpilt[i]);
@@ -63,7 +58,7 @@ public class JournalService extends GenericServiceFull<Journal> {
 	public long getJouSerNoByIssn(String issn) throws Exception {
 		DsRestrictions restrictions = DsBeanFactory.getDsRestrictions();
 		restrictions.eq("issn", issn);
-		
+
 		if (dao.findByRestrictions(restrictions).size() > 0) {
 			return dao.findByRestrictions(restrictions).get(0).getSerNo();
 		} else {

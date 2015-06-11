@@ -202,12 +202,43 @@ public class Test {
 		System.out.println(tel);
 		System.out.println(NumberUtils.isDigits(tel));
 
-//		String cc = "^(?[A-Z]{1,3})" + "(?\\d{1,4})(\\ ?)"
-//				+ "(\\.(?\\d{1,3}))?" + "(?\\ [A-Za-z0-9]{1,4}\\ )?"
-//				+ "([\\ \\.](?[A-Z][0-9]{1,4}))" + "(\\ (?[A-Za-z0-9]{0,4}))?"
-//				+ "(\\.?(?[A-Z][0-9]{1,4}))?" + "(\\ (?\\w*)\\ ?)?"
-//				+ "(\\ (?\\w*)\\ ?)?" + "(\\ (?\\w*)\\ ?)?";
-//
-//		System.out.println(!Pattern.compile(cc).matcher("").matches());
+		// p = re.compile("""^(?P<aclass>[A-Z]{1,3})
+		// (?P<nclass>\\d{1,4})(\\ ?)
+		// (\\.(?P<dclass>\\d{1,3}))?
+		// (?P<date>\\ [A-Za-z0-9]{1,4}\\ )?
+		// ([\\ \\.](?P<c1>[A-Z][0-9]{1,4}))
+		// (\\ (?P<c1d>[A-Za-z0-9]{0,4}))?
+		// (\\.?(?P<c2>[A-Z][0-9]{1,4}))?
+		// (\\ (?P<e8>\\w*)\\ ?)?
+		// (\\ (?P<e9>\\w*)\\ ?)?
+		// (\\ (?P<e10>\\w*)\\ ?)?""",
+		// re.VERBOSE)
+
+		String LCC = "NB 1.1";
+		System.out.println(isLCC(LCC));
+		
+		String num ="123.3";
+		System.out.print(isNum(num));
+
 	}
+
+	public static boolean isLCC(String LCC) {
+		String LCCPattern = "([A-Z]{1,3})((\\d+)(\\.?)(\\d+))";
+
+		Pattern pattern = Pattern.compile(LCCPattern);
+
+		return pattern.matcher(LCC).matches();
+	}
+	
+	public static boolean isNum(String num) {
+//		String numPattern = "(\\d+)(\\.?)(\\d+)";
+
+		String numPattern = "\\d+(\\.\\d+)";
+//		String numPattern = "^[1-9]\\d*(\\.\\d+)?$";
+		Pattern pattern = Pattern.compile(numPattern);
+
+		return pattern.matcher(num).matches();
+	}
+	
+	
 }

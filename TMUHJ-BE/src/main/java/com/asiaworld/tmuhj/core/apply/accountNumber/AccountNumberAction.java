@@ -169,8 +169,8 @@ public class AccountNumberAction extends GenericCRUDActionFull<AccountNumber> {
 							.getParameter("cusSerNo"))));
 
 			if (getLoginUser().getRole().equals(Role.管理員)) {
-				if (getLoginUser().getCustomer().getSerNo() != getEntity()
-						.getCustomer().getSerNo()) {
+				if (getLoginUser().getCustomer().getSerNo() != Long
+						.parseLong(getRequest().getParameter("cusSerNo"))) {
 					errorMessages.add("用戶名稱不正確");
 				}
 			}
@@ -615,10 +615,34 @@ public class AccountNumberAction extends GenericCRUDActionFull<AccountNumber> {
 		if (StringUtils.isNotBlank(getRequest().getParameter("viewSerNo"))
 				&& NumberUtils.isDigits(getRequest().getParameter("viewSerNo"))) {
 
+			List<Role> roleList = new ArrayList<Role>(Arrays.asList(Role
+					.values()));
+			List<Role> tempList = new ArrayList<Role>();
+
+			roleList.remove(roleList.size() - 1);
+
+			int roleCode = roleList.indexOf(getLoginUser().getRole());
+
+			for (int i = 0; i < roleCode; i++) {
+				tempList.add(roleList.get(i));
+			}
+
+			roleList.removeAll(tempList);
+
+			boolean isLegalRole = false;
 			accountNumber = accountNumberService.getBySerNo(Long
 					.parseLong(getRequest().getParameter("viewSerNo")));
-			if (accountNumber != null) {
+			if (accountNumber != null
+					&& roleList.contains(accountNumber.getRole())) {
+				isLegalRole = true;
+			}
+
+			if (isLegalRole) {
 				setEntity(accountNumber);
+			} else {
+				if (accountNumber != null) {
+					getResponse().sendError(HttpServletResponse.SC_FORBIDDEN);
+				}
 			}
 		}
 		return VIEW;
@@ -1092,17 +1116,6 @@ public class AccountNumberAction extends GenericCRUDActionFull<AccountNumber> {
 		return XLSX;
 	}
 
-	// 判斷文件類型
-	public Workbook createWorkBook(InputStream is) throws IOException {
-		if (fileFileName[0].toLowerCase().endsWith("xls")) {
-			return new HSSFWorkbook(is);
-		}
-		if (fileFileName[0].toLowerCase().endsWith("xlsx")) {
-			return new XSSFWorkbook(is);
-		}
-		return null;
-	}
-
 	public boolean hasEntity() throws Exception {
 		if (getEntity().getSerNo() == null) {
 			getEntity().setSerNo(-1L);
@@ -1115,6 +1128,17 @@ public class AccountNumberAction extends GenericCRUDActionFull<AccountNumber> {
 		}
 
 		return true;
+	}
+
+	// 判斷文件類型
+	public Workbook createWorkBook(InputStream is) throws IOException {
+		if (fileFileName[0].toLowerCase().endsWith("xls")) {
+			return new HSSFWorkbook(is);
+		}
+		if (fileFileName[0].toLowerCase().endsWith("xlsx")) {
+			return new XSSFWorkbook(is);
+		}
+		return null;
 	}
 
 	/**

@@ -640,37 +640,31 @@ public class EbookAction extends GenericCRUDActionFull<Ebook> {
 		getRequest().setAttribute("viewSerNo",
 				getRequest().getParameter("viewSerNo"));
 
-		if (getRequest().getParameter("viewSerNo") == null
-				|| !NumberUtils
-						.isDigits(getRequest().getParameter("viewSerNo"))) {
-			addActionError("流水號不正確");
-		} else {
+		if (StringUtils.isNotBlank(getRequest().getParameter("viewSerNo"))
+				&& NumberUtils.isDigits(getRequest().getParameter("viewSerNo"))) {
 			ebook = ebookService.getBySerNo(Long.parseLong(getRequest()
 					.getParameter("viewSerNo")));
-			if (ebook == null) {
-				addActionError("電子書不存在");
-			} else {
+			if (ebook != null) {
 				resourcesUnion = resourcesUnionService.getByObjSerNo(
 						ebook.getSerNo(), Ebook.class);
+
+				ebook.setResourcesBuyers(resourcesUnion.getResourcesBuyers());
+
+				List<ResourcesUnion> resourceUnions = resourcesUnionService
+						.getResourcesUnionsByObj(ebook, Ebook.class);
+				List<Customer> customers = new ArrayList<Customer>();
+
+				Iterator<ResourcesUnion> iterator = resourceUnions.iterator();
+				while (iterator.hasNext()) {
+					resourcesUnion = iterator.next();
+					customers.add(resourcesUnion.getCustomer());
+				}
+
+				ebook.setCustomers(customers);
+				setEntity(ebook);
 			}
 		}
 
-		if (!hasActionErrors()) {
-			ebook.setResourcesBuyers(resourcesUnion.getResourcesBuyers());
-
-			List<ResourcesUnion> resourceUnions = resourcesUnionService
-					.getResourcesUnionsByObj(ebook, Ebook.class);
-			List<Customer> customers = new ArrayList<Customer>();
-
-			Iterator<ResourcesUnion> iterator = resourceUnions.iterator();
-			while (iterator.hasNext()) {
-				resourcesUnion = iterator.next();
-				customers.add(resourcesUnion.getCustomer());
-			}
-
-			ebook.setCustomers(customers);
-			setEntity(ebook);
-		}
 		return VIEW;
 	}
 
@@ -1141,41 +1135,6 @@ public class EbookAction extends GenericCRUDActionFull<Ebook> {
 		}
 	}
 
-	public boolean isIsbn(long isbnNum) {
-		if (isbnNum >= 9780000000000l && isbnNum < 9800000000000l) {
-			String isbn = "" + isbnNum;
-			int sum = Integer.parseInt(isbn.substring(0, 1)) * 1
-					+ Integer.parseInt(isbn.substring(1, 2)) * 3
-					+ Integer.parseInt(isbn.substring(2, 3)) * 1
-					+ Integer.parseInt(isbn.substring(3, 4)) * 3
-					+ Integer.parseInt(isbn.substring(4, 5)) * 1
-					+ Integer.parseInt(isbn.substring(5, 6)) * 3
-					+ Integer.parseInt(isbn.substring(6, 7)) * 1
-					+ Integer.parseInt(isbn.substring(7, 8)) * 3
-					+ Integer.parseInt(isbn.substring(8, 9)) * 1
-					+ Integer.parseInt(isbn.substring(9, 10)) * 3
-					+ Integer.parseInt(isbn.substring(10, 11)) * 1
-					+ Integer.parseInt(isbn.substring(11, 12)) * 3;
-
-			int remainder = sum % 10;
-			int num = 10 - remainder;
-
-			if (num == 10) {
-				if (Integer.parseInt(isbn.substring(12)) != 0) {
-					return false;
-				}
-			} else {
-				if (Integer.parseInt(isbn.substring(12)) != num) {
-					return false;
-				}
-			}
-
-		} else {
-			return false;
-		}
-		return true;
-	}
-
 	public String example() throws Exception {
 		reportFile = "ebook_sample.xlsx";
 
@@ -1225,15 +1184,39 @@ public class EbookAction extends GenericCRUDActionFull<Ebook> {
 		return XLSX;
 	}
 
-	// 判斷文件類型
-	public Workbook createWorkBook(InputStream is) throws IOException {
-		if (fileFileName[0].toLowerCase().endsWith("xls")) {
-			return new HSSFWorkbook(is);
+	public boolean isIsbn(long isbnNum) {
+		if (isbnNum >= 9780000000000l && isbnNum < 9800000000000l) {
+			String isbn = "" + isbnNum;
+			int sum = Integer.parseInt(isbn.substring(0, 1)) * 1
+					+ Integer.parseInt(isbn.substring(1, 2)) * 3
+					+ Integer.parseInt(isbn.substring(2, 3)) * 1
+					+ Integer.parseInt(isbn.substring(3, 4)) * 3
+					+ Integer.parseInt(isbn.substring(4, 5)) * 1
+					+ Integer.parseInt(isbn.substring(5, 6)) * 3
+					+ Integer.parseInt(isbn.substring(6, 7)) * 1
+					+ Integer.parseInt(isbn.substring(7, 8)) * 3
+					+ Integer.parseInt(isbn.substring(8, 9)) * 1
+					+ Integer.parseInt(isbn.substring(9, 10)) * 3
+					+ Integer.parseInt(isbn.substring(10, 11)) * 1
+					+ Integer.parseInt(isbn.substring(11, 12)) * 3;
+
+			int remainder = sum % 10;
+			int num = 10 - remainder;
+
+			if (num == 10) {
+				if (Integer.parseInt(isbn.substring(12)) != 0) {
+					return false;
+				}
+			} else {
+				if (Integer.parseInt(isbn.substring(12)) != num) {
+					return false;
+				}
+			}
+
+		} else {
+			return false;
 		}
-		if (fileFileName[0].toLowerCase().endsWith("xlsx")) {
-			return new XSSFWorkbook(is);
-		}
-		return null;
+		return true;
 	}
 
 	public boolean hasEntity() throws Exception {
@@ -1248,6 +1231,17 @@ public class EbookAction extends GenericCRUDActionFull<Ebook> {
 		}
 
 		return true;
+	}
+
+	// 判斷文件類型
+	public Workbook createWorkBook(InputStream is) throws IOException {
+		if (fileFileName[0].toLowerCase().endsWith("xls")) {
+			return new HSSFWorkbook(is);
+		}
+		if (fileFileName[0].toLowerCase().endsWith("xlsx")) {
+			return new XSSFWorkbook(is);
+		}
+		return null;
 	}
 
 	/**

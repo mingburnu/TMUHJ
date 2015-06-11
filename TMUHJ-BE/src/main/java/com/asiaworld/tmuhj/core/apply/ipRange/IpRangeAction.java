@@ -31,26 +31,22 @@ public class IpRangeAction extends GenericCRUDActionFull<IpRange> {
 
 	@Override
 	protected void validateSave() throws Exception {
-		String ipPattern = "^([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\."
-				+ "([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\."
-				+ "([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\."
-				+ "([01]?\\d\\d?|2[0-4]\\d|25[0-5])$";
+		if (customerService.getBySerNo(getEntity().getCustomer().getSerNo()) == null) {
+			errorMessages.add("could not execute statement");
+		}
 
 		if (StringUtils.isNotBlank(getEntity().getIpRangeStart())
 				&& StringUtils.isNotBlank(getEntity().getIpRangeEnd())) {
-			if (!Pattern.compile(ipPattern)
-					.matcher(getEntity().getIpRangeStart()).matches()) {
+			if (!isIp(getEntity().getIpRangeStart())) {
 				errorMessages.add("IP起值輸入格式錯誤");
 			}
-			if (!Pattern.compile(ipPattern)
-					.matcher(getEntity().getIpRangeEnd()).matches()) {
-				errorMessages.add("IP迄值輸入格式錯誤");
+
+			if (!isIp(getEntity().getIpRangeEnd())) {
+				errorMessages.add("IP起值輸入格式錯誤");
 			}
 
-			if (Pattern.compile(ipPattern)
-					.matcher(getEntity().getIpRangeStart()).matches()
-					&& Pattern.compile(ipPattern)
-							.matcher(getEntity().getIpRangeEnd()).matches()) {
+			if (isIp(getEntity().getIpRangeStart())
+					&& isIp(getEntity().getIpRangeEnd())) {
 				String[] ipStartNum = getEntity().getIpRangeStart()
 						.split("\\.");
 				String[] ipEndNum = getEntity().getIpRangeEnd().split("\\.");
@@ -96,11 +92,10 @@ public class IpRangeAction extends GenericCRUDActionFull<IpRange> {
 
 	@Override
 	protected void validateUpdate() throws Exception {
-		String ipPattern = "^([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\."
-				+ "([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\."
-				+ "([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\."
-				+ "([01]?\\d\\d?|2[0-4]\\d|25[0-5])$";
-
+		if (customerService.getBySerNo(getEntity().getCustomer().getSerNo()) == null) {
+			errorMessages.add("could not execute statement");
+		}
+		
 		if (!ipRangeService.isLegalEntity(initDataSet())) {
 			errorMessages.add("Target must not be null");
 
@@ -111,19 +106,16 @@ public class IpRangeAction extends GenericCRUDActionFull<IpRange> {
 
 		if (StringUtils.isNotBlank(getEntity().getIpRangeStart())
 				&& StringUtils.isNotBlank(getEntity().getIpRangeEnd())) {
-			if (!Pattern.compile(ipPattern)
-					.matcher(getEntity().getIpRangeStart()).matches()) {
+			if (!isIp(getEntity().getIpRangeStart())) {
 				errorMessages.add("IP起值輸入格式錯誤");
 			}
-			if (!Pattern.compile(ipPattern)
-					.matcher(getEntity().getIpRangeEnd()).matches()) {
-				errorMessages.add("IP迄值輸入格式錯誤");
+
+			if (!isIp(getEntity().getIpRangeEnd())) {
+				errorMessages.add("IP起值輸入格式錯誤");
 			}
 
-			if (Pattern.compile(ipPattern)
-					.matcher(getEntity().getIpRangeStart()).matches()
-					&& Pattern.compile(ipPattern)
-							.matcher(getEntity().getIpRangeEnd()).matches()) {
+			if (isIp(getEntity().getIpRangeStart())
+					&& isIp(getEntity().getIpRangeEnd())) {
 				String[] ipStartNum = getEntity().getIpRangeStart()
 						.split("\\.");
 				String[] ipEndNum = getEntity().getIpRangeEnd().split("\\.");
@@ -250,40 +242,46 @@ public class IpRangeAction extends GenericCRUDActionFull<IpRange> {
 		}
 	}
 
-	public boolean isRepeat(String ipStart, String ipEnd,
-			List<IpRange> allIpList) {
+	public boolean isIp(String ip) {
+		String ipPattern = "^([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\."
+				+ "([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\."
+				+ "([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\."
+				+ "([01]?\\d\\d?|2[0-4]\\d|25[0-5])$";
 
+		if (Pattern.compile(ipPattern).matcher(ip).matches()) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	public boolean isPrivateIp(String ipStart, String ipEnd) {
 		String[] ipStartNum = ipStart.split("\\.");
 		String[] ipEndNum = ipEnd.split("\\.");
-		List<Integer> entityIpRange = new ArrayList<Integer>();
-		for (int i = Integer.parseInt(ipStartNum[2]) * 1000
-				+ Integer.parseInt(ipStartNum[3]); i < Integer
-				.parseInt(ipEndNum[2]) * 1000 + Integer.parseInt(ipEndNum[3]); i++) {
-			entityIpRange.add(i);
+
+		// 10.0.0.0~10.255.255.255
+		if (ipStartNum[0].equals("10") && ipEndNum[0].equals("10")) {
+			return true;
 		}
 
-		for (int i = 0; i < allIpList.size(); i++) {
-			String[] existIpStartNum = allIpList.get(i).getIpRangeStart()
-					.split("\\.");
-			String[] existIpEndNum = allIpList.get(i).getIpRangeStart()
-					.split("\\.");
-			if (ipStartNum[0].equals(existIpStartNum[0])
-					&& ipStartNum[1].equals(existIpStartNum[1])) {
-
-				for (int j = 0; j < entityIpRange.size(); j++) {
-					if (entityIpRange.get(j) > Integer
-							.parseInt(existIpStartNum[2])
-							* 1000
-							+ Integer.parseInt(existIpStartNum[3])
-							&& entityIpRange.get(j) > Integer
-									.parseInt(existIpEndNum[2])
-									* 1000
-									+ Integer.parseInt(existIpEndNum[3])) {
-						return true;
-					}
-				}
+		// 172.16.0.0~172.31.255.255
+		if (ipStartNum[0].equals("172") && ipEndNum[0].equals("172")) {
+			if (Integer.parseInt(ipStartNum[1]) >= 16
+					&& Integer.parseInt(ipStartNum[1]) <= 31) {
+				return true;
+			}
+			if (Integer.parseInt(ipEndNum[1]) >= 16
+					&& Integer.parseInt(ipEndNum[1]) <= 31) {
+				return true;
 			}
 		}
+
+		// 192.168.0.0~192.168.255.255
+		if (ipStartNum[0].equals("192") && ipEndNum[0].equals("192")
+				&& ipStartNum[0].equals("168") && ipEndNum[0].equals("168")) {
+			return true;
+		}
+
 		return false;
 	}
 
@@ -327,35 +325,5 @@ public class IpRangeAction extends GenericCRUDActionFull<IpRange> {
 			}
 		}
 		return null;
-	}
-
-	public boolean isPrivateIp(String ipStart, String ipEnd) {
-		String[] ipStartNum = ipStart.split("\\.");
-		String[] ipEndNum = ipEnd.split("\\.");
-
-		// 10.0.0.0~10.255.255.255
-		if (ipStartNum[0].equals("10") && ipEndNum[0].equals("10")) {
-			return true;
-		}
-
-		// 172.16.0.0~172.31.255.255
-		if (ipStartNum[0].equals("172") && ipEndNum[0].equals("172")) {
-			if (Integer.parseInt(ipStartNum[1]) >= 16
-					&& Integer.parseInt(ipStartNum[1]) <= 31) {
-				return true;
-			}
-			if (Integer.parseInt(ipEndNum[1]) >= 16
-					&& Integer.parseInt(ipEndNum[1]) <= 31) {
-				return true;
-			}
-		}
-
-		// 192.168.0.0~192.168.255.255
-		if (ipStartNum[0].equals("192") && ipEndNum[0].equals("192")
-				&& ipStartNum[0].equals("168") && ipEndNum[0].equals("168")) {
-			return true;
-		}
-
-		return false;
 	}
 }
