@@ -77,8 +77,6 @@ public class CustomerAction extends GenericCRUDActionFull<Customer> {
 
 	@Override
 	protected void validateSave() throws Exception {
-		String emailPattern = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@"
-				+ "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
 		if (StringUtils.isBlank(getEntity().getName())) {
 			errorMessages.add("用戶名稱不可空白");
 		} else {
@@ -93,8 +91,7 @@ public class CustomerAction extends GenericCRUDActionFull<Customer> {
 		}
 
 		if (StringUtils.isNotEmpty(getEntity().getEmail())) {
-			if (!Pattern.compile(emailPattern).matcher(getEntity().getEmail())
-					.matches()) {
+			if (!isEmail(getEntity().getEmail())) {
 				errorMessages.add("email格式不正確");
 			}
 		}
@@ -110,16 +107,12 @@ public class CustomerAction extends GenericCRUDActionFull<Customer> {
 
 	@Override
 	protected void validateUpdate() throws Exception {
-		String emailPattern = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@"
-				+ "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
-
 		if (!hasEntity()) {
 			errorMessages.add("Target must not be null");
 		}
 
 		if (StringUtils.isNotEmpty(getEntity().getEmail())) {
-			if (!Pattern.compile(emailPattern).matcher(getEntity().getEmail())
-					.matches()) {
+			if (!isEmail(getEntity().getEmail())) {
 				errorMessages.add("email格式不正確");
 			}
 		}
@@ -463,11 +456,7 @@ public class CustomerAction extends GenericCRUDActionFull<Customer> {
 						}
 
 						if (StringUtils.isNotEmpty(customer.getEmail())) {
-
-							String emailPattern = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@"
-									+ "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
-							if (!Pattern.compile(emailPattern)
-									.matcher(customer.getEmail()).matches()) {
+							if (!isEmail(customer.getEmail())) {
 								customer.setEmail(null);
 							}
 						}
@@ -721,15 +710,11 @@ public class CustomerAction extends GenericCRUDActionFull<Customer> {
 		return XLSX;
 	}
 
-	// 判斷文件類型
-	public Workbook createWorkBook(InputStream is) throws IOException {
-		if (fileFileName[0].toLowerCase().endsWith("xls")) {
-			return new HSSFWorkbook(is);
-		}
-		if (fileFileName[0].toLowerCase().endsWith("xlsx")) {
-			return new XSSFWorkbook(is);
-		}
-		return null;
+	public boolean isEmail(String email) {
+		String emailPattern = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@"
+				+ "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
+
+		return Pattern.compile(emailPattern).matcher(email).matches();
 	}
 
 	public boolean hasEntity() throws Exception {
@@ -744,6 +729,17 @@ public class CustomerAction extends GenericCRUDActionFull<Customer> {
 		}
 
 		return true;
+	}
+
+	// 判斷文件類型
+	public Workbook createWorkBook(InputStream is) throws IOException {
+		if (fileFileName[0].toLowerCase().endsWith("xls")) {
+			return new HSSFWorkbook(is);
+		}
+		if (fileFileName[0].toLowerCase().endsWith("xlsx")) {
+			return new XSSFWorkbook(is);
+		}
+		return null;
 	}
 
 	/**

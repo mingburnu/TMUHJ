@@ -59,11 +59,11 @@
 			<table cellspacing="1" class="detail-table">
 				<tbody>
 					<tr>
-						<th width="130">資料庫中文題名<span class="required">(&#8226;)</span></th>
+						<th width="130">資料庫中文題名</th>
 						<td><c:out value="${entity.dbChtTitle }" /></td>
 					</tr>
 					<tr>
-						<th width="130">資料庫英文題名<span class="required">(&#8226;)</span></th>
+						<th width="130">資料庫英文題名</th>
 						<td><c:out value="${entity.dbEngTitle }" /></td>
 					</tr>
 					<tr>

@@ -27,11 +27,10 @@ public class DatabaseService extends GenericServiceFull<Database> {
 		Database entity = ds.getEntity();
 		DsRestrictions restrictions = DsBeanFactory.getDsRestrictions();
 
-		if (StringUtils.isNotEmpty(entity.getDbChtTitle())) {
+		if (StringUtils.isNotBlank(entity.getDbChtTitle())) {
 			restrictions.likeIgnoreCase("dbChtTitle", entity.getDbChtTitle(),
 					MatchMode.ANYWHERE);
-		}
-		if (StringUtils.isNotEmpty(entity.getDbEngTitle())) {
+		} else if (StringUtils.isNotBlank(entity.getDbEngTitle())) {
 			restrictions.likeIgnoreCase("dbEngTitle", entity.getDbEngTitle(),
 					MatchMode.ANYWHERE);
 		}
@@ -51,7 +50,7 @@ public class DatabaseService extends GenericServiceFull<Database> {
 		restrictions.customCriterion(Restrictions.and(
 				Restrictions.ilike("dbChtTitle", dbChtTitle, MatchMode.EXACT),
 				Restrictions.ilike("dbEngTitle", dbEngTitle, MatchMode.EXACT)));
-		
+
 		if (dao.findByRestrictions(restrictions).size() > 0) {
 			return (dao.findByRestrictions(restrictions).get(0)).getSerNo();
 		} else {
@@ -61,9 +60,10 @@ public class DatabaseService extends GenericServiceFull<Database> {
 
 	public long getDatSerNoByChtName(String dbChtTitle) throws Exception {
 		DsRestrictions restrictions = DsBeanFactory.getDsRestrictions();
-		
+
 		if (StringUtils.isNotBlank(dbChtTitle)) {
-			restrictions.likeIgnoreCase("dbChtTitle", dbChtTitle.trim(), MatchMode.EXACT);
+			restrictions.likeIgnoreCase("dbChtTitle", dbChtTitle.trim(),
+					MatchMode.EXACT);
 		} else {
 			return 0;
 		}
@@ -77,13 +77,14 @@ public class DatabaseService extends GenericServiceFull<Database> {
 
 	public long getDatSerNoByEngName(String dbEngTitle) throws Exception {
 		DsRestrictions restrictions = DsBeanFactory.getDsRestrictions();
-		
+
 		if (StringUtils.isNotBlank(dbEngTitle)) {
-			restrictions.likeIgnoreCase("dbEngTitle", dbEngTitle.trim(), MatchMode.EXACT);
+			restrictions.likeIgnoreCase("dbEngTitle", dbEngTitle.trim(),
+					MatchMode.EXACT);
 		} else {
 			return 0;
 		}
-		
+
 		if (dao.findByRestrictions(restrictions).size() > 0) {
 			return (dao.findByRestrictions(restrictions).get(0)).getSerNo();
 		} else {

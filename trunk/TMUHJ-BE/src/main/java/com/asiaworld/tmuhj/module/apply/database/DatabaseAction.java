@@ -15,7 +15,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -116,10 +115,7 @@ public class DatabaseAction extends GenericCRUDActionFull<Database> {
 		}
 
 		if (StringUtils.isNotEmpty(getEntity().getUrl())) {
-			String regex = "(@)?(href=')?(HREF=')?(HREF=\")?(href=\")?(http://)?(https://)?[a-zA-Z_0-9\\-]+(\\.\\w[`~!@#$%^&*()_-{[}]|;:<>?,./a-zA-Z0-9\u0000-\uffff\\+=]+)+(/[#&\\n\\-=?\\+\\%/\\.\\w]+)?";
-			Pattern pattern = Pattern.compile(regex);
-			Matcher matcher = pattern.matcher(getEntity().getUrl());
-			if (!matcher.matches()) {
+			if (!isURL(getEntity().getUrl())) {
 				errorMessages.add("URL格式不正確");
 			}
 		}
@@ -203,10 +199,7 @@ public class DatabaseAction extends GenericCRUDActionFull<Database> {
 		}
 
 		if (StringUtils.isNotEmpty(getEntity().getUrl())) {
-			String regex = "(@)?(href=')?(HREF=')?(HREF=\")?(href=\")?(http://)?(https://)?[a-zA-Z_0-9\\-]+(\\.\\w[`~!@#$%^&*()_-{[}]|;:<>?,./a-zA-Z0-9\u0000-\uffff\\+=]+)+(/[#&\\n\\-=?\\+\\%/\\.\\w]+)?";
-			Pattern pattern = Pattern.compile(regex);
-			Matcher matcher = pattern.matcher(getEntity().getUrl());
-			if (!matcher.matches()) {
+			if (!isURL(getEntity().getUrl())) {
 				errorMessages.add("URL格式不正確");
 			}
 		}
@@ -622,37 +615,32 @@ public class DatabaseAction extends GenericCRUDActionFull<Database> {
 		getRequest().setAttribute("viewSerNo",
 				getRequest().getParameter("viewSerNo"));
 
-		if (getRequest().getParameter("viewSerNo") == null
-				|| !NumberUtils
-						.isDigits(getRequest().getParameter("viewSerNo"))) {
-			addActionError("流水號不正確");
-		} else {
+		if (StringUtils.isNotBlank(getRequest().getParameter("viewSerNo"))
+				&& NumberUtils.isDigits(getRequest().getParameter("viewSerNo"))) {
+
 			database = databaseService.getBySerNo(Long.parseLong(getRequest()
 					.getParameter("viewSerNo")));
-			if (database == null) {
-				addActionError("資料庫不存在");
-			} else {
+			if (database != null) {
 				resourcesUnion = resourcesUnionService.getByObjSerNo(
 						database.getSerNo(), Database.class);
+
+				database.setResourcesBuyers(resourcesUnion.getResourcesBuyers());
+
+				List<ResourcesUnion> resourceUnions = resourcesUnionService
+						.getResourcesUnionsByObj(database, Database.class);
+				List<Customer> customers = new ArrayList<Customer>();
+
+				Iterator<ResourcesUnion> iterator = resourceUnions.iterator();
+				while (iterator.hasNext()) {
+					resourcesUnion = iterator.next();
+					customers.add(resourcesUnion.getCustomer());
+				}
+
+				database.setCustomers(customers);
+				setEntity(database);
 			}
 		}
 
-		if (!hasActionErrors()) {
-			database.setResourcesBuyers(resourcesUnion.getResourcesBuyers());
-
-			List<ResourcesUnion> resourceUnions = resourcesUnionService
-					.getResourcesUnionsByObj(database, Database.class);
-			List<Customer> customers = new ArrayList<Customer>();
-
-			Iterator<ResourcesUnion> iterator = resourceUnions.iterator();
-			while (iterator.hasNext()) {
-				resourcesUnion = iterator.next();
-				customers.add(resourcesUnion.getCustomer());
-			}
-
-			database.setCustomers(customers);
-			setEntity(database);
-		}
 		return VIEW;
 	}
 
@@ -914,13 +902,10 @@ public class DatabaseAction extends GenericCRUDActionFull<Database> {
 				}
 
 				if (StringUtils.isNotEmpty(database.getUrl())) {
-						String regex = "(@)?(href=')?(HREF=')?(HREF=\")?(href=\")?(http://)?(https://)?[a-zA-Z_0-9\\-]+(\\.\\w[`~!@#$%^&*()_-{[}]|;:<>?,./a-zA-Z0-9\u0000-\uffff\\+=]+)+(/[#&\\n\\-=?\\+\\%/\\.\\w]+)?";
-						Pattern pattern = Pattern.compile(regex);
-						Matcher matcher = pattern.matcher(database.getUrl());
-						if (!matcher.matches()) {
-							database.setUrl(null);
-						}
+					if (!isURL(database.getUrl())) {
+						database.setUrl(null);
 					}
+				}
 
 				if (database.getExistStatus().equals("")) {
 					database.setExistStatus("正常");
@@ -1217,15 +1202,10 @@ public class DatabaseAction extends GenericCRUDActionFull<Database> {
 		return XLSX;
 	}
 
-	// 判斷文件類型
-	public Workbook createWorkBook(InputStream is) throws IOException {
-		if (fileFileName[0].toLowerCase().endsWith("xls")) {
-			return new HSSFWorkbook(is);
-		}
-		if (fileFileName[0].toLowerCase().endsWith("xlsx")) {
-			return new XSSFWorkbook(is);
-		}
-		return null;
+	public boolean isURL(String url) {
+		String urlPattern = "(@)?(href=')?(HREF=')?(HREF=\")?(href=\")?(http://)?(https://)?[a-zA-Z_0-9\\-]+(\\.\\w[`~!@#$%^&*()_-{[}]|;:<>?,./a-zA-Z0-9\u0000-\uffff\\+=]+)+(/[#&\\n\\-=?\\+\\%/\\.\\w]+)?";
+
+		return Pattern.compile(urlPattern).matcher(url).matches();
 	}
 
 	public boolean hasEntity() throws Exception {
@@ -1240,6 +1220,17 @@ public class DatabaseAction extends GenericCRUDActionFull<Database> {
 		}
 
 		return true;
+	}
+
+	// 判斷文件類型
+	public Workbook createWorkBook(InputStream is) throws IOException {
+		if (fileFileName[0].toLowerCase().endsWith("xls")) {
+			return new HSSFWorkbook(is);
+		}
+		if (fileFileName[0].toLowerCase().endsWith("xlsx")) {
+			return new XSSFWorkbook(is);
+		}
+		return null;
 	}
 
 	/**

@@ -169,10 +169,10 @@ function goImport(){
 								<c:choose>
 									<c:when test="${login.role.role != '管理員' }">
 										<c:set var="customerName">
-											<c:out value="${entity.customer.name }">
+											<c:out value="${entity.customerName }">
 											</c:out>
 										</c:set>
-										<input type="text" name="entity.customer.name" maxlength="20"
+										<input type="text" name="entity.customerName" maxlength="20"
 											id="search" class="input_text" value="${customerName }">
 									</c:when>
 									<c:otherwise>

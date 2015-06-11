@@ -66,16 +66,19 @@ public class AccountNumber extends GenericEntityFull {
 	@Column(name = "status")
 	@Enumerated(EnumType.STRING)
 	private Status status;
-	
+
 	/**
 	 * 用戶流水號
 	 */
 	@ManyToOne(cascade = CascadeType.DETACH)
 	@JoinColumn(name = "cus_serNo", nullable = false)
 	private Customer customer;
-	
+
 	@Transient
 	private String existStatus;
+
+	@Transient
+	private String customerName;
 
 	/**
 	 * @return the userId
@@ -154,7 +157,8 @@ public class AccountNumber extends GenericEntityFull {
 	}
 
 	/**
-	 * @param customer the customer to set
+	 * @param customer
+	 *            the customer to set
 	 */
 	public void setCustomer(Customer customer) {
 		this.customer = customer;
@@ -168,10 +172,26 @@ public class AccountNumber extends GenericEntityFull {
 	}
 
 	/**
-	 * @param existStatus the existStatus to set
+	 * @param existStatus
+	 *            the existStatus to set
 	 */
 	public void setExistStatus(String existStatus) {
 		this.existStatus = existStatus;
+	}
+
+	/**
+	 * @return the customerName
+	 */
+	public String getCustomerName() {
+		return customerName;
+	}
+
+	/**
+	 * @param customerName
+	 *            the customerName to set
+	 */
+	public void setCustomerName(String customerName) {
+		this.customerName = customerName;
 	}
 
 	public AccountNumber() {
@@ -179,9 +199,8 @@ public class AccountNumber extends GenericEntityFull {
 		// TODO Auto-generated constructor stub
 	}
 
-	public AccountNumber(String userId, String userPw,
-			String userName, Role role, Status status, Customer customer,
-			String existStatus) {
+	public AccountNumber(String userId, String userPw, String userName,
+			Role role, Status status, Customer customer, String existStatus) {
 		super();
 		this.userId = userId;
 		this.userPw = userPw;

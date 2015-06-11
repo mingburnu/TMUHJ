@@ -25,11 +25,10 @@ public class EbookService extends GenericServiceFull<Ebook> {
 		Ebook entity = ds.getEntity();
 		DsRestrictions restrictions = DsBeanFactory.getDsRestrictions();
 
-		if (StringUtils.isNotEmpty(entity.getBookName())) {
+		if (StringUtils.isNotBlank(entity.getBookName())) {
 			restrictions.likeIgnoreCase("bookName", entity.getBookName(),
 					MatchMode.ANYWHERE);
-		}
-		if (entity.getIsbn() != null) {
+		} else if (entity.getIsbn() != null) {
 			restrictions.eq("isbn", entity.getIsbn());
 		}
 
@@ -45,7 +44,7 @@ public class EbookService extends GenericServiceFull<Ebook> {
 	public long getEbkSerNoByIsbn(long isbn) throws Exception {
 		DsRestrictions restrictions = DsBeanFactory.getDsRestrictions();
 		restrictions.eq("isbn", isbn);
-		
+
 		if (dao.findByRestrictions(restrictions).size() > 0) {
 			return dao.findByRestrictions(restrictions).get(0).getSerNo();
 		} else {

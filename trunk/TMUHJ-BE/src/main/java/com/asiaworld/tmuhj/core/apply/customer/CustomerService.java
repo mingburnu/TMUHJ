@@ -32,18 +32,12 @@ public class CustomerService extends GenericServiceFull<Customer> {
 		Customer entity = ds.getEntity();
 		DsRestrictions restrictions = DsBeanFactory.getDsRestrictions();
 
-		if (StringUtils.isNotEmpty(entity.getEngName())
-				&& StringUtils.isNotBlank(entity.getEngName())) {
+		if (StringUtils.isNotBlank(entity.getEngName())) {
 			restrictions.likeIgnoreCase("engName", entity.getEngName(),
 					MatchMode.ANYWHERE);
-		} else if (StringUtils.isNotEmpty(entity.getName())
-				&& StringUtils.isNotBlank(entity.getName())) {
+		} else if (StringUtils.isNotBlank(entity.getName())) {
 			restrictions.likeIgnoreCase("name", entity.getName(),
 					MatchMode.ANYWHERE);
-		}
-
-		if (entity.getSerNo() != null && entity.getSerNo() > 0) {
-			restrictions.eq("serNo", entity.getSerNo());
 		}
 
 		restrictions.addOrderAsc("serNo");
@@ -83,6 +77,13 @@ public class CustomerService extends GenericServiceFull<Customer> {
 		}
 	}
 
+	public List<Customer> getCustomersByName(String name) throws Exception {
+		DsRestrictions restrictions = DsBeanFactory.getDsRestrictions();
+		restrictions.likeIgnoreCase("name", name.trim(), MatchMode.ANYWHERE);
+
+		return dao.findByRestrictions(restrictions);
+	}
+
 	public List<Customer> getAllCustomers() throws Exception {
 		DsRestrictions restrictions = DsBeanFactory.getDsRestrictions();
 
@@ -90,6 +91,6 @@ public class CustomerService extends GenericServiceFull<Customer> {
 	}
 
 	public boolean deleteOwnerObj(long cusSerNo) {
-		 return dao.delRelatedObj(cusSerNo);
+		return dao.delRelatedObj(cusSerNo);
 	}
 }
