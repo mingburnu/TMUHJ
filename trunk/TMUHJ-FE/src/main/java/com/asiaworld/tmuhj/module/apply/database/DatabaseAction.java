@@ -80,12 +80,14 @@ public class DatabaseAction extends GenericCRUDActionFull<Database> {
 		getRequest().setAttribute("keywords", keywords);
 		getRequest().setAttribute("list", "apply.database.list.action");
 
+		getEntity().setKeywords(keywords);
+
 		DataSet<Database> ds = initDataSet();
 		ds.setPager(Pager.getChangedPager(
 				getRequest().getParameter("recordPerPage"), getRequest()
 						.getParameter("recordPoint"), ds.getPager()));
 
-		ds = databaseService.getBySql(ds, keywords);
+		ds = databaseService.getByRestrictions(ds);
 		setDs(ds);
 		return "database";
 	}
@@ -151,9 +153,9 @@ public class DatabaseAction extends GenericCRUDActionFull<Database> {
 		ds.setPager(Pager.getChangedPager(
 				getRequest().getParameter("recordPerPage"), getRequest()
 						.getParameter("recordPoint"), ds.getPager()));
-		ds = databaseService.getByRestrictions(ds);
+		ds = databaseService.getByOption(ds);
 		setDs(ds);
-		
+
 		return "database";
 	}
 
@@ -208,7 +210,7 @@ public class DatabaseAction extends GenericCRUDActionFull<Database> {
 								.replace("？", "?").replace("＆", "&"));
 			}
 		}
-		
+
 		return "d-detail";
 	}
 

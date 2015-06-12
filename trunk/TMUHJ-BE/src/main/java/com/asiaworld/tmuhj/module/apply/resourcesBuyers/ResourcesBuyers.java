@@ -132,19 +132,6 @@ public class ResourcesBuyers extends GenericEntityFull {
 		this.dbEngTitle = dbEngTitle;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Object#toString()
-	 */
-	@Override
-	public String toString() {
-		return "ResourcesBuyers [startDate=" + startDate + ", maturityDate="
-				+ maturityDate + ", rCategory=" + rCategory + ", rType="
-				+ rType + ", dbChtTitle=" + dbChtTitle + ", dbEngTitle="
-				+ dbEngTitle + "]";
-	}
-
 	public ResourcesBuyers() {
 		super();
 		// TODO Auto-generated constructor stub

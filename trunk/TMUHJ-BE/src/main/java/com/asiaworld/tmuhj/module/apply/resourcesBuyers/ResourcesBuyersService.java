@@ -12,6 +12,7 @@ import com.asiaworld.tmuhj.core.util.DsBeanFactory;
 
 @Service
 public class ResourcesBuyersService extends GenericServiceFull<ResourcesBuyers> {
+
 	@Autowired
 	private ResourcesBuyersDao dao;
 

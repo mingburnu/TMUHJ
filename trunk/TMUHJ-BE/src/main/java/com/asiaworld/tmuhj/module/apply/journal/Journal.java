@@ -343,23 +343,6 @@ public class Journal extends GenericEntityFull {
 		this.existStatus = existStatus;
 	}
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
-	@Override
-	public String toString() {
-		return "Journal [chineseTitle=" + chineseTitle + ", englishTitle="
-				+ englishTitle + ", abbreviationTitle=" + abbreviationTitle
-				+ ", titleEvolution=" + titleEvolution + ", issn=" + issn
-				+ ", languages=" + languages + ", publishName=" + publishName
-				+ ", publishYear=" + publishYear + ", caption=" + caption
-				+ ", url=" + url + ", numB=" + numB + ", publication="
-				+ publication + ", congressClassification="
-				+ congressClassification + ", version=" + version
-				+ ", resourcesBuyers=" + resourcesBuyers + ", customers="
-				+ customers + ", existStatus=" + existStatus + "]";
-	}
-
 	public Journal() {
 		super();
 		// TODO Auto-generated constructor stub

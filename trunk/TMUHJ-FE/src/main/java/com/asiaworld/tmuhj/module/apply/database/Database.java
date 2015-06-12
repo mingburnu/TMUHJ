@@ -248,19 +248,4 @@ public class Database extends GenericEntityFull {
 		this.keywords = keywords;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Object#toString()
-	 */
-	@Override
-	public String toString() {
-		return "Database [dbChtTitle=" + dbChtTitle + ", dbEngTitle="
-				+ dbEngTitle + ", languages=" + languages
-				+ ", includedSpecies=" + includedSpecies + ", publishName="
-				+ publishName + ", content=" + content + ", url=" + url
-				+ ", topic=" + topic + ", classification=" + classification
-				+ ", indexedYears=" + indexedYears + ", option=" + option
-				+ ", keywords=" + keywords + "]";
-	}
 }

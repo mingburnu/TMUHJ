@@ -77,10 +77,10 @@ public class Ebook extends GenericEntityFull {
 
 	@Transient
 	private String option;
-	
+
 	@Transient
 	private String keywords;
-	
+
 	/**
 	 * @return the bookName
 	 */
@@ -299,7 +299,8 @@ public class Ebook extends GenericEntityFull {
 	}
 
 	/**
-	 * @param option the option to set
+	 * @param option
+	 *            the option to set
 	 */
 	public void setOption(String option) {
 		this.option = option;
@@ -313,24 +314,11 @@ public class Ebook extends GenericEntityFull {
 	}
 
 	/**
-	 * @param keywords the keywords to set
+	 * @param keywords
+	 *            the keywords to set
 	 */
 	public void setKeywords(String keywords) {
 		this.keywords = keywords;
 	}
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
-	@Override
-	public String toString() {
-		return "Ebook [bookName=" + bookName + ", isbn=" + isbn
-				+ ", publishName=" + publishName + ", autherName=" + autherName
-				+ ", authers=" + authers + ", uppeName=" + uppeName
-				+ ", pubDate=" + pubDate + ", languages=" + languages
-				+ ", version=" + version + ", cnClassBzStr=" + cnClassBzStr
-				+ ", bookInfoIntegral=" + bookInfoIntegral + ", url=" + url
-				+ ", style=" + style + ", publication=" + publication
-				+ ", option=" + option + ", keywords=" + keywords + "]";
-	}
 }

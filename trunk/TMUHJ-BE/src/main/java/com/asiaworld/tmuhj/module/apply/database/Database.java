@@ -267,21 +267,6 @@ public class Database extends GenericEntityFull {
 		this.existStatus = existStatus;
 	}
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
-	@Override
-	public String toString() {
-		return "Database [dbChtTitle=" + dbChtTitle + ", dbEngTitle="
-				+ dbEngTitle + ", languages=" + languages
-				+ ", includedSpecies=" + includedSpecies + ", publishName="
-				+ publishName + ", content=" + content + ", url=" + url
-				+ ", topic=" + topic + ", classification=" + classification
-				+ ", indexedYears=" + indexedYears + ", resourcesBuyers="
-				+ resourcesBuyers + ", customers=" + customers
-				+ ", existStatus=" + existStatus + "]";
-	}
-
 	public Database() {
 		super();
 		// TODO Auto-generated constructor stub

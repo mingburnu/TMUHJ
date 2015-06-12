@@ -19,8 +19,8 @@ import com.asiaworld.tmuhj.core.entity.GenericEntityFull;
  * @author Roderick
  * @version 2014/9/29
  */
-public abstract class GenericServiceFull<T extends GenericEntityFull> implements
-		Service<T> {
+public abstract class GenericServiceFull<T extends GenericEntityFull>
+		implements Service<T> {
 
 	protected final transient Logger log = Logger.getLogger(getClass());
 
@@ -103,20 +103,18 @@ public abstract class GenericServiceFull<T extends GenericEntityFull> implements
 	 * @throws Exception
 	 */
 	public void makeUserInfo(List<T> entitys) throws Exception {
-		// for (T entity : entitys) {
-		// if (entity.getCreatedBy() != null
-		// && entity.getLastModifiedBy() != null) {
-		// AccountNumber user = getUserInfo(entity.getCreatedBy());
-		// entity.setCreatedUser(user);
-		//
-		// if (entity.getCreatedBy().equals(entity.getLastModifiedBy())) {
-		// entity.setLastModifiedUser(user);
-		// } else {
-		// entity.setLastModifiedUser(getUserInfo(entity
-		// .getLastModifiedBy()));
-		// }
-		// }
-		// }
+		for (T entity : entitys) {
+			if (entity.getcUid() != null && entity.getuUid() != null) {
+				AccountNumber user = getUserInfo(entity.getcUid());
+				entity.setCreatedUser(user);
+
+				if (entity.getcUid().equals(entity.getuUid())) {
+					entity.setLastModifiedUser(user);
+				} else {
+					entity.setLastModifiedUser(getUserInfo(entity.getuUid()));
+				}
+			}
+		}
 	}
 
 	/**
@@ -126,10 +124,9 @@ public abstract class GenericServiceFull<T extends GenericEntityFull> implements
 	 * @return
 	 * @throws Exception
 	 */
-	public AccountNumber getUserInfo(Long serNo) throws Exception {
-		Assert.notNull(serNo);
-
-		return userDao.findBySerNo(serNo);
+	public AccountNumber getUserInfo(String userId) throws Exception {
+		Assert.notNull(userId);
+		return userDao.findByUserId(userId);
 	}
 
 }
