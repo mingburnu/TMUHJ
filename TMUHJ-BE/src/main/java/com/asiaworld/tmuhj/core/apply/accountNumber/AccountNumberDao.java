@@ -2,7 +2,9 @@ package com.asiaworld.tmuhj.core.apply.accountNumber;
 
 import java.util.Map;
 
+import org.hibernate.Criteria;
 import org.hibernate.Query;
+import org.hibernate.criterion.Restrictions;
 import org.hibernate.metadata.ClassMetadata;
 import org.springframework.stereotype.Repository;
 
@@ -16,6 +18,13 @@ import com.asiaworld.tmuhj.core.dao.GenericHibernateDaoFull;
  */
 @Repository
 public class AccountNumberDao extends GenericHibernateDaoFull<AccountNumber> {
+
+	public AccountNumber findByUserId(String userId) {
+		Criteria criteria = getSession().createCriteria(AccountNumber.class);
+		Restrictions.eq("userId", userId);
+
+		return (AccountNumber) criteria.list().get(0);
+	}
 
 	public void updateCustomer(AccountNumber accountNumber) {
 		Map<String, ClassMetadata> map = (Map<String, ClassMetadata>) getSession()

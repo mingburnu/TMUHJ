@@ -167,18 +167,6 @@ public class BeLogs extends GenericEntityLog {
 		this.rank = rank;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Object#toString()
-	 */
-	@Override
-	public String toString() {
-		return "BeLogs [actionType=" + actionType + ", accountNumber="
-				+ accountNumber + ", customer=" + customer + ", start=" + start
-				+ ", end=" + end + ", count=" + count + ", rank=" + rank + "]";
-	}
-
 	public BeLogs() {
 		super();
 		// TODO Auto-generated constructor stub

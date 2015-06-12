@@ -176,33 +176,6 @@ public class Customer extends GenericEntityFull {
 		this.existStatus = existStatus;
 	}
 
-	// /**
-	// * @return the accountNumbers
-	// */
-	// public Set<AccountNumber> getAccountNumbers() {
-	// return accountNumbers;
-	// }
-	//
-	// /**
-	// * @param accountNumbers the accountNumbers to set
-	// */
-	// public void setAccountNumbers(Set<AccountNumber> accountNumbers) {
-	// this.accountNumbers = accountNumbers;
-	// }
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Object#toString()
-	 */
-	@Override
-	public String toString() {
-		return "Customer [name=" + name + ", engName=" + engName + ", address="
-				+ address + ", email=" + email + ", tel=" + tel
-				+ ", contactUserName=" + contactUserName + ", memo=" + memo
-				+ ", existStatus=" + existStatus + "]";
-	}
-
 	public Customer() {
 		super();
 		// TODO Auto-generated constructor stub

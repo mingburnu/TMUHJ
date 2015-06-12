@@ -6,6 +6,8 @@ import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.CharUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.joda.time.LocalDateTime;
@@ -94,86 +96,98 @@ public class Test {
 			sql[i] = sql[i].replace(",   '		", ",   '");
 			// System.out.println(sql[i]);
 		}
-		
+
 		System.out.println(System.getProperty("java.version"));
-		
-		String regex="(@)?(href=')?(HREF=')?(HREF=\")?(href=\")?(http://)?(https://)?[a-zA-Z_0-9\\-]+(\\.\\w[`~!@#$%^&*()_-{[}]|;:<>?,./a-zA-Z0-9\u0000-\uffff\\+=]+)+(/[#&\\n\\-=?\\+\\%/\\.\\w]+)?";
-		Pattern pattern=Pattern.compile(regex);
-		
-		String url="http://";
-		Matcher matcher=pattern.matcher(url);
+
+		String regex = "(@)?(href=')?(HREF=')?(HREF=\")?(href=\")?(http://)?(https://)?[a-zA-Z_0-9\\-]+(\\.\\w[`~!@#$%^&*()_-{[}]|;:<>?,./a-zA-Z0-9\u0000-\uffff\\+=]+)+(/[#&\\n\\-=?\\+\\%/\\.\\w]+)?";
+		Pattern pattern = Pattern.compile(regex);
+
+		String url = "http://";
+		Matcher matcher = pattern.matcher(url);
 		System.out.println(matcher.matches());
-		
-String issn=" ";
+
+		String issn = " ";
 
 		System.out.println(StringUtils.isBlank(issn));
 		System.out.println(StringUtils.isEmpty(issn));
-		
-		Object obj=9;
-		String str="9";
-		long l=9;
-		double d=5.0;
-		StringBuilder sb=new StringBuilder("sb");
+
+		Object obj = 9;
+		String str = "9";
+		long l = 9;
+		double d = 5.0;
+		StringBuilder sb = new StringBuilder("sb");
 		sb.append(110);
 		System.out.println(sb.toString());
-		int cast=(int)d;
+		int cast = (int) d;
 		System.out.println(NumberUtils.isNumber(""));
-		
-		Map<String, Object> map=new TreeMap<String, Object>();
-		map.put("Number",1111);
-		Object object=map.get("Number");
-		Integer num=(Integer) object;
-		System.out.println(num.getClass()+"  "+num);
-		
+
+		Map<String, Object> map = new TreeMap<String, Object>();
+		map.put("Number", 1111);
+		Object object = map.get("Number");
+		Integer num = (Integer) object;
+		System.out.println(num.getClass() + "  " + num);
+
 		LocalDateTime dt1 = LocalDateTime.parse("2013-02-01");
 		LocalDateTime dt2 = LocalDateTime.parse("2013-03-01");
-		
-		LocalDateTime dt3=dt2.plusDays(1);
-		
+
+		LocalDateTime dt3 = dt2.plusDays(1);
+
 		System.out.println(dt2.plusDays(1));
-		String string="cjava SE";
+		String string = "cjava SE";
 		System.out.println(string.contains("java"));
-		
-		regex="((19|20)\\d\\d)-(0?[1-9]|1[012])-(0?[1-9]|[12][0-9]|3[01])";
-		pattern=Pattern.compile(regex);
-		String date="2012-09-12"; 
-		matcher=pattern.matcher(date);
+
+		regex = "((19|20)\\d\\d)-(0?[1-9]|1[012])-(0?[1-9]|[12][0-9]|3[01])";
+		pattern = Pattern.compile(regex);
+		String date = "2012-09-12";
+		matcher = pattern.matcher(date);
 		System.out.println(matcher.matches());
-		
-	
-//	map.remove("Number");
-	System.out.println(map.get("Number"));
-		
-	long maxL=Long.MAX_VALUE;
-	int maxI=Integer.MAX_VALUE;
-	System.out.println(maxI+","+maxL);
-	System.out.println(NumberUtils.isDigits("000"));
-	
-	System.out.println(NumberUtils.isDigits(" 789".trim()));
-	System.out.println(StringUtils.isBlank(null));
-	System.out.println(StringUtils.isEmpty(null));
-	System.out.println(StringUtils.isBlank(""));
-	System.out.println(StringUtils.isEmpty(""));
-	System.out.println(StringUtils.isBlank(" "));
-	System.out.println(StringUtils.isEmpty(" "));
-	System.out.println(StringUtils.isBlank("　　"));
-	System.out.println(StringUtils.isEmpty("　　"));
-//	System.out.println(StringUtils.isBlank(" \t \n"));
-//	System.out.println(StringUtils.isEmpty(" \t \n"));
-//	
-	System.out.println(StringUtils.isNotBlank(null));
-	System.out.println(StringUtils.isNotEmpty(null));
-	System.out.println(StringUtils.isNotBlank(""));
-	System.out.println(StringUtils.isNotEmpty(""));
-	System.out.println(StringUtils.isNotBlank(" "));
-	System.out.println(StringUtils.isNotEmpty(" "));
-	System.out.println(StringUtils.isNotBlank("　　"));
-	System.out.println(StringUtils.isNotEmpty("　　"));
-//	List<Role> li = Arrays.asList(Role.values());
-//	li.remove(0);
-//	List<Role> roleList= new ArrayList<Role>(Arrays.asList(Role.values()));
-//	roleList.remove(0);
-//	System.out.println(roleList);
-	
+
+		// map.remove("Number");
+		System.out.println(map.get("Number"));
+
+		long maxL = Long.MAX_VALUE;
+		int maxI = Integer.MAX_VALUE;
+		System.out.println(maxI + "," + maxL);
+		System.out.println(NumberUtils.isDigits("000"));
+
+		System.out.println(NumberUtils.isDigits(" 789".trim()));
+		System.out.println(StringUtils.isBlank(null));
+		System.out.println(StringUtils.isEmpty(null));
+		System.out.println(StringUtils.isBlank(""));
+		System.out.println(StringUtils.isEmpty(""));
+		System.out.println(StringUtils.isBlank(" "));
+		System.out.println(StringUtils.isEmpty(" "));
+		System.out.println(StringUtils.isBlank("　　"));
+		System.out.println(StringUtils.isEmpty("　　"));
+		// System.out.println(StringUtils.isBlank(" \t \n"));
+		// System.out.println(StringUtils.isEmpty(" \t \n"));
+		//
+		System.out.println(StringUtils.isNotBlank(null));
+		System.out.println(StringUtils.isNotEmpty(null));
+		System.out.println(StringUtils.isNotBlank(""));
+		System.out.println(StringUtils.isNotEmpty(""));
+		System.out.println(StringUtils.isNotBlank(" "));
+		System.out.println(StringUtils.isNotEmpty(" "));
+		System.out.println(StringUtils.isNotBlank("　　"));
+		System.out.println(StringUtils.isNotEmpty("　　"));
+		// List<Role> li = Arrays.asList(Role.values());
+		// li.remove(0);
+		// List<Role> roleList= new
+		// ArrayList<Role>(Arrays.asList(Role.values()));
+		// roleList.remove(0);
+		// System.out.println(roleList);
+
+		String strSplit = "dfs--X";
+		System.out.println(ArrayUtils.isEmpty(strSplit.split(" ")));
+		System.out.println(strSplit.charAt(3) == 'X');
+		System.out.println("978-008-0449784".replace("-", ""));
+
+		String charTest = "9999-987l";
+		boolean charBoolean = charTest.replace("-", "").length() == 8 && NumberUtils
+				.isDigits(charTest.replace("-", "").substring(0, 6))
+				&& (charTest.replace("-", "").charAt(7) == 'x'
+						|| charTest.replace("-", "").charAt(7) == 'X' || CharUtils
+							.isAsciiNumeric(charTest.replace("-", "").charAt(7)));
+		System.out.println(charBoolean);
 	}
 }

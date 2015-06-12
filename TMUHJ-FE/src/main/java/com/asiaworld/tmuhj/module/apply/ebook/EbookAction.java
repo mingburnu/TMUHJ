@@ -69,12 +69,15 @@ public class EbookAction extends GenericCRUDActionFull<Ebook> {
 
 		getRequest().setAttribute("keywords", keywords);
 		getRequest().setAttribute("list", "apply.ebook.list.action");
+
+		getEntity().setKeywords(keywords);
+
 		DataSet<Ebook> ds = initDataSet();
 		ds.setPager(Pager.getChangedPager(
 				getRequest().getParameter("recordPerPage"), getRequest()
 						.getParameter("recordPoint"), ds.getPager()));
 
-		ds = ebookService.getBySql(ds, keywords);
+		ds = ebookService.getByRestrictions(ds);
 		setDs(ds);
 		return "ebook";
 	}
@@ -120,7 +123,7 @@ public class EbookAction extends GenericCRUDActionFull<Ebook> {
 			setDs(ds);
 
 		}
-		
+
 		return "ebook";
 
 	}
@@ -140,9 +143,9 @@ public class EbookAction extends GenericCRUDActionFull<Ebook> {
 		ds.setPager(Pager.getChangedPager(
 				getRequest().getParameter("recordPerPage"), getRequest()
 						.getParameter("recordPoint"), ds.getPager()));
-		ds = ebookService.getByRestrictions(ds);
+		ds = ebookService.getByOption(ds);
 		setDs(ds);
-		
+
 		return "ebook";
 	}
 
@@ -190,7 +193,7 @@ public class EbookAction extends GenericCRUDActionFull<Ebook> {
 								.replace("？", "?").replace("＆", "&"));
 			}
 		}
-		
+
 		return "e-detail";
 	}
 }

@@ -3,7 +3,6 @@ package com.asiaworld.tmuhj.core.apply.customer;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
-import org.hibernate.SessionFactory;
 import org.hibernate.criterion.MatchMode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,9 +16,6 @@ import com.asiaworld.tmuhj.core.util.DsBeanFactory;
 
 @Service
 public class CustomerService extends GenericServiceFull<Customer> {
-
-	@Autowired
-	private SessionFactory sessionFactory;
 
 	@Autowired
 	private CustomerDao dao;

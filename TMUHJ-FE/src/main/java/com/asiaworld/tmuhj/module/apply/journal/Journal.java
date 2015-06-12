@@ -75,10 +75,10 @@ public class Journal extends GenericEntityFull {
 	// 版本
 	@Column(name = "version")
 	private Integer version;
-	
+
 	@Transient
 	private String option;
-	
+
 	@Transient
 	private String keywords;
 
@@ -300,7 +300,8 @@ public class Journal extends GenericEntityFull {
 	}
 
 	/**
-	 * @param option the option to set
+	 * @param option
+	 *            the option to set
 	 */
 	public void setOption(String option) {
 		this.option = option;
@@ -314,25 +315,11 @@ public class Journal extends GenericEntityFull {
 	}
 
 	/**
-	 * @param keywords the keywords to set
+	 * @param keywords
+	 *            the keywords to set
 	 */
 	public void setKeywords(String keywords) {
 		this.keywords = keywords;
 	}
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
-	@Override
-	public String toString() {
-		return "Journal [chineseTitle=" + chineseTitle + ", englishTitle="
-				+ englishTitle + ", abbreviationTitle=" + abbreviationTitle
-				+ ", titleEvolution=" + titleEvolution + ", issn=" + issn
-				+ ", languages=" + languages + ", publishName=" + publishName
-				+ ", publishYear=" + publishYear + ", caption=" + caption
-				+ ", url=" + url + ", numB=" + numB + ", publication="
-				+ publication + ", congressClassification="
-				+ congressClassification + ", version=" + version + ", option="
-				+ option + ", keywords=" + keywords + "]";
-	}
 }

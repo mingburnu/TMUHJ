@@ -80,12 +80,15 @@ public class JournalAction extends GenericCRUDActionFull<Journal> {
 
 		getRequest().setAttribute("keywords", keywords);
 		getRequest().setAttribute("list", "apply.journal.list.action");
+		
+		getEntity().setKeywords(keywords);
+		
 		DataSet<Journal> ds = initDataSet();
 		ds.setPager(Pager.getChangedPager(
 				getRequest().getParameter("recordPerPage"), getRequest()
 						.getParameter("recordPoint"), ds.getPager()));
 
-		ds = journalService.getBySql(ds, keywords);
+		ds = journalService.getByRestrictions(ds);
 		setDs(ds);
 		return "journal";
 	}
@@ -150,7 +153,7 @@ public class JournalAction extends GenericCRUDActionFull<Journal> {
 		ds.setPager(Pager.getChangedPager(
 				getRequest().getParameter("recordPerPage"), getRequest()
 						.getParameter("recordPoint"), ds.getPager()));
-		ds = journalService.getByRestrictions(ds);
+		ds = journalService.getByOption(ds);
 		setDs(ds);
 
 		return "journal";

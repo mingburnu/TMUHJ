@@ -265,16 +265,4 @@ public class FeLogs extends GenericEntityLog {
 		this.jouSerNo = jouSerNo;
 	}
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
-	@Override
-	public String toString() {
-		return "FeLogs [actionType=" + actionType + ", keyword=" + keyword
-				+ ", customer=" + customer + ", accountNumber=" + accountNumber
-				+ ", datSerNo=" + datSerNo + ", ebkSerNo=" + ebkSerNo
-				+ ", jouSerNo=" + jouSerNo + ", start=" + start + ", end="
-				+ end + ", count=" + count + ", rank=" + rank + "]";
-	}
-
 }

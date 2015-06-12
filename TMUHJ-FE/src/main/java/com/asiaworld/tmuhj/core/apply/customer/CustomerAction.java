@@ -49,7 +49,7 @@ public class CustomerAction extends GenericCRUDActionFull<Customer> {
 		// TODO Auto-generated method stub
 		return null;
 	}
-	
+
 	@Override
 	public String list() throws Exception {
 		String keywords = getRequest().getParameter("keywords");
@@ -57,18 +57,22 @@ public class CustomerAction extends GenericCRUDActionFull<Customer> {
 		getRequest().setAttribute("keywords", keywords);
 		getRequest().setAttribute("list", "apply.customer.list.action");
 
+		getEntity().setKeywords(keywords);
+
 		DataSet<Customer> ds = initDataSet();
 		ds.setPager(Pager.getChangedPager(
 				getRequest().getParameter("recordPerPage"), getRequest()
 						.getParameter("recordPoint"), ds.getPager()));
 
-		ds = customerService.getBySql(ds,keywords);
+		ds = customerService.getByRestrictions(ds);
 		List<Customer> results = ds.getResults();
 		for (int i = 0; i < results.size(); i++) {
 			customer = results.get(i);
 			customer.setDbAmount(resourcesUnionService.countTotalDb(customer));
-			customer.setEbookAmount(resourcesUnionService.countTotalEbook(customer));
-			customer.setJournalAmount(resourcesUnionService.countTotalJournal(customer));
+			customer.setEbookAmount(resourcesUnionService
+					.countTotalEbook(customer));
+			customer.setJournalAmount(resourcesUnionService
+					.countTotalJournal(customer));
 			results.remove(i);
 			results.add(i, customer);
 		}
@@ -96,5 +100,5 @@ public class CustomerAction extends GenericCRUDActionFull<Customer> {
 		// TODO Auto-generated method stub
 		return null;
 	}
-	
+
 }

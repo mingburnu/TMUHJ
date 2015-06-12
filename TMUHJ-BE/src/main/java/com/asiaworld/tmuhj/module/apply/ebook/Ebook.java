@@ -342,24 +342,6 @@ public class Ebook extends GenericEntityFull {
 		this.existStatus = existStatus;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Object#toString()
-	 */
-	@Override
-	public String toString() {
-		return "Ebook [bookName=" + bookName + ", isbn=" + isbn
-				+ ", publishName=" + publishName + ", autherName=" + autherName
-				+ ", authers=" + authers + ", uppeName=" + uppeName
-				+ ", pubDate=" + pubDate + ", languages=" + languages
-				+ ", version=" + version + ", cnClassBzStr=" + cnClassBzStr
-				+ ", bookInfoIntegral=" + bookInfoIntegral + ", url=" + url
-				+ ", style=" + style + ", publication=" + publication
-				+ ", resourcesBuyers=" + resourcesBuyers + ", customers="
-				+ customers + ", existStatus=" + existStatus + "]";
-	}
-
 	public Ebook() {
 		super();
 		// TODO Auto-generated constructor stub
