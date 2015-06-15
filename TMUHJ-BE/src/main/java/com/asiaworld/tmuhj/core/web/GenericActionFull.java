@@ -24,9 +24,13 @@ import com.opensymphony.xwork2.ActionSupport;
  * @author Roderick
  * @version 2014/11/21
  */
-@SuppressWarnings("serial")
 public abstract class GenericActionFull<T extends GenericEntityFull> extends
 		ActionSupport implements Action<T> {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 8461510694567060010L;
 
 	protected final transient Logger log = Logger.getLogger(getClass());
 
@@ -40,7 +44,7 @@ public abstract class GenericActionFull<T extends GenericEntityFull> extends
 
 	@Autowired
 	private Pager pager;
-	
+
 	/**
 	 * Get Http Session
 	 * 
@@ -88,7 +92,7 @@ public abstract class GenericActionFull<T extends GenericEntityFull> extends
 		ds.setPager(pager);
 		return ds;
 	}
-	
+
 	public T getEntity() {
 		return entity;
 	}

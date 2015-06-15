@@ -47,9 +47,13 @@ import com.asiaworld.tmuhj.module.apply.resourcesUnion.ResourcesUnion;
 import com.asiaworld.tmuhj.module.apply.resourcesUnion.ResourcesUnionService;
 
 @Controller
-@SuppressWarnings("serial")
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class DatabaseAction extends GenericCRUDActionFull<Database> {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 5792761795605940212L;
 
 	private String[] checkItem;
 
@@ -991,10 +995,8 @@ public class DatabaseAction extends GenericCRUDActionFull<Database> {
 		}
 	}
 
-	@SuppressWarnings("unchecked")
 	public String paginate() throws Exception {
-		List<Database> importList = (List<Database>) getSession().get(
-				"importList");
+		List<?> importList = (List<?>) getSession().get("importList");
 		if (importList == null) {
 			return null;
 		}
@@ -1016,7 +1018,7 @@ public class DatabaseAction extends GenericCRUDActionFull<Database> {
 		int i = 0;
 		while (i < importList.size()) {
 			if (i >= first && i < last) {
-				results.add(importList.get(i));
+				results.add((Database) importList.get(i));
 			}
 			i++;
 		}
@@ -1026,26 +1028,27 @@ public class DatabaseAction extends GenericCRUDActionFull<Database> {
 		return QUEUE;
 	}
 
-	@SuppressWarnings("unchecked")
 	public String getCheckedItem() {
-		List<Database> importList = (List<Database>) getSession().get(
-				"importList");
+		List<?> importList = (List<?>) getSession().get("importList");
 		if (importList == null) {
 			return null;
 		}
 
-		Set<Integer> checkItemSet;
+		Set<Integer> checkItemSet = new TreeSet<Integer>();
 		if (getSession().containsKey("checkItemSet")) {
-			checkItemSet = (TreeSet<Integer>) getSession().get("checkItemSet");
-		} else {
-			checkItemSet = new TreeSet<Integer>();
+			Iterator<?> iterator = ((Set<?>) getSession().get("checkItemSet"))
+					.iterator();
+			while (iterator.hasNext()) {
+				checkItemSet.add((Integer) iterator.next());
+			}
 		}
 
 		if (ArrayUtils.isNotEmpty(importSerNos)) {
 			if (NumberUtils.isDigits(importSerNos[0])) {
 				if (!checkItemSet.contains(Integer.parseInt(importSerNos[0]))) {
-					if (importList.get(Integer.parseInt(importSerNos[0]))
-							.getExistStatus().equals("正常")) {
+					if (((Database) importList.get(Integer
+							.parseInt(importSerNos[0]))).getExistStatus()
+							.equals("正常")) {
 						checkItemSet.add(Integer.parseInt(importSerNos[0]));
 					}
 				} else {
@@ -1059,10 +1062,8 @@ public class DatabaseAction extends GenericCRUDActionFull<Database> {
 		return null;
 	}
 
-	@SuppressWarnings("unchecked")
 	public String allCheckedItem() {
-		List<Database> importList = (List<Database>) getSession().get(
-				"importList");
+		List<?> importList = (List<?>) getSession().get("importList");
 		if (importList == null) {
 			return null;
 		}
@@ -1074,8 +1075,9 @@ public class DatabaseAction extends GenericCRUDActionFull<Database> {
 			while (i < importSerNos.length) {
 				if (NumberUtils.isDigits(importSerNos[i])) {
 					if (Long.parseLong(importSerNos[i]) < importList.size()) {
-						if (importList.get(Integer.parseInt(importSerNos[i]))
-								.getExistStatus().equals("正常")) {
+						if (((Database) importList.get(Integer
+								.parseInt(importSerNos[i]))).getExistStatus()
+								.equals("正常")) {
 							checkItemSet.add(Integer.parseInt(importSerNos[i]));
 						}
 					}
@@ -1102,28 +1104,25 @@ public class DatabaseAction extends GenericCRUDActionFull<Database> {
 		return null;
 	}
 
-	@SuppressWarnings("unchecked")
 	public String importData() throws Exception {
-		List<Database> importList = (List<Database>) getSession().get(
-				"importList");
+		List<?> importList = (List<?>) getSession().get("importList");
 
 		if (importList == null) {
 			return null;
 		}
 
-		Set<Integer> checkItemSet = (TreeSet<Integer>) getSession().get(
-				"checkItemSet");
+		Set<?> checkItemSet = (Set<?>) getSession().get("checkItemSet");
 
 		if (CollectionUtils.isEmpty(checkItemSet)) {
 			addActionError("請選擇一筆或一筆以上的資料");
 		}
 
 		if (!hasActionErrors()) {
-			Iterator<Integer> iterator = checkItemSet.iterator();
+			Iterator<?> iterator = checkItemSet.iterator();
 			int successCount = 0;
 			while (iterator.hasNext()) {
-				int index = iterator.next();
-				database = importList.get(index);
+				int index = (Integer) iterator.next();
+				database = (Database) importList.get(index);
 
 				long datSerNo = databaseService.getDatSerNoByBothName(
 						database.getDbChtTitle(), database.getDbEngTitle());

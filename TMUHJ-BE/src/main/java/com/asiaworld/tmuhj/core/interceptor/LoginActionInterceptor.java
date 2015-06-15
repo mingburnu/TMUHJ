@@ -20,8 +20,12 @@ import com.opensymphony.xwork2.interceptor.AbstractInterceptor;
  * @author Roderick
  * @version 2015/1/20
  */
-@SuppressWarnings("serial")
 public class LoginActionInterceptor extends AbstractInterceptor {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -5641049812365809693L;
 
 	Log logger = LogFactory.getLog(this.getClass());
 

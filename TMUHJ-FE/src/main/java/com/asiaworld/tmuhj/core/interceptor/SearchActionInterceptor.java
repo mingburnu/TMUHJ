@@ -24,8 +24,12 @@ import com.opensymphony.xwork2.interceptor.AbstractInterceptor;
  * @author Roderick
  * @version 2015/1/20
  */
-@SuppressWarnings("serial")
 public class SearchActionInterceptor extends AbstractInterceptor {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -5107110044080126585L;
 
 	Log logger = LogFactory.getLog(this.getClass());
 

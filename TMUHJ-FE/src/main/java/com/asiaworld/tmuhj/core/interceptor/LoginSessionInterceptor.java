@@ -8,19 +8,25 @@ import com.opensymphony.xwork2.interceptor.AbstractInterceptor;
 
 /**
  * 檢查登入session
+ * 
  * @author Roderick
  * @version 2014/3/26
  */
-@SuppressWarnings("serial")
 public class LoginSessionInterceptor extends AbstractInterceptor {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 3380957463430167238L;
 
 	@Override
 	public String intercept(ActionInvocation invocation) throws Exception {
-		Map<String, Object> session = invocation.getInvocationContext().getSession();
-		if(session.get(Action.LOGIN) == null) {
+		Map<String, Object> session = invocation.getInvocationContext()
+				.getSession();
+		if (session.get(Action.LOGIN) == null) {
 			return Action.INPUT;
 		}
-		
+
 		return invocation.invoke();
 	}
 

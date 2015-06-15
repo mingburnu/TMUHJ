@@ -50,9 +50,13 @@ import com.asiaworld.tmuhj.core.web.GenericCRUDActionFull;
  * @version 2014/9/29
  */
 @Controller
-@SuppressWarnings("serial")
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class AccountNumberAction extends GenericCRUDActionFull<AccountNumber> {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 9198667697775718131L;
 
 	private String[] checkItem;
 
@@ -934,10 +938,8 @@ public class AccountNumberAction extends GenericCRUDActionFull<AccountNumber> {
 		}
 	}
 
-	@SuppressWarnings("unchecked")
 	public String paginate() throws Exception {
-		List<AccountNumber> importList = (List<AccountNumber>) getSession()
-				.get("importList");
+		List<?> importList = (List<?>) getSession().get("importList");
 		if (importList == null) {
 			return null;
 		}
@@ -959,7 +961,7 @@ public class AccountNumberAction extends GenericCRUDActionFull<AccountNumber> {
 		int i = 0;
 		while (i < importList.size()) {
 			if (i >= first && i < last) {
-				results.add(importList.get(i));
+				results.add((AccountNumber) importList.get(i));
 			}
 			i++;
 		}
@@ -969,27 +971,29 @@ public class AccountNumberAction extends GenericCRUDActionFull<AccountNumber> {
 		return QUEUE;
 	}
 
-	@SuppressWarnings("unchecked")
 	public String getCheckedItem() {
-		List<AccountNumber> importList = (List<AccountNumber>) getSession()
-				.get("importList");
+		List<?> importList = (List<?>) getSession().get("importList");
 		if (importList == null) {
 			return null;
 		}
 
-		Set<Integer> checkItemSet;
+		Set<Integer> checkItemSet = new TreeSet<Integer>();
 		if (getSession().containsKey("checkItemSet")) {
-			checkItemSet = (TreeSet<Integer>) getSession().get("checkItemSet");
-		} else {
-			checkItemSet = new TreeSet<Integer>();
+			Iterator<?> iterator = ((Set<?>) getSession().get("checkItemSet"))
+					.iterator();
+			while (iterator.hasNext()) {
+				checkItemSet.add((Integer) iterator.next());
+			}
 		}
 
 		if (ArrayUtils.isNotEmpty(importSerNos)) {
 			if (NumberUtils.isDigits(importSerNos[0])) {
 				if (!checkItemSet.contains(Integer.parseInt(importSerNos[0]))) {
-					if (importList.get(Integer.parseInt(importSerNos[0]))
-							.getExistStatus().equals("正常")) {
+					if (((AccountNumber) importList.get(Integer
+							.parseInt(importSerNos[0]))).getExistStatus()
+							.equals("正常")) {
 						checkItemSet.add(Integer.parseInt(importSerNos[0]));
+
 					}
 				} else {
 					checkItemSet.remove(Integer.parseInt(importSerNos[0]));
@@ -1002,10 +1006,8 @@ public class AccountNumberAction extends GenericCRUDActionFull<AccountNumber> {
 		return null;
 	}
 
-	@SuppressWarnings("unchecked")
 	public String allCheckedItem() {
-		List<AccountNumber> importList = (List<AccountNumber>) getSession()
-				.get("importList");
+		List<?> importList = (List<?>) getSession().get("importList");
 		if (importList == null) {
 			return null;
 		}
@@ -1017,8 +1019,9 @@ public class AccountNumberAction extends GenericCRUDActionFull<AccountNumber> {
 			while (i < importSerNos.length) {
 				if (NumberUtils.isDigits(importSerNos[i])) {
 					if (Long.parseLong(importSerNos[i]) < importList.size()) {
-						if (importList.get(Integer.parseInt(importSerNos[i]))
-								.getExistStatus().equals("正常")) {
+						if (((AccountNumber) importList.get(Integer
+								.parseInt(importSerNos[i]))).getExistStatus()
+								.equals("正常")) {
 							checkItemSet.add(Integer.parseInt(importSerNos[i]));
 						}
 					}
@@ -1045,28 +1048,25 @@ public class AccountNumberAction extends GenericCRUDActionFull<AccountNumber> {
 		return null;
 	}
 
-	@SuppressWarnings("unchecked")
 	public String importData() throws Exception {
-		List<AccountNumber> importList = (List<AccountNumber>) getSession()
-				.get("importList");
+		List<?> importList = (List<?>) getSession().get("importList");
 
 		if (importList == null) {
 			return null;
 		}
 
-		Set<Integer> checkItemSet = (TreeSet<Integer>) getSession().get(
-				"checkItemSet");
+		Set<?> checkItemSet = (Set<?>) getSession().get("checkItemSet");
 
 		if (CollectionUtils.isEmpty(checkItemSet)) {
 			addActionError("請選擇一筆或一筆以上的資料");
 		}
 
 		if (!hasActionErrors()) {
-			Iterator<Integer> iterator = checkItemSet.iterator();
+			Iterator<?> iterator = checkItemSet.iterator();
 			int successCount = 0;
 			while (iterator.hasNext()) {
-				int index = iterator.next();
-				accountNumber = importList.get(index);
+				int index = (Integer) iterator.next();
+				accountNumber = (AccountNumber) importList.get(index);
 				accountNumberService.save(accountNumber, getLoginUser());
 				++successCount;
 			}

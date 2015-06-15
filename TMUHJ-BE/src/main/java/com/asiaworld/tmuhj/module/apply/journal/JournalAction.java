@@ -48,9 +48,13 @@ import com.asiaworld.tmuhj.module.apply.resourcesUnion.ResourcesUnion;
 import com.asiaworld.tmuhj.module.apply.resourcesUnion.ResourcesUnionService;
 
 @Controller
-@SuppressWarnings("serial")
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class JournalAction extends GenericCRUDActionFull<Journal> {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -4383738517930055495L;
 
 	private String[] checkItem;
 
@@ -953,10 +957,8 @@ public class JournalAction extends GenericCRUDActionFull<Journal> {
 		}
 	}
 
-	@SuppressWarnings("unchecked")
 	public String paginate() throws Exception {
-		List<Journal> importList = (List<Journal>) getSession().get(
-				"importList");
+		List<?> importList = (List<?>) getSession().get("importList");
 		if (importList == null) {
 			return null;
 		}
@@ -978,7 +980,7 @@ public class JournalAction extends GenericCRUDActionFull<Journal> {
 		int i = 0;
 		while (i < importList.size()) {
 			if (i >= first && i < last) {
-				results.add(importList.get(i));
+				results.add((Journal) importList.get(i));
 			}
 			i++;
 		}
@@ -988,26 +990,27 @@ public class JournalAction extends GenericCRUDActionFull<Journal> {
 		return QUEUE;
 	}
 
-	@SuppressWarnings("unchecked")
 	public String getCheckedItem() {
-		List<Journal> importList = (List<Journal>) getSession().get(
-				"importList");
+		List<?> importList = (List<?>) getSession().get("importList");
 		if (importList == null) {
 			return null;
 		}
 
-		Set<Integer> checkItemSet;
+		Set<Integer> checkItemSet = new TreeSet<Integer>();
 		if (getSession().containsKey("checkItemSet")) {
-			checkItemSet = (TreeSet<Integer>) getSession().get("checkItemSet");
-		} else {
-			checkItemSet = new TreeSet<Integer>();
+			Iterator<?> iterator = ((Set<?>) getSession().get("checkItemSet"))
+					.iterator();
+			while (iterator.hasNext()) {
+				checkItemSet.add((Integer) iterator.next());
+			}
 		}
 
 		if (ArrayUtils.isNotEmpty(importSerNos)) {
 			if (NumberUtils.isDigits(importSerNos[0])) {
 				if (!checkItemSet.contains(Integer.parseInt(importSerNos[0]))) {
-					if (importList.get(Integer.parseInt(importSerNos[0]))
-							.getExistStatus().equals("正常")) {
+					if (((Journal) importList.get(Integer
+							.parseInt(importSerNos[0]))).getExistStatus()
+							.equals("正常")) {
 						checkItemSet.add(Integer.parseInt(importSerNos[0]));
 					}
 				} else {
@@ -1021,10 +1024,8 @@ public class JournalAction extends GenericCRUDActionFull<Journal> {
 		return null;
 	}
 
-	@SuppressWarnings("unchecked")
 	public String allCheckedItem() {
-		List<Journal> importList = (List<Journal>) getSession().get(
-				"importList");
+		List<?> importList = (List<?>) getSession().get("importList");
 		if (importList == null) {
 			return null;
 		}
@@ -1036,8 +1037,9 @@ public class JournalAction extends GenericCRUDActionFull<Journal> {
 			while (i < importSerNos.length) {
 				if (NumberUtils.isDigits(importSerNos[i])) {
 					if (Long.parseLong(importSerNos[i]) < importList.size()) {
-						if (importList.get(Integer.parseInt(importSerNos[i]))
-								.getExistStatus().equals("正常")) {
+						if (((Journal) importList.get(Integer
+								.parseInt(importSerNos[i]))).getExistStatus()
+								.equals("正常")) {
 							checkItemSet.add(Integer.parseInt(importSerNos[i]));
 						}
 					}
@@ -1064,28 +1066,25 @@ public class JournalAction extends GenericCRUDActionFull<Journal> {
 		return null;
 	}
 
-	@SuppressWarnings("unchecked")
 	public String importData() throws Exception {
-		List<Journal> importList = (List<Journal>) getSession().get(
-				"importList");
+		List<?> importList = (List<?>) getSession().get("importList");
 
 		if (importList == null) {
 			return null;
 		}
 
-		Set<Integer> checkItem = (TreeSet<Integer>) getSession().get(
-				"checkItem");
+		Set<?> checkItemSet = (Set<?>) getSession().get("checkItemSet");
 
-		if (CollectionUtils.isEmpty(checkItem)) {
+		if (CollectionUtils.isEmpty(checkItemSet)) {
 			addActionError("請選擇一筆或一筆以上的資料");
 		}
 
 		if (!hasActionErrors()) {
-			Iterator<Integer> it = checkItem.iterator();
+			Iterator<?> iterator = checkItemSet.iterator();
 			int successCount = 0;
-			while (it.hasNext()) {
-				int index = it.next();
-				journal = importList.get(index);
+			while (iterator.hasNext()) {
+				int index = (Integer) iterator.next();
+				journal = (Journal) importList.get(index);
 
 				long jouSerNo = journalService.getJouSerNoByIssn(journal
 						.getIssn());

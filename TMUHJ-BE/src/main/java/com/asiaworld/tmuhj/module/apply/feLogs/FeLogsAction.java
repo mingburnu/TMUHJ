@@ -30,9 +30,13 @@ import com.asiaworld.tmuhj.core.model.Pager;
 import com.asiaworld.tmuhj.core.web.GenericCRUDActionLog;
 
 @Controller
-@SuppressWarnings("serial")
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class FeLogsAction extends GenericCRUDActionLog<FeLogs> {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -9182601107720081288L;
 
 	@Autowired
 	private FeLogsService feLogsService;

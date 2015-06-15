@@ -20,59 +20,70 @@ import com.opensymphony.xwork2.ActionSupport;
 
 /**
  * GenericAction
+ * 
  * @author Roderick
  * @version 2015/01/19
  */
-@SuppressWarnings("serial")
-public abstract class GenericActionLog<T extends GenericEntityLog> extends ActionSupport implements Action<T> {
+public abstract class GenericActionLog<T extends GenericEntityLog> extends
+		ActionSupport implements Action<T> {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 8301504976985954882L;
 
 	protected final transient Logger log = Logger.getLogger(getClass());
-	
+
 	protected final transient Set<String> errorMessages = new HashSet<String>();
-	
+
 	@Autowired
 	private T entity;
-	
+
 	@Autowired
 	private DataSet<T> ds;
-	
+
 	@Autowired
 	private Pager pager;
-	
+
 	/**
 	 * Get Http Session
+	 * 
 	 * @return
 	 */
 	protected Map<String, Object> getSession() {
 		return ActionContext.getContext().getSession();
 	}
-	
+
 	/**
 	 * Get Http Servlet Request
+	 * 
 	 * @return
 	 */
 	protected HttpServletRequest getRequest() {
 		return ServletActionContext.getRequest();
 	}
-	
+
 	/**
 	 * Get Http Servlet Response
+	 * 
 	 * @return
 	 */
 	protected HttpServletResponse getResponse() {
 		return ServletActionContext.getResponse();
 	}
-	
+
 	/**
 	 * 取得登入者
+	 * 
 	 * @return
 	 */
 	protected AccountNumber getLoginUser() {
 		return (AccountNumber) getSession().get(LOGIN);
 	}
-	
+
 	/**
 	 * entity資料to DataSet
+	 * 
 	 * @param entity
 	 * @return
 	 */
@@ -89,7 +100,7 @@ public abstract class GenericActionLog<T extends GenericEntityLog> extends Actio
 	public void setEntity(T entity) {
 		this.entity = entity;
 	}
-	
+
 	public DataSet<T> getDs() {
 		return ds;
 	}

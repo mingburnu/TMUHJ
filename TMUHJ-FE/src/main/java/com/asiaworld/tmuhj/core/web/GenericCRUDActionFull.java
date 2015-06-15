@@ -4,11 +4,17 @@ import com.asiaworld.tmuhj.core.entity.GenericEntityFull;
 
 /**
  * GenericCRUDAction
+ * 
  * @author Roderick
  * @version 2014/11/21
  */
-@SuppressWarnings("serial")
-public abstract class GenericCRUDActionFull<T extends GenericEntityFull> extends GenericActionFull<T> {
+public abstract class GenericCRUDActionFull<T extends GenericEntityFull>
+		extends GenericActionFull<T> {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 2513573615681531778L;
 
 	/**
 	 * 儲存檢核
@@ -34,26 +40,30 @@ public abstract class GenericCRUDActionFull<T extends GenericEntityFull> extends
 
 	/**
 	 * List頁
+	 * 
 	 * @return
 	 */
 	public abstract String list() throws Exception;
 
 	/**
 	 * 儲存
+	 * 
 	 * @return
 	 */
 	public abstract String save() throws Exception;
 
 	/**
 	 * 修改
+	 * 
 	 * @return
 	 */
 	public abstract String update() throws Exception;
 
 	/**
 	 * 刪除
+	 * 
 	 * @return
 	 */
 	public abstract String delete() throws Exception;
-	
+
 }

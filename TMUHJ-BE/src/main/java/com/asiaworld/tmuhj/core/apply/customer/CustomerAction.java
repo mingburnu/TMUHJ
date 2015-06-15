@@ -43,9 +43,13 @@ import com.asiaworld.tmuhj.core.model.Pager;
 import com.asiaworld.tmuhj.core.web.GenericCRUDActionFull;
 
 @Controller
-@SuppressWarnings("serial")
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class CustomerAction extends GenericCRUDActionFull<Customer> {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 4530353636126561614L;
 
 	private String[] checkItem;
 
@@ -528,10 +532,8 @@ public class CustomerAction extends GenericCRUDActionFull<Customer> {
 		}
 	}
 
-	@SuppressWarnings("unchecked")
 	public String paginate() throws Exception {
-		List<Customer> importList = (List<Customer>) getSession().get(
-				"importList");
+		List<?> importList = (List<?>) getSession().get("importList");
 		if (importList == null) {
 			return null;
 		}
@@ -553,7 +555,7 @@ public class CustomerAction extends GenericCRUDActionFull<Customer> {
 		int i = 0;
 		while (i < importList.size()) {
 			if (i >= first && i < last) {
-				results.add(importList.get(i));
+				results.add((Customer) importList.get(i));
 			}
 			i++;
 		}
@@ -563,26 +565,27 @@ public class CustomerAction extends GenericCRUDActionFull<Customer> {
 		return QUEUE;
 	}
 
-	@SuppressWarnings("unchecked")
 	public String getCheckedItem() {
-		List<Customer> importList = (List<Customer>) getSession().get(
-				"importList");
+		List<?> importList = (List<?>) getSession().get("importList");
 		if (importList == null) {
 			return null;
 		}
 
-		Set<Integer> checkItemSet;
+		Set<Integer> checkItemSet = new TreeSet<Integer>();
 		if (getSession().containsKey("checkItemSet")) {
-			checkItemSet = (TreeSet<Integer>) getSession().get("checkItemSet");
-		} else {
-			checkItemSet = new TreeSet<Integer>();
+			Iterator<?> iterator = ((Set<?>) getSession().get("checkItemSet"))
+					.iterator();
+			while (iterator.hasNext()) {
+				checkItemSet.add((Integer) iterator.next());
+			}
 		}
 
 		if (ArrayUtils.isNotEmpty(importSerNos)) {
 			if (NumberUtils.isDigits(importSerNos[0])) {
 				if (!checkItemSet.contains(Integer.parseInt(importSerNos[0]))) {
-					if (importList.get(Integer.parseInt(importSerNos[0]))
-							.getExistStatus().equals("正常")) {
+					if (((Customer) importList.get(Integer
+							.parseInt(importSerNos[0]))).getExistStatus()
+							.equals("正常")) {
 						checkItemSet.add(Integer.parseInt(importSerNos[0]));
 					}
 				} else {
@@ -596,10 +599,8 @@ public class CustomerAction extends GenericCRUDActionFull<Customer> {
 		return null;
 	}
 
-	@SuppressWarnings("unchecked")
 	public String allCheckedItem() {
-		List<Customer> importList = (List<Customer>) getSession().get(
-				"importList");
+		List<?> importList = (List<?>) getSession().get("importList");
 		if (importList == null) {
 			return null;
 		}
@@ -611,8 +612,9 @@ public class CustomerAction extends GenericCRUDActionFull<Customer> {
 			while (i < importSerNos.length) {
 				if (NumberUtils.isDigits(importSerNos[i])) {
 					if (Long.parseLong(importSerNos[i]) < importList.size()) {
-						if (importList.get(Integer.parseInt(importSerNos[i]))
-								.getExistStatus().equals("正常")) {
+						if (((Customer) importList.get(Integer
+								.parseInt(importSerNos[i]))).getExistStatus()
+								.equals("正常")) {
 							checkItemSet.add(Integer.parseInt(importSerNos[i]));
 						}
 					}
@@ -639,28 +641,25 @@ public class CustomerAction extends GenericCRUDActionFull<Customer> {
 		return null;
 	}
 
-	@SuppressWarnings("unchecked")
 	public String importData() throws Exception {
-		List<Customer> importList = (List<Customer>) getSession().get(
-				"importList");
+		List<?> importList = (List<?>) getSession().get("importList");
 
 		if (importList == null) {
 			return null;
 		}
 
-		Set<Integer> checkItemSet = (TreeSet<Integer>) getSession().get(
-				"checkItemSet");
+		Set<?> checkItemSet = (Set<?>) getSession().get("checkItemSet");
 
 		if (CollectionUtils.isEmpty(checkItemSet)) {
 			addActionError("請選擇一筆或一筆以上的資料");
 		}
 
 		if (!hasActionErrors()) {
-			Iterator<Integer> iterator = checkItemSet.iterator();
+			Iterator<?> iterator = checkItemSet.iterator();
 			int successCount = 0;
 			while (iterator.hasNext()) {
-				int index = iterator.next();
-				customer = importList.get(index);
+				int index = (Integer) iterator.next();
+				customer = (Customer) importList.get(index);
 				customerService.save(customer, getLoginUser());
 				++successCount;
 			}

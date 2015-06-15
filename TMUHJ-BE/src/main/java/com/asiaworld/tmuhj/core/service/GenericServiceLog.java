@@ -47,15 +47,6 @@ public abstract class GenericServiceLog<T extends GenericEntityLog> implements
 	}
 
 	@Override
-	public T update(T entity, AccountNumber user) throws Exception {
-		Assert.notNull(entity);
-
-		T dbEntity = update(entity, user, new String[0]);
-
-		return dbEntity;
-	}
-
-	@Override
 	public T update(T entity, AccountNumber user, String... ignoreProperties)
 			throws Exception {
 		Assert.notNull(entity);

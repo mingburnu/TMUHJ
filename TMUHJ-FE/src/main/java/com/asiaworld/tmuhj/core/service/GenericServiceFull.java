@@ -1,8 +1,5 @@
 package com.asiaworld.tmuhj.core.service;
 
-import java.util.Arrays;
-import java.util.List;
-
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +26,6 @@ public abstract class GenericServiceFull<T extends GenericEntityFull>
 	@Autowired
 	private AccountNumberDao userDao;
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public T save(T entity, AccountNumber user) throws Exception {
 		Assert.notNull(entity);
@@ -37,36 +33,21 @@ public abstract class GenericServiceFull<T extends GenericEntityFull>
 		entity.initInsert(user);
 
 		T dbEntity = getDao().save(entity);
-		makeUserInfo(Arrays.asList(dbEntity));
+		makeUserInfo(dbEntity);
 
 		return dbEntity;
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public T getBySerNo(Long serNo) throws Exception {
 		Assert.notNull(serNo);
 
 		T entity = getDao().findBySerNo(serNo);
-		makeUserInfo(Arrays.asList(entity));
+		makeUserInfo(entity);
 
 		return entity;
 	}
 
-	@SuppressWarnings("unchecked")
-	@Override
-	public T update(T entity, AccountNumber user) throws Exception {
-		Assert.notNull(entity);
-
-		entity.initUpdate(user);
-
-		T dbEntity = update(entity, user, new String[0]);
-		makeUserInfo(Arrays.asList(dbEntity));
-
-		return dbEntity;
-	}
-
-	@SuppressWarnings("unchecked")
 	@Override
 	public T update(T entity, AccountNumber user, String... ignoreProperties)
 			throws Exception {
@@ -83,7 +64,7 @@ public abstract class GenericServiceFull<T extends GenericEntityFull>
 		}
 
 		getDao().update(dbEntity);
-		makeUserInfo(Arrays.asList(dbEntity));
+		makeUserInfo(dbEntity);
 
 		return dbEntity;
 	}
@@ -102,17 +83,15 @@ public abstract class GenericServiceFull<T extends GenericEntityFull>
 	 * @return
 	 * @throws Exception
 	 */
-	public void makeUserInfo(List<T> entitys) throws Exception {
-		for (T entity : entitys) {
-			if (entity.getcUid() != null && entity.getuUid() != null) {
-				AccountNumber user = getUserInfo(entity.getcUid());
-				entity.setCreatedUser(user);
+	public void makeUserInfo(T entity) throws Exception {
+		if (entity.getcUid() != null && entity.getuUid() != null) {
+			AccountNumber user = getUserInfo(entity.getcUid());
+			entity.setCreatedUser(user);
 
-				if (entity.getcUid().equals(entity.getuUid())) {
-					entity.setLastModifiedUser(user);
-				} else {
-					entity.setLastModifiedUser(getUserInfo(entity.getuUid()));
-				}
+			if (entity.getcUid().equals(entity.getuUid())) {
+				entity.setLastModifiedUser(user);
+			} else {
+				entity.setLastModifiedUser(getUserInfo(entity.getuUid()));
 			}
 		}
 	}

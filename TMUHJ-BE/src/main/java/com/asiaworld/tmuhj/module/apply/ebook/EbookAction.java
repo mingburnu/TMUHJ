@@ -46,9 +46,13 @@ import com.asiaworld.tmuhj.module.apply.resourcesUnion.ResourcesUnion;
 import com.asiaworld.tmuhj.module.apply.resourcesUnion.ResourcesUnionService;
 
 @Controller
-@SuppressWarnings("serial")
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class EbookAction extends GenericCRUDActionFull<Ebook> {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 9166237220863961574L;
 
 	private String[] checkItem;
 
@@ -972,9 +976,8 @@ public class EbookAction extends GenericCRUDActionFull<Ebook> {
 		}
 	}
 
-	@SuppressWarnings("unchecked")
 	public String paginate() throws Exception {
-		List<Ebook> importList = (List<Ebook>) getSession().get("importList");
+		List<?> importList = (List<?>) getSession().get("importList");
 		if (importList == null) {
 			return null;
 		}
@@ -996,7 +999,7 @@ public class EbookAction extends GenericCRUDActionFull<Ebook> {
 		int i = 0;
 		while (i < importList.size()) {
 			if (i >= first && i < last) {
-				results.add(importList.get(i));
+				results.add((Ebook) importList.get(i));
 			}
 			i++;
 		}
@@ -1006,25 +1009,27 @@ public class EbookAction extends GenericCRUDActionFull<Ebook> {
 		return QUEUE;
 	}
 
-	@SuppressWarnings("unchecked")
 	public String getCheckedItem() {
-		List<Ebook> importList = (List<Ebook>) getSession().get("importList");
+		List<?> importList = (List<?>) getSession().get("importList");
 		if (importList == null) {
 			return null;
 		}
 
-		Set<Integer> checkItemSet;
+		Set<Integer> checkItemSet = new TreeSet<Integer>();
 		if (getSession().containsKey("checkItemSet")) {
-			checkItemSet = (TreeSet<Integer>) getSession().get("checkItemSet");
-		} else {
-			checkItemSet = new TreeSet<Integer>();
+			Iterator<?> iterator = ((Set<?>) getSession().get("checkItemSet"))
+					.iterator();
+			while (iterator.hasNext()) {
+				checkItemSet.add((Integer) iterator.next());
+			}
 		}
 
 		if (ArrayUtils.isNotEmpty(importSerNos)) {
 			if (NumberUtils.isDigits(importSerNos[0])) {
 				if (!checkItemSet.contains(Integer.parseInt(importSerNos[0]))) {
-					if (importList.get(Integer.parseInt(importSerNos[0]))
-							.getExistStatus().equals("正常")) {
+					if (((Ebook) importList.get(Integer
+							.parseInt(importSerNos[0]))).getExistStatus()
+							.equals("正常")) {
 						checkItemSet.add(Integer.parseInt(importSerNos[0]));
 					}
 				} else {
@@ -1038,9 +1043,8 @@ public class EbookAction extends GenericCRUDActionFull<Ebook> {
 		return null;
 	}
 
-	@SuppressWarnings("unchecked")
 	public String allCheckedItem() {
-		List<Ebook> importList = (List<Ebook>) getSession().get("importList");
+		List<?> importList = (List<?>) getSession().get("importList");
 		if (importList == null) {
 			return null;
 		}
@@ -1052,8 +1056,9 @@ public class EbookAction extends GenericCRUDActionFull<Ebook> {
 			while (i < importSerNos.length) {
 				if (NumberUtils.isDigits(importSerNos[i])) {
 					if (Long.parseLong(importSerNos[i]) < importList.size()) {
-						if (importList.get(Integer.parseInt(importSerNos[i]))
-								.getExistStatus().equals("正常")) {
+						if (((Ebook) importList.get(Integer
+								.parseInt(importSerNos[i]))).getExistStatus()
+								.equals("正常")) {
 							checkItemSet.add(Integer.parseInt(importSerNos[i]));
 						}
 					}
@@ -1080,27 +1085,25 @@ public class EbookAction extends GenericCRUDActionFull<Ebook> {
 		return null;
 	}
 
-	@SuppressWarnings("unchecked")
 	public String importData() throws Exception {
-		List<Ebook> importList = (List<Ebook>) getSession().get("importList");
+		List<?> importList = (List<?>) getSession().get("importList");
 
 		if (importList == null) {
 			return null;
 		}
 
-		Set<Integer> checkItemSet = (TreeSet<Integer>) getSession().get(
-				"checkItemSet");
+		Set<?> checkItemSet = (Set<?>) getSession().get("checkItemSet");
 
 		if (CollectionUtils.isEmpty(checkItemSet)) {
 			addActionError("請選擇一筆或一筆以上的資料");
 		}
 
 		if (!hasActionErrors()) {
-			Iterator<Integer> iterator = checkItemSet.iterator();
+			Iterator<?> iterator = checkItemSet.iterator();
 			int successCount = 0;
 			while (iterator.hasNext()) {
-				int index = iterator.next();
-				ebook = importList.get(index);
+				int index = (Integer) iterator.next();
+				ebook = (Ebook) importList.get(index);
 
 				long ebkSerNo = ebookService.getEbkSerNoByIsbn(ebook.getIsbn());
 				long cusSerNo = customerService.getCusSerNoByName(ebook

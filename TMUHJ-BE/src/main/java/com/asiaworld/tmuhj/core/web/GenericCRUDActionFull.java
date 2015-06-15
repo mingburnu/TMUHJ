@@ -8,9 +8,13 @@ import com.asiaworld.tmuhj.core.entity.GenericEntityFull;
  * @author Roderick
  * @version 2014/11/21
  */
-@SuppressWarnings("serial")
 public abstract class GenericCRUDActionFull<T extends GenericEntityFull>
 		extends GenericActionFull<T> {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 2513573615681531778L;
 
 	/**
 	 * 儲存檢核

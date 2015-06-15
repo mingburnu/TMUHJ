@@ -21,8 +21,12 @@ import com.opensymphony.xwork2.interceptor.AbstractInterceptor;
  * @author Roderick
  * @version 2015/1/20
  */
-@SuppressWarnings("serial")
 public class CrudActionInterceptor extends AbstractInterceptor {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -4326400245013459644L;
+
 	@Autowired
 	private AccountNumber accountNumber;
 

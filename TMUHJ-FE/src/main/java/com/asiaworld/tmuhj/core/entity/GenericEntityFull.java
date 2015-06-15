@@ -1,6 +1,3 @@
-/**
- * 
- */
 package com.asiaworld.tmuhj.core.entity;
 
 import javax.persistence.Column;

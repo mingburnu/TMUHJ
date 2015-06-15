@@ -8,15 +8,19 @@ import com.asiaworld.tmuhj.core.entity.GenericEntityLog;
  * @author Roderick
  * @version 2015/01/19
  */
-@SuppressWarnings("serial")
-public abstract class GenericCRUDActionLog<T extends GenericEntityLog>
-		extends GenericActionLog<T> {
+public abstract class GenericCRUDActionLog<T extends GenericEntityLog> extends
+		GenericActionLog<T> {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -8936377251210963451L;
 
 	/**
 	 * 儲存檢核
 	 */
 	protected abstract void validateSave() throws Exception;
-	
+
 	/**
 	 * 修改檢核
 	 */

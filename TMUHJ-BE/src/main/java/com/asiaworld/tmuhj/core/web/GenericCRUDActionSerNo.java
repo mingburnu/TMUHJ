@@ -8,9 +8,13 @@ import com.asiaworld.tmuhj.core.entity.GenericEntitySerNo;
  * @author David Hsu
  * @version 2014/10/15
  */
-@SuppressWarnings("serial")
 public abstract class GenericCRUDActionSerNo<T extends GenericEntitySerNo>
 		extends GenericActionSerNo<T> {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 3138711928578726323L;
 
 	/**
 	 * 儲存檢核

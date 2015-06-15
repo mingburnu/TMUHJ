@@ -32,9 +32,13 @@ import com.asiaworld.tmuhj.core.model.Pager;
 import com.asiaworld.tmuhj.core.web.GenericCRUDActionLog;
 
 @Controller
-@SuppressWarnings("serial")
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class BeLogsAction extends GenericCRUDActionLog<BeLogs> {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -4677113896253423654L;
 
 	@Autowired
 	private BeLogsService beLogsService;

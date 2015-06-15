@@ -21,9 +21,13 @@ import com.asiaworld.tmuhj.module.apply.resourcesUnion.ResourcesUnion;
 import com.asiaworld.tmuhj.module.apply.resourcesUnion.ResourcesUnionService;
 
 @Controller
-@SuppressWarnings("serial")
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class DatabaseAction extends GenericCRUDActionFull<Database> {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -365109377798301323L;
 
 	@Autowired
 	private Database database;

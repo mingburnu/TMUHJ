@@ -9,6 +9,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.hibernate.criterion.Junction;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Restrictions;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
@@ -71,7 +72,7 @@ public class AccountNumberService extends GenericServiceFull<AccountNumber> {
 	public AccountNumber save(AccountNumber entity, AccountNumber user)
 			throws Exception {
 		Assert.notNull(entity);
-		// entity.setTimeToSystime();
+
 		entity.initInsert(user);
 		if (StringUtils.isNotEmpty(entity.getUserPw())) { // 密碼非空則進行加密
 			final String encryptedPassword = EncryptorUtil.encrypt(entity
@@ -80,7 +81,29 @@ public class AccountNumberService extends GenericServiceFull<AccountNumber> {
 		}
 
 		AccountNumber dbEntity = dao.save(entity);
-		makeUserInfo(Arrays.asList(dbEntity));
+		makeUserInfo(dbEntity);
+
+		return dbEntity;
+	}
+
+	@Override
+	public AccountNumber update(AccountNumber entity, AccountNumber user,
+			String... ignoreProperties) throws Exception {
+		Assert.notNull(entity);
+
+		entity.initUpdate(user);
+		if (StringUtils.isNotEmpty(entity.getUserPw())) {
+			final String encryptedPassword = EncryptorUtil.encrypt(entity
+					.getUserPw());
+			entity.setUserPw(encryptedPassword);
+		}
+
+		AccountNumber dbEntity = getDao().findBySerNo(entity.getSerNo());
+
+		BeanUtils.copyProperties(entity, dbEntity, ignoreProperties);
+
+		getDao().update(dbEntity);
+		makeUserInfo(dbEntity);
 
 		return dbEntity;
 	}
@@ -168,8 +191,8 @@ public class AccountNumberService extends GenericServiceFull<AccountNumber> {
 				Junction orGroup = Restrictions.disjunction();
 				if (CollectionUtils.isNotEmpty(customers)) {
 					for (int i = 0; i < customers.size(); i++) {
-						orGroup.add(Restrictions.eq("customer.serNo",
-								customers.get(i).getSerNo()));
+						orGroup.add(Restrictions.eq("customer.serNo", customers
+								.get(i).getSerNo()));
 					}
 				}
 
