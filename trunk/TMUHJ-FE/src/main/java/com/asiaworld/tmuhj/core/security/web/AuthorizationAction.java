@@ -25,9 +25,13 @@ import com.asiaworld.tmuhj.core.web.GenericWebActionFull;
  * @version 2014/10/2
  */
 @Controller
-@SuppressWarnings("serial")
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class AuthorizationAction extends GenericWebActionFull<AccountNumber> {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -2493250353997086462L;
 
 	@Autowired
 	private AccountNumberService userService;

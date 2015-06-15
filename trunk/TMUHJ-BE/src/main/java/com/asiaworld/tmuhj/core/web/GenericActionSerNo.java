@@ -24,12 +24,16 @@ import com.opensymphony.xwork2.ActionSupport;
  * @author Roderick
  * @version 2014/10/15
  */
-@SuppressWarnings("serial")
 public abstract class GenericActionSerNo<T extends GenericEntitySerNo> extends
 		ActionSupport implements Action<T> {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -2903731758217722594L;
+
 	protected final transient Logger log = Logger.getLogger(getClass());
-	
+
 	protected final transient Set<String> errorMessages = new HashSet<String>();
 
 	@Autowired

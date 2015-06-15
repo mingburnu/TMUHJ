@@ -20,9 +20,13 @@ import com.asiaworld.tmuhj.module.apply.resourcesUnion.ResourcesUnion;
 import com.asiaworld.tmuhj.module.apply.resourcesUnion.ResourcesUnionService;
 
 @Controller
-@SuppressWarnings("serial")
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class EbookAction extends GenericCRUDActionFull<Ebook> {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 2746869215531950704L;
 
 	@Autowired
 	private Ebook ebook;

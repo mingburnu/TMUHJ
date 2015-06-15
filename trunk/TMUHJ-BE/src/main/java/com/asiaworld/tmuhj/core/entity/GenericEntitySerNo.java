@@ -1,6 +1,3 @@
-/**
- * 
- */
 package com.asiaworld.tmuhj.core.entity;
 
 import javax.persistence.Column;
@@ -62,7 +59,7 @@ public abstract class GenericEntitySerNo implements Entity {
 	public boolean isNew() {
 		return serNo == null;
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * 

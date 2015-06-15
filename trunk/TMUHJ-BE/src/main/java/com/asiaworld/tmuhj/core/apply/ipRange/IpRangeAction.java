@@ -16,9 +16,13 @@ import com.asiaworld.tmuhj.core.model.Pager;
 import com.asiaworld.tmuhj.core.web.GenericCRUDActionFull;
 
 @Controller
-@SuppressWarnings("serial")
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class IpRangeAction extends GenericCRUDActionFull<IpRange> {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -3274723922938216387L;
 
 	@Autowired
 	private IpRange ipRange;

@@ -13,9 +13,13 @@ import com.asiaworld.tmuhj.core.web.GenericCRUDActionFull;
 import com.asiaworld.tmuhj.module.apply.resourcesUnion.ResourcesUnionService;
 
 @Controller
-@SuppressWarnings("serial")
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class CustomerAction extends GenericCRUDActionFull<Customer> {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -2177287834510404474L;
 
 	@Autowired
 	private Customer customer;

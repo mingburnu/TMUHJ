@@ -4,19 +4,6 @@ import java.util.List;
 
 //
 
-
-
-
-
-
-
-
-
-
-
-
-
-
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -99,7 +86,7 @@ public class SecUserServiceTest extends GenericTest {
 		}
 		Assert.assertTrue(deleted);
 
-		service.makeUserInfo(users);
+		service.makeUserInfo(users.get(0));
 	}
 
 }

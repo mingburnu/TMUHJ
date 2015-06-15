@@ -16,8 +16,8 @@ import com.asiaworld.tmuhj.core.entity.GenericEntitySerNo;
  * @author Roderick
  * @version 2014/9/29
  */
-public abstract class GenericServiceSerNo<T extends GenericEntitySerNo> implements
-		Service<T> {
+public abstract class GenericServiceSerNo<T extends GenericEntitySerNo>
+		implements Service<T> {
 
 	protected final transient Logger log = Logger.getLogger(getClass());
 
@@ -40,14 +40,6 @@ public abstract class GenericServiceSerNo<T extends GenericEntitySerNo> implemen
 
 		T entity = getDao().findBySerNo(serNo);
 		return entity;
-	}
-
-	@Override
-	public T update(T entity, AccountNumber user) throws Exception {
-		Assert.notNull(entity);
-
-		T dbEntity = update(entity, user, new String[0]);
-		return dbEntity;
 	}
 
 	@Override

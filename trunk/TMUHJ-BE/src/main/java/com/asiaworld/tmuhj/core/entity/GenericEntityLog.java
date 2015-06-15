@@ -1,13 +1,9 @@
-/**
- * 
- */
 package com.asiaworld.tmuhj.core.entity;
 
 import javax.persistence.Column;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.Transient;
 
@@ -45,12 +41,6 @@ public abstract class GenericEntityLog implements Entity {
 	@Column(name = "serNo", unique = true, nullable = false, insertable = true, updatable = false, precision = 20)
 	private Long serNo;
 
-	/** The created by. */
-	
-	@Transient
-	private Long createdBy;
-
-	@ManyToOne
 	@Transient
 	private AccountNumber createdUser;
 
@@ -72,14 +62,6 @@ public abstract class GenericEntityLog implements Entity {
 	 */
 	public void setSerNo(Long serNo) {
 		this.serNo = serNo;
-	}
-
-	public Long getCreatedBy() {
-		return createdBy;
-	}
-
-	public void setCreatedBy(Long createdBy) {
-		this.createdBy = createdBy;
 	}
 
 	/**
@@ -130,50 +112,8 @@ public abstract class GenericEntityLog implements Entity {
 	 *            the bpm id
 	 */
 	public void initInsert(AccountNumber user) {
-		this.setCreatedBy(user.getSerNo());
 		this.setcDTime(new LocalDateTime());
 	}
-
-	/**
-	 * initial insert
-	 * <p>
-	 * initial id, tpmId, create, modify and status from main entity when insert
-	 * <br>
-	 * <p>
-	 * .
-	 * 
-	 * @param main
-	 *            entity
-	 */
-	// public <T extends GenericEntity> void initInsert(T entity) {
-	// initInsert(entity, SystemStatus.Y);
-	// }
-
-	/**
-	 * initial insert
-	 * <p>
-	 * initial id, tpmId, create, modify and status from main entity when insert
-	 * <br>
-	 * <p>
-	 * .
-	 * 
-	 * @param main
-	 *            entity
-	 * @param sysStatus
-	 *            the sys status
-	 * @param bpmId
-	 *            the bpm id
-	 */
-	// public <T extends GenericEntity> void initInsert(T entity, SystemStatus
-	// sysStatus) {
-	// this.setVersionNo(1L);
-	// this.setStatus(sysStatus);
-	// this.setCreatedBy(entity.getCreatedBy());
-	// this.setCreatedDate(new LocalDateTime());
-	// this.setLastModifiedBy(getCreatedBy());
-	// this.setLastModifiedDate(getCreatedDate());
-	// }
-
 
 	/*
 	 * (non-Javadoc)

@@ -22,9 +22,13 @@ import com.asiaworld.tmuhj.module.apply.resourcesUnion.ResourcesUnion;
 import com.asiaworld.tmuhj.module.apply.resourcesUnion.ResourcesUnionService;
 
 @Controller
-@SuppressWarnings("serial")
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class JournalAction extends GenericCRUDActionFull<Journal> {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -7274416912972675392L;
 
 	@Autowired
 	private Journal journal;
@@ -80,9 +84,9 @@ public class JournalAction extends GenericCRUDActionFull<Journal> {
 
 		getRequest().setAttribute("keywords", keywords);
 		getRequest().setAttribute("list", "apply.journal.list.action");
-		
+
 		getEntity().setKeywords(keywords);
-		
+
 		DataSet<Journal> ds = initDataSet();
 		ds.setPager(Pager.getChangedPager(
 				getRequest().getParameter("recordPerPage"), getRequest()

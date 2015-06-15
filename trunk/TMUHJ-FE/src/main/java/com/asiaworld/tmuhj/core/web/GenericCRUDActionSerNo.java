@@ -4,11 +4,17 @@ import com.asiaworld.tmuhj.core.entity.GenericEntitySerNo;
 
 /**
  * GenericCRUDActionSerNo
+ * 
  * @author David Hsu
  * @version 2014/10/15
  */
-@SuppressWarnings("serial")
-public abstract class GenericCRUDActionSerNo<T extends GenericEntitySerNo> extends GenericActionSerNo<T> {
+public abstract class GenericCRUDActionSerNo<T extends GenericEntitySerNo>
+		extends GenericActionSerNo<T> {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 3138711928578726323L;
 
 	/**
 	 * 儲存檢核
@@ -34,26 +40,30 @@ public abstract class GenericCRUDActionSerNo<T extends GenericEntitySerNo> exten
 
 	/**
 	 * List頁
+	 * 
 	 * @return
 	 */
 	public abstract String list() throws Exception;
 
 	/**
 	 * 儲存
+	 * 
 	 * @return
 	 */
 	public abstract String save() throws Exception;
 
 	/**
 	 * 修改
+	 * 
 	 * @return
 	 */
 	public abstract String update() throws Exception;
 
 	/**
 	 * 刪除
+	 * 
 	 * @return
 	 */
 	public abstract String delete() throws Exception;
-	
+
 }

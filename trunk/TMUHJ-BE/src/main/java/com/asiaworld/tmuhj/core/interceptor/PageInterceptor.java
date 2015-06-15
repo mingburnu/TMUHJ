@@ -12,8 +12,12 @@ import com.opensymphony.xwork2.interceptor.AbstractInterceptor;
  * @author Roderick
  * @version 2015/1/20
  */
-@SuppressWarnings("serial")
 public class PageInterceptor extends AbstractInterceptor {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -5010620168664114783L;
 
 	@Override
 	public String intercept(ActionInvocation invocation) throws Exception {

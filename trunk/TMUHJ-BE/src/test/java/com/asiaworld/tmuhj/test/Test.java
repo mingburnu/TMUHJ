@@ -218,8 +218,10 @@ public class Test {
 		System.out.println(isLCC(LCC));
 		
 		String num ="123.3";
-		System.out.print(isNum(num));
+		System.out.println(isNum(num));
 
+		dotString();
+		
 	}
 
 	public static boolean isLCC(String LCC) {
@@ -240,5 +242,7 @@ public class Test {
 		return pattern.matcher(num).matches();
 	}
 	
-	
+	public static void dotString(String... strs) {
+		System.out.println(strs == null);
+	}
 }

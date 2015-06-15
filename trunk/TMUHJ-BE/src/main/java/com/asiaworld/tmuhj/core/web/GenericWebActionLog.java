@@ -8,8 +8,12 @@ import com.asiaworld.tmuhj.core.entity.GenericEntityLog;
  * @author Roderick
  * @version 2015/01/19
  */
-@SuppressWarnings("serial")
-public abstract class GenericWebActionLog<T extends GenericEntityLog>
-		extends GenericActionLog<T> {
+public abstract class GenericWebActionLog<T extends GenericEntityLog> extends
+		GenericActionLog<T> {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 2720759729402906265L;
 
 }
