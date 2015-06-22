@@ -16,11 +16,13 @@
 		updateForm = $("form#apply_database_update").html();
 	});
 
-	$(document).ready(
-			function() {
-				$("#div_Detail .content .header .close").html(
-						'<a href="#" onclick="clearCustomers();closeDetail();">關閉</a>');
-			});
+	$(document)
+			.ready(
+					function() {
+						$("#div_Detail .content .header .close")
+								.html(
+										'<a href="#" onclick="clearCustomers();closeDetail();">關閉</a>');
+					});
 
 	$(document).ready(function() {
 		$("img#minus").click(function() {
@@ -35,58 +37,68 @@
 			});
 		});
 	});
-	
-	$(document).ready(function() {
-		$("input#apply_database_save_resourcesBuyers_rCategory").each(function(){
-			if ($(this).val()=="未註明"){
-		        this.checked = true;
-		    }
-		});
-		
-		$("input#apply_database_save_resourcesBuyers_rType").each(function(){
-			if ($(this).val()=="資料庫"){
-		        this.checked = true;
-		    }
-		});
-		
-		$("input#apply_database_update_resourcesBuyers_rCategory").each(function(){
-			if ($(this).val()=="未註明"){
-		        this.checked = true;
-		    }
-		});
-		
-		$("input#apply_database_update_resourcesBuyers_rType").each(function(){
-			if ($(this).val()=="資料庫"){
-		        this.checked = true;
-		    }
-		});
-	});
-	
-	$(document).ready(function() {
-		$("input#apply_database_save_resourcesBuyers_rCategory").each(function(){
-			if ($(this).val()=="${rCategory}"){
-		        this.checked = true;
-		    }
-		});
-		
-		$("input#apply_database_save_resourcesBuyers_rType").each(function(){
-			if ($(this).val()=="${rType}"){
-		        this.checked = true;
-		    }
-		});
-		
-		$("input#apply_database_update_resourcesBuyers_rCategory").each(function(){
-			if ($(this).val()=="${rCategory}"){
-		        this.checked = true;
-		    }
-		});
-		
-		$("input#apply_database_update_resourcesBuyers_rType").each(function(){
-			if ($(this).val()=="${rType}"){
-		        this.checked = true;
-		    }
-		});
-	});
+
+	$(document).ready(
+			function() {
+				$("input#apply_database_save_resourcesBuyers_rCategory").each(
+						function() {
+							if ($(this).val() == "未註明") {
+								this.checked = true;
+							}
+						});
+
+				$("input#apply_database_save_resourcesBuyers_rType").each(
+						function() {
+							if ($(this).val() == "資料庫") {
+								this.checked = true;
+							}
+						});
+
+				$("input#apply_database_update_resourcesBuyers_rCategory")
+						.each(function() {
+							if ($(this).val() == "未註明") {
+								this.checked = true;
+							}
+						});
+
+				$("input#apply_database_update_resourcesBuyers_rType").each(
+						function() {
+							if ($(this).val() == "資料庫") {
+								this.checked = true;
+							}
+						});
+			});
+
+	$(document).ready(
+			function() {
+				$("input#apply_database_save_resourcesBuyers_rCategory").each(
+						function() {
+							if ($(this).val() == "${rCategory}") {
+								this.checked = true;
+							}
+						});
+
+				$("input#apply_database_save_resourcesBuyers_rType").each(
+						function() {
+							if ($(this).val() == "${rType}") {
+								this.checked = true;
+							}
+						});
+
+				$("input#apply_database_update_resourcesBuyers_rCategory")
+						.each(function() {
+							if ($(this).val() == "${rCategory}") {
+								this.checked = true;
+							}
+						});
+
+				$("input#apply_database_update_resourcesBuyers_rType").each(
+						function() {
+							if ($(this).val() == "${rType}") {
+								this.checked = true;
+							}
+						});
+			});
 
 	//重設所有欄位(清空)
 	function resetData() {
@@ -106,7 +118,8 @@
 					'資料庫-新增', data);
 		} else {
 			data = $('#apply_database_update').serialize();
-			goDetail("<c:url value = '/'/>crud/apply.database.update.action?entity.serNo=${entity.serNo}",
+			goDetail(
+					"<c:url value = '/'/>crud/apply.database.update.action?entity.serNo=${entity.serNo}",
 					'資料庫-修改', data);
 		}
 	}
@@ -195,23 +208,23 @@ input#customer_name {
 					</tr>
 					<tr>
 						<th width="130">資源類型</th>
-						<td>
-						<c:forEach var="item" items="${categoryList}" varStatus="status">						
-						<input type="radio" name="rCategory"
-							id="apply_database_save_resourcesBuyers_rCategory" value="${item.category }"> <label
-							for="apply_database_save_resourcesBuyers_rCategory">${item.category }</label>
-						</c:forEach>
-						</td>
+						<td><c:forEach var="item" items="${categoryList}"
+								varStatus="status">
+								<input type="radio" name="rCategory"
+									id="apply_database_save_resourcesBuyers_rCategory"
+									value="${item.category }">
+								<label for="apply_database_save_resourcesBuyers_rCategory">${item.category }</label>
+							</c:forEach></td>
 					</tr>
 					<tr>
 						<th width="130">資源種類</th>
-						<td>
-						<c:forEach var="item" items="${typeList}" varStatus="status">
-						<input type="radio" name="rType"
-							id="apply_database_save_resourcesBuyers_rType" value="${item.type }"> <label
-							for="apply_database_save_resourcesBuyers_rType">${item.type }</label> 
-						</c:forEach>
-						</td>
+						<td><c:forEach var="item" items="${typeList}"
+								varStatus="status">
+								<input type="radio" name="rType"
+									id="apply_database_save_resourcesBuyers_rType"
+									value="${item.type }">
+								<label for="apply_database_save_resourcesBuyers_rType">${item.type }</label>
+							</c:forEach></td>
 					</tr>
 					<tr>
 						<th width="130">購買單位<span class="required">(&#8226;)</span></th>
@@ -253,18 +266,20 @@ input#customer_name {
 		</c:when>
 		<c:otherwise>
 			<%
-				ArrayList<?> allCustomers = (ArrayList<?>) request.getAttribute("allCustomers");
-					ArrayList<?> entityCustomers = (ArrayList<?>) request.getAttribute("entity.customers");
-					Object[] allCustomerArray=allCustomers.toArray();
-					if (entityCustomers.size() > 0) {
-						for (int j = 0; j < entityCustomers.size(); j++) {
+				ArrayList<?> allCustomers = (ArrayList<?>) request
+								.getAttribute("allCustomers");
+						ArrayList<?> entityCustomers = (ArrayList<?>) request
+								.getAttribute("entity.customers");
+						Object[] allCustomerArray = allCustomers.toArray();
+						if (entityCustomers.size() > 0) {
+							for (int j = 0; j < entityCustomers.size(); j++) {
 								if (allCustomers.contains(entityCustomers.get(j))) {
 									allCustomers.remove(entityCustomers.get(j));
-									}
+								}
 							}
 						}
-					
-					request.setAttribute("allCustomers", allCustomers);
+
+						request.setAttribute("allCustomers", allCustomers);
 			%>
 			<s:form namespace="/crud" action="apply.database.update">
 				<table cellspacing="1" class="detail-table">
@@ -313,23 +328,23 @@ input#customer_name {
 					</tr>
 					<tr>
 						<th width="130">資源類型</th>
-						<td>
-						<c:forEach var="item" items="${categoryList}" varStatus="status">						
-						<input type="radio" name="rCategory"
-							id="apply_database_update_resourcesBuyers_rCategory" value="${item.category }"> <label
-							for="apply_database_update_resourcesBuyers_rCategory">${item.category }</label>
-						</c:forEach>
-						</td>
+						<td><c:forEach var="item" items="${categoryList}"
+								varStatus="status">
+								<input type="radio" name="rCategory"
+									id="apply_database_update_resourcesBuyers_rCategory"
+									value="${item.category }">
+								<label for="apply_database_update_resourcesBuyers_rCategory">${item.category }</label>
+							</c:forEach></td>
 					</tr>
 					<tr>
 						<th width="130">資源種類</th>
-						<td>
-						<c:forEach var="item" items="${typeList}" varStatus="status">
-						<input type="radio" name="rType"
-							id="apply_database_update_resourcesBuyers_rType" value="${item.type }"> <label
-							for="apply_database_update_resourcesBuyers_rType">${item.type }</label> 
-						</c:forEach>
-						</td>
+						<td><c:forEach var="item" items="${typeList}"
+								varStatus="status">
+								<input type="radio" name="rType"
+									id="apply_database_update_resourcesBuyers_rType"
+									value="${item.type }">
+								<label for="apply_database_update_resourcesBuyers_rType">${item.type }</label>
+							</c:forEach></td>
 					</tr>
 					<tr>
 						<th width="130">購買單位<span class="required">(&#8226;)</span></th>
@@ -370,15 +385,6 @@ input#customer_name {
 			</s:form>
 		</c:otherwise>
 	</c:choose>
-
-	<s:if test="hasActionErrors()">
-		<script language="javascript" type="text/javascript">
-			var msg = "";
-			<s:iterator value="actionErrors">
-			msg += '<s:property escape="true"/><br>';
-			</s:iterator>;
-			goAlert('訊息', msg);
-		</script>
-	</s:if>
+	<jsp:include page="/WEB-INF/jsp/layout/msg.jsp" />
 </body>
 </html>

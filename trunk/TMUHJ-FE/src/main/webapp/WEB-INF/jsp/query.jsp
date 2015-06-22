@@ -2,18 +2,7 @@
 	pageEncoding="UTF-8"%>
 <%@ taglib prefix="s" uri="/struts-tags"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-<s:if test="hasActionErrors()">
-	<script type="text/javascript">
-		$(document)
-				.ready(
-						function() {
-							var msg = "";
-							<s:iterator value="actionErrors">msg += '<s:property escape="true"/>\r\n';
-							</s:iterator>;
-							alert(msg);
-						});
-	</script>
-</s:if>
+<jsp:include page="/WEB-INF/jsp/layout/msg.jsp" />
 <script type="text/javascript">
 	$(document).ready(
 			function() {
@@ -28,21 +17,29 @@
 											+ item + ".list.action");
 						});
 			});
-	
-	$(document).ready(function() {
-		$("input.v_type").each(function(){
-			if ($(this).val()=="${type}"){
-		        this.checked = true;
-		    	var item = $("input[name='type']:checked").val();
-				$("form").attr("id", "apply_" + item + "_list");
-				$("form").attr("name", "apply_" + item + "_list");
-				$("form").attr(
-						"action",
-						"<c:url value = '/'/>" + "crud/apply."
-								+ item + ".list.action");
-		    }
-		});
-	});
+
+	$(document).ready(
+			function() {
+				$("input.v_type")
+						.each(
+								function() {
+									if ($(this).val() == "${type}") {
+										this.checked = true;
+										var item = $(
+												"input[name='type']:checked")
+												.val();
+										$("form").attr("id",
+												"apply_" + item + "_list");
+										$("form").attr("name",
+												"apply_" + item + "_list");
+										$("form").attr(
+												"action",
+												"<c:url value = '/'/>"
+														+ "crud/apply." + item
+														+ ".list.action");
+									}
+								});
+			});
 
 	function form_reset() {
 		$("input[name='keywords']").val("");

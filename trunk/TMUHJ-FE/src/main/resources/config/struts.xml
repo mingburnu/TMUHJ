@@ -66,7 +66,7 @@
 		<default-interceptor-ref name="defaultInterceptor" />
 		<action name="*" class="commonMainPageAction">
 			<result name="success">/WEB-INF/jsp/{1}.jsp</result>
-			<result name="input">/login.jsp</result>
+			<result name="input">/WEB-INF/jsp/sessionTimeOut.jsp</result>
 		</action>
 	</package>
 
@@ -87,7 +87,7 @@
 		<action name="apply.*.*" class="{1}Action" method="{2}">
 			<exception-mapping exception="java.lang.NoSuchMethodException"
 				result="error" />
-			<result name="input">/login.jsp</result>
+			<result name="input">/WEB-INF/jsp/sessionTimeOut.jsp</result>
 			<result name="query">/WEB-INF/jsp/query.jsp</result>
 			<result name="adv_query">/WEB-INF/jsp/adv_query.jsp</result>
 			<result name="database">/WEB-INF/jsp/module/apply/search/result_a.jsp

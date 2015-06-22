@@ -77,12 +77,12 @@
 
 		<action name="main" class="commonMainPageAction">
 			<result name="success">/WEB-INF/jsp/index.jsp</result>
-			<result name="input">/login.jsp</result>
+			<result name="input">/WEB-INF/jsp/sessionTimeOut.jsp</result>
 		</action>
 		<action name="*" class="commonMainPageAction">
 			<result name="success">/WEB-INF/jsp/module/apply/{1}/{1}List.jsp
 			</result>
-			<result name="input">/login.jsp</result>
+			<result name="input">/WEB-INF/jsp/sessionTimeOut.jsp</result>
 		</action>
 	</package>
 
@@ -104,7 +104,7 @@
 		<action name="apply.*.*" class="{1}Action" method="{2}">
 			<exception-mapping exception="java.lang.NoSuchMethodException"
 				result="error" />
-			<result name="input">/login.jsp</result>
+			<result name="input">/WEB-INF/jsp/sessionTimeOut.jsp</result>
 			<result name="list">/WEB-INF/jsp/module/apply/{1}/{1}List.jsp
 			</result>
 			<result name="edit">/WEB-INF/jsp/module/apply/{1}/{1}Edit.jsp

@@ -93,13 +93,6 @@
 	<div class="detail-func-button">
 		<a class="state-default" onclick="closeDetail_ToQuery();">關閉</a>
 	</div>
-	<s:if test="hasActionMessages()">
-		<script language="javascript" type="text/javascript">
-			var msg = "";
-			<s:iterator value="actionMessages">msg += '<s:property escape="true"/>\n';
-			</s:iterator>;
-			goAlert('訊息', msg);
-		</script>
-	</s:if>
+	<jsp:include page="/WEB-INF/jsp/layout/msg.jsp" />
 </body>
 </html>

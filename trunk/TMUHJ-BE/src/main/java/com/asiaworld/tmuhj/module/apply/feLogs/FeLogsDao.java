@@ -12,6 +12,7 @@ import org.springframework.util.Assert;
 
 import com.asiaworld.tmuhj.core.apply.customer.Customer;
 import com.asiaworld.tmuhj.core.apply.enums.Act;
+import com.asiaworld.tmuhj.core.converter.JodaTimeConverter;
 import com.asiaworld.tmuhj.core.dao.ModuleDaoLog;
 import com.asiaworld.tmuhj.core.model.DataSet;
 
@@ -20,6 +21,9 @@ public class FeLogsDao extends ModuleDaoLog<FeLogs> {
 
 	@Autowired
 	private FeLogs feLogs;
+	
+	@Autowired
+	private JodaTimeConverter converter;
 
 	public DataSet<FeLogs> getRanks(DataSet<FeLogs> ds) throws Exception {
 		Assert.notNull(ds);
@@ -29,11 +33,11 @@ public class FeLogsDao extends ModuleDaoLog<FeLogs> {
 		String start = "";
 		String end = "";
 		if (entity.getStart() != null) {
-			start = entity.getStart().toString().split("T")[0];
+			start = converter.convertToString(entity.getStart());
 		}
 
 		if (entity.getEnd() != null) {
-			end = entity.getEnd().plusDays(1).toString().split("T")[0];
+			end = converter.convertToString(entity.getEnd().plusDays(1));
 		}
 
 		Query listQuery = null;
@@ -93,7 +97,7 @@ public class FeLogsDao extends ModuleDaoLog<FeLogs> {
 		List<?> total = totalQuery.list();
 		Iterator<?> iterator = data.iterator();
 		List<FeLogs> ranks = new ArrayList<FeLogs>();
-		
+
 		int i = 0;
 		while (iterator.hasNext()) {
 			Object[] row = (Object[]) iterator.next();

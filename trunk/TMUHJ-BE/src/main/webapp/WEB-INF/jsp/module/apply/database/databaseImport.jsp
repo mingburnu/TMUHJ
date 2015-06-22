@@ -8,19 +8,19 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title></title>
 <script type="text/javascript">
-    var importForm = "";
-    $(document).ready(function() {
-    	importForm = $("form#apply_database_queue").html();
-    });
+	var importForm = "";
+	$(document).ready(function() {
+		importForm = $("form#apply_database_queue").html();
+	});
 
-    //重設所有欄位(清空)
-    function resetData() {
-    	$("form#apply_database_queue").html(importForm);
-    }
-    
-    //匯出範本
-    function goExample() {
-	    var url = "<%=request.getContextPath()%>/crud/apply.database.example.action";
+	//重設所有欄位(清空)
+	function resetData() {
+		$("form#apply_database_queue").html(importForm);
+	}
+
+	//匯出範本
+	function goExample() {
+		var url = "<c:url value = '/'/>crud/apply.database.example.action";
 		window.open(url, "_top");
 	}
 
@@ -62,28 +62,31 @@
 
 			var formData = new FormData(document
 					.getElementById("apply_database_queue"));
-			$.ajax({
-				url : formURL,
-				type : 'POST',
-				data : formData,
-				mimeType : "multipart/form-data",
-				contentType : false,
-				cache : false,
-				processData : false,
-				success : function(data, textStatus, jqXHR) {
-					$("#div_Detail").show();
-					UI_Resize();
-					$(window).scrollTop(0);
-					$("#div_Detail .content > .header > .title").html("資料庫-匯入");
-					$("#div_Detail .content > .contain").empty().html(data);
-					closeLoading();
+			$
+					.ajax({
+						url : formURL,
+						type : 'POST',
+						data : formData,
+						mimeType : "multipart/form-data",
+						contentType : false,
+						cache : false,
+						processData : false,
+						success : function(data, textStatus, jqXHR) {
+							$("#div_Detail").show();
+							UI_Resize();
+							$(window).scrollTop(0);
+							$("#div_Detail .content > .header > .title").html(
+									"資料庫-匯入");
+							$("#div_Detail .content > .contain").empty().html(
+									data);
+							closeLoading();
 
-				},
-				error : function(jqXHR, textStatus, errorThrown) {
-					goAlert("結果", XMLHttpRequest.responseText);
-					closeLoading();
-				}
-			});
+						},
+						error : function(jqXHR, textStatus, errorThrown) {
+							goAlert("結果", XMLHttpRequest.responseText);
+							closeLoading();
+						}
+					});
 
 		} else //for olden browsers
 		{
@@ -116,37 +119,32 @@
 
 	}
 </script>
-<s:form namespace="/crud" action="apply.database.queue"
-	enctype="multipart/form-data" method="post">
-	<table cellspacing="1" class="detail-table">
-		<tr>
-			<th width="130">匯入檔案<span class="required">(•)</span>(<a
-				href="#" onclick="goExample();">範例</a>)
-			</th>
-			<td><input type="file" id="file" name="file" size="50"></td>
-		</tr>
-	</table>
-	<div class="button_box">
-		<div class="detail-func-button">
-			<a class="state-default" onclick="closeDetail();">取消</a> &nbsp;<a
-				class="state-default" onclick="resetData();">重置</a>&nbsp;<a
-				id="ports" class="state-default" onclick="goQueue();">下一步</a>
+</head>
+<body>
+	<s:form namespace="/crud" action="apply.database.queue"
+		enctype="multipart/form-data" method="post">
+		<table cellspacing="1" class="detail-table">
+			<tr>
+				<th width="130">匯入檔案<span class="required">(•)</span>(<a
+					href="#" onclick="goExample();">範例</a>)
+				</th>
+				<td><input type="file" id="file" name="file" size="50"></td>
+			</tr>
+		</table>
+		<div class="button_box">
+			<div class="detail-func-button">
+				<a class="state-default" onclick="closeDetail();">取消</a> &nbsp;<a
+					class="state-default" onclick="resetData();">重置</a>&nbsp;<a
+					id="ports" class="state-default" onclick="goQueue();">下一步</a>
+			</div>
 		</div>
-	</div>
-	<div class="detail_note">
-		<div class="detail_note_title">Note</div>
-		<div class="detail_note_content">
-			<span class="required">(&#8226;)</span>為必填欄位
+		<div class="detail_note">
+			<div class="detail_note_title">Note</div>
+			<div class="detail_note_content">
+				<span class="required">(&#8226;)</span>為必填欄位
+			</div>
 		</div>
-	</div>
-</s:form>
-<s:if test="hasActionErrors()">
-	<script language="javascript" type="text/javascript">
-		var msg = "";
-		<s:iterator value="actionErrors">msg += '<s:property escape="true"/><br>';
-		</s:iterator>;
-		goAlert('訊息', msg);
-	</script>
-</s:if>
+	</s:form>
+	<jsp:include page="/WEB-INF/jsp/layout/msg.jsp" />
 </body>
 </html>

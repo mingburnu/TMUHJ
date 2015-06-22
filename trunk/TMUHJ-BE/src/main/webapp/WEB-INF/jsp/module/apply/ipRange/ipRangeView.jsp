@@ -12,14 +12,18 @@
 	function closeDetail_ToQuery() {
 		$("#div_Detail_2").hide();
 		UI_Resize();
-		gotoPage_detail($("form#apply_ipRange_list input#listForm_currentPageHeader").val());
+		gotoPage_detail($(
+				"form#apply_ipRange_list input#listForm_currentPageHeader")
+				.val());
 		resetCloseDetail_2();
 	}
-	
+
 	function closeDetail_2() {
 		$("#div_Detail_2").hide();
 		UI_Resize();
-		gotoPage_detail($("form#apply_ipRange_list input#listForm_currentPageHeader").val());
+		gotoPage_detail($(
+				"form#apply_ipRange_list input#listForm_currentPageHeader")
+				.val());
 		resetCloseDetail_2();
 	}
 </script>
@@ -42,13 +46,6 @@
 	<div class="detail-func-button">
 		<a class="state-default" onclick="closeDetail_ToQuery();">關閉</a>
 	</div>
-	<s:if test="hasActionMessages()">
-		<script language="javascript" type="text/javascript">
-			var msg = "";
-			<s:iterator value="actionMessages">msg += '<s:property escape="true"/><br>';
-			</s:iterator>;
-			goAlert('訊息', msg);
-		</script>
-	</s:if>
+	<jsp:include page="/WEB-INF/jsp/layout/msg.jsp" />
 </body>
 </html>

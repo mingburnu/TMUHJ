@@ -8,12 +8,12 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title></title>
 <script type="text/javascript">
-var saveForm = "";
-var updateForm = "";
-$(document).ready(function() {
-	saveForm = $("form#apply_ipRange_save").html();
-	updateForm = $("form#apply_ipRange_update").html();
-});
+	var saveForm = "";
+	var updateForm = "";
+	$(document).ready(function() {
+		saveForm = $("form#apply_ipRange_save").html();
+		updateForm = $("form#apply_ipRange_update").html();
+	});
 
 	//重設所有欄位(清空)
 	function resetData() {
@@ -26,15 +26,16 @@ $(document).ready(function() {
 		closeDetail_2();
 		if ($("form#apply_ipRange_save").length != 0) {
 			var data = $('form#apply_ipRange_save').serialize();
-			goDetail_2("<c:url value = '/'/>crud/apply.ipRange.save.action?entity.customer.serNo=${entity.customer.serNo}",
+			goDetail_2(
+					"<c:url value = '/'/>crud/apply.ipRange.save.action?entity.customer.serNo=${entity.customer.serNo}",
 					'客戶-IP Range新增', data);
 		} else {
 			var data = $('form#apply_ipRange_update').serialize();
-			goDetail_2("<c:url value = '/'/>crud/apply.ipRange.update.action?entity.serNo=${entity.serNo}&entity.customer.serNo=${entity.customer.serNo}&entity.listNo=${entity.listNo}",
+			goDetail_2(
+					"<c:url value = '/'/>crud/apply.ipRange.update.action?entity.serNo=${entity.serNo}&entity.customer.serNo=${entity.customer.serNo}&entity.listNo=${entity.listNo}",
 					'客戶-IP Range修改', data);
 		}
 	}
-
 </script>
 </head>
 <body>
@@ -95,14 +96,6 @@ $(document).ready(function() {
 			</s:form>
 		</c:otherwise>
 	</c:choose>
-	<s:if test="hasActionErrors()">
-		<script language="javascript" type="text/javascript">
-			var msg = "";
-			<s:iterator value="actionErrors">
-			msg += '<s:property escape="false"/><br>';
-			</s:iterator>;
-			goAlert('訊息', msg);
-		</script>
-	</s:if>
+	<jsp:include page="/WEB-INF/jsp/layout/msg.jsp" />
 </body>
 </html>

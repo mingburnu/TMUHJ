@@ -76,23 +76,21 @@ function changePageSize(recordPerPage,recordPoint){
 function goExport(){
 	var data=$("#apply_beLogs_list").serialize();
 	var url='<%=request.getContextPath()%>/crud/apply.beLogs.exports.action?'+ data;
-	
 	if($("input#customerSerno").attr("checked")){
-	var customerSerno=$("input#customerSerno").val();
-	if(customerSerno!=null && customerSerno>0){
-		window.open(url, "export"); 
-	}else{
-		goAlert("訊息", "請正確填寫機構名稱");
-	}
-	}else{
-		window.open(url, "export"); 
+		var customerSerno=$("input#customerSerno").val();
+		if(customerSerno!=null && customerSerno>0){
+			window.open(url, "_top");
+		} else {
+			goAlert("訊息", "請正確填寫機構名稱");
+		}
+	} else {
+		window.open(url, "_top");
 	}
 }
 
 </script>
 </head>
 <body>
-
 	<s:form action="apply.beLogs.list" namespace="/crud" method="post"
 		onsubmit="return false;">
 		<div class="tabs-box">
@@ -258,22 +256,6 @@ function goExport(){
 			</div>
 		</div>
 	</s:form>
-
-	<s:if test="hasActionMessages()">
-		<script language="javascript" type="text/javascript">
-            var msg = "";
-            <s:iterator value="actionMessages">msg += '<s:property escape="false"/><br>';
-            </s:iterator>;
-            goAlert('訊息', msg);
-        </script>
-	</s:if>
-	<s:if test="hasActionErrors()">
-		<script language="javascript" type="text/javascript">
-			var msg = "";
-			<s:iterator value="actionErrors">msg += '<s:property escape="true"/><br>';</s:iterator>;
-			goAlert('訊息', msg);
-		</script>
-	</s:if>
-	<iframe name="export" style="display: none;"></iframe>
+	<jsp:include page="/WEB-INF/jsp/layout/msg.jsp" />
 </body>
 </html>

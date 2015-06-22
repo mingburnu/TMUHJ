@@ -17,7 +17,8 @@
 <link
 	href="<%=request.getContextPath()%>/resources/css/jquery.autocomplete.css"
 	rel="stylesheet" type="text/css" />
-<link href="<%=request.getContextPath()%>/resources/css/calendar-win2k-cold-1.css"
+<link
+	href="<%=request.getContextPath()%>/resources/css/calendar-win2k-cold-1.css"
 	rel="stylesheet" type="text/css">
 <script language="javascript" type="text/javascript"
 	src="<%=request.getContextPath()%>/resources/js/jquery-1.5.2.js">

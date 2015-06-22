@@ -990,6 +990,7 @@ public class JournalAction extends GenericCRUDActionFull<Journal> {
 		return QUEUE;
 	}
 
+	@SuppressWarnings("unchecked")
 	public String getCheckedItem() {
 		List<?> importList = (List<?>) getSession().get("importList");
 		if (importList == null) {
@@ -998,11 +999,7 @@ public class JournalAction extends GenericCRUDActionFull<Journal> {
 
 		Set<Integer> checkItemSet = new TreeSet<Integer>();
 		if (getSession().containsKey("checkItemSet")) {
-			Iterator<?> iterator = ((Set<?>) getSession().get("checkItemSet"))
-					.iterator();
-			while (iterator.hasNext()) {
-				checkItemSet.add((Integer) iterator.next());
-			}
+			checkItemSet = (Set<Integer>) getSession().get("checkItemSet");
 		}
 
 		if (ArrayUtils.isNotEmpty(importSerNos)) {

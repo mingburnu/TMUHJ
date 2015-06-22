@@ -26,23 +26,10 @@
 	<util:properties id="systemConfigurer"
 		location="classpath:config/system.properties" />
 
-	<!-- <beans profile="dev"> -->
-	<!-- <context:property-placeholder location="classpath:datasource/datasource-h2.properties" 
-		/> -->
-	<!-- <bean id="datasourceConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"> -->
-	<!-- <property name="location" value="classpath:datasource/datasource-h2.properties" 
-		/> -->
-	<!-- </bean> -->
-	<!-- </beans> -->
-
 	<beans profile="dev">
 		<!--<context:property-placeholder location="classpath:datasource/datasource-h2.properties" 
 			/> -->
 		<context:property-placeholder
 			location="classpath:datasource/datasource-h2.properties" />
-		<!--<bean id="datasourceConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"> 
-			<property name="location" value="classpath:datasource/datasource-maria.properties" 
-			/> </bean> -->
 	</beans>
-
-</beans>	
+</beans>
