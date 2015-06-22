@@ -8,19 +8,19 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title></title>
 <script type="text/javascript">
-    var importForm = "";
-    $(document).ready(function() {
-    	importForm = $("form#apply_customer_queue").html();
-    });
+	var importForm = "";
+	$(document).ready(function() {
+		importForm = $("form#apply_customer_queue").html();
+	});
 
-    //重設所有欄位(清空)
-    function resetData() {
-    	$("form#apply_customer_queue").html(importForm);
-    }
-    
-    //匯出範本
-    function goExample() {
-	    var url = "<%=request.getContextPath()%>/crud/apply.customer.example.action";
+	//重設所有欄位(清空)
+	function resetData() {
+		$("form#apply_customer_queue").html(importForm);
+	}
+
+	//匯出範本
+	function goExample() {
+		var url = "<c:url value = '/'/>crud/apply.customer.example.action";
 		window.open(url, "_top");
 	}
 
@@ -116,37 +116,32 @@
 
 	}
 </script>
-<s:form namespace="/crud" action="apply.customer.queue"
-	enctype="multipart/form-data" method="post">
-	<table cellspacing="1" class="detail-table">
-		<tr>
-			<th width="130">匯入檔案<span class="required">(•)</span>(<a
-				href="#" onclick="goExample();">範例</a>)
-			</th>
-			<td><input type="file" id="file" name="file" size="50"></td>
-		</tr>
-	</table>
-	<div class="button_box">
-		<div class="detail-func-button">
-			<a class="state-default" onclick="closeDetail();">取消</a> &nbsp;<a
-				class="state-default" onclick="resetData();">重置</a>&nbsp;<a
-				id="ports" class="state-default" onclick="goQueue();">下一步</a>
+</head>
+<body>
+	<s:form namespace="/crud" action="apply.customer.queue"
+		enctype="multipart/form-data" method="post">
+		<table cellspacing="1" class="detail-table">
+			<tr>
+				<th width="130">匯入檔案<span class="required">(•)</span>(<a
+					href="#" onclick="goExample();">範例</a>)
+				</th>
+				<td><input type="file" id="file" name="file" size="50"></td>
+			</tr>
+		</table>
+		<div class="button_box">
+			<div class="detail-func-button">
+				<a class="state-default" onclick="closeDetail();">取消</a> &nbsp;<a
+					class="state-default" onclick="resetData();">重置</a>&nbsp;<a
+					id="ports" class="state-default" onclick="goQueue();">下一步</a>
+			</div>
 		</div>
-	</div>
-	<div class="detail_note">
-		<div class="detail_note_title">Note</div>
-		<div class="detail_note_content">
-			<span class="required">(&#8226;)</span>為必填欄位
+		<div class="detail_note">
+			<div class="detail_note_title">Note</div>
+			<div class="detail_note_content">
+				<span class="required">(&#8226;)</span>為必填欄位
+			</div>
 		</div>
-	</div>
-</s:form>
-<s:if test="hasActionErrors()">
-	<script language="javascript" type="text/javascript">
-		var msg = "";
-		<s:iterator value="actionErrors">msg += '<s:property escape="true"/><br>';
-		</s:iterator>;
-		goAlert('訊息', msg);
-	</script>
-</s:if>
+	</s:form>
+	<jsp:include page="/WEB-INF/jsp/layout/msg.jsp" />
 </body>
 </html>

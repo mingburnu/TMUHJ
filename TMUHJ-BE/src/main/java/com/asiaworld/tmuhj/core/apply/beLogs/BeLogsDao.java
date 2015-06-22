@@ -13,6 +13,7 @@ import org.springframework.util.Assert;
 import com.asiaworld.tmuhj.core.apply.accountNumber.AccountNumber;
 import com.asiaworld.tmuhj.core.apply.customer.Customer;
 import com.asiaworld.tmuhj.core.apply.enums.Act;
+import com.asiaworld.tmuhj.core.converter.JodaTimeConverter;
 import com.asiaworld.tmuhj.core.dao.ModuleDaoLog;
 import com.asiaworld.tmuhj.core.model.DataSet;
 
@@ -22,6 +23,9 @@ public class BeLogsDao extends ModuleDaoLog<BeLogs> {
 	@Autowired
 	private BeLogs beLogs;
 	
+	@Autowired
+	private JodaTimeConverter converter;
+
 	public DataSet<BeLogs> getRanks(DataSet<BeLogs> ds) throws Exception {
 		Assert.notNull(ds);
 		Assert.notNull(ds.getEntity());
@@ -30,11 +34,11 @@ public class BeLogsDao extends ModuleDaoLog<BeLogs> {
 		String start = "";
 		String end = "";
 		if (entity.getStart() != null) {
-			start = entity.getStart().toString().split("T")[0];
+			start = converter.convertToString(entity.getStart());
 		}
 
 		if (entity.getEnd() != null) {
-			end = entity.getEnd().plusDays(1).toString().split("T")[0];
+			end = converter.convertToString(entity.getEnd().plusDays(1));
 		}
 
 		Query listQuery = null;
@@ -56,8 +60,8 @@ public class BeLogsDao extends ModuleDaoLog<BeLogs> {
 					+ "' group by acc_serNo) as countTotal";
 
 			if (entity.getCustomer().getSerNo() == 0) {
-				listHql = listHql.replace("' and B.customer.serNo ='"
-						+ entity.getCustomer(), "");
+				listHql = listHql.replace(
+						"' and B.customer.serNo ='" + entity.getCustomer(), "");
 				countSql = countSql.replace("' and cus_serNo ='"
 						+ entity.getCustomer().getSerNo(), "");
 			}

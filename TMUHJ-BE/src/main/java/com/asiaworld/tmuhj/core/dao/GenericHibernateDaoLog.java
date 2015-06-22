@@ -72,7 +72,6 @@ public abstract class GenericHibernateDaoLog<T extends GenericEntityLog>
 		Assert.notNull(restrictions);
 		Criteria dataCri = getSession().createCriteria(entityClass);
 		Criteria countCri = getSession().createCriteria(entityClass);
-		// DataSet<T> results = new DataSet<>();
 
 		// add restrictions
 		List<Criterion> crions = (List<Criterion>) restrictions.getCriterions();

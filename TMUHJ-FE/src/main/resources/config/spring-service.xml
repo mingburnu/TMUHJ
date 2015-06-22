@@ -52,8 +52,6 @@
 	</tx:advice>
 
 	<aop:config expose-proxy="true">
-		<!--<aop:pointcut id="serviceOperation" expression="execution(* com.asiaworld.tmuhj..*.service..*.*(..))" 
-			/> -->
 		<aop:pointcut id="serviceOperation" expression="bean(*Service)" />
 		<aop:advisor pointcut-ref="serviceOperation" advice-ref="txAdvice" />
 	</aop:config>

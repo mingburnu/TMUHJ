@@ -211,13 +211,6 @@ $(document).ready(function() {
 				;異常筆數 :${total-normal })</div>
 		</div>
 	</s:form>
-	<s:if test="hasActionErrors()">
-		<script language="javascript" type="text/javascript">
-			var msg = "";
-			<s:iterator value="actionErrors">msg += '<s:property escape="false"/><br>';
-			</s:iterator>;
-			goAlert('訊息', msg);
-		</script>
-	</s:if>
+	<jsp:include page="/WEB-INF/jsp/layout/msg.jsp" />
 </body>
 </html>

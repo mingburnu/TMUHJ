@@ -272,22 +272,6 @@ function goImport(){
 			</div>
 		</div>
 	</s:form>
-
-	<s:if test="hasActionMessages()">
-		<script language="javascript" type="text/javascript">
-            var msg = "";
-            <s:iterator value="actionMessages">msg += '<s:property escape="true"/><br>';
-            </s:iterator>;
-            goAlert('訊息', msg);
-        </script>
-	</s:if>
-	<s:if test="hasActionErrors()">
-		<script language="javascript" type="text/javascript">
-			var msg = "";
-			<s:iterator value="actionErrors">msg += '<s:property escape="true"/><br>';
-			</s:iterator>;
-			goAlert('訊息', msg);
-		</script>
-	</s:if>
+	<jsp:include page="/WEB-INF/jsp/layout/msg.jsp" />
 </body>
 </html>

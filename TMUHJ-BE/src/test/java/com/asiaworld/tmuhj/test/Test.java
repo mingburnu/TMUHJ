@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Properties;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.regex.Matcher;
@@ -14,9 +15,7 @@ import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
-import org.jasypt.util.password.StrongPasswordEncryptor;
-
-import com.asiaworld.tmuhj.core.apply.customer.Customer;
+import org.joda.time.LocalDate;
 
 public class Test {
 
@@ -168,18 +167,6 @@ public class Test {
 		System.out.println('c' > 'a');
 		System.out.println(whiteTest.replaceAll("[a-zA-Z0-9]", ""));
 		System.out.println(whiteTest.replaceAll("[a-zA-Z0-9]", "").length());
-		Customer customer = new Customer("AAA", "", "", "", "", "", "", "");
-		List<Customer> customers = new ArrayList<Customer>();
-		customers.add(customer);
-		customers.get(0).setName("BBB");
-		System.out.println(customers.get(0).getName());
-		System.out.println(customer.getName());
-
-		StrongPasswordEncryptor encryptor = new StrongPasswordEncryptor();
-		System.out
-				.println(encryptor
-						.checkPassword("admin",
-								"8w5y4CYvLHP69kq5Wm2vHDVfPX1IOcrpskUugS/4KZN6budffcIYbfhpEL6HmNZ0"));
 
 		Set<String> setForList = new LinkedHashSet<String>();
 		for (int i = 0; i < 10; i++) {
@@ -202,25 +189,20 @@ public class Test {
 		System.out.println(tel);
 		System.out.println(NumberUtils.isDigits(tel));
 
-		// p = re.compile("""^(?P<aclass>[A-Z]{1,3})
-		// (?P<nclass>\\d{1,4})(\\ ?)
-		// (\\.(?P<dclass>\\d{1,3}))?
-		// (?P<date>\\ [A-Za-z0-9]{1,4}\\ )?
-		// ([\\ \\.](?P<c1>[A-Z][0-9]{1,4}))
-		// (\\ (?P<c1d>[A-Za-z0-9]{0,4}))?
-		// (\\.?(?P<c2>[A-Z][0-9]{1,4}))?
-		// (\\ (?P<e8>\\w*)\\ ?)?
-		// (\\ (?P<e9>\\w*)\\ ?)?
-		// (\\ (?P<e10>\\w*)\\ ?)?""",
-		// re.VERBOSE)
-
 		String LCC = "NB 1.1";
 		System.out.println(isLCC(LCC));
-		
-		String num ="123.3";
+
+		String num = "123.3";
 		System.out.println(isNum(num));
 
 		dotString();
+
+		Properties properties = new Properties();
+		properties.setProperty("hello", "world");
+		System.out.println(properties.get("hello"));
+		System.out.println(isDate("2010-02-31"));
+		
+		System.out.println(new LocalDate("2015/01/01").toString());
 		
 	}
 
@@ -231,18 +213,24 @@ public class Test {
 
 		return pattern.matcher(LCC).matches();
 	}
-	
+
 	public static boolean isNum(String num) {
-//		String numPattern = "(\\d+)(\\.?)(\\d+)";
+		// String numPattern = "(\\d+)(\\.?)(\\d+)";
 
 		String numPattern = "\\d+(\\.\\d+)";
-//		String numPattern = "^[1-9]\\d*(\\.\\d+)?$";
+		// String numPattern = "^[1-9]\\d*(\\.\\d+)?$";
 		Pattern pattern = Pattern.compile(numPattern);
 
 		return pattern.matcher(num).matches();
 	}
-	
+
 	public static void dotString(String... strs) {
 		System.out.println(strs == null);
+	}
+	
+	public static boolean isDate(String date) {
+		Pattern pattern = Pattern.compile("((19|20)\\d\\d)-(0?[1-9]|1[012])-(0?[1-9]|[12][0-9]|3[01])");
+		Matcher matcher = pattern.matcher(date);
+		return matcher.matches();
 	}
 }
