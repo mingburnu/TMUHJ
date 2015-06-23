@@ -12,7 +12,6 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-import org.apache.struts2.json.annotations.JSON;
 import org.hibernate.annotations.Type;
 import org.joda.time.LocalDateTime;
 import org.slf4j.Logger;
@@ -82,7 +81,6 @@ public abstract class GenericEntityLog implements Entity {
 	/**
 	 * @return the cDTime
 	 */
-	@JSON(serialize = false)
 	public LocalDateTime getcDTime() {
 		return cDTime;
 	}
@@ -130,47 +128,6 @@ public abstract class GenericEntityLog implements Entity {
 		this.setCreatedBy(user.getSerNo());
 		this.setcDTime(new LocalDateTime());
 	}
-
-	/**
-	 * initial insert
-	 * <p>
-	 * initial id, tpmId, create, modify and status from main entity when insert
-	 * <br>
-	 * <p>
-	 * .
-	 * 
-	 * @param main
-	 *            entity
-	 */
-	// public <T extends GenericEntity> void initInsert(T entity) {
-	// initInsert(entity, SystemStatus.Y);
-	// }
-
-	/**
-	 * initial insert
-	 * <p>
-	 * initial id, tpmId, create, modify and status from main entity when insert
-	 * <br>
-	 * <p>
-	 * .
-	 * 
-	 * @param main
-	 *            entity
-	 * @param sysStatus
-	 *            the sys status
-	 * @param bpmId
-	 *            the bpm id
-	 */
-	// public <T extends GenericEntity> void initInsert(T entity, SystemStatus
-	// sysStatus) {
-	// this.setVersionNo(1L);
-	// this.setStatus(sysStatus);
-	// this.setCreatedBy(entity.getCreatedBy());
-	// this.setCreatedDate(new LocalDateTime());
-	// this.setLastModifiedBy(getCreatedBy());
-	// this.setLastModifiedDate(getCreatedDate());
-	// }
-
 
 	/*
 	 * (non-Javadoc)
