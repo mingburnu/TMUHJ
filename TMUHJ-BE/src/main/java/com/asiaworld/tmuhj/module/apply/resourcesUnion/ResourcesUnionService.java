@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
-import com.asiaworld.tmuhj.core.dao.GenericDaoSerNo;
+import com.asiaworld.tmuhj.core.dao.GenericDao;
 import com.asiaworld.tmuhj.core.dao.DsRestrictions;
 import com.asiaworld.tmuhj.core.model.DataSet;
 import com.asiaworld.tmuhj.core.model.Pager;
@@ -34,7 +34,7 @@ public class ResourcesUnionService extends GenericServiceSerNo<ResourcesUnion> {
 	}
 
 	@Override
-	protected GenericDaoSerNo<ResourcesUnion> getDao() {
+	protected GenericDao<ResourcesUnion> getDao() {
 		// TODO Auto-generated method stub
 		return dao;
 	}

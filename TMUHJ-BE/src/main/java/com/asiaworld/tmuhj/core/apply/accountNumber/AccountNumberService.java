@@ -18,7 +18,7 @@ import com.asiaworld.tmuhj.core.apply.customer.Customer;
 import com.asiaworld.tmuhj.core.apply.customer.CustomerService;
 import com.asiaworld.tmuhj.core.apply.enums.Role;
 import com.asiaworld.tmuhj.core.apply.enums.Status;
-import com.asiaworld.tmuhj.core.dao.GenericDaoFull;
+import com.asiaworld.tmuhj.core.dao.GenericDao;
 import com.asiaworld.tmuhj.core.dao.DsRestrictions;
 import com.asiaworld.tmuhj.core.model.DataSet;
 import com.asiaworld.tmuhj.core.service.GenericServiceFull;
@@ -41,7 +41,7 @@ public class AccountNumberService extends GenericServiceFull<AccountNumber> {
 	private CustomerService customerService;
 
 	@Override
-	protected GenericDaoFull<AccountNumber> getDao() {
+	protected GenericDao<AccountNumber> getDao() {
 		return dao;
 	}
 

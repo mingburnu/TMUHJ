@@ -9,6 +9,6 @@ import com.asiaworld.tmuhj.core.entity.GenericEntitySerNo;
  * @version 2014/10/15
  */
 public class ModuleDaoSerNo<T extends GenericEntitySerNo> extends
-		GenericHibernateDaoSerNo<T> {
+		GenericHibernateDao<T> {
 
 }

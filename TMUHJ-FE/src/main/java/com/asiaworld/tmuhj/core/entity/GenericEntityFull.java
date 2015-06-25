@@ -4,7 +4,6 @@ import javax.persistence.Column;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.Transient;
 
@@ -12,7 +11,6 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-import org.apache.struts2.json.annotations.JSON;
 import org.hibernate.annotations.Type;
 import org.joda.time.LocalDateTime;
 import org.slf4j.Logger;
@@ -43,13 +41,9 @@ public abstract class GenericEntityFull implements Entity {
 	private Long serNo;
 
 	/** The created by. */
-	@Transient
-	private Long createdBy;
-
 	@Column(name = "cUid", updatable = false)
 	private String cUid;
 
-	@ManyToOne
 	@Transient
 	private AccountNumber createdUser;
 
@@ -59,13 +53,9 @@ public abstract class GenericEntityFull implements Entity {
 	private LocalDateTime cDTime;
 
 	/** The last modified by. */
-	@Transient
-	private Long lastModifiedBy;
-
 	@Column(name = "uUid")
 	private String uUid;
 
-	@ManyToOne
 	@Transient
 	private AccountNumber lastModifiedUser;
 
@@ -89,14 +79,6 @@ public abstract class GenericEntityFull implements Entity {
 		this.serNo = serNo;
 	}
 
-	public Long getCreatedBy() {
-		return createdBy;
-	}
-
-	public void setCreatedBy(Long createdBy) {
-		this.createdBy = createdBy;
-	}
-
 	/**
 	 * @return the cUid
 	 */
@@ -115,7 +97,6 @@ public abstract class GenericEntityFull implements Entity {
 	/**
 	 * @return the cDTime
 	 */
-	@JSON(serialize = false)
 	public LocalDateTime getcDTime() {
 		return cDTime;
 	}
@@ -126,15 +107,6 @@ public abstract class GenericEntityFull implements Entity {
 	 */
 	public void setcDTime(LocalDateTime cDTime) {
 		this.cDTime = cDTime;
-	}
-
-	@JSON(serialize = false)
-	public Long getLastModifiedBy() {
-		return lastModifiedBy;
-	}
-
-	public void setLastModifiedBy(Long lastModifiedBy) {
-		this.lastModifiedBy = lastModifiedBy;
 	}
 
 	/**
@@ -155,7 +127,6 @@ public abstract class GenericEntityFull implements Entity {
 	/**
 	 * @return the uDTime
 	 */
-	@JSON(serialize = false)
 	public LocalDateTime getuDTime() {
 		return uDTime;
 	}
@@ -208,53 +179,11 @@ public abstract class GenericEntityFull implements Entity {
 	 *            the bpm id
 	 */
 	public void initInsert(AccountNumber user) {
-		this.setCreatedBy(user.getSerNo());
 		this.setcUid(user.getUserId());
 		this.setcDTime(new LocalDateTime());
-		this.setLastModifiedBy(getCreatedBy());
-		this.setuUid(user.getcUid());
+		this.setuUid(getcUid());
 		this.setuDTime(getcDTime());
 	}
-
-	/**
-	 * initial insert
-	 * <p>
-	 * initial id, tpmId, create, modify and status from main entity when insert
-	 * <br>
-	 * <p>
-	 * .
-	 * 
-	 * @param main
-	 *            entity
-	 */
-	// public <T extends GenericEntity> void initInsert(T entity) {
-	// initInsert(entity, SystemStatus.Y);
-	// }
-
-	/**
-	 * initial insert
-	 * <p>
-	 * initial id, tpmId, create, modify and status from main entity when insert
-	 * <br>
-	 * <p>
-	 * .
-	 * 
-	 * @param main
-	 *            entity
-	 * @param sysStatus
-	 *            the sys status
-	 * @param bpmId
-	 *            the bpm id
-	 */
-	// public <T extends GenericEntity> void initInsert(T entity, SystemStatus
-	// sysStatus) {
-	// this.setVersionNo(1L);
-	// this.setStatus(sysStatus);
-	// this.setCreatedBy(entity.getCreatedBy());
-	// this.setCreatedDate(new LocalDateTime());
-	// this.setLastModifiedBy(getCreatedBy());
-	// this.setLastModifiedDate(getCreatedDate());
-	// }
 
 	/**
 	 * initial update
@@ -269,25 +198,7 @@ public abstract class GenericEntityFull implements Entity {
 	 *            the sys status
 	 */
 	public void initUpdate(AccountNumber user) {
-		this.setLastModifiedBy(user.getSerNo());
 		this.setuUid(user.getUserId());
-		this.setuDTime(new LocalDateTime());
-	}
-
-	/**
-	 * initial update
-	 * <p>
-	 * initial modify, status from main entity when update <br>
-	 * <p>
-	 * .
-	 * 
-	 * @param main
-	 *            entity
-	 * @param sysStatus
-	 *            the sys status
-	 */
-	public <T extends GenericEntityFull> void initUpdate(T entity) {
-		this.setLastModifiedBy(entity.getLastModifiedBy());
 		this.setuDTime(new LocalDateTime());
 	}
 

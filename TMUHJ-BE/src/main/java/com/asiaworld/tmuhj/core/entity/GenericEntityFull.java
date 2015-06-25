@@ -181,7 +181,7 @@ public abstract class GenericEntityFull implements Entity {
 	public void initInsert(AccountNumber user) {
 		this.setcUid(user.getUserId());
 		this.setcDTime(new LocalDateTime());
-		this.setuUid(user.getcUid());
+		this.setuUid(getcUid());
 		this.setuDTime(getcDTime());
 	}
 

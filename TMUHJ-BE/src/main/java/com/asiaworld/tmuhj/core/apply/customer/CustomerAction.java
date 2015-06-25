@@ -23,6 +23,7 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.openxml4j.exceptions.InvalidOperationException;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -681,10 +682,10 @@ public class CustomerAction extends GenericCRUDActionFull<Customer> {
 		// This data needs to be written (Object[])
 		Map<String, Object[]> empinfo = new LinkedHashMap<String, Object[]>();
 		empinfo.put("1", new Object[] { "name/姓名", "egName/英文姓名", "address/地址",
-				"tel/電話", "contactUserName/聯絡人", "emai/l電子信箱", "memo/備註" });
+				"tel/電話", "contactUserName/聯絡人", "email/電子信箱" });
 
 		empinfo.put("2", new Object[] { "國防醫學中心", "ndmc", "台北市內湖區民權東路六段161號",
-				"886-2-87923100", "總機", "ndmc@ndmc.gmail.com", "" });
+				"886-2-87923100", "總機", "ndmc@ndmc.gmail.com" });
 
 		// Iterate over data and write to sheet
 		Set<String> keyid = empinfo.keySet();
@@ -729,12 +730,18 @@ public class CustomerAction extends GenericCRUDActionFull<Customer> {
 
 	// 判斷文件類型
 	public Workbook createWorkBook(InputStream is) throws IOException {
-		if (fileFileName[0].toLowerCase().endsWith("xls")) {
-			return new HSSFWorkbook(is);
+		try {
+			if (fileFileName[0].toLowerCase().endsWith("xls")) {
+				return new HSSFWorkbook(is);
+			}
+
+			if (fileFileName[0].toLowerCase().endsWith("xlsx")) {
+				return new XSSFWorkbook(is);
+			}
+		} catch (InvalidOperationException e) {
+			return null;
 		}
-		if (fileFileName[0].toLowerCase().endsWith("xlsx")) {
-			return new XSSFWorkbook(is);
-		}
+
 		return null;
 	}
 

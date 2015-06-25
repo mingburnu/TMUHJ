@@ -16,7 +16,7 @@ import com.asiaworld.tmuhj.core.apply.customer.CustomerService;
 import com.asiaworld.tmuhj.core.apply.ipRange.IpRange;
 import com.asiaworld.tmuhj.core.apply.ipRange.IpRangeService;
 import com.asiaworld.tmuhj.core.model.DataSet;
-import com.asiaworld.tmuhj.core.web.GenericWebActionFull;
+import com.asiaworld.tmuhj.core.web.GenericAction;
 
 /**
  * LoginAction
@@ -26,7 +26,7 @@ import com.asiaworld.tmuhj.core.web.GenericWebActionFull;
  */
 @Controller
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-public class AuthorizationAction extends GenericWebActionFull<AccountNumber> {
+public class AuthorizationAction extends GenericAction<AccountNumber> {
 
 	/**
 	 * 

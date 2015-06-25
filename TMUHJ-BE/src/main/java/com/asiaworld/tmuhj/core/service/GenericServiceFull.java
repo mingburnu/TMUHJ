@@ -7,7 +7,7 @@ import org.springframework.util.Assert;
 
 import com.asiaworld.tmuhj.core.apply.accountNumber.AccountNumber;
 import com.asiaworld.tmuhj.core.apply.accountNumber.AccountNumberDao;
-import com.asiaworld.tmuhj.core.dao.GenericDaoFull;
+import com.asiaworld.tmuhj.core.dao.GenericDao;
 import com.asiaworld.tmuhj.core.entity.GenericEntityFull;
 
 /**
@@ -21,7 +21,7 @@ public abstract class GenericServiceFull<T extends GenericEntityFull>
 
 	protected final transient Logger log = Logger.getLogger(getClass());
 
-	protected abstract GenericDaoFull<T> getDao();
+	protected abstract GenericDao<T> getDao();
 
 	@Autowired
 	private AccountNumberDao userDao;

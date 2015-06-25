@@ -1,20 +1,13 @@
 package com.asiaworld.tmuhj.core.web;
 
-import com.asiaworld.tmuhj.core.entity.GenericEntitySerNo;
+import com.asiaworld.tmuhj.core.entity.Entity;
 
-/**
- * GenericCRUDActionSerNo
- * 
- * @author David Hsu
- * @version 2014/10/15
- */
-public abstract class GenericCRUDActionSerNo<T extends GenericEntitySerNo>
-		extends GenericActionSerNo<T> {
-
+public abstract class GenericCRUDAction<T extends Entity> extends
+		GenericAction<T> {
 	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 3138711928578726323L;
+* 
+*/
+	private static final long serialVersionUID = 8456347034602219914L;
 
 	/**
 	 * 儲存檢核
@@ -65,5 +58,4 @@ public abstract class GenericCRUDActionSerNo<T extends GenericEntitySerNo>
 	 * @return
 	 */
 	public abstract String delete() throws Exception;
-
 }

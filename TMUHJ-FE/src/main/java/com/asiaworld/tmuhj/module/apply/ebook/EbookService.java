@@ -15,7 +15,7 @@ import org.springframework.util.Assert;
 
 import com.asiaworld.tmuhj.core.apply.customer.Customer;
 import com.asiaworld.tmuhj.core.apply.customer.CustomerService;
-import com.asiaworld.tmuhj.core.dao.GenericDaoFull;
+import com.asiaworld.tmuhj.core.dao.GenericDao;
 import com.asiaworld.tmuhj.core.dao.DsRestrictions;
 import com.asiaworld.tmuhj.core.model.DataSet;
 import com.asiaworld.tmuhj.core.model.Pager;
@@ -99,7 +99,7 @@ public class EbookService extends GenericServiceFull<Ebook> {
 	}
 
 	@Override
-	protected GenericDaoFull<Ebook> getDao() {
+	protected GenericDao<Ebook> getDao() {
 		// TODO Auto-generated method stub
 		return dao;
 	}

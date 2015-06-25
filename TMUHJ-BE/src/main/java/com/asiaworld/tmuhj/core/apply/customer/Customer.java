@@ -53,9 +53,6 @@ public class Customer extends GenericEntityFull {
 	@Transient
 	private String existStatus;
 
-	// @OneToMany(cascade=CascadeType.ALL, mappedBy="customer")
-	// private Set<AccountNumber> accountNumbers;
-
 	/**
 	 * @return the name
 	 */

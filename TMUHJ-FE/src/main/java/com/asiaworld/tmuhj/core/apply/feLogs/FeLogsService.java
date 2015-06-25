@@ -3,7 +3,7 @@ package com.asiaworld.tmuhj.core.apply.feLogs;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.asiaworld.tmuhj.core.dao.GenericDaoLog;
+import com.asiaworld.tmuhj.core.dao.GenericDao;
 import com.asiaworld.tmuhj.core.model.DataSet;
 import com.asiaworld.tmuhj.core.service.GenericServiceLog;
 
@@ -21,7 +21,7 @@ public class FeLogsService extends GenericServiceLog<FeLogs> {
 	}
 
 	@Override
-	protected GenericDaoLog<FeLogs> getDao() {
+	protected GenericDao<FeLogs> getDao() {
 		// TODO Auto-generated method stub
 		return dao;
 	}

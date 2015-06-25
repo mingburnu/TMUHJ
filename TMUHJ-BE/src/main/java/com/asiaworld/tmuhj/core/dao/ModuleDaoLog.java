@@ -9,6 +9,6 @@ import com.asiaworld.tmuhj.core.entity.GenericEntityLog;
  * @version 2015/01/19
  */
 public class ModuleDaoLog<T extends GenericEntityLog> extends
-		GenericHibernateDaoLog<T> {
+		GenericHibernateDao<T> {
 
 }

@@ -12,25 +12,25 @@ import org.apache.struts2.ServletActionContext;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.asiaworld.tmuhj.core.apply.accountNumber.AccountNumber;
-import com.asiaworld.tmuhj.core.entity.GenericEntitySerNo;
+import com.asiaworld.tmuhj.core.entity.Entity;
 import com.asiaworld.tmuhj.core.model.DataSet;
 import com.asiaworld.tmuhj.core.model.Pager;
 import com.opensymphony.xwork2.ActionContext;
 import com.opensymphony.xwork2.ActionSupport;
 
 /**
- * GenericActionSerNo
+ * GenericAction
  * 
  * @author Roderick
- * @version 2014/10/15
+ * @version 2014/11/21
  */
-public abstract class GenericActionSerNo<T extends GenericEntitySerNo> extends
+public abstract class GenericAction<T extends Entity> extends
 		ActionSupport implements Action<T> {
 
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = 2093106116821759839L;
+	private static final long serialVersionUID = 8461510694567060010L;
 
 	protected final transient Logger log = Logger.getLogger(getClass());
 

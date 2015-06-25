@@ -18,7 +18,7 @@ import org.hibernate.criterion.Projections;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;
 
-import com.asiaworld.tmuhj.core.entity.GenericEntityLog;
+import com.asiaworld.tmuhj.core.entity.Entity;
 import com.asiaworld.tmuhj.core.model.DataSet;
 import com.asiaworld.tmuhj.core.model.Pager;
 
@@ -26,10 +26,10 @@ import com.asiaworld.tmuhj.core.model.Pager;
  * GenericHibernateDao
  * 
  * @author Roderick
- * @version 2015/01/19
+ * @version 2014/11/7
  */
-public abstract class GenericHibernateDaoLog<T extends GenericEntityLog>
-		extends GenericDaoLog<T> {
+public abstract class GenericHibernateDao<T extends Entity> extends
+		GenericDao<T> {
 
 	@Autowired
 	private SessionFactory sessionFactory;
@@ -37,7 +37,7 @@ public abstract class GenericHibernateDaoLog<T extends GenericEntityLog>
 	private Class<T> entityClass;
 
 	@SuppressWarnings("unchecked")
-	public GenericHibernateDaoLog() {
+	public GenericHibernateDao() {
 		this.entityClass = null;
 		Class<?> c = getClass();
 		Type t = c.getGenericSuperclass();

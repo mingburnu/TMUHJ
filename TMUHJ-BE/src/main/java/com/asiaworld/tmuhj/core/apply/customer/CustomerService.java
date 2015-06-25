@@ -8,7 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
-import com.asiaworld.tmuhj.core.dao.GenericDaoFull;
+import com.asiaworld.tmuhj.core.dao.GenericDao;
 import com.asiaworld.tmuhj.core.dao.DsRestrictions;
 import com.asiaworld.tmuhj.core.model.DataSet;
 import com.asiaworld.tmuhj.core.service.GenericServiceFull;
@@ -43,7 +43,7 @@ public class CustomerService extends GenericServiceFull<Customer> {
 	}
 
 	@Override
-	protected GenericDaoFull<Customer> getDao() {
+	protected GenericDao<Customer> getDao() {
 		// TODO Auto-generated method stub
 		return dao;
 	}
