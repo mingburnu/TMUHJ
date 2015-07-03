@@ -2,7 +2,6 @@ package com.asiaworld.tmuhj.core.apply.beLogs;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.InputStream;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -59,10 +58,6 @@ public class BeLogsAction extends GenericCRUDActionLog<BeLogs> {
 
 	@Autowired
 	private JodaTimeConverter converter;
-
-	private InputStream inputStream;
-
-	private String reportFile;
 
 	@Override
 	protected void validateSave() throws Exception {
@@ -254,7 +249,7 @@ public class BeLogsAction extends GenericCRUDActionLog<BeLogs> {
 
 			List<BeLogs> results = ds.getResults();
 
-			reportFile = "beLogs.xlsx";
+			getEntity().setReportFile("beLogs.xlsx");
 
 			// Create blank workbook
 			XSSFWorkbook workbook = new XSSFWorkbook();
@@ -316,39 +311,5 @@ public class BeLogsAction extends GenericCRUDActionLog<BeLogs> {
 	public LocalDateTime getLocalDateTime(String date) {
 		LocalDateTime dateTime = converter.convertFromString(date);
 		return dateTime;
-	}
-
-	/**
-	 * @return the inputStream
-	 */
-	public InputStream getInputStream() {
-		return inputStream;
-	}
-
-	/**
-	 * @param inputStream
-	 *            the inputStream to set
-	 */
-	public void setInputStream(InputStream inputStream) {
-		this.inputStream = inputStream;
-	}
-
-	/**
-	 * @return the reportFile
-	 */
-	public String getReportFile() {
-		if (reportFile.equals("beLogs.xlsx")) {
-			return reportFile;
-		} else {
-			return null;
-		}
-	}
-
-	/**
-	 * @param reportFile
-	 *            the reportFile to set
-	 */
-	public void setReportFile(String reportFile) {
-		this.reportFile = reportFile;
 	}
 }

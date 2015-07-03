@@ -87,6 +87,8 @@
 		<action name="apply.*.*" class="{1}Action" method="{2}">
 			<exception-mapping exception="java.lang.NoSuchMethodException"
 				result="error" />
+			<exception-mapping exception="java.lang.ClassCastException"
+				result="error" />
 			<result name="input">/WEB-INF/jsp/sessionTimeOut.jsp</result>
 			<result name="query">/WEB-INF/jsp/query.jsp</result>
 			<result name="adv_query">/WEB-INF/jsp/adv_query.jsp</result>

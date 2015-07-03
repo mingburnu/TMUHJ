@@ -4,7 +4,6 @@ import javax.persistence.Column;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.Transient;
 
@@ -41,12 +40,6 @@ public abstract class GenericEntityLog implements Entity {
 	@Column(name = "serNo", unique = true, nullable = false, insertable = true, updatable = false, precision = 20)
 	private Long serNo;
 
-	/** The created by. */
-	
-	@Transient
-	private Long createdBy;
-
-	@ManyToOne
 	@Transient
 	private AccountNumber createdUser;
 
@@ -54,6 +47,9 @@ public abstract class GenericEntityLog implements Entity {
 	@Column(name = "cDTime", updatable = false)
 	@Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDateTime")
 	private LocalDateTime cDTime;
+
+	@Transient
+	private String reportFile;
 
 	/**
 	 * @return the serNo
@@ -68,14 +64,6 @@ public abstract class GenericEntityLog implements Entity {
 	 */
 	public void setSerNo(Long serNo) {
 		this.serNo = serNo;
-	}
-
-	public Long getCreatedBy() {
-		return createdBy;
-	}
-
-	public void setCreatedBy(Long createdBy) {
-		this.createdBy = createdBy;
 	}
 
 	/**
@@ -102,6 +90,21 @@ public abstract class GenericEntityLog implements Entity {
 	}
 
 	/**
+	 * @return the reportFile
+	 */
+	public String getReportFile() {
+		return reportFile;
+	}
+
+	/**
+	 * @param reportFile
+	 *            the reportFile to set
+	 */
+	public void setReportFile(String reportFile) {
+		this.reportFile = reportFile;
+	}
+
+	/**
 	 * check entity is new or not.
 	 * 
 	 * @return true, if is new
@@ -125,7 +128,6 @@ public abstract class GenericEntityLog implements Entity {
 	 *            the bpm id
 	 */
 	public void initInsert(AccountNumber user) {
-		this.setCreatedBy(user.getSerNo());
 		this.setcDTime(new LocalDateTime());
 	}
 
