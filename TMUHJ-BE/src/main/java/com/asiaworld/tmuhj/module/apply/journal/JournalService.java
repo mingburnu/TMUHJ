@@ -6,8 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
-import com.asiaworld.tmuhj.core.dao.GenericDao;
 import com.asiaworld.tmuhj.core.dao.DsRestrictions;
+import com.asiaworld.tmuhj.core.dao.GenericDao;
 import com.asiaworld.tmuhj.core.model.DataSet;
 import com.asiaworld.tmuhj.core.service.GenericServiceFull;
 import com.asiaworld.tmuhj.core.util.DsBeanFactory;
@@ -25,25 +25,33 @@ public class JournalService extends GenericServiceFull<Journal> {
 		Assert.notNull(ds.getEntity());
 		Journal entity = ds.getEntity();
 		DsRestrictions restrictions = DsBeanFactory.getDsRestrictions();
-
-		if (StringUtils.isNotBlank(entity.getChineseTitle())) {
-			restrictions.likeIgnoreCase("chineseTitle",
-					entity.getChineseTitle(), MatchMode.ANYWHERE);
-		} else if (StringUtils.isNotBlank(entity.getEnglishTitle())) {
-			restrictions.likeIgnoreCase("englishTitle",
-					entity.getEnglishTitle(), MatchMode.ANYWHERE);
-		} else if (StringUtils.isNotBlank(entity.getIssn())) {
-
-			String[] issnSpilt = entity.getIssn().split("-");
-
-			StringBuilder issn = new StringBuilder("");
-			int i = 0;
-			while (i < issnSpilt.length) {
-				issn.append(issnSpilt[i]);
-				i++;
+		if (entity.getOption().equals("entity.chineseTitle")) {
+			if (StringUtils.isNotBlank(entity.getChineseTitle())) {
+				restrictions.likeIgnoreCase("chineseTitle",
+						entity.getChineseTitle(), MatchMode.ANYWHERE);
 			}
+		}
 
-			restrictions.likeIgnoreCase("issn", issn.toString());
+		if (entity.getOption().equals("entity.englishTitle")) {
+			if (StringUtils.isNotBlank(entity.getEnglishTitle())) {
+				restrictions.likeIgnoreCase("englishTitle",
+						entity.getEnglishTitle(), MatchMode.ANYWHERE);
+			}
+		}
+
+		if (entity.getOption().equals("entity.issn")) {
+			if (StringUtils.isNotBlank(entity.getIssn())) {
+				String[] issnSpilt = entity.getIssn().split("-");
+				StringBuilder issn = new StringBuilder("");
+
+				int i = 0;
+				while (i < issnSpilt.length) {
+					issn.append(issnSpilt[i]);
+					i++;
+				}
+
+				restrictions.likeIgnoreCase("issn", issn.toString());
+			}
 		}
 
 		return dao.findByRestrictions(restrictions, ds);

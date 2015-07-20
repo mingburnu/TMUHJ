@@ -7,8 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
-import com.asiaworld.tmuhj.core.dao.GenericDao;
 import com.asiaworld.tmuhj.core.dao.DsRestrictions;
+import com.asiaworld.tmuhj.core.dao.GenericDao;
 import com.asiaworld.tmuhj.core.model.DataSet;
 import com.asiaworld.tmuhj.core.service.GenericServiceFull;
 import com.asiaworld.tmuhj.core.util.DsBeanFactory;
@@ -27,12 +27,18 @@ public class DatabaseService extends GenericServiceFull<Database> {
 		Database entity = ds.getEntity();
 		DsRestrictions restrictions = DsBeanFactory.getDsRestrictions();
 
-		if (StringUtils.isNotBlank(entity.getDbChtTitle())) {
-			restrictions.likeIgnoreCase("dbChtTitle", entity.getDbChtTitle(),
-					MatchMode.ANYWHERE);
-		} else if (StringUtils.isNotBlank(entity.getDbEngTitle())) {
-			restrictions.likeIgnoreCase("dbEngTitle", entity.getDbEngTitle(),
-					MatchMode.ANYWHERE);
+		if (entity.getOption().equals("entity.dbChtTitle")) {
+			if (StringUtils.isNotBlank(entity.getDbChtTitle())) {
+				restrictions.likeIgnoreCase("dbChtTitle",
+						entity.getDbChtTitle(), MatchMode.ANYWHERE);
+			}
+		}
+		
+		if (entity.getOption().equals("entity.dbEngTitle")) {
+			if (StringUtils.isNotBlank(entity.getDbEngTitle())) {
+				restrictions.likeIgnoreCase("dbEngTitle",
+						entity.getDbEngTitle(), MatchMode.ANYWHERE);
+			}
 		}
 
 		return dao.findByRestrictions(restrictions, ds);

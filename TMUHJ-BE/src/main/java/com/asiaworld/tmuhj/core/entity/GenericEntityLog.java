@@ -15,7 +15,6 @@ import org.hibernate.annotations.Type;
 import org.joda.time.LocalDateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import com.asiaworld.tmuhj.core.apply.accountNumber.AccountNumber;
 
 /**
@@ -23,7 +22,7 @@ import com.asiaworld.tmuhj.core.apply.accountNumber.AccountNumber;
  * 
  */
 @MappedSuperclass
-public abstract class GenericEntityLog implements Entity {
+public abstract class GenericEntityLog extends FileIoProperties {
 
 	/**
 	 * 
@@ -40,16 +39,10 @@ public abstract class GenericEntityLog implements Entity {
 	@Column(name = "serNo", unique = true, nullable = false, insertable = true, updatable = false, precision = 20)
 	private Long serNo;
 
-	@Transient
-	private AccountNumber createdUser;
-
 	/** The created date. */
 	@Column(name = "cDTime", updatable = false)
 	@Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDateTime")
 	private LocalDateTime cDTime;
-
-	@Transient
-	private String reportFile;
 
 	/**
 	 * @return the serNo
@@ -81,36 +74,13 @@ public abstract class GenericEntityLog implements Entity {
 		this.cDTime = cDTime;
 	}
 
-	public AccountNumber getCreatedUser() {
-		return createdUser;
-	}
-
-	public void setCreatedUser(AccountNumber createdUser) {
-		this.createdUser = createdUser;
-	}
-
 	/**
-	 * @return the reportFile
-	 */
-	public String getReportFile() {
-		return reportFile;
-	}
-
-	/**
-	 * @param reportFile
-	 *            the reportFile to set
-	 */
-	public void setReportFile(String reportFile) {
-		this.reportFile = reportFile;
-	}
-
-	/**
-	 * check entity is new or not.
+	 * check entity has id or not.
 	 * 
-	 * @return true, if is new
+	 * @return true, if has id
 	 */
-	public boolean isNew() {
-		return serNo == null;
+	public boolean hasSerNo() {
+		return serNo != null;
 	}
 
 	/**

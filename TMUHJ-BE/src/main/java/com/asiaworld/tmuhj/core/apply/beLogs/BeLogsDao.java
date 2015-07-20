@@ -22,7 +22,7 @@ public class BeLogsDao extends ModuleDaoLog<BeLogs> {
 
 	@Autowired
 	private BeLogs beLogs;
-	
+
 	@Autowired
 	private JodaTimeConverter converter;
 
@@ -34,11 +34,11 @@ public class BeLogsDao extends ModuleDaoLog<BeLogs> {
 		String start = "";
 		String end = "";
 		if (entity.getStart() != null) {
-			start = converter.convertToString(entity.getStart());
+			start = converter.convertToString(null, entity.getStart());
 		}
 
 		if (entity.getEnd() != null) {
-			end = converter.convertToString(entity.getEnd().plusDays(1));
+			end = converter.convertToString(null, entity.getEnd().plusDays(1));
 		}
 
 		Query listQuery = null;
@@ -60,8 +60,8 @@ public class BeLogsDao extends ModuleDaoLog<BeLogs> {
 					+ "' group by acc_serNo) as countTotal";
 
 			if (entity.getCustomer().getSerNo() == 0) {
-				listHql = listHql.replace(
-						"' and B.customer.serNo ='" + entity.getCustomer(), "");
+				listHql = listHql.replace("' and B.customer.serNo ='"
+						+ entity.getCustomer().getSerNo(), "");
 				countSql = countSql.replace("' and cus_serNo ='"
 						+ entity.getCustomer().getSerNo(), "");
 			}
@@ -89,7 +89,6 @@ public class BeLogsDao extends ModuleDaoLog<BeLogs> {
 
 			listQuery = getSession().createQuery(listHql);
 			totalQuery = getSession().createSQLQuery(countSql);
-
 		}
 
 		listQuery.setFirstResult(ds.getPager().getOffset());

@@ -3,6 +3,8 @@ package com.asiaworld.tmuhj.core.dao;
 import java.io.Serializable;
 import java.util.Map;
 
+import com.asiaworld.tmuhj.core.dao.DsQueryLanguage;
+
 /**
  * DsQueryLanguage
  * @author Roderick

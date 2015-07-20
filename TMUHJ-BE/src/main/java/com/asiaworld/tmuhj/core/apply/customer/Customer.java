@@ -3,7 +3,6 @@ package com.asiaworld.tmuhj.core.apply.customer;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 
 import org.hibernate.annotations.Type;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
@@ -21,11 +20,11 @@ public class Customer extends GenericEntityFull {
 	 */
 	private static final long serialVersionUID = 5508975058661670537L;
 
-	// 姓名
+	// 名稱
 	@Column(name = "name", unique = true)
 	private String name;
 
-	// 英文姓名
+	// 英文名稱
 	@Column(name = "engName")
 	private String engName;
 
@@ -33,13 +32,13 @@ public class Customer extends GenericEntityFull {
 	@Column(name = "address")
 	private String address;
 
-	// email
-	@Column(name = "email")
-	private String email;
-
 	// 電話
 	@Column(name = "tel")
 	private String tel;
+
+	// email
+	@Column(name = "email")
+	private String email;
 
 	// 聯絡人
 	@Column(name = "contactUserName")
@@ -49,9 +48,6 @@ public class Customer extends GenericEntityFull {
 	@Column(name = "memo")
 	@Type(type = "text")
 	private String memo;
-
-	@Transient
-	private String existStatus;
 
 	/**
 	 * @return the name
@@ -114,6 +110,21 @@ public class Customer extends GenericEntityFull {
 	}
 
 	/**
+	 * @return the email
+	 */
+	public String getEmail() {
+		return email;
+	}
+
+	/**
+	 * @param email
+	 *            the email to set
+	 */
+	public void setEmail(String email) {
+		this.email = email;
+	}
+
+	/**
 	 * @return the contactUserName
 	 */
 	public String getContactUserName() {
@@ -143,51 +154,20 @@ public class Customer extends GenericEntityFull {
 		this.memo = memo;
 	}
 
-	/**
-	 * @return the email
-	 */
-	public String getEmail() {
-		return email;
-	}
-
-	/**
-	 * @param email
-	 *            the email to set
-	 */
-	public void setEmail(String email) {
-		this.email = email;
-	}
-
-	/**
-	 * @return the existStatus
-	 */
-	public String getExistStatus() {
-		return existStatus;
-	}
-
-	/**
-	 * @param existStatus
-	 *            the existStatus to set
-	 */
-	public void setExistStatus(String existStatus) {
-		this.existStatus = existStatus;
-	}
-
 	public Customer() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
 
-	public Customer(String name, String engName, String address, String email,
-			String tel, String contactUserName, String memo, String existStatus) {
+	public Customer(String name, String engName, String address, String tel,
+			String contactUserName, String memo) {
 		super();
 		this.name = name;
 		this.engName = engName;
 		this.address = address;
-		this.email = email;
 		this.tel = tel;
 		this.contactUserName = contactUserName;
 		this.memo = memo;
-		this.existStatus = existStatus;
 	}
+
 }

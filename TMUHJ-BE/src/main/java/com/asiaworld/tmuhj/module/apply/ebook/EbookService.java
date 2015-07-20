@@ -6,8 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
-import com.asiaworld.tmuhj.core.dao.GenericDao;
 import com.asiaworld.tmuhj.core.dao.DsRestrictions;
+import com.asiaworld.tmuhj.core.dao.GenericDao;
 import com.asiaworld.tmuhj.core.model.DataSet;
 import com.asiaworld.tmuhj.core.service.GenericServiceFull;
 import com.asiaworld.tmuhj.core.util.DsBeanFactory;
@@ -25,11 +25,17 @@ public class EbookService extends GenericServiceFull<Ebook> {
 		Ebook entity = ds.getEntity();
 		DsRestrictions restrictions = DsBeanFactory.getDsRestrictions();
 
-		if (StringUtils.isNotBlank(entity.getBookName())) {
-			restrictions.likeIgnoreCase("bookName", entity.getBookName(),
-					MatchMode.ANYWHERE);
-		} else if (entity.getIsbn() != null) {
-			restrictions.eq("isbn", entity.getIsbn());
+		if (entity.getOption().equals("entity.bookName")) {
+			if (StringUtils.isNotBlank(entity.getBookName())) {
+				restrictions.likeIgnoreCase("bookName", entity.getBookName(),
+						MatchMode.ANYWHERE);
+			}
+		}
+
+		if (entity.getOption().equals("entity.isbn")) {
+			if (entity.getIsbn() != null) {
+				restrictions.eq("isbn", entity.getIsbn());
+			}
 		}
 
 		return dao.findByRestrictions(restrictions, ds);

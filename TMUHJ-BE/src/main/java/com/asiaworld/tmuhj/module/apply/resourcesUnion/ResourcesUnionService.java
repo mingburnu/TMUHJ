@@ -7,15 +7,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
-import com.asiaworld.tmuhj.core.dao.GenericDao;
+import com.asiaworld.tmuhj.module.apply.database.Database;
+import com.asiaworld.tmuhj.module.apply.ebook.Ebook;
+import com.asiaworld.tmuhj.module.apply.journal.Journal;
 import com.asiaworld.tmuhj.core.dao.DsRestrictions;
+import com.asiaworld.tmuhj.core.dao.GenericDao;
 import com.asiaworld.tmuhj.core.model.DataSet;
 import com.asiaworld.tmuhj.core.model.Pager;
 import com.asiaworld.tmuhj.core.service.GenericServiceSerNo;
 import com.asiaworld.tmuhj.core.util.DsBeanFactory;
-import com.asiaworld.tmuhj.module.apply.database.Database;
-import com.asiaworld.tmuhj.module.apply.ebook.Ebook;
-import com.asiaworld.tmuhj.module.apply.journal.Journal;
 
 @Service
 public class ResourcesUnionService extends GenericServiceSerNo<ResourcesUnion> {

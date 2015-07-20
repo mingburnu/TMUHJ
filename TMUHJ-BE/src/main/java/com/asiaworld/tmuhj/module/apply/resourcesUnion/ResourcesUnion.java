@@ -7,12 +7,13 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 
+import com.asiaworld.tmuhj.module.apply.resourcesBuyers.ResourcesBuyers;
 import com.asiaworld.tmuhj.core.apply.customer.Customer;
 import com.asiaworld.tmuhj.core.entity.GenericEntitySerNo;
-import com.asiaworld.tmuhj.module.apply.resourcesBuyers.ResourcesBuyers;
 
 @Entity
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
@@ -26,10 +27,12 @@ public class ResourcesUnion extends GenericEntitySerNo {
 
 	@ManyToOne(cascade = CascadeType.DETACH)
 	@JoinColumn(name = "cus_serNo", nullable = false)
+	@Autowired
 	private Customer customer;
 
 	@ManyToOne(cascade = CascadeType.DETACH)
 	@JoinColumn(name = "res_SerNo", nullable = false)
+	@Autowired
 	private ResourcesBuyers resourcesBuyers;
 
 	@Column(name = "ebk_SerNo")

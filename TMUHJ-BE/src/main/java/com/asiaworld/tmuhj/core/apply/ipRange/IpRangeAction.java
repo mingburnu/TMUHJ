@@ -2,9 +2,9 @@ package com.asiaworld.tmuhj.core.apply.ipRange;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Pattern;
+import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.lang3.StringUtils;
+import org.owasp.esapi.ESAPI;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
@@ -12,12 +12,11 @@ import org.springframework.stereotype.Controller;
 
 import com.asiaworld.tmuhj.core.apply.customer.CustomerService;
 import com.asiaworld.tmuhj.core.model.DataSet;
-import com.asiaworld.tmuhj.core.model.Pager;
-import com.asiaworld.tmuhj.core.web.GenericCRUDActionFull;
+import com.asiaworld.tmuhj.core.web.GenericWebActionFull;
 
 @Controller
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-public class IpRangeAction extends GenericCRUDActionFull<IpRange> {
+public class IpRangeAction extends GenericWebActionFull<IpRange> {
 
 	/**
 	 * 
@@ -35,81 +34,71 @@ public class IpRangeAction extends GenericCRUDActionFull<IpRange> {
 
 	@Override
 	protected void validateSave() throws Exception {
-		if (customerService.getBySerNo(getEntity().getCustomer().getSerNo()) == null) {
+		if (!getEntity().getCustomer().hasSerNo()
+				|| getEntity().getCustomer().getSerNo() <= 0
+				|| customerService.getBySerNo(getEntity().getCustomer()
+						.getSerNo()) == null) {
 			errorMessages.add("could not execute statement");
 		}
 
-		if (StringUtils.isNotBlank(getEntity().getIpRangeStart())
-				&& StringUtils.isNotBlank(getEntity().getIpRangeEnd())) {
-			if (!isIp(getEntity().getIpRangeStart())) {
-				errorMessages.add("IP起值輸入格式錯誤");
-			}
+		if (!isIp(getEntity().getIpRangeStart())) {
+			errorMessages.add("IP起值輸入格式錯誤");
+		}
 
-			if (!isIp(getEntity().getIpRangeEnd())) {
-				errorMessages.add("IP起值輸入格式錯誤");
-			}
+		if (!isIp(getEntity().getIpRangeEnd())) {
+			errorMessages.add("IP起值輸入格式錯誤");
+		}
 
-			if (isIp(getEntity().getIpRangeStart())
-					&& isIp(getEntity().getIpRangeEnd())) {
-				String[] ipStartNum = getEntity().getIpRangeStart()
-						.split("\\.");
-				String[] ipEndNum = getEntity().getIpRangeEnd().split("\\.");
+		if (isIp(getEntity().getIpRangeStart())
+				&& isIp(getEntity().getIpRangeEnd())) {
+			String[] ipStartNum = getEntity().getIpRangeStart().split("\\.");
+			String[] ipEndNum = getEntity().getIpRangeEnd().split("\\.");
 
-				int i = 0;
-				while (i < 2) {
-					if (!ipStartNum[i].equals(ipEndNum[i])) {
-						errorMessages.add("IP起迄值第" + (i + 1) + "位數字必須相同");
-					}
-					i++;
+			int i = 0;
+			while (i < 2) {
+				if (Integer.parseInt(ipStartNum[i]) != Integer
+						.parseInt(ipEndNum[i])) {
+					errorMessages.add("IP起迄值第" + (i + 1) + "位數字必須相同");
 				}
+				i++;
+			}
 
-				if (ipStartNum[0].equals(ipEndNum[0])
-						&& ipStartNum[1].equals(ipEndNum[1])) {
-					if (Integer.parseInt(ipStartNum[2]) * 1000
-							+ Integer.parseInt(ipStartNum[3]) > Integer
-							.parseInt(ipEndNum[2])
-							* 1000
-							+ Integer.parseInt(ipEndNum[3])) {
-						errorMessages.add("IP起值不可大於IP迄值");
+			if (Integer.parseInt(ipStartNum[0]) == Integer
+					.parseInt(ipEndNum[0])
+					&& Integer.parseInt(ipStartNum[1]) == Integer
+							.parseInt(ipEndNum[1])) {
+				if (Integer.parseInt(ipStartNum[2]) * 1000
+						+ Integer.parseInt(ipStartNum[3]) > Integer
+						.parseInt(ipEndNum[2])
+						* 1000
+						+ Integer.parseInt(ipEndNum[3])) {
+					errorMessages.add("IP起值不可大於IP迄值");
+				} else {
+					if (isPrivateIp(getEntity().getIpRangeStart(), getEntity()
+							.getIpRangeEnd())) {
+						errorMessages.add("此IP區間為私有Ip");
 					} else {
-						if (isPrivateIp(getEntity().getIpRangeStart(),
-								getEntity().getIpRangeEnd())) {
-							errorMessages.add("此IP區間為私有Ip");
-						} else {
-							IpRange repeatIpRange = checkRepeatIpRange(
-									getEntity().getIpRangeStart(), getEntity()
-											.getIpRangeEnd(),
-									ipRangeService.getAllIpList(0));
-							if (repeatIpRange != null) {
-								errorMessages.add("此IP區間"
-										+ repeatIpRange.getCustomer().getName()
-										+ "正在使用");
-							}
+						IpRange repeatIpRange = checkRepeatIpRange(getEntity()
+								.getIpRangeStart(),
+								getEntity().getIpRangeEnd(),
+								ipRangeService.getAllIpList(0));
+						if (repeatIpRange != null) {
+							errorMessages.add("此IP區間"
+									+ repeatIpRange.getCustomer().getName()
+									+ "正在使用");
 						}
 					}
 				}
 			}
-		} else {
-			errorMessages.add("IP起迄值不可空白");
 		}
 	}
 
 	@Override
 	protected void validateUpdate() throws Exception {
-		if (customerService.getBySerNo(getEntity().getCustomer().getSerNo()) == null) {
-			errorMessages.add("could not execute statement");
-		}
-		
-		if (!ipRangeService.isLegalEntity(initDataSet())) {
+		if (ipRangeService.getTargetEntity(initDataSet()) == null) {
 			errorMessages.add("Target must not be null");
-
-			if (getEntity().getSerNo() == null) {
-				getEntity().setSerNo(-1L);
-			}
-		}
-
-		if (StringUtils.isNotBlank(getEntity().getIpRangeStart())
-				&& StringUtils.isNotBlank(getEntity().getIpRangeEnd())) {
+			getResponse().sendError(HttpServletResponse.SC_NOT_FOUND);
+		} else {
 			if (!isIp(getEntity().getIpRangeStart())) {
 				errorMessages.add("IP起值輸入格式錯誤");
 			}
@@ -126,14 +115,17 @@ public class IpRangeAction extends GenericCRUDActionFull<IpRange> {
 
 				int i = 0;
 				while (i < 2) {
-					if (!ipStartNum[i].equals(ipEndNum[i])) {
+					if (Integer.parseInt(ipStartNum[i]) != Integer
+							.parseInt(ipEndNum[i])) {
 						errorMessages.add("IP起迄值第" + (i + 1) + "位數字必須相同");
 					}
 					i++;
 				}
 
-				if (ipStartNum[0].equals(ipEndNum[0])
-						&& ipStartNum[1].equals(ipEndNum[1])) {
+				if (Integer.parseInt(ipStartNum[0]) == Integer
+						.parseInt(ipEndNum[0])
+						&& Integer.parseInt(ipStartNum[1]) == Integer
+								.parseInt(ipEndNum[1])) {
 					if (Integer.parseInt(ipStartNum[2]) * 1000
 							+ Integer.parseInt(ipStartNum[3]) > Integer
 							.parseInt(ipEndNum[2])
@@ -160,40 +152,53 @@ public class IpRangeAction extends GenericCRUDActionFull<IpRange> {
 					}
 				}
 			}
-		} else {
-			errorMessages.add("IP起迄值不可空白");
 		}
 	}
 
 	@Override
 	protected void validateDelete() throws Exception {
-		if (getEntity().getSerNo() <= 0) {
-			errorMessages.add("流水號不正確");
-		} else if (!ipRangeService.isLegalEntity(initDataSet())) {
+		if (ipRangeService.getTargetEntity(initDataSet()) == null) {
 			errorMessages.add("沒有這個物件");
 		}
 	}
 
 	@Override
+	public String add() throws Exception {
+		return ADD;
+	}
+
+	@Override
 	public String edit() throws Exception {
-		if (getEntity().getSerNo() != null) {
-			if (ipRangeService.isLegalEntity(initDataSet())) {
-				ipRange.setListNo(getEntity().getListNo());
-				setEntity(ipRangeService.getBySerNo(getEntity().getSerNo()));
-			}
+		ipRange = ipRangeService.getTargetEntity(initDataSet());
+		if (ipRange != null) {
+			ipRange.setListNo(getEntity().getListNo());
+			setEntity(ipRange);
+		} else {
+			getResponse().sendError(HttpServletResponse.SC_NOT_FOUND);
 		}
 		return EDIT;
 	}
 
 	@Override
 	public String list() throws Exception {
-		DataSet<IpRange> ds = initDataSet();
-		ds.setPager(Pager.getChangedPager(
-				getRequest().getParameter("recordPerPage"), getRequest()
-						.getParameter("recordPoint"), ds.getPager()));
-		ds = ipRangeService.getByRestrictions(ds);
+		if (getEntity().getCustomer().hasSerNo()
+				&& getEntity().getCustomer().getSerNo() > 0) {
+			DataSet<IpRange> ds = ipRangeService
+					.getByRestrictions(initDataSet());
 
-		setDs(ds);
+			if (ds.getResults().size() == 0
+					&& ds.getPager().getCurrentPage() > 1) {
+				ds.getPager().setCurrentPage(
+						(int) (ds.getPager().getTotalRecord()
+								/ ds.getPager().getRecordPerPage() + 1));
+				ds = ipRangeService.getByRestrictions(ds);
+			}
+
+			setDs(ds);
+		} else {
+			setDs(initDataSet());
+		}
+
 		return LIST;
 	}
 
@@ -203,11 +208,35 @@ public class IpRangeAction extends GenericCRUDActionFull<IpRange> {
 		setActionErrors(errorMessages);
 
 		if (!hasActionErrors()) {
+			String[] ipStartNums = getEntity().getIpRangeStart().split("\\.");
+			String[] ipEndNums = getEntity().getIpRangeEnd().split("\\.");
+
+			StringBuilder ipStartBuilder = new StringBuilder();
+			StringBuilder ipEndBuilder = new StringBuilder();
+
+			int i = 0;
+			while (i < 4) {
+				if (i < 3) {
+					ipStartBuilder.append(Integer.parseInt(ipStartNums[i])
+							+ ".");
+					ipEndBuilder.append(Integer.parseInt(ipEndNums[i]) + ".");
+				} else {
+					ipStartBuilder.append(Integer.parseInt(ipStartNums[i]));
+					ipEndBuilder.append(Integer.parseInt(ipEndNums[i]));
+				}
+
+				i++;
+			}
+
+			getEntity().setIpRangeStart(ipStartBuilder.toString());
+			getEntity().setIpRangeEnd(ipEndBuilder.toString());
+
 			ipRange = ipRangeService.save(getEntity(), getLoginUser());
+			setEntity(ipRange);
 			addActionMessage("新增成功");
 			return VIEW;
 		} else {
-			return EDIT;
+			return ADD;
 		}
 	}
 
@@ -217,6 +246,29 @@ public class IpRangeAction extends GenericCRUDActionFull<IpRange> {
 		setActionErrors(errorMessages);
 
 		if (!hasActionErrors()) {
+			String[] ipStartNums = getEntity().getIpRangeStart().split("\\.");
+			String[] ipEndNums = getEntity().getIpRangeEnd().split("\\.");
+
+			StringBuilder ipStartBuilder = new StringBuilder();
+			StringBuilder ipEndBuilder = new StringBuilder();
+
+			int i = 0;
+			while (i < 4) {
+				if (i < 3) {
+					ipStartBuilder.append(Integer.parseInt(ipStartNums[i])
+							+ ".");
+					ipEndBuilder.append(Integer.parseInt(ipEndNums[i]) + ".");
+				} else {
+					ipStartBuilder.append(Integer.parseInt(ipStartNums[i]));
+					ipEndBuilder.append(Integer.parseInt(ipEndNums[i]));
+				}
+
+				i++;
+			}
+
+			getEntity().setIpRangeStart(ipStartBuilder.toString());
+			getEntity().setIpRangeEnd(ipEndBuilder.toString());
+
 			ipRange = ipRangeService.update(getEntity(), getLoginUser());
 			ipRange.setListNo(getEntity().getListNo());
 			setEntity(ipRange);
@@ -234,37 +286,26 @@ public class IpRangeAction extends GenericCRUDActionFull<IpRange> {
 
 		if (!hasActionErrors()) {
 			ipRangeService.deleteBySerNo(getEntity().getSerNo());
-			DataSet<IpRange> ds = ipRangeService
-					.getByRestrictions(initDataSet());
-			setDs(ds);
+			list();
 			return LIST;
 		} else {
-			DataSet<IpRange> ds = ipRangeService
-					.getByRestrictions(initDataSet());
-			setDs(ds);
+			list();
 			return LIST;
 		}
 	}
 
-	public boolean isIp(String ip) {
-		String ipPattern = "^([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\."
-				+ "([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\."
-				+ "([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\."
-				+ "([01]?\\d\\d?|2[0-4]\\d|25[0-5])$";
-
-		if (Pattern.compile(ipPattern).matcher(ip).matches()) {
-			return true;
-		} else {
-			return false;
-		}
+	protected boolean isIp(String ip) {
+		return ESAPI.validator().isValidInput("IpRange ip", ip, "IPAddress",
+				15, false);
 	}
 
-	public boolean isPrivateIp(String ipStart, String ipEnd) {
+	protected boolean isPrivateIp(String ipStart, String ipEnd) {
 		String[] ipStartNum = ipStart.split("\\.");
 		String[] ipEndNum = ipEnd.split("\\.");
 
 		// 10.0.0.0~10.255.255.255
-		if (ipStartNum[0].equals("10") && ipEndNum[0].equals("10")) {
+		if (Integer.parseInt(ipStartNum[0]) == 10
+				&& Integer.parseInt(ipEndNum[0]) == 10) {
 			return true;
 		}
 
@@ -289,7 +330,7 @@ public class IpRangeAction extends GenericCRUDActionFull<IpRange> {
 		return false;
 	}
 
-	public IpRange checkRepeatIpRange(String ipStart, String ipEnd,
+	protected IpRange checkRepeatIpRange(String ipStart, String ipEnd,
 			List<IpRange> allIpList) {
 
 		String[] ipStartNum = ipStart.split("\\.");

@@ -11,6 +11,8 @@ import com.asiaworld.tmuhj.core.entity.Entity;
 public interface Action<T extends Entity> {
 
 	public final static String INDEX = "index";
+	
+	public final static String ADD = "add";
 
 	public final static String EDIT = "edit";
 
@@ -18,7 +20,7 @@ public interface Action<T extends Entity> {
 
 	public final static String VIEW = "view";
 
-	public final static String AJAX = "ajax";
+	public final static String BOX = "box";
 
 	public final static String JSON = "json";
 

@@ -6,8 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
-import com.asiaworld.tmuhj.core.dao.GenericDao;
 import com.asiaworld.tmuhj.core.dao.DsRestrictions;
+import com.asiaworld.tmuhj.core.dao.GenericDao;
 import com.asiaworld.tmuhj.core.model.DataSet;
 import com.asiaworld.tmuhj.core.service.GenericServiceFull;
 import com.asiaworld.tmuhj.core.util.DsBeanFactory;
@@ -26,9 +26,7 @@ public class IpRangeService extends GenericServiceFull<IpRange> {
 		IpRange entity = ds.getEntity();
 		DsRestrictions restrictions = DsBeanFactory.getDsRestrictions();
 
-		if (entity.getCustomer().getSerNo() > 0) {
-			restrictions.eq("customer.serNo", entity.getCustomer().getSerNo());
-		}
+		restrictions.eq("customer.serNo", entity.getCustomer().getSerNo());
 
 		restrictions.addOrderAsc("serNo");
 		return dao.findByRestrictions(restrictions, ds);
@@ -47,23 +45,31 @@ public class IpRangeService extends GenericServiceFull<IpRange> {
 		return dao.findByRestrictions(restrictions);
 	}
 
-	public boolean isLegalEntity(DataSet<IpRange> ds) throws Exception {
+	public IpRange getTargetEntity(DataSet<IpRange> ds) throws Exception {
 		Assert.notNull(ds);
 		Assert.notNull(ds.getEntity());
 		IpRange entity = ds.getEntity();
 		DsRestrictions restrictions = DsBeanFactory.getDsRestrictions();
-		restrictions.eq("serNo", entity.getSerNo());
+
+		if (entity.getSerNo() != null) {
+			restrictions.eq("serNo", entity.getSerNo());
+		} else {
+			restrictions.eq("serNo", -1L);
+		}
+
 		if (entity.getCustomer() != null) {
 			restrictions.eq("customer.serNo", entity.getCustomer().getSerNo());
 		} else {
 			restrictions.eq("customer.serNo", -1L);
 		}
 
-		if (dao.findByRestrictions(restrictions).size() == 0) {
-			return false;
-		}
+		List<IpRange> results = dao.findByRestrictions(restrictions);
 
-		return true;
+		if (results.size() == 1) {
+			return results.get(0);
+		} else {
+			return null;
+		}
 	}
 
 }

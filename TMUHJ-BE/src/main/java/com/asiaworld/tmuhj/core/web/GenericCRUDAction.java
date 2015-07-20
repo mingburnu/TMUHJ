@@ -5,8 +5,8 @@ import com.asiaworld.tmuhj.core.entity.Entity;
 public abstract class GenericCRUDAction<T extends Entity> extends
 		GenericAction<T> {
 	/**
-* 
-*/
+	 * 
+	 */
 	private static final long serialVersionUID = 8456347034602219914L;
 
 	/**
@@ -23,6 +23,13 @@ public abstract class GenericCRUDAction<T extends Entity> extends
 	 * 刪除檢核
 	 */
 	protected abstract void validateDelete() throws Exception;
+
+	/**
+	 * 新增頁
+	 * 
+	 * @return
+	 */
+	public abstract String add() throws Exception;
 
 	/**
 	 * 編輯頁

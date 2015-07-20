@@ -2,11 +2,12 @@ package com.asiaworld.tmuhj.core.apply.customer;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -14,7 +15,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
-import java.util.regex.Pattern;
+
+import javax.servlet.http.HttpServletResponse;
 
 import net.sf.json.JSONObject;
 
@@ -31,48 +33,30 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.owasp.esapi.ESAPI;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 
 import com.asiaworld.tmuhj.core.apply.enums.Role;
-import com.asiaworld.tmuhj.core.apply.ipRange.IpRange;
-import com.asiaworld.tmuhj.core.apply.ipRange.IpRangeService;
 import com.asiaworld.tmuhj.core.model.DataSet;
-import com.asiaworld.tmuhj.core.model.Pager;
-import com.asiaworld.tmuhj.core.web.GenericCRUDActionFull;
+import com.asiaworld.tmuhj.core.web.GenericWebActionFull;
 
 @Controller
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-public class CustomerAction extends GenericCRUDActionFull<Customer> {
+public class CustomerAction extends GenericWebActionFull<Customer> {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 4530353636126561614L;
 
-	private String[] checkItem;
-
-	private File[] file;
-
-	private String[] fileFileName;
-
-	private String[] fileContentType;
-
 	@Autowired
 	private Customer customer;
 
 	@Autowired
 	private CustomerService customerService;
-
-	@Autowired
-	private IpRange ipRange;
-
-	@Autowired
-	private IpRangeService ipRangeService;
-
-	private String[] importSerNos;
 
 	@Override
 	protected void validateSave() throws Exception {
@@ -89,57 +73,58 @@ public class CustomerAction extends GenericCRUDActionFull<Customer> {
 			}
 		}
 
-		if (StringUtils.isNotEmpty(getEntity().getEmail())) {
-			if (!isEmail(getEntity().getEmail())) {
-				errorMessages.add("email格式不正確");
-			}
-		}
-
 		if (StringUtils.isNotEmpty(getEntity().getTel())) {
 			String tel = getEntity().getTel().replaceAll("[/()+-]", "")
 					.replace(" ", "");
 			if (!NumberUtils.isDigits(tel)) {
 				errorMessages.add("電話格式不正確");
 			}
+		}
+
+		if (!isEmail(getEntity().getEmail())) {
+			errorMessages.add("email格式不正確");
 		}
 	}
 
 	@Override
 	protected void validateUpdate() throws Exception {
 		if (!hasEntity()) {
-			errorMessages.add("Target must not be null");
-		}
+			getResponse().sendError(HttpServletResponse.SC_NOT_FOUND);
+		} else {
+			if (StringUtils.isNotEmpty(getEntity().getTel())) {
+				String tel = getEntity().getTel().replaceAll("[/()+-]", "")
+						.replace(" ", "");
+				if (!NumberUtils.isDigits(tel)) {
+					errorMessages.add("電話格式不正確");
+				}
+			}
 
-		if (StringUtils.isNotEmpty(getEntity().getEmail())) {
 			if (!isEmail(getEntity().getEmail())) {
 				errorMessages.add("email格式不正確");
 			}
 		}
-
-		if (StringUtils.isNotEmpty(getEntity().getTel())) {
-			String tel = getEntity().getTel().replaceAll("[/()+-]", "")
-					.replace(" ", "");
-			if (!NumberUtils.isDigits(tel)) {
-				errorMessages.add("電話格式不正確");
-			}
-		}
-
 	}
 
 	@Override
 	protected void validateDelete() throws Exception {
 		if (getLoginUser().getRole().equals(Role.系統管理員)) {
-			if (ArrayUtils.isEmpty(checkItem)) {
+
+			if (ArrayUtils.isEmpty(getEntity().getCheckItem())) {
 				errorMessages.add("請選擇一筆或一筆以上的資料");
 			} else {
+				Set<Long> deRepeatSet = new HashSet<Long>(
+						Arrays.asList(getEntity().getCheckItem()));
+				getEntity().setCheckItem(
+						deRepeatSet.toArray(new Long[deRepeatSet.size()]));
+
 				int i = 0;
-				while (i < checkItem.length) {
-					if (!NumberUtils.isDigits(String.valueOf(checkItem[i]))
-							|| Long.parseLong(checkItem[i]) < 1
-							|| Long.parseLong(checkItem[i]) == 9
-							|| customerService.getBySerNo(Long
-									.parseLong(checkItem[i])) == null) {
-						errorMessages.add(checkItem[i] + "為不可利用的流水號");
+				while (i < getEntity().getCheckItem().length) {
+					if (getEntity().getCheckItem()[i] == null
+							|| getEntity().getCheckItem()[i] < 1
+							|| customerService.getBySerNo(getEntity()
+									.getCheckItem()[i]) == null) {
+						addActionError("有錯誤流水號");
+						break;
 					}
 					i++;
 				}
@@ -147,6 +132,11 @@ public class CustomerAction extends GenericCRUDActionFull<Customer> {
 		} else {
 			errorMessages.add("權限不足");
 		}
+	}
+
+	@Override
+	public String add() throws Exception {
+		return ADD;
 	}
 
 	@Override
@@ -161,24 +151,23 @@ public class CustomerAction extends GenericCRUDActionFull<Customer> {
 
 	@Override
 	public String list() throws Exception {
-		if (StringUtils.isNotBlank(getRequest().getParameter("option"))) {
-			if (getRequest().getParameter("option").equals("entity.name")
-					|| getRequest().getParameter("option").equals(
-							"entity.engName")) {
-				getRequest().setAttribute("option",
-						getRequest().getParameter("option"));
-			} else {
-				getRequest().setAttribute("option", "entity.name");
+		if (StringUtils.isNotBlank(getEntity().getOption())) {
+			if (!getEntity().getOption().equals("entity.name")
+					&& !getEntity().getOption().equals("entity.engName")) {
+				getEntity().setOption("entity.name");
 			}
 		} else {
-			getRequest().setAttribute("option", "entity.name");
+			getEntity().setOption("entity.name");
 		}
 
-		DataSet<Customer> ds = initDataSet();
-		ds.setPager(Pager.getChangedPager(
-				getRequest().getParameter("recordPerPage"), getRequest()
-						.getParameter("recordPoint"), ds.getPager()));
-		ds = customerService.getByRestrictions(ds);
+		DataSet<Customer> ds = customerService.getByRestrictions(initDataSet());
+
+		if (ds.getResults().size() == 0 && ds.getPager().getCurrentPage() > 1) {
+			ds.getPager().setCurrentPage(
+					(int) (ds.getPager().getTotalRecord()
+							/ ds.getPager().getRecordPerPage() + 1));
+			ds = customerService.getByRestrictions(ds);
+		}
 
 		setDs(ds);
 		return LIST;
@@ -196,8 +185,7 @@ public class CustomerAction extends GenericCRUDActionFull<Customer> {
 			addActionMessage("新增成功");
 			return VIEW;
 		} else {
-			setEntity(getEntity());
-			return EDIT;
+			return ADD;
 		}
 	}
 
@@ -209,6 +197,7 @@ public class CustomerAction extends GenericCRUDActionFull<Customer> {
 		if (!hasActionErrors()) {
 			customer = customerService.update(getEntity(), getLoginUser(),
 					"name");
+
 			setEntity(customer);
 			addActionMessage("修改成功");
 			return VIEW;
@@ -219,7 +208,6 @@ public class CustomerAction extends GenericCRUDActionFull<Customer> {
 								.getName());
 			}
 
-			setEntity(getEntity());
 			return EDIT;
 		}
 	}
@@ -231,12 +219,13 @@ public class CustomerAction extends GenericCRUDActionFull<Customer> {
 
 		if (!hasActionErrors()) {
 			int i = 0;
-			while (i < checkItem.length) {
+			while (i < getEntity().getCheckItem().length) {
 				String name = customerService.getBySerNo(
-						Long.parseLong(checkItem[i])).getName();
+						getEntity().getCheckItem()[i]).getName();
 				if (customerService
-						.deleteOwnerObj(Long.parseLong(checkItem[i]))) {
-					customerService.deleteBySerNo(Long.parseLong(checkItem[i]));
+						.deleteOwnerObj(getEntity().getCheckItem()[i])) {
+					customerService
+							.deleteBySerNo(getEntity().getCheckItem()[i]);
 					addActionMessage(name + "刪除成功");
 				} else {
 					addActionMessage(name + "資源必須先刪除");
@@ -245,46 +234,29 @@ public class CustomerAction extends GenericCRUDActionFull<Customer> {
 				i++;
 			}
 
-			DataSet<Customer> ds = initDataSet();
-			ds.setPager(Pager.getChangedPager(
-					getRequest().getParameter("recordPerPage"), getRequest()
-							.getParameter("recordPoint"), ds.getPager()));
-			ds = customerService.getByRestrictions(ds);
-			setDs(ds);
-
+			list();
 			return LIST;
 		} else {
-			DataSet<Customer> ds = initDataSet();
-			ds.setPager(Pager.getChangedPager(
-					getRequest().getParameter("recordPerPage"), getRequest()
-							.getParameter("recordPoint"), ds.getPager()));
-			ds = customerService.getByRestrictions(ds);
-
-			setDs(ds);
+			list();
 			return LIST;
 		}
 	}
 
 	public String view() throws Exception {
-		getRequest().setAttribute("viewSerNo",
-				getRequest().getParameter("viewSerNo"));
-
-		if (StringUtils.isNotBlank(getRequest().getParameter("viewSerNo"))
-				&& NumberUtils.isDigits(getRequest().getParameter("viewSerNo"))) {
-
-			customer = customerService.getBySerNo(Long.parseLong(getRequest()
-					.getParameter("viewSerNo")));
-			if (customer != null) {
-				setEntity(customer);
-			}
+		if (hasEntity()) {
+			getRequest().setAttribute("viewSerNo", getEntity().getSerNo());
+			setEntity(customer);
+		} else {
+			getResponse().sendError(HttpServletResponse.SC_NOT_FOUND);
 		}
 		return VIEW;
 	}
 
-	public String ajax() throws Exception {
-		getRequest().setAttribute("customerUnits",
+	public String box() throws Exception {
+		getRequest().setAttribute("allCustomers",
 				customerService.getAllCustomers());
-		return AJAX;
+
+		return BOX;
 	}
 
 	public String json() throws Exception {
@@ -311,16 +283,18 @@ public class CustomerAction extends GenericCRUDActionFull<Customer> {
 	}
 
 	public String queue() throws Exception {
-		if (ArrayUtils.isEmpty(file) || !file[0].isFile()) {
+		if (ArrayUtils.isEmpty(getEntity().getFile())
+				|| !getEntity().getFile()[0].isFile()) {
 			addActionError("請選擇檔案");
 		} else {
-			if (createWorkBook(new FileInputStream(file[0])) == null) {
+			if (createWorkBook(new FileInputStream(getEntity().getFile()[0])) == null) {
 				addActionError("檔案格式錯誤");
 			}
 		}
 
 		if (!hasActionErrors()) {
-			Workbook book = createWorkBook(new FileInputStream(file[0]));
+			Workbook book = createWorkBook(new FileInputStream(getEntity()
+					.getFile()[0]));
 			// book.getNumberOfSheets(); 判斷Excel文件有多少個sheet
 			Sheet sheet = book.getSheetAt(0);
 
@@ -436,27 +410,20 @@ public class CustomerAction extends GenericCRUDActionFull<Customer> {
 				}
 
 				customer = new Customer(rowValues[0], rowValues[1],
-						rowValues[2], rowValues[5], rowValues[4], rowValues[3],
-						"", "");
+						rowValues[2], rowValues[4], rowValues[3], "");
 
 				if (StringUtils.isBlank(customer.getName())) {
-					customer.setExistStatus("名稱空白");
+					customer.setDataStatus("名稱空白");
 				} else {
 					if (customer.getName()
 							.replaceAll("[a-zA-Z0-9\u4e00-\u9fa5]", "")
 							.length() != 0) {
-						customer.setExistStatus("名稱字元異常");
+						customer.setDataStatus("名稱字元異常");
 					} else {
 						long cusSerNo = customerService
 								.getCusSerNoByName(customer.getName());
 						if (cusSerNo != 0) {
-							customer.setExistStatus("已存在");
-						}
-
-						if (StringUtils.isNotEmpty(customer.getEmail())) {
-							if (!isEmail(customer.getEmail())) {
-								customer.setEmail(null);
-							}
+							customer.setDataStatus("已存在");
 						}
 
 						if (StringUtils.isNotEmpty(customer.getTel())) {
@@ -470,15 +437,19 @@ public class CustomerAction extends GenericCRUDActionFull<Customer> {
 
 				}
 
-				if (customer.getExistStatus().equals("")) {
-					customer.setExistStatus("正常");
+				if (!isEmail(customer.getEmail())) {
+					customer.setEmail(null);
 				}
 
-				if (customer.getExistStatus().equals("正常")
+				if (customer.getDataStatus() == null) {
+					customer.setDataStatus("正常");
+				}
+
+				if (customer.getDataStatus().equals("正常")
 						&& !originalData.contains(customer)) {
 
 					if (checkRepeatRow.containsKey(customer.getName())) {
-						customer.setExistStatus("名稱重複");
+						customer.setDataStatus("名稱重複");
 
 					} else {
 						checkRepeatRow.put(customer.getName(), customer);
@@ -493,26 +464,21 @@ public class CustomerAction extends GenericCRUDActionFull<Customer> {
 			List<Customer> excelData = new ArrayList<Customer>(originalData);
 
 			DataSet<Customer> ds = initDataSet();
-			List<Customer> results = ds.getResults();
-
 			ds.getPager().setTotalRecord((long) excelData.size());
-			ds.getPager().setRecordPoint(0);
 
 			if (excelData.size() < ds.getPager().getRecordPerPage()) {
 				int i = 0;
 				while (i < excelData.size()) {
-					results.add(excelData.get(i));
+					ds.getResults().add(excelData.get(i));
 					i++;
 				}
 			} else {
 				int i = 0;
 				while (i < ds.getPager().getRecordPerPage()) {
-					results.add(excelData.get(i));
+					ds.getResults().add(excelData.get(i));
 					i++;
 				}
 			}
-
-			ds.setResults(results);
 
 			getSession().put("cellNames", cellNames);
 			getSession().put("importList", excelData);
@@ -529,32 +495,42 @@ public class CustomerAction extends GenericCRUDActionFull<Customer> {
 	public String paginate() throws Exception {
 		List<?> importList = (List<?>) getSession().get("importList");
 		if (importList == null) {
-			return null;
+			return IMPORT;
 		}
 
 		clearCheckedItem();
 
 		DataSet<Customer> ds = initDataSet();
-		ds.setPager(Pager.getChangedPager(
-				getRequest().getParameter("recordPerPage"), getRequest()
-						.getParameter("recordPoint"), ds.getPager()));
 		ds.getPager().setTotalRecord((long) importList.size());
 
-		int first = ds.getPager().getRecordPerPage()
-				* (ds.getPager().getCurrentPage() - 1);
+		int first = ds.getPager().getOffset();
 		int last = first + ds.getPager().getRecordPerPage();
-
-		List<Customer> results = new ArrayList<Customer>();
 
 		int i = 0;
 		while (i < importList.size()) {
 			if (i >= first && i < last) {
-				results.add((Customer) importList.get(i));
+				ds.getResults().add((Customer) importList.get(i));
 			}
 			i++;
 		}
 
-		ds.setResults(results);
+		if (ds.getResults().size() == 0 && ds.getPager().getCurrentPage() > 1) {
+			ds.getPager().setCurrentPage(
+					(int) (ds.getPager().getTotalRecord()
+							/ ds.getPager().getRecordPerPage() + 1));
+			first = ds.getPager().getOffset();
+			last = first + ds.getPager().getRecordPerPage();
+
+			int j = 0;
+			while (j < importList.size()) {
+				if (j >= first && j < last) {
+					ds.getResults().add((Customer) importList.get(j));
+				}
+				j++;
+			}
+
+		}
+
 		setDs(ds);
 		return QUEUE;
 	}
@@ -563,7 +539,7 @@ public class CustomerAction extends GenericCRUDActionFull<Customer> {
 	public String getCheckedItem() {
 		List<?> importList = (List<?>) getSession().get("importList");
 		if (importList == null) {
-			return null;
+			return IMPORT;
 		}
 
 		Set<Integer> checkItemSet = new TreeSet<Integer>();
@@ -571,43 +547,49 @@ public class CustomerAction extends GenericCRUDActionFull<Customer> {
 			checkItemSet = (Set<Integer>) getSession().get("checkItemSet");
 		}
 
-		if (ArrayUtils.isNotEmpty(importSerNos)) {
-			if (NumberUtils.isDigits(importSerNos[0])) {
-				if (!checkItemSet.contains(Integer.parseInt(importSerNos[0]))) {
-					if (((Customer) importList.get(Integer
-							.parseInt(importSerNos[0]))).getExistStatus()
-							.equals("正常")) {
-						checkItemSet.add(Integer.parseInt(importSerNos[0]));
+		if (ArrayUtils.isNotEmpty(getEntity().getImportItem())) {
+			if (getEntity().getImportItem()[0] != null
+					&& getEntity().getImportItem()[0] >= 0
+					&& getEntity().getImportItem()[0] < importList.size()) {
+				if (!checkItemSet.contains(getEntity().getImportItem()[0])) {
+					if (((Customer) importList
+							.get(getEntity().getImportItem()[0]))
+							.getDataStatus().equals("正常")) {
+						checkItemSet.add(getEntity().getImportItem()[0]);
 					}
 				} else {
-					checkItemSet.remove(Integer.parseInt(importSerNos[0]));
+					checkItemSet.remove(getEntity().getImportItem()[0]);
 				}
 			}
 		}
 
 		getSession().put("checkItemSet", checkItemSet);
-
-		return null;
+		return QUEUE;
 	}
 
 	public String allCheckedItem() {
 		List<?> importList = (List<?>) getSession().get("importList");
 		if (importList == null) {
-			return null;
+			return IMPORT;
 		}
 
 		Set<Integer> checkItemSet = new TreeSet<Integer>();
 
-		if (ArrayUtils.isNotEmpty(importSerNos)) {
+		if (ArrayUtils.isNotEmpty(getEntity().getImportItem())) {
+			Set<Integer> deRepeatSet = new HashSet<Integer>(
+					Arrays.asList(getEntity().getImportItem()));
+			getEntity().setImportItem(
+					deRepeatSet.toArray(new Integer[deRepeatSet.size()]));
+
 			int i = 0;
-			while (i < importSerNos.length) {
-				if (NumberUtils.isDigits(importSerNos[i])) {
-					if (Long.parseLong(importSerNos[i]) < importList.size()) {
-						if (((Customer) importList.get(Integer
-								.parseInt(importSerNos[i]))).getExistStatus()
-								.equals("正常")) {
-							checkItemSet.add(Integer.parseInt(importSerNos[i]));
-						}
+			while (i < getEntity().getImportItem().length) {
+				if (getEntity().getImportItem()[i] != null
+						&& getEntity().getImportItem()[i] >= 0
+						&& getEntity().getImportItem()[i] < importList.size()) {
+					if (((Customer) importList
+							.get(getEntity().getImportItem()[i]))
+							.getDataStatus().equals("正常")) {
+						checkItemSet.add(getEntity().getImportItem()[i]);
 					}
 
 					if (checkItemSet.size() == importList.size()) {
@@ -619,12 +601,12 @@ public class CustomerAction extends GenericCRUDActionFull<Customer> {
 		}
 
 		getSession().put("checkItemSet", checkItemSet);
-		return null;
+		return QUEUE;
 	}
 
 	public String clearCheckedItem() {
 		if (getSession().get("importList") == null) {
-			return null;
+			return IMPORT;
 		}
 
 		Set<Integer> checkItemSet = new TreeSet<Integer>();
@@ -636,7 +618,7 @@ public class CustomerAction extends GenericCRUDActionFull<Customer> {
 		List<?> importList = (List<?>) getSession().get("importList");
 
 		if (importList == null) {
-			return null;
+			return IMPORT;
 		}
 
 		Set<?> checkItemSet = (Set<?>) getSession().get("checkItemSet");
@@ -664,8 +646,8 @@ public class CustomerAction extends GenericCRUDActionFull<Customer> {
 	}
 
 	public String example() throws Exception {
+		// reportFile = "customer_sample.xlsx";
 		getEntity().setReportFile("customer_sample.xlsx");
-
 		// Create blank workbook
 		XSSFWorkbook workbook = new XSSFWorkbook();
 		// Create a blank sheet
@@ -675,10 +657,10 @@ public class CustomerAction extends GenericCRUDActionFull<Customer> {
 		// This data needs to be written (Object[])
 		Map<String, Object[]> empinfo = new LinkedHashMap<String, Object[]>();
 		empinfo.put("1", new Object[] { "name/姓名", "egName/英文姓名", "address/地址",
-				"tel/電話", "contactUserName/聯絡人", "email/電子信箱" });
+				"tel/電話", "contactUserName/聯絡人" });
 
 		empinfo.put("2", new Object[] { "國防醫學中心", "ndmc", "台北市內湖區民權東路六段161號",
-				"886-2-87923100", "總機", "ndmc@ndmc.gmail.com" });
+				"886-2-87923100", "總機" });
 
 		// Iterate over data and write to sheet
 		Set<String> keyid = empinfo.keySet();
@@ -695,21 +677,19 @@ public class CustomerAction extends GenericCRUDActionFull<Customer> {
 
 		ByteArrayOutputStream boas = new ByteArrayOutputStream();
 		workbook.write(boas);
-		setInputStream(new ByteArrayInputStream(boas.toByteArray()));
+		getEntity()
+				.setInputStream(new ByteArrayInputStream(boas.toByteArray()));
 
 		return XLSX;
 	}
 
-	public boolean isEmail(String email) {
-		String emailPattern = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@"
-				+ "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
-
-		return Pattern.compile(emailPattern).matcher(email).matches();
+	protected boolean isEmail(String email) {
+		return ESAPI.validator().isValidInput("account Email", email, "Email",
+				254, true);
 	}
 
-	public boolean hasEntity() throws Exception {
-		if (getEntity().getSerNo() == null) {
-			getEntity().setSerNo(-1L);
+	protected boolean hasEntity() throws Exception {
+		if (!getEntity().hasSerNo()) {
 			return false;
 		}
 
@@ -722,13 +702,13 @@ public class CustomerAction extends GenericCRUDActionFull<Customer> {
 	}
 
 	// 判斷文件類型
-	public Workbook createWorkBook(InputStream is) throws IOException {
+	protected Workbook createWorkBook(InputStream is) throws IOException {
 		try {
-			if (fileFileName[0].toLowerCase().endsWith("xls")) {
+			if (getEntity().getFileFileName()[0].toLowerCase().endsWith("xls")) {
 				return new HSSFWorkbook(is);
 			}
 
-			if (fileFileName[0].toLowerCase().endsWith("xlsx")) {
+			if (getEntity().getFileFileName()[0].toLowerCase().endsWith("xlsx")) {
 				return new XSSFWorkbook(is);
 			}
 		} catch (InvalidOperationException e) {
@@ -736,80 +716,5 @@ public class CustomerAction extends GenericCRUDActionFull<Customer> {
 		}
 
 		return null;
-	}
-
-	/**
-	 * @return the checkItem
-	 */
-	public String[] getCheckItem() {
-		return checkItem;
-	}
-
-	/**
-	 * @param checkItem
-	 *            the checkItem to set
-	 */
-	public void setCheckItem(String[] checkItem) {
-		this.checkItem = checkItem;
-	}
-
-	/**
-	 * @return the file
-	 */
-	public File[] getFile() {
-		return file;
-	}
-
-	/**
-	 * @param file
-	 *            the file to set
-	 */
-	public void setFile(File[] file) {
-		this.file = file;
-	}
-
-	/**
-	 * @return the fileFileName
-	 */
-	public String[] getFileFileName() {
-		return fileFileName;
-	}
-
-	/**
-	 * @param fileFileName
-	 *            the fileFileName to set
-	 */
-	public void setFileFileName(String[] fileFileName) {
-		this.fileFileName = fileFileName;
-	}
-
-	/**
-	 * @return the fileContentType
-	 */
-	public String[] getFileContentType() {
-		return fileContentType;
-	}
-
-	/**
-	 * @param fileContentType
-	 *            the fileContentType to set
-	 */
-	public void setFileContentType(String[] fileContentType) {
-		this.fileContentType = fileContentType;
-	}
-
-	/**
-	 * @return the importSerNos
-	 */
-	public String[] getImportSerNos() {
-		return importSerNos;
-	}
-
-	/**
-	 * @param importSerNos
-	 *            the importSerNos to set
-	 */
-	public void setImportSerNos(String[] importSerNos) {
-		this.importSerNos = importSerNos;
 	}
 }

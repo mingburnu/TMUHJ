@@ -2,17 +2,14 @@ package com.asiaworld.tmuhj.core.interceptor;
 
 import java.util.Map;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.opensymphony.xwork2.ActionContext;
+import com.opensymphony.xwork2.ActionInvocation;
 import com.asiaworld.tmuhj.core.apply.accountNumber.AccountNumber;
 import com.asiaworld.tmuhj.core.apply.beLogs.BeLogs;
 import com.asiaworld.tmuhj.core.apply.beLogs.BeLogsService;
 import com.asiaworld.tmuhj.core.apply.enums.Act;
-import com.opensymphony.xwork2.ActionContext;
-import com.opensymphony.xwork2.ActionInvocation;
-import com.opensymphony.xwork2.interceptor.AbstractInterceptor;
 
 /**
  * 儲存登入log
@@ -20,14 +17,12 @@ import com.opensymphony.xwork2.interceptor.AbstractInterceptor;
  * @author Roderick
  * @version 2015/1/20
  */
-public class LoginActionInterceptor extends AbstractInterceptor {
+public class LoginActionInterceptor extends RootInterceptor {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = -5641049812365809693L;
-
-	Log logger = LogFactory.getLog(this.getClass());
 
 	@Autowired
 	private BeLogsService beLogsService;

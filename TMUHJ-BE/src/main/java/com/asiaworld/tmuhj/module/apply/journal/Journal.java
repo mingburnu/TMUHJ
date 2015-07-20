@@ -1,23 +1,17 @@
 package com.asiaworld.tmuhj.module.apply.journal;
 
-import java.util.List;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
-import javax.persistence.Transient;
-
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 
-import com.asiaworld.tmuhj.core.apply.customer.Customer;
-import com.asiaworld.tmuhj.core.entity.GenericEntityFull;
-import com.asiaworld.tmuhj.module.apply.resourcesBuyers.ResourcesBuyers;
+import com.asiaworld.tmuhj.module.entity.ModuleProperties;
 
 @Entity
 @Table(name = "journal")
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-public class Journal extends GenericEntityFull {
+public class Journal extends ModuleProperties {
 
 	/**
 	 * 
@@ -80,15 +74,6 @@ public class Journal extends GenericEntityFull {
 	@Column(name = "version")
 	private Integer version;
 
-	@Transient
-	private ResourcesBuyers resourcesBuyers;
-
-	@Transient
-	private List<Customer> customers;
-	
-	@Transient
-	private String existStatus;
-	
 	/**
 	 * @return the chineseTitle
 	 */
@@ -299,50 +284,6 @@ public class Journal extends GenericEntityFull {
 		this.version = version;
 	}
 
-	/**
-	 * @return the resourcesBuyers
-	 */
-	public ResourcesBuyers getResourcesBuyers() {
-		return resourcesBuyers;
-	}
-
-	/**
-	 * @param resourcesBuyers
-	 *            the resourcesBuyers to set
-	 */
-	public void setResourcesBuyers(ResourcesBuyers resourcesBuyers) {
-		this.resourcesBuyers = resourcesBuyers;
-	}
-
-	/**
-	 * @return the customers
-	 */
-	public List<Customer> getCustomers() {
-		return customers;
-	}
-
-	/**
-	 * @param customers
-	 *            the customers to set
-	 */
-	public void setCustomers(List<Customer> customers) {
-		this.customers = customers;
-	}
-
-	/**
-	 * @return the existStatus
-	 */
-	public String getExistStatus() {
-		return existStatus;
-	}
-
-	/**
-	 * @param existStatus the existStatus to set
-	 */
-	public void setExistStatus(String existStatus) {
-		this.existStatus = existStatus;
-	}
-
 	public Journal() {
 		super();
 		// TODO Auto-generated constructor stub
@@ -352,9 +293,7 @@ public class Journal extends GenericEntityFull {
 			String abbreviationTitle, String titleEvolution, String issn,
 			String languages, String publishName, String publishYear,
 			String caption, String url, String numB, String publication,
-			String congressClassification, Integer version,
-			ResourcesBuyers resourcesBuyers, List<Customer> customers,
-			String existStatus) {
+			String congressClassification, Integer version) {
 		super();
 		this.chineseTitle = chineseTitle;
 		this.englishTitle = englishTitle;
@@ -370,9 +309,5 @@ public class Journal extends GenericEntityFull {
 		this.publication = publication;
 		this.congressClassification = congressClassification;
 		this.version = version;
-		this.resourcesBuyers = resourcesBuyers;
-		this.customers = customers;
-		this.existStatus = existStatus;
 	}
-
 }
