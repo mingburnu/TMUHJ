@@ -100,7 +100,7 @@ public class JournalAction extends GenericWebActionFull<Journal> {
 		}
 
 		setDs(ds);
-		return "journal";
+		return LIST;
 	}
 
 	@Override
@@ -148,7 +148,7 @@ public class JournalAction extends GenericWebActionFull<Journal> {
 
 		}
 
-		return "journal";
+		return LIST;
 	}
 
 	public String focus() throws Exception {
@@ -168,7 +168,7 @@ public class JournalAction extends GenericWebActionFull<Journal> {
 
 		setDs(ds);
 
-		return "journal";
+		return LIST;
 	}
 
 	public String view() throws Exception {
@@ -207,7 +207,7 @@ public class JournalAction extends GenericWebActionFull<Journal> {
 			getResponse().sendError(HttpServletResponse.SC_NOT_FOUND);
 		}
 
-		return "j-detail";
+		return VIEW;
 	}
 
 	protected boolean hasEntity() throws Exception {

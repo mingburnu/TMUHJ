@@ -51,78 +51,66 @@ public class SearchActionInterceptor extends RootInterceptor {
 		String method = invocation.getProxy().getMethod();
 
 		if (method.equals("list")) {
-			String item = request.getParameter("item");
+			String item = request.getServletPath().replace("/crud/apply.", "")
+					.replace(".list.action", "");
 			if (StringUtils.isBlank(request.getParameter("entity.indexTerm"))) {
 				addActionError(invocation, "．請輸入關鍵字。");
-			} else {
-				invocation
-						.getInvocationContext()
-						.getValueStack()
-						.set("indexTerm",
-								request.getParameter("entity.indexTerm"));
-			}
-
-			if (request.getParameter("pager.recordPerPage") == null) {
-				if (StringUtils.isBlank(item)) {
-					invocation.getInvocationContext().getValueStack()
-							.set("item", "database");
-					addActionError(invocation, "item exception");
-				} else if (item.equals("database") || item.equals("ebook")
-						|| item.equals("journal") || item.equals("customer")) {
-					invocation.getInvocationContext().getValueStack()
-							.set("item", item);
-				} else {
-					invocation.getInvocationContext().getValueStack()
-							.set("item", "database");
-					addActionError(invocation, "item exception");
-				}
 			}
 
 			if (hasActionErrors(invocation)) {
+				invocation.getInvocationContext().getValueStack()
+						.set("item", item);
 				return "query";
 			}
 		}
 
 		if (method.equals("focus")) {
-			String item = request.getParameter("item");
-			if (StringUtils.isBlank(request.getParameter("entity.indexTerm"))) {
+			String item = request.getServletPath().replace("/crud/apply.", "")
+					.replace(".focus.action", "");
+			String indexTerm = request.getParameter("entity.indexTerm");
+			String option = request.getParameter("entity.option");
+			if (StringUtils.isBlank(indexTerm)) {
 				addActionError(invocation, "．請輸入關鍵字。");
-			} else {
-				invocation
-						.getInvocationContext()
-						.getValueStack()
-						.set("indexTerm",
-								request.getParameter("entity.indexTerm"));
 			}
 
-			if (StringUtils.isBlank(request.getParameter("entity.option"))) {
-				addActionError(invocation, "．請輸入選項。");
-			} else {
-				invocation.getInvocationContext().getValueStack()
-						.set("option", request.getParameter("entity.option"));
+			if (item.equals("database")) {
+				if (StringUtils.isBlank(option)) {
+					addActionError(invocation, "．請輸入選項。");
+				} else if (!option.equals("中文題名") && !option.equals("英文題名")
+						&& !option.equals("出版社") && !option.equals("內容描述")) {
+					addActionError(invocation, "．請輸入選項。");
+					option = "中文題名";
+				}
 			}
 
-			if (request.getParameter("pager.recordPerPage") == null) {
-				if (StringUtils.isBlank(item)) {
-					invocation.getInvocationContext().getValueStack()
-							.set("item", "database");
-					invocation.getInvocationContext().getValueStack()
-							.set("option", "中文題名");
-					addActionError(invocation, "item exception");
-				} else if (item.equals("database") || item.equals("ebook")
-						|| item.equals("journal")) {
-					invocation.getInvocationContext().getValueStack()
-							.set("item", item);
-				} else {
-					invocation.getInvocationContext().getValueStack()
-							.set("item", "database");
-					invocation.getInvocationContext().getValueStack()
-							.set("option", "中文題名");
-					addActionError(invocation, "item exception");
+			if (item.equals("ebook")) {
+				if (StringUtils.isBlank(option)) {
+					addActionError(invocation, "．請輸入選項。");
+				} else if (!option.equals("書名") && !option.equals("ISBN")
+						&& !option.equals("出版社") && !option.equals("作者")) {
+					addActionError(invocation, "．請輸入選項。");
+					option = "書名";
+				}
+			}
+
+			if (item.equals("journal")) {
+				if (StringUtils.isBlank(option)) {
+					addActionError(invocation, "．請輸入選項。");
+				} else if (!option.equals("中文刊名") && !option.equals("英文刊名")
+						&& !option.equals("英文縮寫") && !option.equals("出版商")
+						&& !option.equals("ISSN")) {
+					addActionError(invocation, "．請輸入選項。");
+					option = "中文刊名";
 				}
 			}
 
 			if (hasActionErrors(invocation)) {
+				invocation.getInvocationContext().getValueStack()
+						.set("item", item);
+				invocation.getInvocationContext().getValueStack()
+						.set("option", option);
+				invocation.getInvocationContext().getValueStack()
+						.set("indexTerm", indexTerm);
 				return "adv_query";
 			}
 		}

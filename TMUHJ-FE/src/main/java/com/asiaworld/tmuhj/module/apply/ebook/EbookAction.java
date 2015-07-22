@@ -90,7 +90,7 @@ public class EbookAction extends GenericWebActionFull<Ebook> {
 		}
 
 		setDs(ds);
-		return "ebook";
+		return LIST;
 	}
 
 	@Override
@@ -137,7 +137,7 @@ public class EbookAction extends GenericWebActionFull<Ebook> {
 			setDs(ds);
 		}
 
-		return "ebook";
+		return LIST;
 	}
 
 	public String focus() throws Exception {
@@ -157,7 +157,7 @@ public class EbookAction extends GenericWebActionFull<Ebook> {
 
 		setDs(ds);
 
-		return "ebook";
+		return LIST;
 	}
 
 	public String view() throws Exception {
@@ -189,7 +189,7 @@ public class EbookAction extends GenericWebActionFull<Ebook> {
 			getResponse().sendError(HttpServletResponse.SC_NOT_FOUND);
 		}
 
-		return "e-detail";
+		return VIEW;
 	}
 
 	protected boolean hasEntity() throws Exception {

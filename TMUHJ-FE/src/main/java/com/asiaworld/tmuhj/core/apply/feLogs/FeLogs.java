@@ -9,6 +9,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 
@@ -47,6 +48,7 @@ public class FeLogs extends GenericEntityLog {
 	 */
 	@ManyToOne(cascade = CascadeType.REMOVE)
 	@JoinColumn(name = "cus_serNo", nullable = false)
+	@Autowired
 	private Customer customer;
 
 	/**
@@ -54,6 +56,7 @@ public class FeLogs extends GenericEntityLog {
 	 */
 	@ManyToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "acc_SerNo", nullable = true)
+	@Autowired
 	private AccountNumber accountNumber;
 
 	// 資料庫流水號
@@ -106,7 +109,8 @@ public class FeLogs extends GenericEntityLog {
 	}
 
 	/**
-	 * @param customer the customer to set
+	 * @param customer
+	 *            the customer to set
 	 */
 	public void setCustomer(Customer customer) {
 		this.customer = customer;
@@ -120,7 +124,8 @@ public class FeLogs extends GenericEntityLog {
 	}
 
 	/**
-	 * @param accountNumber the accountNumber to set
+	 * @param accountNumber
+	 *            the accountNumber to set
 	 */
 	public void setAccountNumber(AccountNumber accountNumber) {
 		this.accountNumber = accountNumber;
@@ -176,8 +181,9 @@ public class FeLogs extends GenericEntityLog {
 		// TODO Auto-generated constructor stub
 	}
 
-	public FeLogs(Act actionType, String keyword, Customer customer, AccountNumber accountNumber,
-			Long datSerNo, Long ebkSerNo, Long jouSerNo) {
+	public FeLogs(Act actionType, String keyword, Customer customer,
+			AccountNumber accountNumber, Long datSerNo, Long ebkSerNo,
+			Long jouSerNo) {
 		super();
 		this.actionType = actionType;
 		this.keyword = keyword;
@@ -188,7 +194,9 @@ public class FeLogs extends GenericEntityLog {
 		this.jouSerNo = jouSerNo;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#toString()
 	 */
 	@Override

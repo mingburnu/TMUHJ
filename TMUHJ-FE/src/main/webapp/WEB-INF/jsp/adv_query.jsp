@@ -16,7 +16,7 @@
 	});
 
 	function changeFormAction() {
-		var item = $("input[name='item']:checked").val();
+		var item = $("input[type='radio']:checked").val();
 		$("form").attr("id", "apply_" + item + "_focus");
 		$("form").attr("name", "apply_" + item + "_focus");
 		$("form")
@@ -77,33 +77,32 @@
 		<td class="L">
 			<div id="main_box">
 				<!-- 內容開始 -->
-				<s:form action="apply.database.focus" namespace="/crud"
-					method="post" onsubmit="return false;">
-					<table width="100%" border="0" cellpadding="0" cellspacing="0"
-						class="table_02">
-						<tr valign="middle">
-							<td class="t_01"><img
-								src="<c:url value = '/'/>resources/images/txt_01.png"></td>
-							<td class="t_02"><c:choose>
-									<c:when test="${empty item }">
-										<s:radio name="item" cssClass="v_type"
-											onchange="changeFormAction();showType(this.value);"
-											list="#{'database':' 資料庫','ebook':' 電子書','journal':' 期刊' }"
-											value="'database'" />
-									</c:when>
-									<c:otherwise>
-										<s:radio name="item" cssClass="v_type"
-											onchange="changeFormAction()"
-											list="#{'database':' 資料庫','ebook':' 電子書','journal':' 期刊' }"
-											value="%{item}" />
-									</c:otherwise>
-								</c:choose></td>
-						</tr>
-						<tr valign="middle">
-							<td class="t_01"><img
-								src="<c:url value = '/'/>resources/images/txt_02.png"></td>
-							<td class="t_02">
 
+				<table width="100%" border="0" cellpadding="0" cellspacing="0"
+					class="table_02">
+					<tr valign="middle">
+						<td class="t_01"><img
+							src="<c:url value = '/'/>resources/images/txt_01.png"></td>
+						<td class="t_02"><c:choose>
+								<c:when test="${empty item }">
+									<s:radio name="item" cssClass="v_type"
+										onchange="changeFormAction();showType(this.value);"
+										list="#{'database':' 資料庫','ebook':' 電子書','journal':' 期刊' }"
+										value="'database'" />
+								</c:when>
+								<c:otherwise>
+									<s:radio name="item" cssClass="v_type"
+										onchange="changeFormAction()"
+										list="#{'database':' 資料庫','ebook':' 電子書','journal':' 期刊' }"
+										value="%{item}" />
+								</c:otherwise>
+							</c:choose></td>
+					</tr>
+					<tr valign="middle">
+						<td class="t_01"><img
+							src="<c:url value = '/'/>resources/images/txt_02.png"></td>
+						<td class="t_02"><s:form action="apply.database.focus"
+								namespace="/crud" method="post" onsubmit="return false;">
 								<table border="0" cellpadding="0" cellspacing="0">
 									<tr>
 										<td>
@@ -167,17 +166,14 @@
 											</div></td>
 									</tr>
 								</table>
-
-							</td>
-						</tr>
-						<tr valign="middle">
-							<td class="t_03" colspan="2" align="center"><a
-								class="btn_01" href="javascript:void(0);"
-								onClick="form_reset();">重 新 填 寫</a> <a class="btn_01" href="#"
-								onClick="form_sumbit();">開 始 查 詢</a></td>
-						</tr>
-					</table>
-				</s:form>
+							</s:form></td>
+					</tr>
+					<tr valign="middle">
+						<td class="t_03" colspan="2" align="center"><a class="btn_01"
+							href="javascript:void(0);" onClick="form_reset();">重 新 填 寫</a> <a
+							class="btn_01" href="#" onClick="form_sumbit();">開 始 查 詢</a></td>
+					</tr>
+				</table>
 
 				<!-- 內容結束 -->
 			</div>

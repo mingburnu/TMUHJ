@@ -100,7 +100,7 @@ public class DatabaseAction extends GenericWebActionFull<Database> {
 		}
 
 		setDs(ds);
-		return "database";
+		return LIST;
 	}
 
 	@Override
@@ -146,7 +146,7 @@ public class DatabaseAction extends GenericWebActionFull<Database> {
 			setDs(ds);
 		}
 
-		return "database";
+		return LIST;
 
 	}
 
@@ -166,7 +166,7 @@ public class DatabaseAction extends GenericWebActionFull<Database> {
 
 		setDs(ds);
 
-		return "database";
+		return LIST;
 	}
 
 	public String view() throws Exception {
@@ -204,7 +204,7 @@ public class DatabaseAction extends GenericWebActionFull<Database> {
 			getResponse().sendError(HttpServletResponse.SC_NOT_FOUND);
 		}
 
-		return "d-detail";
+		return VIEW;
 	}
 
 	protected boolean hasEntity() throws Exception {

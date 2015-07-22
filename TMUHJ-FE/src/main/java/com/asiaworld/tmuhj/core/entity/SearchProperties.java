@@ -4,7 +4,7 @@ import javax.persistence.MappedSuperclass;
 import javax.persistence.Transient;
 
 @MappedSuperclass
-public abstract class SearchProperties implements Entity {
+public abstract class SearchProperties extends FileIoProperties {
 
 	/**
 	 * 

@@ -7,6 +7,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 
@@ -29,10 +30,12 @@ public class ResourcesUnion extends GenericEntitySerNo {
 	 */
 	@ManyToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "cus_serNo", nullable = false)
+	@Autowired
 	private Customer customer;
 
 	@ManyToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "res_SerNo", nullable = false)
+	@Autowired
 	private ResourcesBuyers resourcesBuyers;
 
 	@Column(name = "ebk_SerNo")
@@ -52,7 +55,8 @@ public class ResourcesUnion extends GenericEntitySerNo {
 	}
 
 	/**
-	 * @param customer the customer to set
+	 * @param customer
+	 *            the customer to set
 	 */
 	public void setCustomer(Customer customer) {
 		this.customer = customer;
@@ -66,7 +70,8 @@ public class ResourcesUnion extends GenericEntitySerNo {
 	}
 
 	/**
-	 * @param resourcesBuyers the resourcesBuyers to set
+	 * @param resourcesBuyers
+	 *            the resourcesBuyers to set
 	 */
 	public void setResourcesBuyers(ResourcesBuyers resourcesBuyers) {
 		this.resourcesBuyers = resourcesBuyers;
@@ -80,7 +85,8 @@ public class ResourcesUnion extends GenericEntitySerNo {
 	}
 
 	/**
-	 * @param ebkSerNo the ebkSerNo to set
+	 * @param ebkSerNo
+	 *            the ebkSerNo to set
 	 */
 	public void setEbkSerNo(Long ebkSerNo) {
 		this.ebkSerNo = ebkSerNo;
@@ -94,7 +100,8 @@ public class ResourcesUnion extends GenericEntitySerNo {
 	}
 
 	/**
-	 * @param datSerNo the datSerNo to set
+	 * @param datSerNo
+	 *            the datSerNo to set
 	 */
 	public void setDatSerNo(Long datSerNo) {
 		this.datSerNo = datSerNo;
@@ -108,10 +115,11 @@ public class ResourcesUnion extends GenericEntitySerNo {
 	}
 
 	/**
-	 * @param jouSerNo the jouSerNo to set
+	 * @param jouSerNo
+	 *            the jouSerNo to set
 	 */
 	public void setJouSerNo(Long jouSerNo) {
 		this.jouSerNo = jouSerNo;
 	}
-	
+
 }

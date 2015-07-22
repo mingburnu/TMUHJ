@@ -5,7 +5,6 @@ import java.util.List;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.CharUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.hibernate.criterion.Junction;
 import org.hibernate.criterion.MatchMode;
@@ -124,8 +123,6 @@ public class JournalService extends GenericServiceFull<Journal> {
 			option = "publishName";
 		} else if (option.equals("ISSN")) {
 			option = "issn";
-		} else {
-			option = "";
 		}
 
 		char[] cArray = indexTerm.toCharArray();
@@ -144,7 +141,7 @@ public class JournalService extends GenericServiceFull<Journal> {
 				"[^-a-zA-Z0-9\u4e00-\u9fa5\u0391-\u03a9\u03b1-\u03c9]", " ");
 		String[] wordArray = indexTerm.split(" ");
 
-		if (!ArrayUtils.isEmpty(wordArray) && StringUtils.isNotBlank(option)) {
+		if (!ArrayUtils.isEmpty(wordArray)) {
 			Junction orGroup = Restrictions.disjunction();
 			for (int i = 0; i < wordArray.length; i++) {
 				if (option.equals("issn")) {

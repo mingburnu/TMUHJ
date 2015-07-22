@@ -186,22 +186,6 @@ insert into ip_range (serNo, cDTime, cUid, uDTime, uUid, cus_serNo, ipRangeEnd, 
 insert into ip_range (serNo, cDTime, cUid, uDTime, uUid, cus_serNo, ipRangeEnd, ipRangeStart) values('55',sysdate(),'admin',sysdate(),'admin','8','203.65.100.13','203.65.100.13');
 insert into ip_range (serNo, cDTime, cUid, uDTime, uUid, cus_serNo, ipRangeEnd, ipRangeStart) values('56',sysdate(),'admin',sysdate(),'admin','8','210.241.104.254','210.241.104.128');
 
-
---BE_Logs
-insert into BE_Logs(serNo, cDTime, actionType, acc_serNo, cus_serNo) values(1, sysdate(), '登入', 1, 1);
-insert into BE_Logs(serNo, cDTime, actionType, acc_serNo, cus_serNo) values(2, sysdate(), '登入', 2, 2);
-insert into BE_Logs(serNo, cDTime, actionType, acc_serNo, cus_serNo) values(3, sysdate(), '登入', 3, 5);
-insert into BE_Logs(serNo, cDTime, actionType, acc_serNo, cus_serNo) values(4, sysdate(), '登入', 4, 1);
-insert into BE_Logs(serNo, cDTime, actionType, acc_serNo, cus_serNo) values(5, sysdate(), '登入', 5, 2);
-insert into BE_Logs(serNo, cDTime, actionType, acc_serNo, cus_serNo) values(6, sysdate(), '登入', 6, 5);
-insert into BE_Logs(serNo, cDTime, actionType, acc_serNo, cus_serNo) values(7, sysdate(), '登入', 7, 1);
-insert into BE_Logs(serNo, cDTime, actionType, acc_serNo, cus_serNo) values(8, sysdate(), '登入', 8, 2);
-insert into BE_Logs(serNo, cDTime, actionType, acc_serNo, cus_serNo) values(9, sysdate(), '登入', 9, 9);
-insert into BE_Logs(serNo, cDTime, actionType, acc_serNo, cus_serNo) values(10, sysdate(), '登入', 10, 1);
-insert into BE_Logs(serNo, cDTime, actionType, acc_serNo, cus_serNo) values(11, sysdate(), '登入', 11, 2);
-insert into BE_Logs(serNo, cDTime, actionType, acc_serNo, cus_serNo) values(12, sysdate(), '登入', 12, 5);
-insert into BE_Logs(serNo, cDTime, actionType, acc_serNo, cus_serNo) values(13, sysdate(), '登入', 1, 1);
-
 --FE_Logs
 insert into FE_Logs(serNo, cDTime, actionType, keyword, cus_SerNo, acc_SerNo, dat_SerNo, ebk_SerNo, jou_SerNo) values(1, sysdate(), '綜合查詢', 'Hello', 1,1,0,0,0);
 insert into FE_Logs(serNo, cDTime, actionType, keyword, cus_SerNo, acc_SerNo, dat_SerNo, ebk_SerNo, jou_SerNo) values(2, sysdate(), '綜合查詢', 'world', 1,1,0,0,0);

@@ -10,6 +10,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import org.apache.struts2.json.annotations.JSON;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 
@@ -71,6 +72,7 @@ public class AccountNumber extends GenericEntityFull {
 	 */
 	@ManyToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "cus_serNo", nullable = false)
+	@Autowired
 	private Customer customer;
 
 	/**
@@ -150,7 +152,8 @@ public class AccountNumber extends GenericEntityFull {
 	}
 
 	/**
-	 * @param customer the customer to set
+	 * @param customer
+	 *            the customer to set
 	 */
 	public void setCustomer(Customer customer) {
 		this.customer = customer;

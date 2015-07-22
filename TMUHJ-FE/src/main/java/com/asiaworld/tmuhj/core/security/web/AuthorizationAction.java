@@ -12,7 +12,6 @@ import org.springframework.stereotype.Controller;
 import com.asiaworld.tmuhj.core.apply.accountNumber.AccountNumber;
 import com.asiaworld.tmuhj.core.apply.accountNumber.AccountNumberService;
 import com.asiaworld.tmuhj.core.apply.customer.Customer;
-import com.asiaworld.tmuhj.core.apply.customer.CustomerService;
 import com.asiaworld.tmuhj.core.apply.ipRange.IpRange;
 import com.asiaworld.tmuhj.core.apply.ipRange.IpRangeService;
 import com.asiaworld.tmuhj.core.model.DataSet;
@@ -38,9 +37,6 @@ public class AuthorizationAction extends GenericAction<AccountNumber> {
 
 	@Autowired
 	private AccountNumber user;
-
-	@Autowired
-	private CustomerService customerService;
 
 	@Autowired
 	private Customer customer;

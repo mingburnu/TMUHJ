@@ -88,7 +88,7 @@ public class CustomerAction extends GenericWebActionFull<Customer> {
 		ds.setResults(results);
 		setDs(ds);
 
-		return "customer";
+		return LIST;
 	}
 
 	@Override
