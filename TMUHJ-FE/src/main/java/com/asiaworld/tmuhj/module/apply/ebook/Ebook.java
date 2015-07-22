@@ -3,17 +3,15 @@ package com.asiaworld.tmuhj.module.apply.ebook;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
-import javax.persistence.Transient;
-
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 
-import com.asiaworld.tmuhj.core.entity.GenericEntityFull;
+import com.asiaworld.tmuhj.module.entity.ModuleProperties;
 
 @Entity
 @Table(name = "ebook")
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-public class Ebook extends GenericEntityFull {
+public class Ebook extends ModuleProperties {
 	/**
 	 * 
 	 */
@@ -74,12 +72,6 @@ public class Ebook extends GenericEntityFull {
 	// 出版地
 	@Column(name = "publication")
 	private String publication;
-
-	@Transient
-	private String option;
-
-	@Transient
-	private String keywords;
 
 	/**
 	 * @return the bookName
@@ -290,35 +282,4 @@ public class Ebook extends GenericEntityFull {
 	public void setPublication(String publication) {
 		this.publication = publication;
 	}
-
-	/**
-	 * @return the option
-	 */
-	public String getOption() {
-		return option;
-	}
-
-	/**
-	 * @param option
-	 *            the option to set
-	 */
-	public void setOption(String option) {
-		this.option = option;
-	}
-
-	/**
-	 * @return the keywords
-	 */
-	public String getKeywords() {
-		return keywords;
-	}
-
-	/**
-	 * @param keywords
-	 *            the keywords to set
-	 */
-	public void setKeywords(String keywords) {
-		this.keywords = keywords;
-	}
-
 }

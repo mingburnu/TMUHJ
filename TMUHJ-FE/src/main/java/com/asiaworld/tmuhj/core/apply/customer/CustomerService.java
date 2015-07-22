@@ -29,22 +29,22 @@ public class CustomerService extends GenericServiceFull<Customer> {
 
 		DsRestrictions restrictions = DsBeanFactory.getDsRestrictions();
 		Customer entity = ds.getEntity();
-		String keywords = entity.getKeywords();
+		String itemTerm = entity.getIndexTerm();
 
-		char[] cArray = keywords.toCharArray();
-		StringBuilder keywordsBuilder = new StringBuilder();
+		char[] cArray = itemTerm.toCharArray();
+		StringBuilder itemTermBuilder = new StringBuilder();
 		for (int i = 0; i < cArray.length; i++) {
 			int charCode = (int) cArray[i];
 			if (charCode > 65280 && charCode < 65375) {
 				int halfChar = charCode - 65248;
 				cArray[i] = (char) halfChar;
 			}
-			keywordsBuilder.append(cArray[i]);
+			itemTermBuilder.append(cArray[i]);
 		}
 
-		keywords = keywordsBuilder.toString();
-		keywords = keywords.replaceAll("[^a-zA-Z0-9\u4e00-\u9fa5]", " ");
-		String[] wordArray = keywords.split(" ");
+		itemTerm = itemTermBuilder.toString();
+		itemTerm = itemTerm.replaceAll("[^a-zA-Z0-9\u4e00-\u9fa5]", " ");
+		String[] wordArray = itemTerm.split(" ");
 
 		if (!ArrayUtils.isEmpty(wordArray)) {
 			Junction orGroup = Restrictions.disjunction();

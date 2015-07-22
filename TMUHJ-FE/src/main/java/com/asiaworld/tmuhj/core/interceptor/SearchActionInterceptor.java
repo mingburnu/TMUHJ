@@ -16,7 +16,6 @@ import com.asiaworld.tmuhj.core.apply.feLogs.FeLogs;
 import com.asiaworld.tmuhj.core.apply.feLogs.FeLogsService;
 import com.opensymphony.xwork2.ActionInvocation;
 import com.opensymphony.xwork2.ValidationAware;
-import com.opensymphony.xwork2.interceptor.AbstractInterceptor;
 
 /**
  * 儲存檢索log
@@ -24,7 +23,7 @@ import com.opensymphony.xwork2.interceptor.AbstractInterceptor;
  * @author Roderick
  * @version 2015/1/20
  */
-public class SearchActionInterceptor extends AbstractInterceptor {
+public class SearchActionInterceptor extends RootInterceptor {
 
 	/**
 	 * 
@@ -52,26 +51,78 @@ public class SearchActionInterceptor extends AbstractInterceptor {
 		String method = invocation.getProxy().getMethod();
 
 		if (method.equals("list")) {
-			if (StringUtils.isBlank(request.getParameter("keywords"))) {
-				request.setAttribute("type", request.getParameter("type"));
+			String item = request.getParameter("item");
+			if (StringUtils.isBlank(request.getParameter("entity.indexTerm"))) {
 				addActionError(invocation, "．請輸入關鍵字。");
+			} else {
+				invocation
+						.getInvocationContext()
+						.getValueStack()
+						.set("indexTerm",
+								request.getParameter("entity.indexTerm"));
+			}
+
+			if (request.getParameter("pager.recordPerPage") == null) {
+				if (StringUtils.isBlank(item)) {
+					invocation.getInvocationContext().getValueStack()
+							.set("item", "database");
+					addActionError(invocation, "item exception");
+				} else if (item.equals("database") || item.equals("ebook")
+						|| item.equals("journal") || item.equals("customer")) {
+					invocation.getInvocationContext().getValueStack()
+							.set("item", item);
+				} else {
+					invocation.getInvocationContext().getValueStack()
+							.set("item", "database");
+					addActionError(invocation, "item exception");
+				}
+			}
+
+			if (hasActionErrors(invocation)) {
 				return "query";
 			}
 		}
 
 		if (method.equals("focus")) {
-			if (StringUtils.isBlank(request.getParameter("keywords"))
-					|| StringUtils.isBlank(request.getParameter("option"))) {
-				request.setAttribute("type", request.getParameter("type"));
-				request.setAttribute("option", request.getParameter("option"));
+			String item = request.getParameter("item");
+			if (StringUtils.isBlank(request.getParameter("entity.indexTerm"))) {
 				addActionError(invocation, "．請輸入關鍵字。");
+			} else {
+				invocation
+						.getInvocationContext()
+						.getValueStack()
+						.set("indexTerm",
+								request.getParameter("entity.indexTerm"));
+			}
 
-				if (StringUtils.isBlank(request.getParameter("option"))) {
-					request.setAttribute("type", "database");
-					request.setAttribute("option", "中文題名");
-					addActionError(invocation, "．請輸入選項。");
+			if (StringUtils.isBlank(request.getParameter("entity.option"))) {
+				addActionError(invocation, "．請輸入選項。");
+			} else {
+				invocation.getInvocationContext().getValueStack()
+						.set("option", request.getParameter("entity.option"));
+			}
+
+			if (request.getParameter("pager.recordPerPage") == null) {
+				if (StringUtils.isBlank(item)) {
+					invocation.getInvocationContext().getValueStack()
+							.set("item", "database");
+					invocation.getInvocationContext().getValueStack()
+							.set("option", "中文題名");
+					addActionError(invocation, "item exception");
+				} else if (item.equals("database") || item.equals("ebook")
+						|| item.equals("journal")) {
+					invocation.getInvocationContext().getValueStack()
+							.set("item", item);
+				} else {
+					invocation.getInvocationContext().getValueStack()
+							.set("item", "database");
+					invocation.getInvocationContext().getValueStack()
+							.set("option", "中文題名");
+					addActionError(invocation, "item exception");
 				}
+			}
 
+			if (hasActionErrors(invocation)) {
 				return "adv_query";
 			}
 		}
@@ -82,8 +133,8 @@ public class SearchActionInterceptor extends AbstractInterceptor {
 
 			accountNumber = (AccountNumber) session.get("login");
 
-			if (request.getParameter("recordPerPage") == null
-					&& request.getParameter("recordPoint") == null) {
+			if (request.getParameter("pager.recordPerPage") == null
+					&& request.getParameter("pager.recordPoint") == null) {
 				if (accountNumber.getSerNo() != null) {
 					feLogsService.save(
 							new FeLogs(Act.綜合查詢, request
@@ -105,8 +156,7 @@ public class SearchActionInterceptor extends AbstractInterceptor {
 
 			accountNumber = (AccountNumber) session.get("login");
 
-			if (request.getParameter("recordPerPage") == null
-					&& request.getParameter("recordPoint") == null) {
+			if (request.getParameter("pager.recordPerPage") == null) {
 				if (accountNumber.getSerNo() != null) {
 					feLogsService.save(
 							new FeLogs(Act.項目查詢, request
@@ -131,5 +181,10 @@ public class SearchActionInterceptor extends AbstractInterceptor {
 		if (action instanceof ValidationAware) {
 			((ValidationAware) action).addActionError(message);
 		}
+	}
+
+	private boolean hasActionErrors(ActionInvocation invocation) {
+		Object action = invocation.getAction();
+		return ((ValidationAware) action).hasActionErrors();
 	}
 }

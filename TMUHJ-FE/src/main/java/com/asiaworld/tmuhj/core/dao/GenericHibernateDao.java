@@ -10,6 +10,7 @@ import java.util.Map.Entry;
 import org.apache.commons.beanutils.BeanUtils;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
+import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Criterion;
@@ -18,6 +19,9 @@ import org.hibernate.criterion.Projections;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;
 
+import com.asiaworld.tmuhj.core.dao.DsQueryLanguage;
+import com.asiaworld.tmuhj.core.dao.DsRestrictions;
+import com.asiaworld.tmuhj.core.dao.GenericDao;
 import com.asiaworld.tmuhj.core.entity.Entity;
 import com.asiaworld.tmuhj.core.model.DataSet;
 import com.asiaworld.tmuhj.core.model.Pager;
@@ -145,6 +149,22 @@ public abstract class GenericHibernateDao<T extends Entity> extends
 		}
 
 		return query.list();
+	}
+
+	@Override
+	public void checkFK(Boolean constraint) {
+		if (constraint) {
+			// SET REFERENTIAL_INTEGRITY TRUE
+			SQLQuery fkAble = getSession().createSQLQuery(
+					"SET FOREIGN_KEY_CHECKS=1");
+			fkAble.executeUpdate();
+		} else {
+			// SET REFERENTIAL_INTEGRITY FALSE
+			SQLQuery fkDisable = getSession().createSQLQuery(
+					"SET FOREIGN_KEY_CHECKS=0");
+			fkDisable.executeUpdate();
+		}
+
 	}
 
 }

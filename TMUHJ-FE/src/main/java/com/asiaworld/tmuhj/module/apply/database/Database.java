@@ -3,18 +3,16 @@ package com.asiaworld.tmuhj.module.apply.database;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
-import javax.persistence.Transient;
-
 import org.hibernate.annotations.Type;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 
-import com.asiaworld.tmuhj.core.entity.GenericEntityFull;
+import com.asiaworld.tmuhj.module.entity.ModuleProperties;
 
 @Entity
 @Table(name = "db")
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-public class Database extends GenericEntityFull {
+public class Database extends ModuleProperties {
 
 	/**
 	 * 
@@ -61,12 +59,6 @@ public class Database extends GenericEntityFull {
 	// 收錄年代
 	@Column(name = "IndexedYears")
 	private String indexedYears;
-
-	@Transient
-	private String option;
-
-	@Transient
-	private String keywords;
 
 	/**
 	 * @return the dbChtTitle
@@ -217,35 +209,4 @@ public class Database extends GenericEntityFull {
 	public void setIndexedYears(String indexedYears) {
 		this.indexedYears = indexedYears;
 	}
-
-	/**
-	 * @return the option
-	 */
-	public String getOption() {
-		return option;
-	}
-
-	/**
-	 * @param option
-	 *            the option to set
-	 */
-	public void setOption(String option) {
-		this.option = option;
-	}
-
-	/**
-	 * @return the keywords
-	 */
-	public String getKeywords() {
-		return keywords;
-	}
-
-	/**
-	 * @param keywords
-	 *            the keywords to set
-	 */
-	public void setKeywords(String keywords) {
-		this.keywords = keywords;
-	}
-
 }

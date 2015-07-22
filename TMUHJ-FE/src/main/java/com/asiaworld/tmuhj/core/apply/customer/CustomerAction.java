@@ -8,13 +8,12 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 
 import com.asiaworld.tmuhj.core.model.DataSet;
-import com.asiaworld.tmuhj.core.model.Pager;
-import com.asiaworld.tmuhj.core.web.GenericCRUDActionFull;
+import com.asiaworld.tmuhj.core.web.GenericWebActionFull;
 import com.asiaworld.tmuhj.module.apply.resourcesUnion.ResourcesUnionService;
 
 @Controller
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-public class CustomerAction extends GenericCRUDActionFull<Customer> {
+public class CustomerAction extends GenericWebActionFull<Customer> {
 
 	/**
 	 * 
@@ -49,6 +48,12 @@ public class CustomerAction extends GenericCRUDActionFull<Customer> {
 	}
 
 	@Override
+	public String add() throws Exception {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
 	public String edit() throws Exception {
 		// TODO Auto-generated method stub
 		return null;
@@ -56,27 +61,26 @@ public class CustomerAction extends GenericCRUDActionFull<Customer> {
 
 	@Override
 	public String list() throws Exception {
-		String keywords = getRequest().getParameter("keywords");
-
-		getRequest().setAttribute("keywords", keywords);
 		getRequest().setAttribute("list", "apply.customer.list.action");
 
-		getEntity().setKeywords(keywords);
+		DataSet<Customer> ds = customerService.getByRestrictions(initDataSet());
 
-		DataSet<Customer> ds = initDataSet();
-		ds.setPager(Pager.getChangedPager(
-				getRequest().getParameter("recordPerPage"), getRequest()
-						.getParameter("recordPoint"), ds.getPager()));
+		if (ds.getResults().size() == 0 && ds.getPager().getCurrentPage() > 1) {
+			ds.getPager().setCurrentPage(
+					(int) (ds.getPager().getTotalRecord()
+							/ ds.getPager().getRecordPerPage() + 1));
+			ds = customerService.getByRestrictions(ds);
+		}
 
-		ds = customerService.getByRestrictions(ds);
 		List<Customer> results = ds.getResults();
 		for (int i = 0; i < results.size(); i++) {
 			customer = results.get(i);
-			customer.setDbAmount(resourcesUnionService.countTotalDb(customer));
+			customer.setDbAmount(resourcesUnionService.countTotalDb(customer
+					.getSerNo()));
 			customer.setEbookAmount(resourcesUnionService
-					.countTotalEbook(customer));
+					.countTotalEbook(customer.getSerNo()));
 			customer.setJournalAmount(resourcesUnionService
-					.countTotalJournal(customer));
+					.countTotalJournal(customer.getSerNo()));
 			results.remove(i);
 			results.add(i, customer);
 		}
@@ -104,5 +108,4 @@ public class CustomerAction extends GenericCRUDActionFull<Customer> {
 		// TODO Auto-generated method stub
 		return null;
 	}
-
 }

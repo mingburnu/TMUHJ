@@ -4,45 +4,20 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <jsp:include page="/WEB-INF/jsp/layout/msg.jsp" />
 <script type="text/javascript">
-	$(document).ready(
-			function() {
-				$("input[name='type']").change(
-						function() {
-							var item = $("input[name='type']:checked").val();
-							$("form").attr("id", "apply_" + item + "_list");
-							$("form").attr("name", "apply_" + item + "_list");
-							$("form").attr(
-									"action",
-									"<c:url value = '/'/>" + "crud/apply."
-											+ item + ".list.action");
-						});
-			});
+	$(document).ready(function() {
+		changeFormAction();
+	});
 
-	$(document).ready(
-			function() {
-				$("input.v_type")
-						.each(
-								function() {
-									if ($(this).val() == "${type}") {
-										this.checked = true;
-										var item = $(
-												"input[name='type']:checked")
-												.val();
-										$("form").attr("id",
-												"apply_" + item + "_list");
-										$("form").attr("name",
-												"apply_" + item + "_list");
-										$("form").attr(
-												"action",
-												"<c:url value = '/'/>"
-														+ "crud/apply." + item
-														+ ".list.action");
-									}
-								});
-			});
+	function changeFormAction() {
+		var item = $("input[name='item']:checked").val();
+		$("form").attr("id", "apply_" + item + "_list");
+		$("form").attr("name", "apply_" + item + "_list");
+		$("form").attr("action",
+				"<c:url value = '/'/>" + "crud/apply." + item + ".list.action");
+	}
 
 	function form_reset() {
-		$("input[name='keywords']").val("");
+		$("input[name='entity.indexTerm']").val("");
 	}
 
 	function form_sumbit() {
@@ -68,21 +43,29 @@
 						<tr valign="middle">
 							<td class="t_01"><img
 								src="<c:url value = '/'/>resources/images/txt_01.png"></td>
-							<td class="t_02"><label><input name="type"
-									class="v_type" value="database" type="radio" checked>
-									資料庫</label> <label><input name="type" class="v_type"
-									value="ebook" type="radio"> 電子書</label> <label><input
-									name="type" class="v_type" value="journal" type="radio">
-									期刊</label> <label><input name="type" class="v_type"
-									value="customer" type="radio"> 單位名稱</label></td>
+							<td class="t_02"><c:choose>
+									<c:when test="${empty item }">
+										<s:radio name="item" cssClass="v_type"
+											onchange="changeFormAction()"
+											list="#{'database':' 資料庫','ebook':' 電子書','journal':' 期刊','customer':' 單位名稱' }"
+											value="'database'" />
+									</c:when>
+									<c:otherwise>
+										<s:radio name="item" cssClass="v_type"
+											onchange="changeFormAction()"
+											list="#{'database':' 資料庫','ebook':' 電子書','journal':' 期刊','customer':' 單位名稱' }"
+											value="%{item}" />
+									</c:otherwise>
+								</c:choose></td>
 						</tr>
 						<tr valign="middle">
 							<td class="t_01"><img
 								src="<c:url value = '/'/>resources/images/txt_02.png"></td>
 							<td class="t_02">
 								<div class="input_01">
-									<span><input class="v_keyword" name="keywords"
-										type="text" /></span>
+									<span> <s:textfield cssClass="v_keyword"
+											name="entity.indexTerm" value="%{indexTerm}"/>
+									</span>
 								</div>
 							</td>
 						</tr>

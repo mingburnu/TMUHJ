@@ -12,8 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
-import com.asiaworld.tmuhj.core.apply.customer.Customer;
-import com.asiaworld.tmuhj.core.apply.customer.CustomerService;
 import com.asiaworld.tmuhj.core.dao.GenericDao;
 import com.asiaworld.tmuhj.core.dao.DsRestrictions;
 import com.asiaworld.tmuhj.core.model.DataSet;
@@ -27,16 +25,10 @@ import com.asiaworld.tmuhj.module.apply.resourcesUnion.ResourcesUnionService;
 public class DatabaseService extends GenericServiceFull<Database> {
 
 	@Autowired
-	private Customer customer;
-
-	@Autowired
 	private DatabaseDao dao;
 
 	@Autowired
 	private ResourcesUnionService resourcesUnionService;
-
-	@Autowired
-	private CustomerService customerService;
 
 	@Override
 	public DataSet<Database> getByRestrictions(DataSet<Database> ds)
@@ -46,23 +38,23 @@ public class DatabaseService extends GenericServiceFull<Database> {
 
 		DsRestrictions restrictions = DsBeanFactory.getDsRestrictions();
 		Database entity = ds.getEntity();
-		String keywords = entity.getKeywords();
+		String indexTerm = entity.getIndexTerm();
 
-		char[] cArray = keywords.toCharArray();
-		StringBuilder keywordsBuilder = new StringBuilder();
+		char[] cArray = indexTerm.toCharArray();
+		StringBuilder indexTermBuilder = new StringBuilder();
 		for (int i = 0; i < cArray.length; i++) {
 			int charCode = (int) cArray[i];
 			if (charCode > 65280 && charCode < 65375) {
 				int halfChar = charCode - 65248;
 				cArray[i] = (char) halfChar;
 			}
-			keywordsBuilder.append(cArray[i]);
+			indexTermBuilder.append(cArray[i]);
 		}
 
-		keywords = keywordsBuilder.toString();
-		keywords = keywords.replaceAll(
+		indexTerm = indexTermBuilder.toString();
+		indexTerm = indexTerm.replaceAll(
 				"[^a-zA-Z0-9\u4e00-\u9fa5\u0391-\u03a9\u03b1-\u03c9]", " ");
-		String[] wordArray = keywords.split(" ");
+		String[] wordArray = indexTerm.split(" ");
 
 		if (!ArrayUtils.isEmpty(wordArray)) {
 			Junction orGroup = Restrictions.disjunction();
@@ -97,7 +89,7 @@ public class DatabaseService extends GenericServiceFull<Database> {
 
 		DsRestrictions restrictions = DsBeanFactory.getDsRestrictions();
 		Database entity = ds.getEntity();
-		String keywords = entity.getKeywords();
+		String indexTerm = entity.getIndexTerm();
 		String option = entity.getOption();
 
 		if (option.equals("中文題名")) {
@@ -112,21 +104,21 @@ public class DatabaseService extends GenericServiceFull<Database> {
 			option = "";
 		}
 
-		char[] cArray = keywords.toCharArray();
-		StringBuilder keywordsBuilder = new StringBuilder();
+		char[] cArray = indexTerm.toCharArray();
+		StringBuilder indexTermBuilder = new StringBuilder();
 		for (int i = 0; i < cArray.length; i++) {
 			int charCode = (int) cArray[i];
 			if (charCode > 65280 && charCode < 65375) {
 				int halfChar = charCode - 65248;
 				cArray[i] = (char) halfChar;
 			}
-			keywordsBuilder.append(cArray[i]);
+			indexTermBuilder.append(cArray[i]);
 		}
 
-		keywords = keywordsBuilder.toString();
-		keywords = keywords.replaceAll(
+		indexTerm = indexTermBuilder.toString();
+		indexTerm = indexTerm.replaceAll(
 				"[^a-zA-Z0-9\u4e00-\u9fa5\u0391-\u03a9\u03b1-\u03c9]", " ");
-		String[] wordArray = keywords.split(" ");
+		String[] wordArray = indexTerm.split(" ");
 
 		if (!ArrayUtils.isEmpty(wordArray) && StringUtils.isNotBlank(option)) {
 			Junction orGroup = Restrictions.disjunction();
@@ -147,18 +139,17 @@ public class DatabaseService extends GenericServiceFull<Database> {
 		return dao.findByRestrictions(restrictions, ds);
 	}
 
-	public DataSet<Database> getByCusSerNo(DataSet<Database> ds, long cusSerNo)
+	public DataSet<Database> getByCusSerNo(DataSet<Database> ds)
 			throws Exception {
 		Assert.notNull(ds);
 		Assert.notNull(ds.getEntity());
 
 		DsRestrictions restrictions = DsBeanFactory.getDsRestrictions();
+		Database entity = ds.getEntity();
 		Pager pager = ds.getPager();
 
-		customer = customerService.getBySerNo(cusSerNo);
-
 		List<ResourcesUnion> resourcesUnionList = resourcesUnionService
-				.totalDb(customer, pager);
+				.totalDb(entity.getCusSerNo(), pager);
 
 		if (CollectionUtils.isNotEmpty(resourcesUnionList)) {
 			Junction orGroup = Restrictions.disjunction();
@@ -175,7 +166,8 @@ public class DatabaseService extends GenericServiceFull<Database> {
 		}
 
 		List<Database> results = dao.findByRestrictions(restrictions);
-		pager.setTotalRecord(resourcesUnionService.countTotalDb(customer));
+		pager.setTotalRecord(resourcesUnionService.countTotalDb(entity
+				.getCusSerNo()));
 		ds.setResults(results);
 		ds.setPager(pager);
 		return ds;

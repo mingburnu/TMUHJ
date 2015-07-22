@@ -4,48 +4,31 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <jsp:include page="/WEB-INF/jsp/layout/msg.jsp" />
 <script type="text/javascript">
-	$(document).ready(
-			function() {
-				$("input[name='type']").change(
-						function() {
-							var item = $("input[name='type']:checked").val();
-							$("form").attr("id", "apply_" + item + "_focus");
-							$("form").attr("name", "apply_" + item + "_focus");
-							$("form").attr(
-									"action",
-									"<c:url value = '/'/>" + "crud/apply."
-											+ item + ".focus.action");
-							$("input[type='hidden']").removeAttr("name");
-							$('input#' + item).attr("name", "option");
-						});
-			});
-
 	$(document).ready(function() {
 		do_event();
 		showType('database');
 	});
 
 	$(document).ready(function() {
-		$("input.v_type").each(function(){
-			if ($(this).val()=="${type}"){
-		        this.checked = true;
-		        var item = $("input[name='type']:checked").val();
-				$("form").attr("id", "apply_" + item + "_focus");
-				$("form").attr("name", "apply_" + item + "_focus");
-				$("form").attr(
-						"action",
-						"<c:url value = '/'/>" + "crud/apply."
-								+ item + ".focus.action");
-				$("input[type='hidden']").removeAttr("name");
-				$('input#' + item).attr("name", "option");
-				
-				showType("${type}");
-				$("[id=" + "${type}" + "]").val("${option}");
-				$("[id=" + "${type}" + "]").next().children().html("${option}");
-			}
-		});
+		changeFormAction();
+		$("[id=" + "${item}" + "]").val("${option}");
+		$("[id=" + "${item}" + "]").next().children().html("${option}");
 	});
-	
+
+	function changeFormAction() {
+		var item = $("input[name='item']:checked").val();
+		$("form").attr("id", "apply_" + item + "_focus");
+		$("form").attr("name", "apply_" + item + "_focus");
+		$("form")
+				.attr(
+						"action",
+						"<c:url value = '/'/>" + "crud/apply." + item
+								+ ".focus.action");
+		$("input[type='hidden']").removeAttr("name");
+		$('input#' + item).attr("name", "entity.option");
+		showType(item);
+	}
+
 	function clickItem(arg) {
 		var currentValue = $(arg).html();
 		$(arg).parent().parent().parent().find('input[type="hidden"]').attr(
@@ -65,7 +48,7 @@
 			$('.select_01 ul').hide();
 		});
 	}
-	
+
 	function showType(arg) {
 		$('.select_database').hide();
 		$('.select_ebook').hide();
@@ -75,7 +58,7 @@
 	}
 
 	function form_reset() {
-		$("input[name='keywords']").val("");
+		$("input[name='entity.indexTerm']").val("");
 	}
 
 	function form_sumbit() {
@@ -101,13 +84,20 @@
 						<tr valign="middle">
 							<td class="t_01"><img
 								src="<c:url value = '/'/>resources/images/txt_01.png"></td>
-							<td class="t_02"><label><input name="type"
-									class="v_type" value="database" type="radio"
-									onClick="showType(this.value);" checked> 資料庫</label> <label><input
-									name="type" class="v_type" value="ebook" type="radio"
-									onClick="showType(this.value);"> 電子書</label> <label><input
-									name="type" class="v_type" value="journal" type="radio"
-									onClick="showType(this.value);"> 期刊</label></td>
+							<td class="t_02"><c:choose>
+									<c:when test="${empty item }">
+										<s:radio name="item" cssClass="v_type"
+											onchange="changeFormAction();showType(this.value);"
+											list="#{'database':' 資料庫','ebook':' 電子書','journal':' 期刊' }"
+											value="'database'" />
+									</c:when>
+									<c:otherwise>
+										<s:radio name="item" cssClass="v_type"
+											onchange="changeFormAction()"
+											list="#{'database':' 資料庫','ebook':' 電子書','journal':' 期刊' }"
+											value="%{item}" />
+									</c:otherwise>
+								</c:choose></td>
 						</tr>
 						<tr valign="middle">
 							<td class="t_01"><img
@@ -118,8 +108,7 @@
 									<tr>
 										<td>
 											<div class="select_01 select_database">
-												<input type="hidden" value="中文題名" name="option"
-													id="database" />
+												<s:hidden value="中文題名" id="database" name="entity.option" />
 												<div>
 													<a href="javascript:void(0);">中文題名</a>
 												</div>
@@ -136,7 +125,7 @@
 											</div>
 
 											<div class="select_01 select_ebook">
-												<input type="hidden" value="書名" id="ebook" />
+												<s:hidden value="書名" id="ebook" />
 												<div>
 													<a href="javascript:void(0);">書名</a>
 												</div>
@@ -153,7 +142,7 @@
 											</div>
 
 											<div class="select_01 select_journal">
-												<input type="hidden" value="中文刊名" id="journal" />
+												<s:hidden value="中文刊名" id="journal" />
 												<div>
 													<a href="javascript:void(0);">中文刊名</a>
 												</div>
@@ -173,8 +162,8 @@
 
 										</td>
 										<td><div class="input_01">
-												<span><input class="v_keyword" type="text"
-													name="keywords" /></span>
+												<span><s:textfield cssClass="v_keyword"
+														name="entity.indexTerm" value="%{indexTerm}" /></span>
 											</div></td>
 									</tr>
 								</table>

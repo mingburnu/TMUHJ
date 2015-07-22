@@ -13,8 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
-import com.asiaworld.tmuhj.core.apply.customer.Customer;
-import com.asiaworld.tmuhj.core.apply.customer.CustomerService;
 import com.asiaworld.tmuhj.core.dao.GenericDao;
 import com.asiaworld.tmuhj.core.dao.DsRestrictions;
 import com.asiaworld.tmuhj.core.model.DataSet;
@@ -28,16 +26,10 @@ import com.asiaworld.tmuhj.module.apply.resourcesUnion.ResourcesUnionService;
 public class EbookService extends GenericServiceFull<Ebook> {
 
 	@Autowired
-	private Customer customer;
-
-	@Autowired
 	private EbookDao dao;
 
 	@Autowired
 	private ResourcesUnionService resourcesUnionService;
-
-	@Autowired
-	private CustomerService customerService;
 
 	@Override
 	public DataSet<Ebook> getByRestrictions(DataSet<Ebook> ds) throws Exception {
@@ -46,23 +38,23 @@ public class EbookService extends GenericServiceFull<Ebook> {
 
 		DsRestrictions restrictions = DsBeanFactory.getDsRestrictions();
 		Ebook entity = ds.getEntity();
-		String keywords = entity.getKeywords();
+		String indexTerm = entity.getIndexTerm();
 
-		char[] cArray = keywords.toCharArray();
-		StringBuilder keywordsBuilder = new StringBuilder();
+		char[] cArray = indexTerm.toCharArray();
+		StringBuilder indexTermBuilder = new StringBuilder();
 		for (int i = 0; i < cArray.length; i++) {
 			int charCode = (int) cArray[i];
 			if (charCode > 65280 && charCode < 65375) {
 				int halfChar = charCode - 65248;
 				cArray[i] = (char) halfChar;
 			}
-			keywordsBuilder.append(cArray[i]);
+			indexTermBuilder.append(cArray[i]);
 		}
 
-		keywords = keywordsBuilder.toString();
-		keywords = keywords.replaceAll(
+		indexTerm = indexTermBuilder.toString();
+		indexTerm = indexTerm.replaceAll(
 				"[^-a-zA-Z0-9\u4e00-\u9fa5\u0391-\u03a9\u03b1-\u03c9]", " ");
-		String[] wordArray = keywords.split(" ");
+		String[] wordArray = indexTerm.split(" ");
 
 		if (!ArrayUtils.isEmpty(wordArray)) {
 			Junction orGroup = Restrictions.disjunction();
@@ -110,7 +102,7 @@ public class EbookService extends GenericServiceFull<Ebook> {
 
 		DsRestrictions restrictions = DsBeanFactory.getDsRestrictions();
 		Ebook entity = ds.getEntity();
-		String keywords = entity.getKeywords();
+		String indexTerm = entity.getIndexTerm();
 		String option = entity.getOption();
 
 		if (option.equals("書名")) {
@@ -125,21 +117,21 @@ public class EbookService extends GenericServiceFull<Ebook> {
 			option = "";
 		}
 
-		char[] cArray = keywords.toCharArray();
-		StringBuilder keywordsBuilder = new StringBuilder();
+		char[] cArray = indexTerm.toCharArray();
+		StringBuilder indexTermBuilder = new StringBuilder();
 		for (int i = 0; i < cArray.length; i++) {
 			int charCode = (int) cArray[i];
 			if (charCode > 65280 && charCode < 65375) {
 				int halfChar = charCode - 65248;
 				cArray[i] = (char) halfChar;
 			}
-			keywordsBuilder.append(cArray[i]);
+			indexTermBuilder.append(cArray[i]);
 		}
 
-		keywords = keywordsBuilder.toString();
-		keywords = keywords.replaceAll(
+		indexTerm = indexTermBuilder.toString();
+		indexTerm = indexTerm.replaceAll(
 				"[^-a-zA-Z0-9\u4e00-\u9fa5\u0391-\u03a9\u03b1-\u03c9]", " ");
-		String[] wordArray = keywords.split(" ");
+		String[] wordArray = indexTerm.split(" ");
 
 		if (!ArrayUtils.isEmpty(wordArray) && StringUtils.isNotBlank(option)) {
 			Junction orGroup = Restrictions.disjunction();
@@ -171,21 +163,17 @@ public class EbookService extends GenericServiceFull<Ebook> {
 		return dao.findByRestrictions(restrictions, ds);
 	}
 
-	public DataSet<Ebook> getByCusSerNo(DataSet<Ebook> ds, long cusSerNo)
-			throws Exception {
+	public DataSet<Ebook> getByCusSerNo(DataSet<Ebook> ds) throws Exception {
 		Assert.notNull(ds);
 		Assert.notNull(ds.getEntity());
 
 		DsRestrictions restrictions = DsBeanFactory.getDsRestrictions();
+		Ebook entity = ds.getEntity();
 		Pager pager = ds.getPager();
 
-		customer = customerService.getBySerNo(cusSerNo);
-
 		List<ResourcesUnion> resourcesUnionList = null;
-		if (cusSerNo > 0) {
-			resourcesUnionList = resourcesUnionService.totalEbook(customer,
-					pager);
-		}
+		resourcesUnionList = resourcesUnionService.totalEbook(
+				entity.getCusSerNo(), pager);
 
 		if (CollectionUtils.isNotEmpty(resourcesUnionList)) {
 			Junction orGroup = Restrictions.disjunction();
@@ -202,7 +190,8 @@ public class EbookService extends GenericServiceFull<Ebook> {
 		}
 
 		List<Ebook> results = dao.findByRestrictions(restrictions);
-		pager.setTotalRecord(resourcesUnionService.countTotalEbook(customer));
+		pager.setTotalRecord(resourcesUnionService.countTotalEbook(entity
+				.getCusSerNo()));
 		ds.setResults(results);
 		ds.setPager(pager);
 		return ds;

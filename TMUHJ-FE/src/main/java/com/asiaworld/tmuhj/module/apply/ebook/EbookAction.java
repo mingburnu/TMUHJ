@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.math.NumberUtils;
+import javax.servlet.http.HttpServletResponse;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
@@ -14,14 +14,13 @@ import org.springframework.stereotype.Controller;
 import com.asiaworld.tmuhj.core.apply.customer.Customer;
 import com.asiaworld.tmuhj.core.apply.customer.CustomerService;
 import com.asiaworld.tmuhj.core.model.DataSet;
-import com.asiaworld.tmuhj.core.model.Pager;
-import com.asiaworld.tmuhj.core.web.GenericCRUDActionFull;
+import com.asiaworld.tmuhj.core.web.GenericWebActionFull;
 import com.asiaworld.tmuhj.module.apply.resourcesUnion.ResourcesUnion;
 import com.asiaworld.tmuhj.module.apply.resourcesUnion.ResourcesUnionService;
 
 @Controller
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-public class EbookAction extends GenericCRUDActionFull<Ebook> {
+public class EbookAction extends GenericWebActionFull<Ebook> {
 
 	/**
 	 * 
@@ -62,6 +61,12 @@ public class EbookAction extends GenericCRUDActionFull<Ebook> {
 	}
 
 	@Override
+	public String add() throws Exception {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
 	public String edit() throws Exception {
 		// TODO Auto-generated method stub
 		return null;
@@ -69,19 +74,21 @@ public class EbookAction extends GenericCRUDActionFull<Ebook> {
 
 	@Override
 	public String list() throws Exception {
-		String keywords = getRequest().getParameter("keywords");
+		getRequest()
+				.setAttribute(
+						"list",
+						getRequest().getContextPath()
+								+ "/crud/apply.ebook.list.action");
 
-		getRequest().setAttribute("keywords", keywords);
-		getRequest().setAttribute("list", "apply.ebook.list.action");
+		DataSet<Ebook> ds = ebookService.getByRestrictions(initDataSet());
 
-		getEntity().setKeywords(keywords);
+		if (ds.getResults().size() == 0 && ds.getPager().getCurrentPage() > 1) {
+			ds.getPager().setCurrentPage(
+					(int) (ds.getPager().getTotalRecord()
+							/ ds.getPager().getRecordPerPage() + 1));
+			ds = ebookService.getByRestrictions(ds);
+		}
 
-		DataSet<Ebook> ds = initDataSet();
-		ds.setPager(Pager.getChangedPager(
-				getRequest().getParameter("recordPerPage"), getRequest()
-						.getParameter("recordPoint"), ds.getPager()));
-
-		ds = ebookService.getByRestrictions(ds);
 		setDs(ds);
 		return "ebook";
 	}
@@ -105,72 +112,58 @@ public class EbookAction extends GenericCRUDActionFull<Ebook> {
 	}
 
 	public String owner() throws Exception {
-		long cusSerNo = 0;
-		if (NumberUtils.isDigits(getRequest().getParameter("cusSerNo"))
-				&& Long.parseLong(getRequest().getParameter("cusSerNo")) > 0) {
-			cusSerNo = Long.parseLong(getRequest().getParameter("cusSerNo"));
-		}
-
-		if (customerService.getBySerNo(cusSerNo) == null) {
+		if (getEntity().getCusSerNo() == null
+				|| getEntity().getCusSerNo() <= 0
+				|| customerService.getBySerNo(getEntity().getCusSerNo()) == null) {
 			addActionError("Customer Null");
 		}
 
 		if (!hasActionErrors()) {
-			getRequest().setAttribute("cusSerNo", cusSerNo);
-			getRequest().setAttribute("owner", "apply.ebook.owner.action");
+			getRequest().setAttribute(
+					"owner",
+					getRequest().getContextPath()
+							+ "/crud/apply.ebook.owner.action");
 
-			DataSet<Ebook> ds = initDataSet();
-			ds.setPager(Pager.getChangedPager(
-					getRequest().getParameter("recordPerPage"), getRequest()
-							.getParameter("recordPoint"), ds.getPager()));
-			ds = ebookService.getByCusSerNo(ds, cusSerNo);
+			DataSet<Ebook> ds = ebookService.getByCusSerNo(initDataSet());
+
+			if (ds.getResults().size() == 0
+					&& ds.getPager().getCurrentPage() > 1) {
+				ds.getPager().setCurrentPage(
+						(int) (ds.getPager().getTotalRecord()
+								/ ds.getPager().getRecordPerPage() + 1));
+				ds = ebookService.getByCusSerNo(ds);
+			}
+
 			setDs(ds);
-
 		}
 
 		return "ebook";
-
 	}
 
 	public String focus() throws Exception {
-		String option = getRequest().getParameter("option");
-		String keywords = getRequest().getParameter("keywords");
+		getRequest().setAttribute(
+				"focus",
+				getRequest().getContextPath()
+						+ "/crud/apply.ebook.focus.action");
 
-		getRequest().setAttribute("keywords", keywords);
-		getRequest().setAttribute("option", option);
-		getRequest().setAttribute("focus", "apply.ebook.focus.action");
+		DataSet<Ebook> ds = ebookService.getByOption(initDataSet());
 
-		getEntity().setOption(option);
-		getEntity().setKeywords(keywords);
+		if (ds.getResults().size() == 0 && ds.getPager().getCurrentPage() > 1) {
+			ds.getPager().setCurrentPage(
+					(int) (ds.getPager().getTotalRecord()
+							/ ds.getPager().getRecordPerPage() + 1));
+			ds = ebookService.getByOption(ds);
+		}
 
-		DataSet<Ebook> ds = initDataSet();
-		ds.setPager(Pager.getChangedPager(
-				getRequest().getParameter("recordPerPage"), getRequest()
-						.getParameter("recordPoint"), ds.getPager()));
-		ds = ebookService.getByOption(ds);
 		setDs(ds);
 
 		return "ebook";
 	}
 
 	public String view() throws Exception {
-		if (StringUtils.isBlank(getRequest().getParameter("serNo"))
-				|| !NumberUtils.isDigits(getRequest().getParameter("serNo"))) {
-			addActionError("serNo Error");
-		} else {
-			if (ebookService.getBySerNo(Long.parseLong(getRequest()
-					.getParameter("serNo"))) == null) {
-				addActionError("Object Null");
-			}
-		}
-
-		if (!hasActionErrors()) {
-			ebook = ebookService.getBySerNo(Long.parseLong(getRequest()
-					.getParameter("serNo")));
-
+		if (hasEntity()) {
 			List<ResourcesUnion> ebookResourcesUnionList = resourcesUnionService
-					.getByEbkSerNo(Long.parseLong(getRequest().getParameter(
-							"serNo")));
+					.getByEbkSerNo(getEntity().getSerNo());
 
 			List<String> ownerNameList = new ArrayList<String>();
 
@@ -187,17 +180,28 @@ public class EbookAction extends GenericCRUDActionFull<Ebook> {
 
 			String ownerNames = ownerNameList.toString().replace("[", "")
 					.replace("]", "");
-			getRequest().setAttribute("ebook", ebook);
 			getRequest().setAttribute("ownerNames", ownerNames);
+			ebook.setBackURL(getEntity().getBackURL());
 
-			if (StringUtils.isNotBlank(getRequest().getParameter("currentURL"))) {
-				getRequest().setAttribute(
-						"backURL",
-						getRequest().getParameter("currentURL")
-								.replace("？", "?").replace("＆", "&"));
-			}
+			setDs(initDataSet());
+			setEntity(ebook);
+		} else {
+			getResponse().sendError(HttpServletResponse.SC_NOT_FOUND);
 		}
 
 		return "e-detail";
+	}
+
+	protected boolean hasEntity() throws Exception {
+		if (!getEntity().hasSerNo()) {
+			return false;
+		}
+
+		ebook = ebookService.getBySerNo(getEntity().getSerNo());
+		if (ebook == null) {
+			return false;
+		}
+
+		return true;
 	}
 }

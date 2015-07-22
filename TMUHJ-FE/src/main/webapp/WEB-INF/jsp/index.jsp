@@ -11,17 +11,15 @@
 <script type="text/javascript"
 	src="<c:url value = '/'/>resources/js/jquery-1.7.2.min.js"></script>
 <script type="text/javascript">
-$(document).ready(function() {
-	goURL('<c:url value = '/'/>page/query.action');
-});
+	$(document).ready(function() {
+		goURL('<c:url value = '/'/>page/query.action');
+	});
 </script>
 </head>
 <body>
 	<div id="wrapper">
 		<jsp:include page="/WEB-INF/jsp/layout/menu.jsp" />
-		<div id="container">
-			
-		</div>
+		<div id="container"></div>
 		<jsp:include page="/WEB-INF/jsp/layout/footer.jsp" />
 	</div>
 </body>

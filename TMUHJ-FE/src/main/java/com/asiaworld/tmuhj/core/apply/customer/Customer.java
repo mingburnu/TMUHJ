@@ -59,12 +59,6 @@ public class Customer extends GenericEntityFull {
 	@Transient
 	private long journalAmount;
 
-	@Transient
-	private String option;
-
-	@Transient
-	private String keywords;
-
 	/**
 	 * @return the name
 	 */
@@ -214,35 +208,4 @@ public class Customer extends GenericEntityFull {
 	public void setJournalAmount(long journalAmount) {
 		this.journalAmount = journalAmount;
 	}
-
-	/**
-	 * @return the option
-	 */
-	public String getOption() {
-		return option;
-	}
-
-	/**
-	 * @param option
-	 *            the option to set
-	 */
-	public void setOption(String option) {
-		this.option = option;
-	}
-
-	/**
-	 * @return the keywords
-	 */
-	public String getKeywords() {
-		return keywords;
-	}
-
-	/**
-	 * @param keywords
-	 *            the keywords to set
-	 */
-	public void setKeywords(String keywords) {
-		this.keywords = keywords;
-	}
-
 }

@@ -11,12 +11,12 @@ import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.opensymphony.xwork2.ActionContext;
+import com.opensymphony.xwork2.ActionSupport;
 import com.asiaworld.tmuhj.core.apply.accountNumber.AccountNumber;
 import com.asiaworld.tmuhj.core.entity.Entity;
 import com.asiaworld.tmuhj.core.model.DataSet;
 import com.asiaworld.tmuhj.core.model.Pager;
-import com.opensymphony.xwork2.ActionContext;
-import com.opensymphony.xwork2.ActionSupport;
 
 /**
  * GenericAction
@@ -30,7 +30,7 @@ public abstract class GenericAction<T extends Entity> extends ActionSupport
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = 8418630117055146439L;
+	private static final long serialVersionUID = 8461510694567060010L;
 
 	protected final transient Logger log = Logger.getLogger(getClass());
 
@@ -86,10 +86,13 @@ public abstract class GenericAction<T extends Entity> extends ActionSupport
 	 * 
 	 * @param entity
 	 * @return
+	 * @throws NoSuchFieldException
+	 * @throws SecurityException
 	 */
 	protected DataSet<T> initDataSet() {
 		ds.setEntity(entity);
-		ds.setPager(pager);
+		ds.setPager(Pager.getChangedPager(getPager().getRecordPerPage(),
+				getPager().getRecordPoint(), getPager()));
 		return ds;
 	}
 
@@ -116,5 +119,4 @@ public abstract class GenericAction<T extends Entity> extends ActionSupport
 	public void setPager(Pager pager) {
 		this.pager = pager;
 	}
-
 }

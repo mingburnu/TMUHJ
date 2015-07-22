@@ -16,7 +16,7 @@ import javax.servlet.http.HttpServletResponse;
 /**
  * Servlet Filter implementation class DelegatingFilterProxy
  */
-public class DelegatingFilterProxy implements Filter {
+public class LoginFilter implements Filter {
 
 	final static private List<String> IGNORE_URLS = Arrays.asList("/login.jsp",
 			"/index.jsp", "/authorization/userEntry.action");
@@ -24,7 +24,7 @@ public class DelegatingFilterProxy implements Filter {
 	/**
 	 * Default constructor.
 	 */
-	public DelegatingFilterProxy() {
+	public LoginFilter() {
 		// TODO Auto-generated constructor stub
 	}
 
@@ -48,7 +48,7 @@ public class DelegatingFilterProxy implements Filter {
 		if (request.getSession().getAttribute("login") == null
 				&& IGNORE_URLS.indexOf(servletPath) == -1) {
 			response.sendRedirect(request.getContextPath()
-					+ "/authorization/userEntry.action");
+					+ "/authorization/userEntry.action?" + Math.random());
 		}
 
 		try {

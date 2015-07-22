@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
-import com.asiaworld.tmuhj.core.apply.customer.Customer;
 import com.asiaworld.tmuhj.core.dao.GenericDao;
 import com.asiaworld.tmuhj.core.dao.DsRestrictions;
 import com.asiaworld.tmuhj.core.model.DataSet;
@@ -40,49 +39,51 @@ public class ResourcesUnionService extends GenericServiceSerNo<ResourcesUnion> {
 		return dao;
 	}
 
-	public List<ResourcesUnion> totalDb(Customer customer, Pager pager) throws Exception {
+	public List<ResourcesUnion> totalDb(long cusSerNo, Pager pager)
+			throws Exception {
 		LogicalExpression andOperator = Restrictions.and(
-				Restrictions.eq("customer.serNo", customer.getSerNo()),
+				Restrictions.eq("customer.serNo", cusSerNo),
 				Restrictions.gt("datSerNo", 0L));
 		return dao.getTotal(andOperator, pager);
 	}
 
-	public long countTotalDb(Customer customer) {
+	public long countTotalDb(long cusSerNo) {
 		LogicalExpression andOperator = Restrictions.and(
-				Restrictions.eq("customer.serNo", customer.getSerNo()),
+				Restrictions.eq("customer.serNo", cusSerNo),
 				Restrictions.gt("datSerNo", 0L));
 
 		return dao.countTotal(andOperator);
 	}
 
-	public List<ResourcesUnion> totalJournal(Customer customer, Pager pager)
+	public List<ResourcesUnion> totalJournal(long cusSerNo, Pager pager)
 			throws Exception {
 
 		LogicalExpression andOperator = Restrictions.and(
-				Restrictions.eq("customer.serNo", customer.getSerNo()),
+				Restrictions.eq("customer.serNo", cusSerNo),
 				Restrictions.ne("jouSerNo", 0L));
 
 		return dao.getTotal(andOperator, pager);
 	}
 
-	public long countTotalJournal(Customer customer) {
+	public long countTotalJournal(long cusSerNo) {
 		LogicalExpression andOperator = Restrictions.and(
-				Restrictions.eq("customer.serNo", customer.getSerNo()),
+				Restrictions.eq("customer.serNo", cusSerNo),
 				Restrictions.gt("jouSerNo", 0L));
 
 		return dao.countTotal(andOperator);
 	}
 
-	public List<ResourcesUnion> totalEbook(Customer customer, Pager pager) throws Exception {
+	public List<ResourcesUnion> totalEbook(long cusSerNo, Pager pager)
+			throws Exception {
 		LogicalExpression andOperator = Restrictions.and(
-				Restrictions.eq("customer.serNo", customer.getSerNo()),
+				Restrictions.eq("customer.serNo", cusSerNo),
 				Restrictions.gt("ebkSerNo", 0L));
 		return dao.getTotal(andOperator, pager);
 	}
 
-	public long countTotalEbook(Customer customer) {
+	public long countTotalEbook(long cusSerNo) {
 		LogicalExpression andOperator = Restrictions.and(
-				Restrictions.eq("customer.serNo", customer.getSerNo()),
+				Restrictions.eq("customer.serNo", cusSerNo),
 				Restrictions.gt("ebkSerNo", 0L));
 		return dao.countTotal(andOperator);
 	}

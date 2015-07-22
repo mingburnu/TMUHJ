@@ -2,21 +2,20 @@
 	pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="s" uri="/struts-tags"%>
+<%@ taglib prefix="esapi"
+	uri="http://www.owasp.org/index.php/Category:OWASP_Enterprise_Security_API"%>
 <script type="text/javascript">
 function view(serNo){
-	var action=$("form:eq(0)").attr("action");
-	var pageParameter="?pager.currentPage="+"${ds.pager.currentPage}"+"&pager.offset="+"${ds.pager.offset}";
-	var data=$("form:eq(0)").serialize();
-	var backURL=action.concat(pageParameter,"&",data);
-	backURL=backURL.replace(/\?/g,"？").replace(/\&/g,"＆");
-	var url="<%=request.getContextPath()%>"+"/crud/apply.journal.view.action?serNo="+serNo+"&currentURL="+backURL;
-		$.ajax({
-			url: url,
-			success: function(result){
-	        $("#container").html(result);
-	    }
-		});
-	}
+	var data=$("form:eq(0)").serialize()+"&entity.backURL="+"${list}${focus}${owner}";
+	var url="<%=request.getContextPath()%>"+"/crud/apply.journal.view.action?entity.serNo="+serNo+"&pager.recordPoint="+"${ds.pager.recordPoint}";
+	$.ajax({
+		url: url,
+		data: data,
+		success: function(result){
+			$("#container").html(result);
+		}
+	});
+}
 </script>
 <style>
 .list td a:hover {
@@ -34,9 +33,8 @@ function view(serNo){
 						<tr>
 							<td align="left" class="p_01"><s:form
 									action="apply.journal.list.action">
-									<input type="hidden" name="recordPoint"
-										value="${ds.pager.recordPoint}">共 <strong>${ds.pager.totalRecord}</strong>
-												筆記錄， 每頁顯示筆數 <select name="recordPerPage"
+									共 <strong>${ds.pager.totalRecord}</strong>
+												筆記錄， 每頁顯示筆數 <select name="pager.recordPerPage"
 										id="apply_journal_list_action_recordPerPage"
 										onchange="upperChangeSize(this.value);">
 										<option value="${ds.pager.recordPerPage}">${ds.pager.recordPerPage}</option>
@@ -46,10 +44,7 @@ function view(serNo){
 										<option value="50">50</option>
 										<option value="100">100</option>
 									</select>
-									<c:set var="keywords">
-										<c:out value="${keywords }"></c:out>
-									</c:set>
-									<input type="hidden" name="keywords" value="${keywords }" />
+									<s:hidden name="entity.indexTerm" />
 								</s:form></td>
 							<td align="right" class="p_02"><c:if
 									test="${ds.pager.totalRecord > 0 }"><jsp:include
@@ -57,9 +52,6 @@ function view(serNo){
 										<jsp:param name="namespace" value="/crud" />
 										<jsp:param name="action" value="apply.journal.list" />
 										<jsp:param name="pager" value="${ds.pager}" />
-										<jsp:param name="keywords" value="${keywords}" />
-										<jsp:param name="recordPerPage"
-											value="${ds.pager.recordPerPage}" />
 									</jsp:include></c:if></td>
 						</tr>
 					</table>
@@ -71,9 +63,8 @@ function view(serNo){
 						<tr>
 							<td align="left" class="p_01"><s:form
 									action="apply.journal.owner.action">
-									<input type="hidden" name="recordPoint"
-										value="${ds.pager.recordPoint}">共 <strong>${ds.pager.totalRecord}</strong>
-												筆記錄， 每頁顯示筆數 <select name="recordPerPage"
+									共 <strong>${ds.pager.totalRecord}</strong>
+												筆記錄， 每頁顯示筆數 <select name="pager.recordPerPage"
 										id="apply_journal_owner_action_recordPerPage"
 										onchange="upperChangeSize(this.value);">
 										<option value="${ds.pager.recordPerPage}">${ds.pager.recordPerPage}</option>
@@ -83,7 +74,7 @@ function view(serNo){
 										<option value="50">50</option>
 										<option value="100">100</option>
 									</select>
-									<input type="hidden" name="cusSerNo" value="${cusSerNo }" />
+									<s:hidden name="entity.cusSerNo" value="%{ds.entity.cusSerNo}" />
 								</s:form></td>
 							<td align="right" class="p_02"><c:if
 									test="${ds.pager.totalRecord > 0 }"><jsp:include
@@ -91,9 +82,6 @@ function view(serNo){
 										<jsp:param name="namespace" value="/crud" />
 										<jsp:param name="action" value="apply.journal.owner" />
 										<jsp:param name="pager" value="${ds.pager}" />
-										<jsp:param name="cusSerNo" value="${cusSerNo}" />
-										<jsp:param name="recordPerPage"
-											value="${ds.pager.recordPerPage}" />
 									</jsp:include></c:if></td>
 						</tr>
 					</table>
@@ -105,9 +93,8 @@ function view(serNo){
 						<tr>
 							<td align="left" class="p_01"><s:form
 									action="apply.journal.focus.action">
-									<input type="hidden" name="recordPoint"
-										value="${ds.pager.recordPoint}">共 <strong>${ds.pager.totalRecord}</strong>
-									筆記錄， 每頁顯示筆數 <select name="recordPerPage"
+									共 <strong>${ds.pager.totalRecord}</strong>
+									筆記錄， 每頁顯示筆數 <select name="pager.recordPerPage"
 										id="apply_journal_focus_action_recordPerPage"
 										onchange="upperChangeSize(this.value);">
 										<option value="${ds.pager.recordPerPage}">${ds.pager.recordPerPage}</option>
@@ -117,14 +104,8 @@ function view(serNo){
 										<option value="50">50</option>
 										<option value="100">100</option>
 									</select>
-									<c:set var="option">
-										<c:out value="${option }"></c:out>
-									</c:set>
-									<c:set var="keywords">
-										<c:out value="${keywords }"></c:out>
-									</c:set>
-									<input type="hidden" name="option" value="${option }" />
-									<input type="hidden" name="keywords" value="${keywords }" />
+									<s:hidden name="entity.option" />
+									<s:hidden name="entity.indexTerm" />
 								</s:form></td>
 							<td align="right" class="p_02"><c:if
 									test="${ds.pager.totalRecord > 0 }"><jsp:include
@@ -132,10 +113,6 @@ function view(serNo){
 										<jsp:param name="namespace" value="/crud" />
 										<jsp:param name="action" value="apply.journal.focus" />
 										<jsp:param name="pager" value="${ds.pager}" />
-										<jsp:param name="keywords" value="${keywords}" />
-										<jsp:param name="option" value="${option}" />
-										<jsp:param name="recordPerPage"
-											value="${ds.pager.recordPerPage}" />
 									</jsp:include></c:if></td>
 						</tr>
 					</table>
@@ -161,23 +138,21 @@ function view(serNo){
 								<td>${orderInt}</td>
 								<c:choose>
 									<c:when test="${not empty item.englishTitle}">
-										<td><a onclick="view(${item.serNo})"><c:out
-													value="${item.englishTitle}" /></a></td>
+										<td><a onclick="view(${item.serNo})"><esapi:encodeForHTML>${item.englishTitle}</esapi:encodeForHTML></a></td>
 									</c:when>
 									<c:otherwise>
-										<td><a onclick="view(${item.serNo})"><c:out
-													value="${item.chineseTitle}" /></a></td>
+										<td><a onclick="view(${item.serNo})"><esapi:encodeForHTML>${item.chineseTitle}</esapi:encodeForHTML></a></td>
 									</c:otherwise>
 								</c:choose>
 								<td><c:choose>
 										<c:when test="${not empty item.publishName}">
-											<c:out value="${item.publishName}" />
+											<esapi:encodeForHTML>${item.publishName}</esapi:encodeForHTML>
 										</c:when>
 										<c:otherwise>N/A</c:otherwise>
 									</c:choose></td>
 								<td><c:choose>
 										<c:when test="${not empty item.publishYear}">
-											<c:out value="${item.publishYear}" />
+											<esapi:encodeForHTML>${item.publishYear}</esapi:encodeForHTML>
 										</c:when>
 										<c:otherwise>N/A</c:otherwise>
 									</c:choose></td>
@@ -188,23 +163,21 @@ function view(serNo){
 								<td>${orderInt}</td>
 								<c:choose>
 									<c:when test="${not empty item.englishTitle}">
-										<td><a onclick="view(${item.serNo})"><c:out
-													value="${item.englishTitle}" /></a></td>
+										<td><a onclick="view(${item.serNo})"><esapi:encodeForHTML>${item.englishTitle}</esapi:encodeForHTML></a></td>
 									</c:when>
 									<c:otherwise>
-										<td><a onclick="view(${item.serNo})"><c:out
-													value="${item.chineseTitle}" /></a></td>
+										<td><a onclick="view(${item.serNo})"><esapi:encodeForHTML>${item.chineseTitle}</esapi:encodeForHTML></a></td>
 									</c:otherwise>
 								</c:choose>
 								<td><c:choose>
 										<c:when test="${not empty item.publishName}">
-											<c:out value="${item.publishName}" />
+											<esapi:encodeForHTML>${item.publishName}</esapi:encodeForHTML>
 										</c:when>
 										<c:otherwise>N/A</c:otherwise>
 									</c:choose></td>
 								<td><c:choose>
 										<c:when test="${not empty item.publishYear}">
-											<c:out value="${item.publishYear}" />
+											<esapi:encodeForHTML>${item.publishYear}</esapi:encodeForHTML>
 										</c:when>
 										<c:otherwise>N/A</c:otherwise>
 									</c:choose></td>
@@ -222,9 +195,8 @@ function view(serNo){
 						<tr>
 							<td align="left" class="p_01"><s:form
 									action="apply.journal.list.action">
-									<input type="hidden" name="recordPoint"
-										value="${ds.pager.recordPoint}">共 <strong>${ds.pager.totalRecord}</strong>
-									筆記錄， 每頁顯示筆數 <select name="recordPerPage"
+									共 <strong>${ds.pager.totalRecord}</strong>
+									筆記錄， 每頁顯示筆數 <select name="pager.recordPerPage"
 										id="apply_journal_list_action_recordPerPage"
 										onchange="bottomChangeSize(this.value);">
 										<option value="${ds.pager.recordPerPage}">${ds.pager.recordPerPage}</option>
@@ -234,10 +206,7 @@ function view(serNo){
 										<option value="50">50</option>
 										<option value="100">100</option>
 									</select>
-									<c:set var="keywords">
-										<c:out value="${keywords }"></c:out>
-									</c:set>
-									<input type="hidden" name="keywords" value="${keywords }" />
+									<s:hidden name="entity.indexTerm" />
 								</s:form></td>
 							<td align="right" class="p_02"><c:if
 									test="${ds.pager.totalRecord > 0 }"><jsp:include
@@ -245,9 +214,6 @@ function view(serNo){
 										<jsp:param name="namespace" value="/crud" />
 										<jsp:param name="action" value="apply.journal.list" />
 										<jsp:param name="pager" value="${ds.pager}" />
-										<jsp:param name="keywords" value="${keywords}" />
-										<jsp:param name="recordPerPage"
-											value="${ds.pager.recordPerPage}" />
 									</jsp:include></c:if></td>
 						</tr>
 					</table>
@@ -258,10 +224,9 @@ function view(serNo){
 					<table width="100%" border="0" cellpadding="0" cellspacing="0">
 						<tr>
 							<td align="left" class="p_01"><s:form
-									action="apply.journal.list.action">
-									<input type="hidden" name="recordPoint"
-										value="${ds.pager.recordPoint}">共 <strong>${ds.pager.totalRecord}</strong>
-									筆記錄， 每頁顯示筆數 <select name="recordPerPage"
+									action="apply.journal.owner.action">
+									共 <strong>${ds.pager.totalRecord}</strong>
+									筆記錄， 每頁顯示筆數 <select name="pager.recordPerPage"
 										id="apply_journal_owner_action_recordPerPage"
 										onchange="bottomChangeSize(this.value);">
 										<option value="${ds.pager.recordPerPage}">${ds.pager.recordPerPage}</option>
@@ -271,7 +236,7 @@ function view(serNo){
 										<option value="50">50</option>
 										<option value="100">100</option>
 									</select>
-									<input type="hidden" name="cusSerNo" value="${cusSerNo }" />
+									<s:hidden name="entity.cusSerNo" value="%{ds.entity.cusSerNo}" />
 								</s:form></td>
 							<td align="right" class="p_02"><c:if
 									test="${ds.pager.totalRecord > 0 }"><jsp:include
@@ -279,9 +244,6 @@ function view(serNo){
 										<jsp:param name="namespace" value="/crud" />
 										<jsp:param name="action" value="apply.journal.owner" />
 										<jsp:param name="pager" value="${ds.pager}" />
-										<jsp:param name="cusSerNo" value="${cusSerNo}" />
-										<jsp:param name="recordPerPage"
-											value="${ds.pager.recordPerPage}" />
 									</jsp:include></c:if></td>
 						</tr>
 					</table>
@@ -293,9 +255,8 @@ function view(serNo){
 						<tr>
 							<td align="left" class="p_01"><s:form
 									action="apply.journal.focus.action">
-									<input type="hidden" name="recordPoint"
-										value="${ds.pager.recordPoint}">共 <strong>${ds.pager.totalRecord}</strong>
-									筆記錄， 每頁顯示筆數 <select name="recordPerPage"
+									共 <strong>${ds.pager.totalRecord}</strong>
+									筆記錄， 每頁顯示筆數 <select name="pager.recordPerPage"
 										id="apply_journal_focus_action_recordPerPage"
 										onchange="bottomChangeSize(this.value);">
 										<option value="${ds.pager.recordPerPage}">${ds.pager.recordPerPage}</option>
@@ -305,14 +266,8 @@ function view(serNo){
 										<option value="50">50</option>
 										<option value="100">100</option>
 									</select>
-									<c:set var="option">
-										<c:out value="${option }"></c:out>
-									</c:set>
-									<c:set var="keywords">
-										<c:out value="${keywords }"></c:out>
-									</c:set>
-									<input type="hidden" name="option" value="${option }" />
-									<input type="hidden" name="keywords" value="${keywords }" />
+									<s:hidden name="entity.option" />
+									<s:hidden name="entity.indexTerm" />
 								</s:form></td>
 							<td align="right" class="p_02"><c:if
 									test="${ds.pager.totalRecord > 0 }"><jsp:include
@@ -320,10 +275,6 @@ function view(serNo){
 										<jsp:param name="namespace" value="/crud" />
 										<jsp:param name="action" value="apply.journal.focus" />
 										<jsp:param name="pager" value="${ds.pager}" />
-										<jsp:param name="keywords" value="${keywords}" />
-										<jsp:param name="option" value="${option}" />
-										<jsp:param name="recordPerPage"
-											value="${ds.pager.recordPerPage}" />
 									</jsp:include></c:if></td>
 						</tr>
 					</table>

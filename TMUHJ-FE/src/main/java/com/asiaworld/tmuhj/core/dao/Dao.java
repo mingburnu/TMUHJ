@@ -2,6 +2,8 @@ package com.asiaworld.tmuhj.core.dao;
 
 import java.util.List;
 
+import com.asiaworld.tmuhj.core.dao.DsQueryLanguage;
+import com.asiaworld.tmuhj.core.dao.DsRestrictions;
 import com.asiaworld.tmuhj.core.entity.Entity;
 import com.asiaworld.tmuhj.core.model.DataSet;
 
@@ -82,5 +84,13 @@ public interface Dao<T extends Entity> {
 	 * @return
 	 */
 	public List<?> findByQL(DsQueryLanguage iQL);
+
+	/**
+	 * Turn on or off Foreign Key
+	 * 
+	 * @param constraint
+	 * @return
+	 */
+	public void checkFK(Boolean constraint);
 
 }

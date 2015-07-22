@@ -15,7 +15,6 @@ import org.hibernate.annotations.Type;
 import org.joda.time.LocalDateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import com.asiaworld.tmuhj.core.apply.accountNumber.AccountNumber;
 
 /**
@@ -23,7 +22,7 @@ import com.asiaworld.tmuhj.core.apply.accountNumber.AccountNumber;
  * 
  */
 @MappedSuperclass
-public abstract class GenericEntityFull implements Entity {
+public abstract class GenericEntityFull extends SearchProperties {
 
 	/**
 	 * 
@@ -63,9 +62,6 @@ public abstract class GenericEntityFull implements Entity {
 	@Column(name = "uDTime")
 	@Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDateTime")
 	private LocalDateTime uDTime;
-
-	@Transient
-	private String reportFile;
 
 	/**
 	 * @return the serNo
@@ -159,27 +155,12 @@ public abstract class GenericEntityFull implements Entity {
 	}
 
 	/**
-	 * @return the reportFile
-	 */
-	public String getReportFile() {
-		return reportFile;
-	}
-
-	/**
-	 * @param reportFile
-	 *            the reportFile to set
-	 */
-	public void setReportFile(String reportFile) {
-		this.reportFile = reportFile;
-	}
-
-	/**
-	 * check entity is new or not.
+	 * check entity has id or not.
 	 * 
-	 * @return true, if is new
+	 * @return true, if has id
 	 */
-	public boolean isNew() {
-		return serNo == null;
+	public boolean hasSerNo() {
+		return serNo != null;
 	}
 
 	/**

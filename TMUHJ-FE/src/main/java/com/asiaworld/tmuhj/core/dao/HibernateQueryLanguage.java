@@ -3,6 +3,8 @@ package com.asiaworld.tmuhj.core.dao;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.asiaworld.tmuhj.core.dao.DsQueryLanguage;
+
 /**
  * HQL
  * @author Roderick

@@ -3,97 +3,97 @@
 <%@ taglib prefix="s" uri="/struts-tags"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="pg" uri="http://jsptags.com/tags/navigation/pager"%>
-<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
+<%@ taglib prefix="esapi"
+	uri="http://www.owasp.org/index.php/Category:OWASP_Enterprise_Security_API"%>
+
+<c:set var="recordPerPage" value="${pager.recordPerPage}" />
+<c:set var="totalRecord" value="${pager.totalRecord}" />
+<c:set var="currentPage" value="${pager.currentPage}" />
+<c:set var="recordPoint" value="${pager.recordPoint}" />
+
+<c:set var="goToPage">
+	<c:url
+		value="<esapi:encodeForXMLAttribute>${param.namespace}</esapi:encodeForXMLAttribute>/<esapi:encodeForXMLAttribute>${param.action}</esapi:encodeForXMLAttribute>.action" />
+</c:set>
 
 <script type="text/javascript">
 function gotoPage(page){
-	var totalPage = "${totalPage}";
-    var recordPerPage="${ds.pager.recordPerPage}";
-    var offset=parseInt(recordPerPage)*(parseInt(page)-1);
-    if(parseInt(page) < 1){
-        page=1;
-        offset=parseInt(recordPerPage)*(parseInt(page)-1);
-    }
-    else if(parseInt(page)>parseInt(totalPage)){
-        page=parseInt(totalPage);
-        offset=parseInt(recordPerPage)*(parseInt(page)-1);
-    }
-    
-    $('input[name=recordPoint]:eq(0)').remove();
-	var action = $("form").attr("action");
-	var data = $("form:eq(0)").serialize(); 
-	var pageParameter = '?pager.offset=' + offset
-			+ '&pager.currentPage=' + parseInt(page) + "&";
+	var isNum = /^\d+$/.test(page);
+	var lastPage = "${lastPage}";
 
-	var url=action + pageParameter + data;
-	$.ajax({url: url, success: function(result){
+	if (!isNum){
+		page="${currentPage}";
+	} else {
+		if (parseInt(page) < 1){
+			page=1;
+		} else if (parseInt(page)>parseInt(lastPage)){
+			page=parseInt(lastPage);
+		}
+	}
+
+	var offset=parseInt('${recordPerPage}')*(parseInt(page)-1);
+    var url = $("form").attr("action")+"?pager.currentPage="+ page + "&pager.offset="+ offset;
+	var data = $("form:eq(0)").serialize(); 
+
+	$.ajax({
+		url: url, 
+		data: data,
+		success: function(result){
             $("#container").html(result);
         }});
 	$("body").scrollTop(0);
 }
 
 function upperChangeSize(recordPerPage) {
-	var action = $("form").attr("action");
+	var page = Math.floor(parseInt('${recordPoint}')/parseInt(recordPerPage))+1;
+	var offset=parseInt(recordPerPage)*(page-1);
+	var url= $("form").attr("action")+"?pager.recordPoint="+"${recordPoint}"+"&pager.offset="+offset;
 	var data = $("form:eq(0)").serialize();
-
-	var recordPoint = '${ds.pager.recordPoint}';
-	var newPage = Math.floor(parseInt(recordPoint)
-			/ parseInt(recordPerPage) + 1);
-	var newOffset = parseInt(recordPerPage) * (newPage - 1);
-	var pageParameter = '?pager.offset=' + newOffset
-			+ '&pager.currentPage=' + newPage + "&";
-
-	var url=action + pageParameter + data;
-	$.ajax({url: url, success: function(result){
+	
+	$.ajax({
+		url: url, 
+		data:data,
+		success: function(result){
         $("#container").html(result);
     }});
+	
 	$("body").scrollTop(0);
 }
 
-function bottomChangeSize(recordPerPage) {
-	var action = $("form").attr("action");
+function bottomChangeSize() {
+	var page = Math.floor(parseInt('${recordPoint}')/parseInt(recordPerPage))+1;
+	var offset=parseInt(recordPerPage)*(parseInt(page)-1);
+	var url= $("form").attr("action")+"?pager.recordPoint="+"${recordPoint}"+"&pager.offset="+offset;
 	var data = $("form:eq(1)").serialize();
-
-	var recordPoint = '${ds.pager.recordPoint}';
-	var newPage = Math.floor(parseInt(recordPoint)
-			/ parseInt(recordPerPage) + 1);
-	var newOffset = parseInt(recordPerPage) * (newPage - 1);
-	var pageParameter = '?pager.offset=' + newOffset
-			+ '&pager.currentPage=' + newPage + "&";
-
-	var url=action + pageParameter + data;
-	$.ajax({url: url, success: function(result){
-            $("#container").html(result);
+	
+	$.ajax({
+		url: url, 
+		data:data,
+		success: function(result){
+        $("#container").html(result);
     }});
+	
 	$("body").scrollTop(0);
 }
-    
 </script>
 
-<c:set var="recordPerPage" value="${pager.recordPerPage}" />
-<c:set var="totalRecord" value="${pager.totalRecord}" />
-<c:set var="currentPage" value="${pager.currentPage}" />
-<c:set var="factor" value="${totalRecord / recordPerPage}" />
-<c:set var="lastPage" value="${factor + (1 - (factor % 1)) % 1}" />
-
 <pg:pager url="${goToPage}" items="${totalRecord}"
-	maxPageItems="${recordPerPage}" maxIndexPages="5">
+	maxPageItems="${recordPerPage }" maxIndexPages="5">
 	<pg:index>
-
-		<pg:prev ifnull="true">
+		<pg:first>
 			<c:choose>
-				<c:when test="${1 eq currentPage}">
+				<c:when test="${pageNumber eq currentPage}">
 					<a class="bb" href="#" onclick="return false;">&nbsp;</a>
 
 				</c:when>
 				<c:otherwise>
-					<a class="bb" onclick="gotoPage(1)">&nbsp;</a>
+					<a class="bb" onclick="gotoPage(${pageNumber})">&nbsp;</a>
 				</c:otherwise>
 			</c:choose>
-		</pg:prev>
+		</pg:first>
 		<pg:prev ifnull="true">
 			<c:choose>
-				<c:when test="${1 eq currentPage}">
+				<c:when test="${empty pageNumber}">
 					<a class="b" href="#" onclick="return false;">&nbsp;</a>
 
 				</c:when>
@@ -117,7 +117,7 @@ function bottomChangeSize(recordPerPage) {
 		</pg:pages>
 		<pg:next ifnull="true">
 			<c:choose>
-				<c:when test="${lastPage eq currentPage}">
+				<c:when test="${empty pageNumber}">
 					<a class="n" href="#" onclick="return false;">&nbsp;</a>
 
 				</c:when>
@@ -127,20 +127,16 @@ function bottomChangeSize(recordPerPage) {
 				</c:otherwise>
 			</c:choose>
 		</pg:next>
-		<pg:next ifnull="true">
+		<pg:last>
 			<c:choose>
-				<c:when test="${lastPage eq currentPage}">
+				<c:when test="${pageNumber eq currentPage}">
 					<a class="nn" href="#" onclick="return false;">&nbsp;</a>
 
 				</c:when>
 				<c:otherwise>
-					<a class="nn"
-						onclick='gotoPage(<fmt:formatNumber type="number" 
-            pattern="0" value="${lastPage}" />)'>&nbsp;</a>
-
+					<a class="nn" onclick='gotoPage(${pageNumber})'>&nbsp;</a>
 				</c:otherwise>
 			</c:choose>
-		</pg:next>
-
+		</pg:last>
 	</pg:index>
 </pg:pager>

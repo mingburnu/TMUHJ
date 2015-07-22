@@ -3,10 +3,12 @@ package com.asiaworld.tmuhj.core.dao;
 import java.io.Serializable;
 import java.util.Map;
 
+import com.asiaworld.tmuhj.core.dao.DsQueryLanguage;
+
 /**
- * IiiQueryLanguage
- * @author David Hsu
- * @version 2014/3/12
+ * DsQueryLanguage
+ * @author Roderick
+ * @version 2015/01/27
  */
 public interface DsQueryLanguage extends Serializable {
 

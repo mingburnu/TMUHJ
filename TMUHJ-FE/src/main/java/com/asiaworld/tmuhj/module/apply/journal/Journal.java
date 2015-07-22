@@ -3,17 +3,16 @@ package com.asiaworld.tmuhj.module.apply.journal;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 
-import com.asiaworld.tmuhj.core.entity.GenericEntityFull;
+import com.asiaworld.tmuhj.module.entity.ModuleProperties;
 
 @Entity
 @Table(name = "journal")
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-public class Journal extends GenericEntityFull {
+public class Journal extends ModuleProperties {
 
 	/**
 	 * 
@@ -75,12 +74,6 @@ public class Journal extends GenericEntityFull {
 	// 版本
 	@Column(name = "version")
 	private Integer version;
-
-	@Transient
-	private String option;
-
-	@Transient
-	private String keywords;
 
 	/**
 	 * @return the chineseTitle
@@ -291,35 +284,4 @@ public class Journal extends GenericEntityFull {
 	public void setVersion(Integer version) {
 		this.version = version;
 	}
-
-	/**
-	 * @return the option
-	 */
-	public String getOption() {
-		return option;
-	}
-
-	/**
-	 * @param option
-	 *            the option to set
-	 */
-	public void setOption(String option) {
-		this.option = option;
-	}
-
-	/**
-	 * @return the keywords
-	 */
-	public String getKeywords() {
-		return keywords;
-	}
-
-	/**
-	 * @param keywords
-	 *            the keywords to set
-	 */
-	public void setKeywords(String keywords) {
-		this.keywords = keywords;
-	}
-
 }

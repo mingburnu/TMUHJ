@@ -5,7 +5,7 @@ import com.asiaworld.tmuhj.core.entity.GenericEntityFull;
 /**
  * ModuleDao
  * 
- * @author Roderick
+ * @author Rodertick
  * @version 2014/11/21
  */
 public class ModuleDaoFull<T extends GenericEntityFull> extends

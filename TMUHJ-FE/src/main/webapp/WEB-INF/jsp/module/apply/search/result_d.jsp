@@ -2,6 +2,8 @@
 	pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="s" uri="/struts-tags"%>
+<%@ taglib prefix="esapi"
+	uri="http://www.owasp.org/index.php/Category:OWASP_Enterprise_Security_API"%>
 <script type="text/javascript">
 	function owner(url) {
 		$.ajax({
@@ -27,9 +29,8 @@
 					<tr>
 						<td align="left" class="p_01"><s:form
 								action="apply.customer.list.action">
-								<input type="hidden" name="recordPoint"
-									value="${ds.pager.recordPoint}">共 <strong>${ds.pager.totalRecord}</strong>
-											筆記錄， 每頁顯示筆數 <select name="recordPerPage"
+								共 <strong>${ds.pager.totalRecord}</strong>
+											筆記錄， 每頁顯示筆數 <select name="pager.recordPerPage"
 									id="apply_customer_list_action_recordPerPage"
 									onchange="upperChangeSize(this.value);">
 									<option value="${ds.pager.recordPerPage}">${ds.pager.recordPerPage}</option>
@@ -39,10 +40,7 @@
 									<option value="50">50</option>
 									<option value="100">100</option>
 								</select>
-								<c:set var="keywords">
-									<c:out value="${keywords }"></c:out>
-								</c:set>
-								<input type="hidden" name="keywords" value="${keywords }" />
+								<s:hidden name="entity.indexTerm" />
 							</s:form></td>
 						<td align="right" class="p_02"><c:if
 								test="${ds.pager.totalRecord > 0 }"><jsp:include
@@ -50,9 +48,6 @@
 									<jsp:param name="namespace" value="/crud" />
 									<jsp:param name="action" value="apply.customer.list" />
 									<jsp:param name="pager" value="${ds.pager}" />
-									<jsp:param name="keywords" value="${keywords}" />
-									<jsp:param name="recordPerPage"
-										value="${ds.pager.recordPerPage}" />
 								</jsp:include></c:if></td>
 					</tr>
 				</table>
@@ -75,17 +70,17 @@
 						value="${ds.pager.offset+(status.index+1)}" />
 					<c:set var="ownJorunal">
 						<s:url namespace="/crud" action="apply.journal.owner">
-							<s:param name="cusSerNo">${item.serNo}</s:param>
+							<s:param name="entity.cusSerNo">${item.serNo}</s:param>
 						</s:url>
 					</c:set>
 					<c:set var="ownDb">
 						<s:url namespace="/crud" action="apply.database.owner">
-							<s:param name="cusSerNo">${item.serNo}</s:param>
+							<s:param name="entity.cusSerNo">${item.serNo}</s:param>
 						</s:url>
 					</c:set>
 					<c:set var="ownEbook">
 						<s:url namespace="/crud" action="apply.ebook.owner">
-							<s:param name="cusSerNo">${item.serNo}</s:param>
+							<s:param name="entity.cusSerNo">${item.serNo}</s:param>
 						</s:url>
 					</c:set>
 					<c:choose>
@@ -93,17 +88,13 @@
 							<tr valign="top">
 								<td>${orderInt}</td>
 								<td><div>
-										<c:out value="${item.name}" />
+										<esapi:encodeForHTML>${item.name}</esapi:encodeForHTML>
 									</div>
 									<div>
-										<c:out value="${item.contactUserName}" />
+										<esapi:encodeForHTML>${item.contactUserName}</esapi:encodeForHTML>
 									</div></td>
-								<td><div>
-										<c:out value="${item.tel}" />
-									</div>
-									<div>
-										<c:out value="${item.email}" />
-									</div></td>
+								<td><div>${item.tel}</div>
+									<div>${item.email}</div></td>
 								<td><c:choose>
 										<c:when test="${item.dbAmount > 0 }">
 											<a onclick="owner('${ownDb}')">${item.dbAmount}</a>
@@ -128,17 +119,13 @@
 							<tr valign="top" class="odd">
 								<td>${orderInt}</td>
 								<td><div>
-										<c:out value="${item.name}" />
+										<esapi:encodeForHTML>${item.name}</esapi:encodeForHTML>
 									</div>
 									<div>
-										<c:out value="${item.contactUserName}" />
+										<esapi:encodeForHTML>${item.contactUserName}</esapi:encodeForHTML>
 									</div></td>
-								<td><div>
-										<c:out value="${item.tel}" />
-									</div>
-									<div>
-										<c:out value="${item.email}" />
-									</div></td>
+								<td><div>${item.tel}</div>
+									<div>${item.email}</div></td>
 								<td><c:choose>
 										<c:when test="${item.dbAmount > 0 }">
 											<a onclick="owner('${ownDb}')">${item.dbAmount}</a>
@@ -170,9 +157,8 @@
 					<tr>
 						<td align="left" class="p_01"><s:form
 								action="apply.customer.list.action">
-								<input type="hidden" name="recordPoint"
-									value="${ds.pager.recordPoint}">共 <strong>${ds.pager.totalRecord}</strong>
-											筆記錄， 每頁顯示筆數 <select name="recordPerPage"
+								共 <strong>${ds.pager.totalRecord}</strong>
+											筆記錄， 每頁顯示筆數 <select name="pager.recordPerPage"
 									id="apply_customer_list_action_recordPerPage"
 									onchange="bottomChangeSize(this.value);">
 									<option value="${ds.pager.recordPerPage}">${ds.pager.recordPerPage}</option>
@@ -182,10 +168,7 @@
 									<option value="50">50</option>
 									<option value="100">100</option>
 								</select>
-								<c:set var="keywords">
-									<c:out value="${keywords }"></c:out>
-								</c:set>
-								<input type="hidden" name="keywords" value="${keywords }" />
+								<s:hidden name="entity.indexTerm" />
 							</s:form></td>
 						<td align="right" class="p_02"><c:if
 								test="${ds.pager.totalRecord > 0 }"><jsp:include
@@ -193,9 +176,6 @@
 									<jsp:param name="namespace" value="/crud" />
 									<jsp:param name="action" value="apply.customer." />
 									<jsp:param name="pager" value="${ds.pager}" />
-									<jsp:param name="keywords" value="${keywords}" />
-									<jsp:param name="recordPerPage"
-										value="${ds.pager.recordPerPage}" />
 								</jsp:include></c:if></td>
 					</tr>
 				</table>
