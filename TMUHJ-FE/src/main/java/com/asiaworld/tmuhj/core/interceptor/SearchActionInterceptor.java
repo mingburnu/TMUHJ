@@ -43,6 +43,8 @@ public class SearchActionInterceptor extends RootInterceptor {
 
 	@Override
 	public String intercept(ActionInvocation invocation) throws Exception {
+		removeErrorParameters(invocation);
+		
 		HttpServletRequest request = ServletActionContext.getRequest();
 
 		Map<String, Object> session = invocation.getInvocationContext()
@@ -76,6 +78,7 @@ public class SearchActionInterceptor extends RootInterceptor {
 			if (item.equals("database")) {
 				if (StringUtils.isBlank(option)) {
 					addActionError(invocation, "．請輸入選項。");
+					option = "中文題名";
 				} else if (!option.equals("中文題名") && !option.equals("英文題名")
 						&& !option.equals("出版社") && !option.equals("內容描述")) {
 					addActionError(invocation, "．請輸入選項。");
@@ -86,6 +89,7 @@ public class SearchActionInterceptor extends RootInterceptor {
 			if (item.equals("ebook")) {
 				if (StringUtils.isBlank(option)) {
 					addActionError(invocation, "．請輸入選項。");
+					option = "書名";
 				} else if (!option.equals("書名") && !option.equals("ISBN")
 						&& !option.equals("出版社") && !option.equals("作者")) {
 					addActionError(invocation, "．請輸入選項。");
@@ -96,6 +100,7 @@ public class SearchActionInterceptor extends RootInterceptor {
 			if (item.equals("journal")) {
 				if (StringUtils.isBlank(option)) {
 					addActionError(invocation, "．請輸入選項。");
+					option = "中文刊名";
 				} else if (!option.equals("中文刊名") && !option.equals("英文刊名")
 						&& !option.equals("英文縮寫") && !option.equals("出版商")
 						&& !option.equals("ISSN")) {

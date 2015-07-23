@@ -164,8 +164,8 @@ public class CustomerAction extends GenericWebActionFull<Customer> {
 
 		if (ds.getResults().size() == 0 && ds.getPager().getCurrentPage() > 1) {
 			ds.getPager().setCurrentPage(
-					(int) (ds.getPager().getTotalRecord()
-							/ ds.getPager().getRecordPerPage() + 1));
+					(int) Math.ceil(ds.getPager().getTotalRecord()
+							/ ds.getPager().getRecordPerPage()));
 			ds = customerService.getByRestrictions(ds);
 		}
 
@@ -516,8 +516,8 @@ public class CustomerAction extends GenericWebActionFull<Customer> {
 
 		if (ds.getResults().size() == 0 && ds.getPager().getCurrentPage() > 1) {
 			ds.getPager().setCurrentPage(
-					(int) (ds.getPager().getTotalRecord()
-							/ ds.getPager().getRecordPerPage() + 1));
+					(int) Math.ceil(ds.getPager().getTotalRecord()
+							/ ds.getPager().getRecordPerPage()));
 			first = ds.getPager().getOffset();
 			last = first + ds.getPager().getRecordPerPage();
 

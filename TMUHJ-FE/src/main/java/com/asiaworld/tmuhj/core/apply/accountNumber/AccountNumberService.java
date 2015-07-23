@@ -15,7 +15,6 @@ import com.asiaworld.tmuhj.core.dao.DsRestrictions;
 import com.asiaworld.tmuhj.core.model.DataSet;
 import com.asiaworld.tmuhj.core.service.GenericServiceFull;
 import com.asiaworld.tmuhj.core.util.EncryptorUtil;
-import com.asiaworld.tmuhj.core.util.DsBeanFactory;
 
 /**
  * 使用者 Service
@@ -41,7 +40,7 @@ public class AccountNumberService extends GenericServiceFull<AccountNumber> {
 		Assert.notNull(ds.getEntity());
 
 		AccountNumber entity = ds.getEntity();
-		DsRestrictions restrictions = DsBeanFactory.getDsRestrictions();
+		DsRestrictions restrictions = getDsRestrictions();
 		if (StringUtils.isNotEmpty(entity.getUserId())) {
 			restrictions.eq("userId", entity.getUserId());
 		}
@@ -106,7 +105,7 @@ public class AccountNumberService extends GenericServiceFull<AccountNumber> {
 	public Boolean checkUser(AccountNumber entity) throws Exception {
 		Assert.notNull(entity);
 
-		DsRestrictions restrictions = DsBeanFactory.getDsRestrictions();
+		DsRestrictions restrictions = getDsRestrictions();
 		restrictions.eq("userId", entity.getUserId());
 
 		List<AccountNumber> secUsers = dao.findByRestrictions(restrictions);
@@ -122,7 +121,7 @@ public class AccountNumberService extends GenericServiceFull<AccountNumber> {
 	public boolean isValidStatus(AccountNumber entity) throws Exception {
 		Assert.notNull(entity);
 
-		DsRestrictions restrictions = DsBeanFactory.getDsRestrictions();
+		DsRestrictions restrictions = getDsRestrictions();
 		restrictions.eq("userId", entity.getUserId());
 		restrictions.eq("status", Status.生效);
 

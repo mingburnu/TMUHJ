@@ -8,7 +8,6 @@ import com.asiaworld.tmuhj.core.dao.DsRestrictions;
 import com.asiaworld.tmuhj.core.dao.GenericDao;
 import com.asiaworld.tmuhj.core.model.DataSet;
 import com.asiaworld.tmuhj.core.service.GenericServiceFull;
-import com.asiaworld.tmuhj.core.util.DsBeanFactory;
 
 @Service
 public class ResourcesBuyersService extends GenericServiceFull<ResourcesBuyers> {
@@ -22,7 +21,7 @@ public class ResourcesBuyersService extends GenericServiceFull<ResourcesBuyers> 
 		Assert.notNull(ds);
 		Assert.notNull(ds.getEntity());
 
-		DsRestrictions restrictions = DsBeanFactory.getDsRestrictions();
+		DsRestrictions restrictions = getDsRestrictions();
 		return dao.findByRestrictions(restrictions, ds);
 	}
 

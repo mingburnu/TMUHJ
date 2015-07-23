@@ -50,7 +50,6 @@ import com.asiaworld.tmuhj.module.apply.resourcesUnion.ResourcesUnion;
 import com.asiaworld.tmuhj.module.apply.resourcesUnion.ResourcesUnionService;
 import com.opensymphony.xwork2.ActionContext;
 
-
 @Controller
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class JournalAction extends GenericWebActionFull<Journal> {
@@ -309,8 +308,8 @@ public class JournalAction extends GenericWebActionFull<Journal> {
 
 		if (ds.getResults().size() == 0 && ds.getPager().getCurrentPage() > 1) {
 			ds.getPager().setCurrentPage(
-					(int) (ds.getPager().getTotalRecord()
-							/ ds.getPager().getRecordPerPage() + 1));
+					(int) Math.ceil(ds.getPager().getTotalRecord()
+							/ ds.getPager().getRecordPerPage()));
 			ds = journalService.getByRestrictions(ds);
 		}
 
@@ -851,8 +850,8 @@ public class JournalAction extends GenericWebActionFull<Journal> {
 
 		if (ds.getResults().size() == 0 && ds.getPager().getCurrentPage() > 1) {
 			ds.getPager().setCurrentPage(
-					(int) (ds.getPager().getTotalRecord()
-							/ ds.getPager().getRecordPerPage() + 1));
+					(int) Math.ceil(ds.getPager().getTotalRecord()
+							/ ds.getPager().getRecordPerPage()));
 			first = ds.getPager().getOffset();
 			last = first + ds.getPager().getRecordPerPage();
 

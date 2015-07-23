@@ -10,7 +10,7 @@ import com.asiaworld.tmuhj.core.GenericTest;
 import com.asiaworld.tmuhj.core.apply.accountNumber.AccountNumber;
 import com.asiaworld.tmuhj.core.apply.accountNumber.AccountNumberDao;
 import com.asiaworld.tmuhj.core.dao.DsRestrictions;
-import com.asiaworld.tmuhj.core.util.DsBeanFactory;
+import com.asiaworld.tmuhj.core.service.ServiceFactory;
 
 /**
  * SecUserDaoTest
@@ -71,7 +71,7 @@ public class SecUserDaoTest extends GenericTest {
 		Assert.assertTrue(updated);
 
 		// query by condition
-		DsRestrictions restrictions = DsBeanFactory.getDsRestrictions();
+		DsRestrictions restrictions = ServiceFactory.getDsRestrictions();
 		restrictions.eq("userName", user1UpdName);
 		List<AccountNumber> users = dao.findByRestrictions(restrictions);
 		Assert.assertEquals(1, users.size());

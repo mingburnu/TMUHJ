@@ -10,7 +10,6 @@ import com.asiaworld.tmuhj.core.dao.DsRestrictions;
 import com.asiaworld.tmuhj.core.dao.GenericDao;
 import com.asiaworld.tmuhj.core.model.DataSet;
 import com.asiaworld.tmuhj.core.service.GenericServiceFull;
-import com.asiaworld.tmuhj.core.util.DsBeanFactory;
 
 @Service
 public class EbookService extends GenericServiceFull<Ebook> {
@@ -23,7 +22,7 @@ public class EbookService extends GenericServiceFull<Ebook> {
 		Assert.notNull(ds);
 		Assert.notNull(ds.getEntity());
 		Ebook entity = ds.getEntity();
-		DsRestrictions restrictions = DsBeanFactory.getDsRestrictions();
+		DsRestrictions restrictions = getDsRestrictions();
 
 		if (entity.getOption().equals("entity.bookName")) {
 			if (StringUtils.isNotBlank(entity.getBookName())) {
@@ -48,7 +47,7 @@ public class EbookService extends GenericServiceFull<Ebook> {
 	}
 
 	public long getEbkSerNoByIsbn(long isbn) throws Exception {
-		DsRestrictions restrictions = DsBeanFactory.getDsRestrictions();
+		DsRestrictions restrictions = getDsRestrictions();
 		restrictions.eq("isbn", isbn);
 
 		if (dao.findByRestrictions(restrictions).size() > 0) {

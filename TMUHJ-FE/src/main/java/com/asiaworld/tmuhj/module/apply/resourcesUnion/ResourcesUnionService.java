@@ -13,7 +13,6 @@ import com.asiaworld.tmuhj.core.dao.DsRestrictions;
 import com.asiaworld.tmuhj.core.model.DataSet;
 import com.asiaworld.tmuhj.core.model.Pager;
 import com.asiaworld.tmuhj.core.service.GenericServiceSerNo;
-import com.asiaworld.tmuhj.core.util.DsBeanFactory;
 import com.asiaworld.tmuhj.module.apply.ebook.Ebook;
 import com.asiaworld.tmuhj.module.apply.journal.Journal;
 
@@ -29,7 +28,7 @@ public class ResourcesUnionService extends GenericServiceSerNo<ResourcesUnion> {
 		Assert.notNull(ds);
 		Assert.notNull(ds.getEntity());
 
-		DsRestrictions restrictions = DsBeanFactory.getDsRestrictions();
+		DsRestrictions restrictions = getDsRestrictions();
 		return dao.findByRestrictions(restrictions, ds);
 	}
 
@@ -93,7 +92,7 @@ public class ResourcesUnionService extends GenericServiceSerNo<ResourcesUnion> {
 		DataSet<ResourcesUnion> ds = new DataSet<ResourcesUnion>();
 		ds.setPager(new Pager());
 		ds.getPager().setRecordPerPage(1);
-		DsRestrictions restrictions = DsBeanFactory.getDsRestrictions();
+		DsRestrictions restrictions = getDsRestrictions();
 
 		if (objClass.equals(Journal.class)) {
 			restrictions.eq("jouSerNo", objSerNo);
@@ -107,21 +106,21 @@ public class ResourcesUnionService extends GenericServiceSerNo<ResourcesUnion> {
 	}
 
 	public List<ResourcesUnion> getByJouSerNo(long jouSerNo) throws Exception {
-		DsRestrictions restrictions = DsBeanFactory.getDsRestrictions();
+		DsRestrictions restrictions = getDsRestrictions();
 		restrictions.eq("jouSerNo", jouSerNo);
 		restrictions.ne("customer.serNo", 0L);
 		return dao.findByRestrictions(restrictions);
 	}
 
 	public List<ResourcesUnion> getByEbkSerNo(long ebkSerNo) throws Exception {
-		DsRestrictions restrictions = DsBeanFactory.getDsRestrictions();
+		DsRestrictions restrictions = getDsRestrictions();
 		restrictions.eq("ebkSerNo", ebkSerNo);
 		restrictions.ne("customer.serNo", 0L);
 		return dao.findByRestrictions(restrictions);
 	}
 
 	public List<ResourcesUnion> getByDatSerNo(long datSerNo) throws Exception {
-		DsRestrictions restrictions = DsBeanFactory.getDsRestrictions();
+		DsRestrictions restrictions = getDsRestrictions();
 		restrictions.eq("datSerNo", datSerNo);
 		restrictions.ne("customer.serNo", 0L);
 		return dao.findByRestrictions(restrictions);

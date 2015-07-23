@@ -8,14 +8,14 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title></title>
+<c:set var="pageFactor"
+	value="${ds.pager.totalRecord/ds.pager.recordPerPage}" />
+<c:set var="totalPage">
+	<fmt:formatNumber type="number" pattern="#"
+		value="${pageFactor+(1-(pageFactor%1))%1}" />
+</c:set>
 <script type="text/javascript">
-//IE press Enter GoPage
-$(document).ready(function() {
-	$("input#listForm_currentPageHeader:(1)").keyup(function(e){
-		if(e.keyCode == 13){gotoPage_detail($(this).val());}
-	});
-});
-	
+
 //新增IP Range
 function goAdd_detail() {
 	var url = "<c:url value = '/'/>/crud/apply.ipRange.add.action";
@@ -40,7 +40,7 @@ function goDel_detail(serNo) {
 			 trueText:'是',
 			 trueFunc:function(){
 				 var url = "<c:url value = '/'/>crud/apply.ipRange.delete.action";
-				 var data = $('#apply_ipRange_list').serialize()+'&entity.serNo='+serNo+'&entity.customer.serNo='+'${entity.customer.serNo }'+'&pager.currentPage='+'${ds.pager.currentPage}';
+				 var data = $('#apply_ipRange_list').serialize()+'&entity.serNo='+serNo+'&pager.currentPage='+'${ds.pager.currentPage}';
 				 goDetail_Main(url,'',data);
 			     },
 			  falseText:'否',
@@ -48,7 +48,7 @@ function goDel_detail(serNo) {
 				  //不進行刪除...
 			  }
 	 };
-
+	 
 	 var isNum = /^\d+$/.test(serNo);
 	 if (isNum && parseInt(serNo) > 0){
 		 goAlert('提醒','確定要刪除此筆資料嗎?',f);
@@ -57,33 +57,6 @@ function goDel_detail(serNo) {
 	 }
 }
 
-//GoPage
-function gotoPage_detail(page) {
-	var isNum = /^\d+$/.test(page);
-	var totalPage = $("span.totalNum:eq(1)").html();
-	var recordPerPage = "${ds.pager.recordPerPage}";
-	var offset = parseInt(recordPerPage) * (parseInt(page) - 1);
-	if(!isNum){
-		page="${ds.pager.currentPage}";
-	} else {
-		if (parseInt(page) < 1){
-			page=1;
-		}		
-			
-		if (parseInt(page) > parseInt(totalPage)){
-			page=totalPage;
-			
-		}
-	}
-	
-	goDetail_Main('<c:url value = '/'/>crud/apply.ipRange.list.action','#apply_ipRange_list', '&entity.customer.serNo='+'${entity.customer.serNo }'+'&pager.currentPage='+page);
-}
-
-//變更顯示筆數
-function changePageSize_detail() {
-	goDetail_Main('<c:url value = '/'/>crud/apply.ipRange.list.action','#apply_ipRange_list', '&entity.customer.serNo='+'${entity.customer.serNo }'+'&pager.recordPoint='+'${ds.pager.recordPoint }');
-}
-	
 function closeDetail() {
 	$("#div_Detail").hide();
 	UI_Resize();
@@ -94,6 +67,8 @@ function closeDetail() {
 </head>
 <body>
 	<s:form action="apply.ipRange.list" namespace="/crud" method="post">
+		<s:hidden name="entity.customer.serNo"
+			value="%{entity.customer.serNo}" />
 		<div class="list-box">
 			<div class="list-buttons">
 				<a class="state-default" onclick="goAdd_detail();">新增</a>
@@ -132,17 +107,10 @@ function closeDetail() {
 									<jsp:param name="namespace" value="/crud" />
 									<jsp:param name="action" value="apply.ipRange.list" />
 									<jsp:param name="pager" value="${ds.pager}" />
-									<jsp:param name="recordPerPage"
-										value="${ds.pager.recordPerPage}" />
 									<jsp:param name="detail" value="1" />
 								</jsp:include></td>
-							<td><c:set var="pageFactor"
-									value="${ds.pager.totalRecord/ds.pager.recordPerPage}" /> <c:set
-									var="totalPage">
-									<fmt:formatNumber type="number" pattern="#"
-										value="${pageFactor+(1-(pageFactor%1))%1}" />
-								</c:set> 每頁顯示 <select id="listForm_pageSize" name="pager.recordPerPage"
-								onchange="changePageSize_detail()">
+							<td>每頁顯示 <select id="listForm_pageSize"
+								name="pager.recordPerPage" onchange="changePageSize_detail()">
 									<option value="${ds.pager.recordPerPage}">${ds.pager.recordPerPage}</option>
 									<option value="5">5</option>
 									<option value="10">10</option>
@@ -151,7 +119,8 @@ function closeDetail() {
 							</select> 筆紀錄, 第 <input id="listForm_currentPageHeader"
 								value="${ds.pager.currentPage }" type="number" min="1"
 								max="${totalPage }" onchange="gotoPage_detail(this.value)">
-								頁, 共<span class="totalNum">${totalPage }</span>頁</td>
+								頁, 共<span class="totalNum">${totalPage }</span>頁
+							</td>
 						</tr>
 					</tbody>
 				</table>

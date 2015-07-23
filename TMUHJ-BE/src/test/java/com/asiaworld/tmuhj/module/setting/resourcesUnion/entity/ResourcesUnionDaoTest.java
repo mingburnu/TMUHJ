@@ -9,7 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.asiaworld.tmuhj.core.GenericTest;
 import com.asiaworld.tmuhj.core.apply.customer.Customer;
 import com.asiaworld.tmuhj.core.dao.DsRestrictions;
-import com.asiaworld.tmuhj.core.util.DsBeanFactory;
+import com.asiaworld.tmuhj.core.service.ServiceFactory;
 import com.asiaworld.tmuhj.module.apply.resourcesUnion.ResourcesUnion;
 import com.asiaworld.tmuhj.module.apply.resourcesUnion.ResourcesUnionDao;
 
@@ -65,7 +65,7 @@ public class ResourcesUnionDaoTest extends GenericTest {
 		Assert.assertTrue(updated);
 
 		// query by condition
-		DsRestrictions restrictions = DsBeanFactory.getDsRestrictions();
+		DsRestrictions restrictions = ServiceFactory.getDsRestrictions();
 		restrictions.eq("customer.serNo", dbResourcesUnion1UpdCus);
 		List<ResourcesUnion> resourcesUnions = dao
 				.findByRestrictions(restrictions);

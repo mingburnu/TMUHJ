@@ -10,7 +10,6 @@ import com.asiaworld.tmuhj.core.dao.DsRestrictions;
 import com.asiaworld.tmuhj.core.dao.GenericDao;
 import com.asiaworld.tmuhj.core.model.DataSet;
 import com.asiaworld.tmuhj.core.service.GenericServiceFull;
-import com.asiaworld.tmuhj.core.util.DsBeanFactory;
 
 @Service
 public class JournalService extends GenericServiceFull<Journal> {
@@ -24,7 +23,7 @@ public class JournalService extends GenericServiceFull<Journal> {
 		Assert.notNull(ds);
 		Assert.notNull(ds.getEntity());
 		Journal entity = ds.getEntity();
-		DsRestrictions restrictions = DsBeanFactory.getDsRestrictions();
+		DsRestrictions restrictions = getDsRestrictions();
 		if (entity.getOption().equals("entity.chineseTitle")) {
 			if (StringUtils.isNotBlank(entity.getChineseTitle())) {
 				restrictions.likeIgnoreCase("chineseTitle",
@@ -64,7 +63,7 @@ public class JournalService extends GenericServiceFull<Journal> {
 	}
 
 	public long getJouSerNoByIssn(String issn) throws Exception {
-		DsRestrictions restrictions = DsBeanFactory.getDsRestrictions();
+		DsRestrictions restrictions = getDsRestrictions();
 		restrictions.eq("issn", issn);
 
 		if (dao.findByRestrictions(restrictions).size() > 0) {

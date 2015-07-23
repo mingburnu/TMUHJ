@@ -11,7 +11,6 @@ import com.asiaworld.tmuhj.core.dao.DsRestrictions;
 import com.asiaworld.tmuhj.core.dao.GenericDao;
 import com.asiaworld.tmuhj.core.model.DataSet;
 import com.asiaworld.tmuhj.core.service.GenericServiceFull;
-import com.asiaworld.tmuhj.core.util.DsBeanFactory;
 
 @Service
 public class DatabaseService extends GenericServiceFull<Database> {
@@ -25,7 +24,7 @@ public class DatabaseService extends GenericServiceFull<Database> {
 		Assert.notNull(ds);
 		Assert.notNull(ds.getEntity());
 		Database entity = ds.getEntity();
-		DsRestrictions restrictions = DsBeanFactory.getDsRestrictions();
+		DsRestrictions restrictions = getDsRestrictions();
 
 		if (entity.getOption().equals("entity.dbChtTitle")) {
 			if (StringUtils.isNotBlank(entity.getDbChtTitle())) {
@@ -33,7 +32,7 @@ public class DatabaseService extends GenericServiceFull<Database> {
 						entity.getDbChtTitle(), MatchMode.ANYWHERE);
 			}
 		}
-		
+
 		if (entity.getOption().equals("entity.dbEngTitle")) {
 			if (StringUtils.isNotBlank(entity.getDbEngTitle())) {
 				restrictions.likeIgnoreCase("dbEngTitle",
@@ -52,7 +51,7 @@ public class DatabaseService extends GenericServiceFull<Database> {
 
 	public long getDatSerNoByBothName(String dbChtTitle, String dbEngTitle)
 			throws Exception {
-		DsRestrictions restrictions = DsBeanFactory.getDsRestrictions();
+		DsRestrictions restrictions = getDsRestrictions();
 		restrictions.customCriterion(Restrictions.and(
 				Restrictions.ilike("dbChtTitle", dbChtTitle, MatchMode.EXACT),
 				Restrictions.ilike("dbEngTitle", dbEngTitle, MatchMode.EXACT)));
@@ -65,7 +64,7 @@ public class DatabaseService extends GenericServiceFull<Database> {
 	}
 
 	public long getDatSerNoByChtName(String dbChtTitle) throws Exception {
-		DsRestrictions restrictions = DsBeanFactory.getDsRestrictions();
+		DsRestrictions restrictions = getDsRestrictions();
 
 		if (StringUtils.isNotBlank(dbChtTitle)) {
 			restrictions.likeIgnoreCase("dbChtTitle", dbChtTitle.trim(),
@@ -82,7 +81,7 @@ public class DatabaseService extends GenericServiceFull<Database> {
 	}
 
 	public long getDatSerNoByEngName(String dbEngTitle) throws Exception {
-		DsRestrictions restrictions = DsBeanFactory.getDsRestrictions();
+		DsRestrictions restrictions = getDsRestrictions();
 
 		if (StringUtils.isNotBlank(dbEngTitle)) {
 			restrictions.likeIgnoreCase("dbEngTitle", dbEngTitle.trim(),

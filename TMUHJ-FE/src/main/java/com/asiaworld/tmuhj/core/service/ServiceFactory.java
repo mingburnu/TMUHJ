@@ -1,4 +1,4 @@
-package com.asiaworld.tmuhj.core.util;
+package com.asiaworld.tmuhj.core.service;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -6,18 +6,19 @@ import java.util.Set;
 import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.BeanWrapperImpl;
 
-import com.asiaworld.tmuhj.core.dao.HibernateQueryLanguage;
-import com.asiaworld.tmuhj.core.dao.HibernateRestrictions;
 import com.asiaworld.tmuhj.core.dao.DsQueryLanguage;
 import com.asiaworld.tmuhj.core.dao.DsRestrictions;
+import com.asiaworld.tmuhj.core.dao.HibernateQueryLanguage;
+import com.asiaworld.tmuhj.core.dao.HibernateRestrictions;
+import com.asiaworld.tmuhj.core.entity.Entity;
 
 /**
- * DsBeanFactory
+ * ServiceFactory
  * 
  * @author Roderick
  * @version 2014/11/27
  */
-public class DsBeanFactory {
+public abstract class ServiceFactory<T extends Entity> implements Service<T> {
 
 	/**
 	 * Get the DsRestrictions

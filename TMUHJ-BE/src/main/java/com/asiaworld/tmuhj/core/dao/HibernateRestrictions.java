@@ -8,7 +8,6 @@ import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
-import com.asiaworld.tmuhj.core.dao.DsRestrictions;
 
 /**
  * Hibernate Restrictions

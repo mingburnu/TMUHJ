@@ -12,7 +12,7 @@ public class FeLogsService extends GenericServiceLog<FeLogs> {
 
 	@Autowired
 	private FeLogsDao dao;
-	
+
 	@Override
 	public DataSet<FeLogs> getByRestrictions(DataSet<FeLogs> ds)
 			throws Exception {

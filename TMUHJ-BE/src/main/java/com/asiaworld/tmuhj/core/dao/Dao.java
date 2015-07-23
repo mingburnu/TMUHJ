@@ -2,8 +2,6 @@ package com.asiaworld.tmuhj.core.dao;
 
 import java.util.List;
 
-import com.asiaworld.tmuhj.core.dao.DsQueryLanguage;
-import com.asiaworld.tmuhj.core.dao.DsRestrictions;
 import com.asiaworld.tmuhj.core.entity.Entity;
 import com.asiaworld.tmuhj.core.model.DataSet;
 

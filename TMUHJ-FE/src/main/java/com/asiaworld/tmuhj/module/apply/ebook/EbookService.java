@@ -17,7 +17,6 @@ import com.asiaworld.tmuhj.core.dao.DsRestrictions;
 import com.asiaworld.tmuhj.core.model.DataSet;
 import com.asiaworld.tmuhj.core.model.Pager;
 import com.asiaworld.tmuhj.core.service.GenericServiceFull;
-import com.asiaworld.tmuhj.core.util.DsBeanFactory;
 import com.asiaworld.tmuhj.module.apply.resourcesUnion.ResourcesUnion;
 import com.asiaworld.tmuhj.module.apply.resourcesUnion.ResourcesUnionService;
 
@@ -35,7 +34,7 @@ public class EbookService extends GenericServiceFull<Ebook> {
 		Assert.notNull(ds);
 		Assert.notNull(ds.getEntity());
 
-		DsRestrictions restrictions = DsBeanFactory.getDsRestrictions();
+		DsRestrictions restrictions = getDsRestrictions();
 		Ebook entity = ds.getEntity();
 		String indexTerm = entity.getIndexTerm();
 
@@ -99,7 +98,7 @@ public class EbookService extends GenericServiceFull<Ebook> {
 		Assert.notNull(ds);
 		Assert.notNull(ds.getEntity());
 
-		DsRestrictions restrictions = DsBeanFactory.getDsRestrictions();
+		DsRestrictions restrictions = getDsRestrictions();
 		Ebook entity = ds.getEntity();
 		String indexTerm = entity.getIndexTerm();
 		String option = entity.getOption();
@@ -164,7 +163,7 @@ public class EbookService extends GenericServiceFull<Ebook> {
 		Assert.notNull(ds);
 		Assert.notNull(ds.getEntity());
 
-		DsRestrictions restrictions = DsBeanFactory.getDsRestrictions();
+		DsRestrictions restrictions = getDsRestrictions();
 		Ebook entity = ds.getEntity();
 		Pager pager = ds.getPager();
 

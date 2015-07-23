@@ -17,7 +17,6 @@ import com.asiaworld.tmuhj.core.dao.DsRestrictions;
 import com.asiaworld.tmuhj.core.dao.GenericDao;
 import com.asiaworld.tmuhj.core.model.DataSet;
 import com.asiaworld.tmuhj.core.service.GenericServiceFull;
-import com.asiaworld.tmuhj.core.util.DsBeanFactory;
 import com.asiaworld.tmuhj.core.util.EncryptorUtil;
 
 /**
@@ -54,7 +53,7 @@ public class AccountNumberService extends GenericServiceFull<AccountNumber> {
 		Assert.notNull(ds.getEntity());
 
 		AccountNumber entity = ds.getEntity();
-		DsRestrictions restrictions = DsBeanFactory.getDsRestrictions();
+		DsRestrictions restrictions = getDsRestrictions();
 
 		if (StringUtils.isNotEmpty(entity.getUserId())) {
 			restrictions.eq("userId", entity.getUserId());
@@ -113,7 +112,7 @@ public class AccountNumberService extends GenericServiceFull<AccountNumber> {
 	public Boolean checkUserId(AccountNumber entity) throws Exception {
 		Assert.notNull(entity);
 
-		DsRestrictions restrictions = DsBeanFactory.getDsRestrictions();
+		DsRestrictions restrictions = getDsRestrictions();
 		restrictions.eq("userId", entity.getUserId());
 		restrictions.ne("role", Role.使用者);
 		restrictions.ne("status", Status.審核中);
@@ -130,7 +129,7 @@ public class AccountNumberService extends GenericServiceFull<AccountNumber> {
 	public Boolean checkUserPw(AccountNumber entity) throws Exception {
 		Assert.notNull(entity);
 
-		DsRestrictions restrictions = DsBeanFactory.getDsRestrictions();
+		DsRestrictions restrictions = getDsRestrictions();
 		restrictions.eq("userId", entity.getUserId());
 
 		List<AccountNumber> secUsers = dao.findByRestrictions(restrictions);
@@ -144,7 +143,7 @@ public class AccountNumberService extends GenericServiceFull<AccountNumber> {
 	}
 
 	public long getSerNoByUserId(String userId) throws Exception {
-		DsRestrictions restrictions = DsBeanFactory.getDsRestrictions();
+		DsRestrictions restrictions = getDsRestrictions();
 		restrictions.customCriterion(Restrictions.eq("userId", userId));
 
 		if (dao.findByRestrictions(restrictions).size() > 0) {
