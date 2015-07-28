@@ -45,15 +45,16 @@
 
 	//重設所有欄位(清空)
 	function resetData() {
-		goDetail('<%=request.getContextPath()%>/crud/apply.database.edit.action?'
+		goDetail('<%=request.getContextPath()%>
+	/crud/apply.database.edit.action?'
 						+ 'entity.serNo=${entity.serNo}', '資料庫-修改');
 	}
 
 	//遞交表單
 	function submitData() {
+		var data = $('#apply_database_update').serialize();
 		closeDetail();
 		clearCustomers();
-		var data = $('#apply_database_update').serialize();
 		goDetail(
 				"<c:url value = '/'/>crud/apply.database.update.action?entity.serNo=${entity.serNo}",
 				'資料庫-修改', data);

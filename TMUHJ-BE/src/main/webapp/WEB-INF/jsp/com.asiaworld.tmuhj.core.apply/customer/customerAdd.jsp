@@ -15,8 +15,8 @@
 
 	//遞交表單
 	function submitData() {
-		closeDetail();
 		var data = $('#apply_customer_save').serialize();
+		closeDetail();
 		goDetail("<c:url value = '/'/>crud/apply.customer.save.action",
 				'客戶-新增', data);
 	}

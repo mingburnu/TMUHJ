@@ -15,8 +15,8 @@
 
 	//遞交表單
 	function submitData() {
-		closeDetail();
 		var data = $('#apply_accountNumber_save').serialize();
+		closeDetail();
 		goDetail("<c:url value = '/'/>crud/apply.accountNumber.save.action",
 				'帳戶-新增', data);
 	}

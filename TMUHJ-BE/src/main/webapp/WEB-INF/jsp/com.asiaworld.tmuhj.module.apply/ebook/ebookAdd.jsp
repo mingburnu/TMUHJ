@@ -63,9 +63,9 @@
 
 	//遞交表單
 	function submitData() {
+		var data = $('#apply_ebook_save').serialize();
 		closeDetail();
 		clearCustomers();
-		var data = $('#apply_ebook_save').serialize();
 		goDetail("<c:url value = '/'/>crud/apply.ebook.save.action", '電子書-新增',
 				data);
 	}
