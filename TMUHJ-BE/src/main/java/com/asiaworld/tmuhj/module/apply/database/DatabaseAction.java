@@ -1068,7 +1068,7 @@ public class DatabaseAction extends GenericWebActionFull<Database> {
 		empinfo.put("2", new Object[] { "BMJ 醫學期刊", "BMJ  Journal",
 				"The BMJ Publishing Group Ltd", "eng", "", "", "", "N/A",
 				"N/A", "租貸", " 資料庫", "衛生福利部基隆醫院", "" });
-		empinfo.put("2", new Object[] { "BMJ 醫學期刊", "BMJ  Journal",
+		empinfo.put("3", new Object[] { "BMJ 醫學期刊", "BMJ  Journal",
 				"The BMJ Publishing Group Ltd", "eng", "", "", "", "N/A",
 				"N/A", "租貸", " 資料庫", "衛生福利部臺北醫院", "" });
 
