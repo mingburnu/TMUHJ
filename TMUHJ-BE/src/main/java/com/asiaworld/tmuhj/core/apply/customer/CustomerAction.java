@@ -410,7 +410,8 @@ public class CustomerAction extends GenericWebActionFull<Customer> {
 				}
 
 				customer = new Customer(rowValues[0], rowValues[1],
-						rowValues[2], rowValues[4], rowValues[3], "");
+						rowValues[2], rowValues[3], rowValues[4], rowValues[5],
+						"");
 
 				if (StringUtils.isBlank(customer.getName())) {
 					customer.setDataStatus("名稱空白");
@@ -657,10 +658,10 @@ public class CustomerAction extends GenericWebActionFull<Customer> {
 		// This data needs to be written (Object[])
 		Map<String, Object[]> empinfo = new LinkedHashMap<String, Object[]>();
 		empinfo.put("1", new Object[] { "name/姓名", "egName/英文姓名", "address/地址",
-				"tel/電話", "contactUserName/聯絡人" });
+				"tel/電話", "Email", "contactUserName/聯絡人" });
 
 		empinfo.put("2", new Object[] { "國防醫學中心", "ndmc", "台北市內湖區民權東路六段161號",
-				"886-2-87923100", "總機" });
+				"886-2-87923100", "ndmc@ndmc.org", "總機" });
 
 		// Iterate over data and write to sheet
 		Set<String> keyid = empinfo.keySet();

@@ -256,6 +256,7 @@ public class AccountNumberAction extends GenericWebActionFull<AccountNumber> {
 			accountNumber = accountNumberService.getBySerNo(accountNumber
 					.getSerNo());
 			setEntity(accountNumber);
+			addActionMessage("新增成功");
 			return VIEW;
 		} else {
 			setEntity(getEntity());
@@ -644,12 +645,10 @@ public class AccountNumberAction extends GenericWebActionFull<AccountNumber> {
 						if (serNo != 0) {
 							accountNumber.setDataStatus("已存在");
 						} else {
-							if (customerService.getCusSerNoByName(customer
-									.getName()) != 0) {
-								accountNumber.setCustomer(customerService
-										.getBySerNo(customerService
-												.getCusSerNoByName(rowValues[3]
-														.trim())));
+							long cusSerNo = customerService
+									.getCusSerNoByName(customer.getName());
+							if (cusSerNo != 0) {
+								accountNumber.getCustomer().setSerNo(cusSerNo);
 							}
 
 							if (getLoginUser().getRole().equals(Role.管理員)) {

@@ -1,5 +1,8 @@
 package com.asiaworld.tmuhj.module.apply.journal;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.criterion.MatchMode;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,15 +43,13 @@ public class JournalService extends GenericServiceFull<Journal> {
 
 		if (entity.getOption().equals("entity.issn")) {
 			if (StringUtils.isNotBlank(entity.getIssn())) {
-				String[] issnSpilt = entity.getIssn().split("-");
-				StringBuilder issn = new StringBuilder("");
-
-				int i = 0;
-				while (i < issnSpilt.length) {
-					issn.append(issnSpilt[i]);
-					i++;
+				String issn = entity.getIssn().trim();
+				Pattern pattern = Pattern.compile("(\\d{4})(\\-{1})(\\d{3})[\\dX]");
+				Matcher matcher = pattern.matcher(issn.toUpperCase());
+				if(matcher.matches()){
+					issn = issn.replace("-", "");
 				}
-
+				
 				restrictions.likeIgnoreCase("issn", issn.toString());
 			}
 		}

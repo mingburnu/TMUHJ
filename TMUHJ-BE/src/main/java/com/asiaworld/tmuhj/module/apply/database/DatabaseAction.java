@@ -354,6 +354,7 @@ public class DatabaseAction extends GenericWebActionFull<Database> {
 
 			database.setCustomers(customers);
 			setEntity(database);
+			addActionMessage("新增成功");
 			return VIEW;
 		} else {
 			setCategoryList();
@@ -455,6 +456,7 @@ public class DatabaseAction extends GenericWebActionFull<Database> {
 
 			database.setCustomers(customers);
 			setEntity(database);
+			addActionMessage("修改成功");
 			return VIEW;
 		} else {
 			setCategoryList();

@@ -15,6 +15,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -100,14 +102,10 @@ public class EbookAction extends GenericWebActionFull<Ebook> {
 				}
 			}
 		} else {
-			if (StringUtils.isBlank(getRequest().getParameter("entity.isbn"))
-					|| !NumberUtils.isDigits(getRequest()
-							.getParameter("entity.isbn").trim()
-							.replace("-", ""))) {
-				errorMessages.add("ISBN必須正確填寫");
+			if (StringUtils.isBlank(getRequest().getParameter("entity.isbn"))) {
+				errorMessages.add("ISBN必須填寫");
 			} else {
-				if (!isIsbn(Long.parseLong(getRequest()
-						.getParameter("entity.isbn").trim().replace("-", "")))) {
+				if (!isIsbn(getRequest().getParameter("entity.isbn"))) {
 					errorMessages.add("ISBN不正確");
 				} else {
 					if (ebookService.getEbkSerNoByIsbn(Long
@@ -189,15 +187,10 @@ public class EbookAction extends GenericWebActionFull<Ebook> {
 				}
 			} else {
 				if (StringUtils.isBlank(getRequest()
-						.getParameter("entity.isbn"))
-						|| !NumberUtils.isDigits(getRequest()
-								.getParameter("entity.isbn").trim()
-								.replace("-", ""))) {
-					errorMessages.add("ISBN必須正確填寫");
+						.getParameter("entity.isbn"))) {
+					errorMessages.add("ISBN必須填寫");
 				} else {
-					if (!isIsbn(Long.parseLong(getRequest()
-							.getParameter("entity.isbn").trim()
-							.replace("-", "")))) {
+					if (!isIsbn(getRequest().getParameter("entity.isbn"))) {
 						errorMessages.add("ISBN不正確");
 					} else {
 						long ebkSerNo = ebookService.getEbkSerNoByIsbn(Long
@@ -348,9 +341,11 @@ public class EbookAction extends GenericWebActionFull<Ebook> {
 			if (getEntity().getIsbn() == null) {
 				if (getRequest().getParameter("entity.isbn") != null
 						&& !getRequest().getParameter("entity.isbn").equals("")) {
-					if (NumberUtils.isDigits(getRequest()
-							.getParameter("entity.isbn").trim()
-							.replaceAll("-", ""))) {
+					Pattern pattern = Pattern
+							.compile("(97)([8-9])(\\-)(\\d)(\\-)(\\d{2})(\\-)(\\d{6})(\\-)(\\d)");
+					Matcher matcher = pattern.matcher(getRequest()
+							.getParameter("entity.isbn").trim());
+					if (matcher.matches()) {
 						getEntity().setIsbn(
 								Long.parseLong(getRequest()
 										.getParameter("entity.isbn").trim()
@@ -427,6 +422,7 @@ public class EbookAction extends GenericWebActionFull<Ebook> {
 
 			ebook.setCustomers(customers);
 			setEntity(ebook);
+			addActionMessage("新增成功");
 			return VIEW;
 		} else {
 			setCategoryList();
@@ -524,6 +520,7 @@ public class EbookAction extends GenericWebActionFull<Ebook> {
 
 			ebook.setCustomers(customers);
 			setEntity(ebook);
+			addActionMessage("修改成功");
 			return VIEW;
 		} else {
 			setCategoryList();
@@ -776,7 +773,7 @@ public class EbookAction extends GenericWebActionFull<Ebook> {
 						rowValues[12], Category.valueOf(category),
 						Type.valueOf(type), rowValues[15], rowValues[16]);
 
-				String isbn = rowValues[1].trim().replace("-", "");
+				String isbn = rowValues[1].trim();
 
 				Integer version = null;
 				if (NumberUtils.isNumber(rowValues[8])) {
@@ -801,6 +798,7 @@ public class EbookAction extends GenericWebActionFull<Ebook> {
 							rowValues[3], rowValues[4], rowValues[5],
 							rowValues[6], rowValues[7], version, rowValues[9],
 							rowValues[10], "", "", "");
+					customers.get(0).setMemo(isbn);
 				}
 
 				ebook.setResourcesBuyers(resourcesBuyers);
@@ -833,7 +831,31 @@ public class EbookAction extends GenericWebActionFull<Ebook> {
 						ebook.setDataStatus("ISBN異常");
 					}
 				} else {
-					ebook.setDataStatus("ISBN異常");
+					if (isIsbn(isbn)) {
+						long ebkSerNo = ebookService.getEbkSerNoByIsbn(Long
+								.parseLong(isbn.replace("-", "")));
+
+						long cusSerNo = customerService
+								.getCusSerNoByName(rowValues[17].trim());
+						if (cusSerNo != 0) {
+							if (ebkSerNo != 0) {
+								if (resourcesUnionService.isExist(
+										ebookService.getBySerNo(ebkSerNo),
+										Ebook.class, cusSerNo)) {
+									ebook.setDataStatus("已存在");
+								}
+							} else {
+								if (ebook.getResourcesBuyers().getCategory()
+										.equals(Category.不明)) {
+									ebook.setDataStatus("資源類型不明");
+								}
+							}
+						} else {
+							ebook.setDataStatus("無此客戶");
+						}
+					} else {
+						ebook.setDataStatus("ISBN異常");
+					}
 				}
 
 				if (StringUtils.isNotEmpty(ebook.getCnClassBzStr())) {
@@ -1041,7 +1063,15 @@ public class EbookAction extends GenericWebActionFull<Ebook> {
 				int index = (Integer) iterator.next();
 				ebook = (Ebook) importList.get(index);
 
-				long ebkSerNo = ebookService.getEbkSerNoByIsbn(ebook.getIsbn());
+				long ebkSerNo = 0;
+				if (ebook.getIsbn() != null) {
+					ebkSerNo = ebookService.getEbkSerNoByIsbn(ebook.getIsbn());
+				} else {
+					ebook.setIsbn(Long.parseLong(ebook.getCustomers().get(0)
+							.getMemo().replace("-", "")));
+					ebkSerNo = ebookService.getEbkSerNoByIsbn(ebook.getIsbn());
+				}
+
 				long cusSerNo = customerService.getCusSerNoByName(ebook
 						.getCustomers().get(0).getName());
 
@@ -1127,18 +1157,15 @@ public class EbookAction extends GenericWebActionFull<Ebook> {
 	protected boolean isIsbn(long isbnNum) {
 		if (isbnNum >= 9780000000000l && isbnNum < 9800000000000l) {
 			String isbn = "" + isbnNum;
-			int sum = Integer.parseInt(isbn.substring(0, 1)) * 1
-					+ Integer.parseInt(isbn.substring(1, 2)) * 3
-					+ Integer.parseInt(isbn.substring(2, 3)) * 1
-					+ Integer.parseInt(isbn.substring(3, 4)) * 3
-					+ Integer.parseInt(isbn.substring(4, 5)) * 1
-					+ Integer.parseInt(isbn.substring(5, 6)) * 3
-					+ Integer.parseInt(isbn.substring(6, 7)) * 1
-					+ Integer.parseInt(isbn.substring(7, 8)) * 3
-					+ Integer.parseInt(isbn.substring(8, 9)) * 1
-					+ Integer.parseInt(isbn.substring(9, 10)) * 3
-					+ Integer.parseInt(isbn.substring(10, 11)) * 1
-					+ Integer.parseInt(isbn.substring(11, 12)) * 3;
+
+			int sum = 0;
+			for (int i = 0; i < 12; i++) {
+				if (i % 2 == 0) {
+					sum = sum + Integer.parseInt(isbn.substring(i, i + 1)) * 1;
+				} else {
+					sum = sum + Integer.parseInt(isbn.substring(i, i + 1)) * 3;
+				}
+			}
 
 			int remainder = sum % 10;
 			int num = 10 - remainder;
@@ -1156,7 +1183,23 @@ public class EbookAction extends GenericWebActionFull<Ebook> {
 		} else {
 			return false;
 		}
+
 		return true;
+	}
+
+	protected boolean isIsbn(String isbnString) {
+		String regex = "(97)([8-9])(\\-)(\\d)(\\-)(\\d{2})(\\-)(\\d{6})(\\-)(\\d)";
+		Pattern pattern = Pattern.compile(regex);
+		Matcher matcher = pattern.matcher(isbnString);
+
+		long isbnNum = 0;
+		if (matcher.matches()) {
+			isbnNum = Long.parseLong(isbnString.replace("-", "").trim());
+		} else {
+			return false;
+		}
+
+		return isIsbn(isbnNum);
 	}
 
 	protected void setCategoryList() {

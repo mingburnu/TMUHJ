@@ -93,12 +93,12 @@
 			<tbody>
 				<tr>
 					<th></th>
-					<c:forEach var="item" items="${cellNames}" varStatus="status">
-						<c:if
-							test="${(0 eq status.index) || (1 eq status.index)||(6 eq status.index)||(9 eq status.index)||(10 eq status.index)||(11 eq status.index)}">
-							<th><esapi:encodeForHTML>${item}</esapi:encodeForHTML></th>
-						</c:if>
-					</c:forEach>
+					<th><esapi:encodeForHTML>${cellNames[0]}</esapi:encodeForHTML></th>
+					<th><esapi:encodeForHTML>${cellNames[1]}</esapi:encodeForHTML></th>
+					<th><esapi:encodeForHTML>${cellNames[6]}</esapi:encodeForHTML></th>
+					<th><esapi:encodeForHTML>${cellNames[9]}</esapi:encodeForHTML></th>
+					<th><esapi:encodeForHTML>${cellNames[10]}</esapi:encodeForHTML></th>
+					<th><esapi:encodeForHTML>${cellNames[11]}</esapi:encodeForHTML></th>
 					<th></th>
 				</tr>
 				<c:forEach var="item" items="${ds.results}" varStatus="status">

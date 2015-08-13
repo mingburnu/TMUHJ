@@ -93,12 +93,10 @@
 			<tbody>
 				<tr>
 					<th></th>
-					<c:forEach var="item" items="${cellNames}" varStatus="status">
-						<c:if
-							test="${(1 eq status.index) || (3 eq status.index)||(11 eq status.index)||(15 eq status.index)}">
-							<th><esapi:encodeForHTML>${item}</esapi:encodeForHTML></th>
-						</c:if>
-					</c:forEach>
+					<th><esapi:encodeForHTML>${cellNames[1]}</esapi:encodeForHTML></th>
+					<th><esapi:encodeForHTML>${cellNames[3]}</esapi:encodeForHTML></th>
+					<th><esapi:encodeForHTML>${cellNames[11]}</esapi:encodeForHTML></th>
+					<th><esapi:encodeForHTML>${cellNames[15]}</esapi:encodeForHTML></th>
 					<th></th>
 				</tr>
 				<c:forEach var="item" items="${ds.results}" varStatus="status">
@@ -113,7 +111,7 @@
 									<input type="checkbox" disabled="disabled">
 								</c:otherwise>
 							</c:choose></td>
-						<td><<esapi:encodeForHTML>${item.englishTitle }</esapi:encodeForHTML></td>
+						<td><esapi:encodeForHTML>${item.englishTitle }</esapi:encodeForHTML></td>
 						<td><esapi:encodeForHTML>${item.issn }</esapi:encodeForHTML></td>
 						<td>${item.resourcesBuyers.category.category }</td>
 						<td align="center"><c:forEach var="customer"

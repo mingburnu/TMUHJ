@@ -160,14 +160,14 @@ public class Customer extends GenericEntityFull {
 	}
 
 	public Customer(String name, String engName, String address, String tel,
-			String contactUserName, String memo) {
+			String email, String contactUserName, String memo) {
 		super();
 		this.name = name;
 		this.engName = engName;
 		this.address = address;
 		this.tel = tel;
+		this.email = email;
 		this.contactUserName = contactUserName;
 		this.memo = memo;
 	}
-
 }

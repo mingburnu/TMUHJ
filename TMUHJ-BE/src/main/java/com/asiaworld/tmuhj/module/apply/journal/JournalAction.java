@@ -726,8 +726,7 @@ public class JournalAction extends GenericWebActionFull<Journal> {
 						rowValues[10], Category.valueOf(category),
 						Type.valueOf(type), rowValues[13], rowValues[14]);
 
-				String issn = rowValues[3].trim().replace("-", "")
-						.toUpperCase();
+				String issn = rowValues[3].trim().toUpperCase();
 
 				customer = new Customer();
 				customer.setName(rowValues[15].trim());
@@ -743,7 +742,8 @@ public class JournalAction extends GenericWebActionFull<Journal> {
 				journal.setCustomers(customers);
 
 				if (isIssn(issn)) {
-					long jouSerNo = journalService.getJouSerNoByIssn(issn);
+					long jouSerNo = journalService.getJouSerNoByIssn(issn
+							.replace("-", ""));
 
 					long cusSerNo = customerService
 							.getCusSerNoByName(rowValues[15].trim());
@@ -967,6 +967,7 @@ public class JournalAction extends GenericWebActionFull<Journal> {
 			while (iterator.hasNext()) {
 				int index = (Integer) iterator.next();
 				journal = (Journal) importList.get(index);
+				journal.setIssn(journal.getIssn().replace("-", ""));
 
 				long jouSerNo = journalService.getJouSerNoByIssn(journal
 						.getIssn());
@@ -991,7 +992,7 @@ public class JournalAction extends GenericWebActionFull<Journal> {
 							jouSerNo), getLoginUser());
 				}
 
-				successCount = successCount + 1;
+				++successCount;
 			}
 
 			getRequest().setAttribute("successCount", successCount);
@@ -1049,19 +1050,18 @@ public class JournalAction extends GenericWebActionFull<Journal> {
 	}
 
 	protected boolean isIssn(String issn) {
-		String regex = "\\d{7}[\\dX]";
+		String regex = "(\\d{4})(\\-?)(\\d{3})[\\dX]";
 		Pattern pattern = Pattern.compile(regex);
-		issn = issn.replace("-", "").trim();
+		issn = issn.trim();
 
 		Matcher matcher = pattern.matcher(issn.toUpperCase());
 		if (matcher.matches()) {
-			int sum = Integer.parseInt(issn.substring(0, 1)) * 8
-					+ Integer.parseInt(issn.substring(1, 2)) * 7
-					+ Integer.parseInt(issn.substring(2, 3)) * 6
-					+ Integer.parseInt(issn.substring(3, 4)) * 5
-					+ Integer.parseInt(issn.substring(4, 5)) * 4
-					+ Integer.parseInt(issn.substring(5, 6)) * 3
-					+ Integer.parseInt(issn.substring(6, 7)) * 2;
+			issn = issn.replace("-", "");
+			int sum = 0;
+			for (int i = 0; i < 7; i++) {
+				sum = sum + Integer.parseInt(issn.substring(i, i + 1))
+						* (8 - i);
+			}
 
 			int remainder = sum % 11;
 
