@@ -743,7 +743,7 @@ public class EbookAction extends GenericWebActionFull<Ebook> {
 				}
 
 				String category = "";
-				if (rowValues[13] == null || rowValues[13].trim().equals("")) {
+				if (StringUtils.isBlank(rowValues[13])) {
 					category = Category.未註明.getCategory();
 				} else {
 					Object object = getEnum(
@@ -757,15 +757,15 @@ public class EbookAction extends GenericWebActionFull<Ebook> {
 				}
 
 				String type = "";
-				if (rowValues[14] == null || rowValues[14].trim().equals("")) {
-					type = Type.資料庫.getType();
+				if (StringUtils.isBlank(rowValues[14])) {
+					type = Type.電子書.getType();
 				} else {
 					Object object = getEnum(
 							new String[] { rowValues[14].trim() }, Type.class);
 					if (object != null) {
 						type = rowValues[14].trim();
 					} else {
-						type = Type.資料庫.getType();
+						type = Type.電子書.getType();
 					}
 				}
 
@@ -812,6 +812,7 @@ public class EbookAction extends GenericWebActionFull<Ebook> {
 						long cusSerNo = customerService
 								.getCusSerNoByName(rowValues[17].trim());
 						if (cusSerNo != 0) {
+							customers.get(0).setSerNo(cusSerNo);
 							if (ebkSerNo != 0) {
 								if (resourcesUnionService.isExist(
 										ebookService.getBySerNo(ebkSerNo),
@@ -838,6 +839,7 @@ public class EbookAction extends GenericWebActionFull<Ebook> {
 						long cusSerNo = customerService
 								.getCusSerNoByName(rowValues[17].trim());
 						if (cusSerNo != 0) {
+							customers.get(0).setSerNo(cusSerNo);
 							if (ebkSerNo != 0) {
 								if (resourcesUnionService.isExist(
 										ebookService.getBySerNo(ebkSerNo),
@@ -1072,24 +1074,21 @@ public class EbookAction extends GenericWebActionFull<Ebook> {
 					ebkSerNo = ebookService.getEbkSerNoByIsbn(ebook.getIsbn());
 				}
 
-				long cusSerNo = customerService.getCusSerNoByName(ebook
-						.getCustomers().get(0).getName());
-
 				if (ebkSerNo == 0) {
 					resourcesBuyers = resourcesBuyersService.save(
 							ebook.getResourcesBuyers(), getLoginUser());
 					ebook = ebookService.save(ebook, getLoginUser());
-					resourcesUnionService.save(new ResourcesUnion(
-							customerService.getBySerNo(cusSerNo),
-							resourcesBuyers, ebook.getSerNo(), 0L, 0L),
+					resourcesUnionService.save(
+							new ResourcesUnion(ebook.getCustomers().get(0),
+									resourcesBuyers, ebook.getSerNo(), 0L, 0L),
 							getLoginUser());
 				} else {
 					resourcesUnion = resourcesUnionService.getByObjSerNo(
 							ebkSerNo, Ebook.class);
-					resourcesUnionService.save(new ResourcesUnion(
-							customerService.getBySerNo(cusSerNo),
-							resourcesUnion.getResourcesBuyers(), ebkSerNo, 0L,
-							0L), getLoginUser());
+					resourcesUnionService.save(
+							new ResourcesUnion(ebook.getCustomers().get(0),
+									resourcesUnion.getResourcesBuyers(),
+									ebkSerNo, 0L, 0L), getLoginUser());
 				}
 
 				++successCount;

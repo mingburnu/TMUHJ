@@ -7,7 +7,7 @@ import javax.persistence.MappedSuperclass;
 import javax.persistence.Transient;
 
 @MappedSuperclass
-public abstract class FileIoProperties extends CheckArray {
+public abstract class FileIoProperties implements Entity {
 
 	/**
 	 * 
@@ -26,49 +26,102 @@ public abstract class FileIoProperties extends CheckArray {
 	@Transient
 	private String dataStatus;
 
+	@Transient
+	private Integer[] importItem;
+
 	/** export file name */
 	@Transient
 	private String reportFile;
-	
-	@Transient
-	private InputStream inputStream; 
 
+	@Transient
+	private InputStream inputStream;
+
+	/**
+	 * @return the file
+	 */
 	public File[] getFile() {
 		return file;
 	}
 
+	/**
+	 * @param file
+	 *            the file to set
+	 */
 	public void setFile(File[] file) {
 		this.file = file;
 	}
 
+	/**
+	 * @return the fileFileName
+	 */
 	public String[] getFileFileName() {
 		return fileFileName;
 	}
 
+	/**
+	 * @param fileFileName
+	 *            the fileFileName to set
+	 */
 	public void setFileFileName(String[] fileFileName) {
 		this.fileFileName = fileFileName;
 	}
 
+	/**
+	 * @return the fileContentType
+	 */
 	public String[] getFileContentType() {
 		return fileContentType;
 	}
 
+	/**
+	 * @param fileContentType
+	 *            the fileContentType to set
+	 */
 	public void setFileContentType(String[] fileContentType) {
 		this.fileContentType = fileContentType;
 	}
 
+	/**
+	 * @return the dataStatus
+	 */
 	public String getDataStatus() {
 		return dataStatus;
 	}
 
+	/**
+	 * @param dataStatus
+	 *            the dataStatus to set
+	 */
 	public void setDataStatus(String dataStatus) {
 		this.dataStatus = dataStatus;
 	}
 
+	/**
+	 * @return the importItem
+	 */
+	public Integer[] getImportItem() {
+		return importItem;
+	}
+
+	/**
+	 * @param importItem
+	 *            the importItem to set
+	 */
+	public void setImportItem(Integer[] importItem) {
+		this.importItem = importItem;
+	}
+
+	/**
+	 * @return the reportFile
+	 */
 	public String getReportFile() {
 		return reportFile;
 	}
 
+	/**
+	 * @param reportFile
+	 *            the reportFile to set
+	 */
 	public void setReportFile(String reportFile) {
 		this.reportFile = reportFile;
 	}
@@ -81,7 +134,8 @@ public abstract class FileIoProperties extends CheckArray {
 	}
 
 	/**
-	 * @param inputStream the inputStream to set
+	 * @param inputStream
+	 *            the inputStream to set
 	 */
 	public void setInputStream(InputStream inputStream) {
 		this.inputStream = inputStream;

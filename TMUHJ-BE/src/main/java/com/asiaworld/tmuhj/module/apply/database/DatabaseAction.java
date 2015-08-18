@@ -726,6 +726,7 @@ public class DatabaseAction extends GenericWebActionFull<Database> {
 						.trim());
 
 				if (cusSerNo != 0) {
+					customers.get(0).setSerNo(cusSerNo);
 					if (StringUtils.isNotBlank(database.getDbChtTitle())
 							|| StringUtils.isNotBlank(database.getDbEngTitle())) {
 						long datSerNoByChtName = databaseService
@@ -1019,25 +1020,22 @@ public class DatabaseAction extends GenericWebActionFull<Database> {
 
 				long datSerNo = databaseService.getDatSerNoByBothName(
 						database.getDbChtTitle(), database.getDbEngTitle());
-				long cusSerNo = customerService.getCusSerNoByName(database
-						.getCustomers().get(0).getName());
 
 				if (datSerNo == 0) {
 					resourcesBuyers = resourcesBuyersService.save(
 							database.getResourcesBuyers(), getLoginUser());
 					database = databaseService.save(database, getLoginUser());
 
-					resourcesUnionService.save(new ResourcesUnion(
-							customerService.getBySerNo(cusSerNo),
-							resourcesBuyers, 0L, database.getSerNo(), 0L),
-							getLoginUser());
+					resourcesUnionService.save(new ResourcesUnion(database
+							.getCustomers().get(0), resourcesBuyers, 0L,
+							database.getSerNo(), 0L), getLoginUser());
 				} else {
 					resourcesUnion = resourcesUnionService.getByObjSerNo(
 							datSerNo, Database.class);
-					resourcesUnionService.save(new ResourcesUnion(
-							customerService.getBySerNo(cusSerNo),
-							resourcesUnion.getResourcesBuyers(), 0L, datSerNo,
-							0L), getLoginUser());
+					resourcesUnionService.save(
+							new ResourcesUnion(database.getCustomers().get(0),
+									resourcesUnion.getResourcesBuyers(), 0L,
+									datSerNo, 0L), getLoginUser());
 				}
 
 				++successCount;

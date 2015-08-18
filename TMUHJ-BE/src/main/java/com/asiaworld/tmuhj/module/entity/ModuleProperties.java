@@ -26,19 +26,51 @@ public abstract class ModuleProperties extends GenericEntityFull {
 	@Transient
 	private List<Customer> customers;
 
+	@Transient
+	private Long[] cusSerNo;
+
+	/**
+	 * @return the resourcesBuyers
+	 */
 	public ResourcesBuyers getResourcesBuyers() {
 		return resourcesBuyers;
 	}
 
+	/**
+	 * @param resourcesBuyers
+	 *            the resourcesBuyers to set
+	 */
 	public void setResourcesBuyers(ResourcesBuyers resourcesBuyers) {
 		this.resourcesBuyers = resourcesBuyers;
 	}
 
+	/**
+	 * @return the customers
+	 */
 	public List<Customer> getCustomers() {
 		return customers;
 	}
 
+	/**
+	 * @param customers
+	 *            the customers to set
+	 */
 	public void setCustomers(List<Customer> customers) {
 		this.customers = customers;
+	}
+
+	/**
+	 * @return the cusSerNo
+	 */
+	public Long[] getCusSerNo() {
+		return cusSerNo;
+	}
+
+	/**
+	 * @param cusSerNo
+	 *            the cusSerNo to set
+	 */
+	public void setCusSerNo(Long[] cusSerNo) {
+		this.cusSerNo = cusSerNo;
 	}
 }

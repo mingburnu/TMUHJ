@@ -44,7 +44,7 @@ public class JournalService extends GenericServiceFull<Journal> {
 		if (entity.getOption().equals("entity.issn")) {
 			if (StringUtils.isNotBlank(entity.getIssn())) {
 				String issn = entity.getIssn().trim();
-				Pattern pattern = Pattern.compile("(\\d{4})(\\-{1})(\\d{3})[\\dX]");
+				Pattern pattern = Pattern.compile("(\\d{4})(\\-?)(\\d{3})[\\dX]");
 				Matcher matcher = pattern.matcher(issn.toUpperCase());
 				if(matcher.matches()){
 					issn = issn.replace("-", "");
