@@ -678,36 +678,31 @@ public class DatabaseAction extends GenericWebActionFull<Database> {
 					k++;
 				}
 
-				String category = "";
-				if (StringUtils.isBlank(rowValues[9])) {
-					category = Category.未註明.getCategory();
+				Category category = null;
+				Object objCategory = getEnum(
+						new String[] { rowValues[9].trim() }, Category.class);
+				if (objCategory != null) {
+					category = (Category) objCategory;
 				} else {
-					Object object = getEnum(
-							new String[] { rowValues[9].trim() },
-							Category.class);
-					if (object != null) {
-						category = rowValues[9].trim();
+					if (StringUtils.isBlank(rowValues[9])) {
+						category = Category.未註明;
 					} else {
-						category = Category.不明.getCategory();
+						category = Category.不明;
 					}
 				}
 
-				String type = "";
-				if (StringUtils.isBlank(rowValues[10])) {
-					type = Type.資料庫.getType();
+				Type type = null;
+				Object objType = getEnum(new String[] { rowValues[10].trim() },
+						Type.class);
+				if (objType != null) {
+					type = (Type) objType;
 				} else {
-					Object object = getEnum(
-							new String[] { rowValues[10].trim() }, Type.class);
-					if (object != null) {
-						type = rowValues[10].trim();
-					} else {
-						type = Type.資料庫.getType();
-					}
+					type = Type.資料庫;
 				}
 
 				resourcesBuyers = new ResourcesBuyers(rowValues[7],
-						rowValues[8], Category.valueOf(category),
-						Type.valueOf(type), rowValues[0], rowValues[1]);
+						rowValues[8], category, type, rowValues[0],
+						rowValues[1]);
 
 				customer = new Customer();
 				customer.setName(rowValues[11].trim());

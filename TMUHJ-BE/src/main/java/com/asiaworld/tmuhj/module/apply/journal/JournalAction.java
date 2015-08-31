@@ -695,36 +695,31 @@ public class JournalAction extends GenericWebActionFull<Journal> {
 					k++;
 				}
 
-				String category = "";
-				if (StringUtils.isBlank(rowValues[11])) {
-					category = Category.未註明.getCategory();
+				Category category = null;
+				Object objCategory = getEnum(
+						new String[] { rowValues[11].trim() }, Category.class);
+				if (objCategory != null) {
+					category = (Category) objCategory;
 				} else {
-					Object object = getEnum(
-							new String[] { rowValues[11].trim() },
-							Category.class);
-					if (object != null) {
-						category = rowValues[11].trim();
+					if (StringUtils.isBlank(rowValues[11])) {
+						category = Category.未註明;
 					} else {
-						category = Category.不明.getCategory();
+						category = Category.不明;
 					}
 				}
 
-				String type = "";
-				if (StringUtils.isBlank(rowValues[12])) {
-					type = Type.期刊.getType();
+				Type type = null;
+				Object objType = getEnum(new String[] { rowValues[12].trim() },
+						Type.class);
+				if (objType != null) {
+					type = (Type) objType;
 				} else {
-					Object object = getEnum(
-							new String[] { rowValues[12].trim() }, Type.class);
-					if (object != null) {
-						type = rowValues[12].trim();
-					} else {
-						type = Type.期刊.getType();
-					}
+					type = Type.期刊;
 				}
 
 				resourcesBuyers = new ResourcesBuyers(rowValues[9],
-						rowValues[10], Category.valueOf(category),
-						Type.valueOf(type), rowValues[13], rowValues[14]);
+						rowValues[10], category, type, rowValues[13],
+						rowValues[14]);
 
 				String issn = rowValues[3].trim().toUpperCase();
 

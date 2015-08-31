@@ -742,36 +742,31 @@ public class EbookAction extends GenericWebActionFull<Ebook> {
 					k++;
 				}
 
-				String category = "";
-				if (StringUtils.isBlank(rowValues[13])) {
-					category = Category.未註明.getCategory();
+				Category category = null;
+				Object objCategory = getEnum(
+						new String[] { rowValues[13].trim() }, Category.class);
+				if (objCategory != null) {
+					category = (Category) objCategory;
 				} else {
-					Object object = getEnum(
-							new String[] { rowValues[13].trim() },
-							Category.class);
-					if (object != null) {
-						category = rowValues[13].trim();
+					if (StringUtils.isBlank(rowValues[13])) {
+						category = Category.未註明;
 					} else {
-						category = Category.不明.getCategory();
+						category = Category.不明;
 					}
 				}
 
-				String type = "";
-				if (StringUtils.isBlank(rowValues[14])) {
-					type = Type.電子書.getType();
+				Type type = null;
+				Object objType = getEnum(new String[] { rowValues[14].trim() },
+						Type.class);
+				if (objType != null) {
+					type = (Type) objType;
 				} else {
-					Object object = getEnum(
-							new String[] { rowValues[14].trim() }, Type.class);
-					if (object != null) {
-						type = rowValues[14].trim();
-					} else {
-						type = Type.電子書.getType();
-					}
+					type = Type.電子書;
 				}
 
 				resourcesBuyers = new ResourcesBuyers(rowValues[11],
-						rowValues[12], Category.valueOf(category),
-						Type.valueOf(type), rowValues[15], rowValues[16]);
+						rowValues[12], category, type, rowValues[15],
+						rowValues[16]);
 
 				String isbn = rowValues[1].trim();
 
