@@ -97,7 +97,7 @@ input#customer_name {
 			<tr>
 				<th width="130">ISBN<span class="required">(&#8226;)</span></th>
 				<td><input type="text" name="entity.isbn" class="input_text"
-					id="apply_ebook_save_entity_isbn"
+					id="apply_ebook_update_entity_isbn"
 					value="<esapi:encodeForHTMLAttribute><%=isbn%></esapi:encodeForHTMLAttribute>">
 				</td>
 			</tr>

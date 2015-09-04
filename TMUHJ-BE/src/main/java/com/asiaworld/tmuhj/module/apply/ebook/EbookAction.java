@@ -339,13 +339,9 @@ public class EbookAction extends GenericWebActionFull<Ebook> {
 
 		if (getEntity().getOption().equals("entity.isbn")) {
 			if (getEntity().getIsbn() == null) {
-				if (getRequest().getParameter("entity.isbn") != null
-						&& !getRequest().getParameter("entity.isbn").equals("")) {
-					Pattern pattern = Pattern
-							.compile("(97)([8-9])(\\-)(\\d)(\\-)(\\d{2})(\\-)(\\d{6})(\\-)(\\d)");
-					Matcher matcher = pattern.matcher(getRequest()
-							.getParameter("entity.isbn").trim());
-					if (matcher.matches()) {
+				if (StringUtils.isNotEmpty(getRequest().getParameter(
+						"entity.isbn"))) {
+					if (isIsbn(getRequest().getParameter("entity.isbn").trim())) {
 						getEntity().setIsbn(
 								Long.parseLong(getRequest()
 										.getParameter("entity.isbn").trim()
