@@ -44,7 +44,7 @@ public class BeLogsDao extends ModuleDaoLog<BeLogs> {
 		Query listQuery = null;
 		SQLQuery totalQuery = null;
 		if (entity.getEnd() != null) {
-			String listHql = "SELECT B.accountNumber, B.customer, B.customer.serNo, B.actionType, count(B.accountNumber) FROM BeLogs B WHERE B.cDTime >'"
+			String listHql = "SELECT B.accountNumber, B.customer, B.actionType, count(B.accountNumber) FROM BeLogs B WHERE B.cDTime >'"
 					+ start
 					+ "' and B.cDTime <'"
 					+ end
@@ -69,7 +69,7 @@ public class BeLogsDao extends ModuleDaoLog<BeLogs> {
 			listQuery = getSession().createQuery(listHql);
 			totalQuery = getSession().createSQLQuery(countSql);
 		} else {
-			String listHql = "SELECT B.accountNumber, B.customer, B.customer.serNo, B.actionType, count(B.accountNumber) FROM BeLogs B WHERE B.cDTime >'"
+			String listHql = "SELECT B.accountNumber, B.customer, B.actionType, count(B.accountNumber) FROM BeLogs B WHERE B.cDTime >'"
 					+ start
 					+ "' and B.customer.serNo ='"
 					+ entity.getCustomer().getSerNo()
@@ -103,9 +103,9 @@ public class BeLogsDao extends ModuleDaoLog<BeLogs> {
 		while (iterator.hasNext()) {
 			Object[] row = (Object[]) iterator.next();
 
-			beLogs = new BeLogs(Act.valueOf(row[3].toString()),
+			beLogs = new BeLogs(Act.valueOf(row[2].toString()),
 					(AccountNumber) row[0], (Customer) row[1]);
-			beLogs.setCount(Integer.parseInt(row[4].toString()));
+			beLogs.setCount(Integer.parseInt(row[3].toString()));
 			beLogs.setRank(i + ds.getPager().getOffset() + 1);
 			ranks.add(beLogs);
 			i++;

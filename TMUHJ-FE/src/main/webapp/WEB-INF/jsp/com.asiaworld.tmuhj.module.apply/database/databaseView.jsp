@@ -30,12 +30,18 @@
 
 		<table width="100%" border="0" cellpadding="0" cellspacing="0"
 			class="table_03">
-			<c:if test="${not empty entity.dbChtTitle}">
-				<tr>
-					<td class="t_01">題名</td>
-					<td class="t_02"><esapi:encodeForHTML>${entity.dbChtTitle }</esapi:encodeForHTML></td>
-				</tr>
-			</c:if>
+			<tr>
+				<td class="t_01">題名</td>
+				<td class="t_02"><c:choose>
+						<c:when test="${not empty entity.dbEngTitle}">
+							<esapi:encodeForHTML>${entity.dbEngTitle }</esapi:encodeForHTML>
+						</c:when>
+						<c:otherwise>
+							<esapi:encodeForHTML>${entity.dbChtTitle }</esapi:encodeForHTML>
+						</c:otherwise>
+					</c:choose></td>
+			</tr>
+
 			<c:if test="${not empty entity.includedSpecies}">
 				<tr>
 					<td class="t_01">類型</td>
@@ -44,14 +50,14 @@
 			</c:if>
 			<c:if test="${not empty entity.content}">
 				<tr>
-					<td class="t_01">出版社</td>
+					<td class="t_01">內容描述</td>
 					<td class="t_02"><esapi:encodeForHTML>${entity.content }</esapi:encodeForHTML></td>
 				</tr>
 			</c:if>
-			<c:if test="${not empty entity.dbChtTitle}">
+			<c:if test="${not empty entity.publishName}">
 				<tr>
-					<td class="t_01">內容描述</td>
-					<td class="t_02"><esapi:encodeForHTML>${entity.dbChtTitle }</esapi:encodeForHTML></td>
+					<td class="t_01">出版社</td>
+					<td class="t_02"><esapi:encodeForHTML>${entity.publishname }</esapi:encodeForHTML></td>
 				</tr>
 			</c:if>
 			<c:if test="${not empty entity.indexedYears }">

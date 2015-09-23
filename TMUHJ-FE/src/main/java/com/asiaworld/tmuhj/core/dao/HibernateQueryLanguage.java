@@ -7,6 +7,7 @@ import com.asiaworld.tmuhj.core.dao.DsQueryLanguage;
 
 /**
  * HQL
+ * 
  * @author Roderick
  * @version 2014/11/6
  */
@@ -17,18 +18,18 @@ public class HibernateQueryLanguage implements DsQueryLanguage {
 	 */
 	private static final long serialVersionUID = 456532219336289896L;
 
-	private String sql;
-	
+	private String hql;
+
 	private Map<String, Object> parameters = new HashMap<String, Object>();
-	
+
 	@Override
-	public String getSql() {
-		return sql;
+	public String getHql() {
+		return hql;
 	}
-	
+
 	@Override
-	public void setSql(String sql) {
-		this.sql = sql;
+	public void setHql(String hql) {
+		this.hql = hql;
 	}
 
 	@Override

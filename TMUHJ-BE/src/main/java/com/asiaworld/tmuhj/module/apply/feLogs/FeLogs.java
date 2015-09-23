@@ -1,6 +1,5 @@
 package com.asiaworld.tmuhj.module.apply.feLogs;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -46,7 +45,7 @@ public class FeLogs extends GenericEntityLog {
 	/**
 	 * 用戶流水號
 	 */
-	@ManyToOne(cascade = CascadeType.DETACH)
+	@ManyToOne
 	@JoinColumn(name = "cus_serNo", nullable = false)
 	@Autowired
 	private Customer customer;
@@ -54,7 +53,7 @@ public class FeLogs extends GenericEntityLog {
 	/**
 	 * 帳戶流水號
 	 */
-	@ManyToOne(cascade = CascadeType.DETACH)
+	@ManyToOne
 	@JoinColumn(name = "acc_SerNo", nullable = true)
 	@Autowired
 	private AccountNumber accountNumber;

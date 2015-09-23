@@ -44,7 +44,7 @@ public class SearchActionInterceptor extends RootInterceptor {
 	@Override
 	public String intercept(ActionInvocation invocation) throws Exception {
 		removeErrorParameters(invocation);
-		
+
 		HttpServletRequest request = ServletActionContext.getRequest();
 
 		Map<String, Object> session = invocation.getInvocationContext()
@@ -131,15 +131,15 @@ public class SearchActionInterceptor extends RootInterceptor {
 				if (accountNumber.getSerNo() != null) {
 					feLogsService.save(
 							new FeLogs(Act.綜合查詢, request
-									.getParameter("keywords"), accountNumber
-									.getCustomer(), accountNumber, 0L, 0L, 0L),
-							accountNumber);
+									.getParameter("entity.indexTerm"),
+									accountNumber.getCustomer(), accountNumber,
+									0L, 0L, 0L), accountNumber);
 				} else {
 					feLogsService.save(
 							new FeLogs(Act.綜合查詢, request
-									.getParameter("keywords"), accountNumber
-									.getCustomer(), null, 0L, 0L, 0L),
-							accountNumber);
+									.getParameter("entity.indexTerm"),
+									accountNumber.getCustomer(), null, 0L, 0L,
+									0L), accountNumber);
 				}
 
 			}
@@ -153,15 +153,15 @@ public class SearchActionInterceptor extends RootInterceptor {
 				if (accountNumber.getSerNo() != null) {
 					feLogsService.save(
 							new FeLogs(Act.項目查詢, request
-									.getParameter("keywords"), accountNumber
-									.getCustomer(), accountNumber, 0L, 0L, 0L),
-							accountNumber);
+									.getParameter("entity.indexTerm"),
+									accountNumber.getCustomer(), accountNumber,
+									0L, 0L, 0L), accountNumber);
 				} else {
 					feLogsService.save(
 							new FeLogs(Act.項目查詢, request
-									.getParameter("keywords"), accountNumber
-									.getCustomer(), null, 0L, 0L, 0L),
-							accountNumber);
+									.getParameter("entity.indexTerm"),
+									accountNumber.getCustomer(), null, 0L, 0L,
+									0L), accountNumber);
 				}
 			}
 		}

@@ -138,7 +138,7 @@ function view(serNo){
 								<td>${orderInt}</td>
 								<td><a onclick="view(${item.serNo})"><esapi:encodeForHTML>${item.bookName}</esapi:encodeForHTML></a></td>
 								<td><esapi:encodeForHTML>${item.autherName}</esapi:encodeForHTML></td>
-								<td><<esapi:encodeForHTML>${item.publishName}</esapi:encodeForHTML></td>
+								<td><esapi:encodeForHTML>${item.publishName}</esapi:encodeForHTML></td>
 							</tr>
 						</c:when>
 						<c:otherwise>

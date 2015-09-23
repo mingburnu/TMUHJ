@@ -139,11 +139,11 @@ public abstract class GenericHibernateDao<T extends Entity> extends
 	}
 
 	@Override
-	public List<?> findByQL(DsQueryLanguage dsQL) {
+	public List<?> findByHQL(DsQueryLanguage dsQL) {
 		Assert.notNull(dsQL);
-		Assert.notNull(dsQL.getSql());
+		Assert.notNull(dsQL.getHql());
 
-		Query query = getSession().createQuery(dsQL.getSql());
+		Query query = getSession().createQuery(dsQL.getHql());
 		for (Entry<String, Object> keyValue : dsQL.getParameters().entrySet()) {
 			query.setParameter(keyValue.getKey(), keyValue.getValue());
 		}

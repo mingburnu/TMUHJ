@@ -43,7 +43,7 @@ public class FeLogsDao extends ModuleDaoLog<FeLogs> {
 		Query listQuery = null;
 		SQLQuery totalQuery = null;
 		if (entity.getEnd() != null) {
-			String listHql = "SELECT F.customer, F.customer.serNo, F.keyword, count(F.keyword) FROM FeLogs F WHERE F.cDTime >'"
+			String listHql = "SELECT F.customer, F.keyword, count(F.keyword) FROM FeLogs F WHERE F.cDTime >'"
 					+ start
 					+ "' and F.cDTime <'"
 					+ end
@@ -68,7 +68,7 @@ public class FeLogsDao extends ModuleDaoLog<FeLogs> {
 			listQuery = getSession().createQuery(listHql);
 			totalQuery = getSession().createSQLQuery(countSql);
 		} else {
-			String listHql = "SELECT F.customer, F.customer.serNo, F.keyword, count(F.keyword) FROM FeLogs F WHERE F.cDTime >'"
+			String listHql = "SELECT F.customer, F.keyword, count(F.keyword) FROM FeLogs F WHERE F.cDTime >'"
 					+ start
 					+ "' and F.customer.serNo ='"
 					+ entity.getCustomer().getSerNo()
@@ -101,9 +101,9 @@ public class FeLogsDao extends ModuleDaoLog<FeLogs> {
 		int i = 0;
 		while (iterator.hasNext()) {
 			Object[] row = (Object[]) iterator.next();
-			feLogs = new FeLogs(Act.綜合查詢, row[2].toString(), (Customer) row[0],
+			feLogs = new FeLogs(Act.綜合查詢, row[1].toString(), (Customer) row[0],
 					null, 0L, 0L, 0L);
-			feLogs.setCount(Integer.parseInt(row[3].toString()));
+			feLogs.setCount(Integer.parseInt(row[2].toString()));
 			feLogs.setRank(i + ds.getPager().getOffset() + 1);
 			ranks.add(feLogs);
 			i++;
