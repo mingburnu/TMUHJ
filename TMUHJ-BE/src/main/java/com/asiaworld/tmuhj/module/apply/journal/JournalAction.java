@@ -15,7 +15,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletResponse;
@@ -95,7 +94,7 @@ public class JournalAction extends GenericWebActionFull<Journal> {
 		if (StringUtils.isBlank(getEntity().getIssn())) {
 			errorMessages.add("ISSN不得空白");
 		} else {
-			if (!isIssn(getEntity().getIssn())) {
+			if (!ISSN_Validator.isIssn(getEntity().getIssn())) {
 				errorMessages.add("ISSN不正確");
 			} else {
 				if (journalService.getJouSerNoByIssn(getEntity().getIssn()
@@ -158,7 +157,7 @@ public class JournalAction extends GenericWebActionFull<Journal> {
 			if (StringUtils.isBlank(getEntity().getIssn())) {
 				errorMessages.add("ISSN不得空白");
 			} else {
-				if (!isIssn(getEntity().getIssn())) {
+				if (!ISSN_Validator.isIssn(getEntity().getIssn())) {
 					errorMessages.add("ISSN不正確");
 				} else {
 					long jouSerNo = journalService
@@ -579,8 +578,10 @@ public class JournalAction extends GenericWebActionFull<Journal> {
 		if (!hasActionErrors()) {
 			Workbook book = createWorkBook(new FileInputStream(getEntity()
 					.getFile()[0]));
-			// book.getNumberOfSheets(); 判斷Excel文件有多少個sheet
-			Sheet sheet = book.getSheetAt(0);
+			Sheet sheet = book.createSheet();
+			if (book.getNumberOfSheets() != 0) {
+				sheet = book.getSheetAt(0);
+			}
 
 			Row firstRow = sheet.getRow(0);
 			if (firstRow == null) {
@@ -736,7 +737,7 @@ public class JournalAction extends GenericWebActionFull<Journal> {
 				journal.setResourcesBuyers(resourcesBuyers);
 				journal.setCustomers(customers);
 
-				if (isIssn(issn)) {
+				if (ISSN_Validator.isIssn(issn)) {
 					long jouSerNo = journalService.getJouSerNoByIssn(issn
 							.replace("-", ""));
 
@@ -1040,46 +1041,6 @@ public class JournalAction extends GenericWebActionFull<Journal> {
 				.setInputStream(new ByteArrayInputStream(boas.toByteArray()));
 
 		return XLSX;
-	}
-
-	protected boolean isIssn(String issn) {
-		String regex = "(\\d{4})(\\-?)(\\d{3})[\\dX]";
-		Pattern pattern = Pattern.compile(regex);
-		issn = issn.trim();
-
-		Matcher matcher = pattern.matcher(issn.toUpperCase());
-		if (matcher.matches()) {
-			issn = issn.replace("-", "");
-			int sum = 0;
-			for (int i = 0; i < 7; i++) {
-				sum = sum + Integer.parseInt(issn.substring(i, i + 1))
-						* (8 - i);
-			}
-
-			int remainder = sum % 11;
-
-			if (remainder == 0) {
-				if (!issn.substring(7).equals("0")) {
-					return false;
-				}
-			} else {
-				if (11 - remainder == 10) {
-					if (!issn.substring(7).toUpperCase().equals("X")) {
-						return false;
-					}
-				} else {
-					if (issn.substring(7).equals("X")
-							|| issn.substring(7).equals("x")
-							|| Integer.parseInt(issn.substring(7)) != 11 - remainder) {
-						return false;
-					}
-				}
-			}
-
-		} else {
-			return false;
-		}
-		return true;
 	}
 
 	protected boolean isLCC(String LCC) {

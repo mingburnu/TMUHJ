@@ -1,10 +1,13 @@
 package com.asiaworld.tmuhj.module.apply.ebook;
 
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.ArrayUtils;
-import org.apache.commons.lang3.math.NumberUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.hibernate.criterion.Junction;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Restrictions;
@@ -36,53 +39,42 @@ public class EbookService extends GenericServiceFull<Ebook> {
 
 		DsRestrictions restrictions = getDsRestrictions();
 		Ebook entity = ds.getEntity();
-		String indexTerm = entity.getIndexTerm();
+		String indexTerm = StringUtils.replaceChars(entity.getIndexTerm()
+				.trim(), "－０１２３４５６７８９", "-0123456789");
 
-		char[] cArray = indexTerm.toCharArray();
-		StringBuilder indexTermBuilder = new StringBuilder();
-		for (int i = 0; i < cArray.length; i++) {
-			int charCode = (int) cArray[i];
-			if (charCode > 65280 && charCode < 65375) {
-				int halfChar = charCode - 65248;
-				cArray[i] = (char) halfChar;
-			}
-			indexTermBuilder.append(cArray[i]);
-		}
-
-		indexTerm = indexTermBuilder.toString();
-		indexTerm = indexTerm.replaceAll(
-				"[^-a-zA-Z0-9\u4e00-\u9fa5\u0391-\u03a9\u03b1-\u03c9]", " ");
-		String[] wordArray = indexTerm.split(" ");
-
-		if (!ArrayUtils.isEmpty(wordArray)) {
-			Junction orGroup = Restrictions.disjunction();
-			for (int i = 0; i < wordArray.length; i++) {
-
-				if (NumberUtils.isDigits(wordArray[i].replace("-", ""))) {
-					orGroup.add(Restrictions.eq("isbn",
-							Long.parseLong(wordArray[i].replace("-", ""))));
-				} else {
-					String[] splitMinus = wordArray[i].split("-");
-
-					for (int j = 0; j < splitMinus.length; j++) {
-						orGroup.add(Restrictions.ilike("bookName",
-								splitMinus[j], MatchMode.ANYWHERE));
-						orGroup.add(Restrictions.ilike("publishName",
-								splitMinus[j], MatchMode.ANYWHERE));
-						orGroup.add(Restrictions.ilike("autherName",
-								splitMinus[j], MatchMode.ANYWHERE));
-					}
-				}
-			}
-
-			orGroup.add(Restrictions.eq("isbn", -1L));
-			restrictions.customCriterion(orGroup);
-
+		if (ISBN_Validator.isIsbn(indexTerm)) {
+			restrictions.eq("isbn", Long.parseLong(indexTerm.replace("-", "")));
 		} else {
-			Pager pager = ds.getPager();
-			pager.setTotalRecord(0L);
-			ds.setPager(pager);
-			return ds;
+			indexTerm = indexTerm.replaceAll(
+					"[^0-9\\p{Ll}\\p{Lm}\\p{Lo}\\p{Lt}\\p{Lu}]", " ");
+			Set<String> keywordSet = new HashSet<String>(
+					Arrays.asList(indexTerm.split(" ")));
+			String[] wordArray = keywordSet.toArray(new String[keywordSet
+					.size()]);
+
+			if (!ArrayUtils.isEmpty(wordArray)) {
+				Junction or = Restrictions.disjunction();
+				Junction bookNameAnd = Restrictions.conjunction();
+				Junction publishNameAnd = Restrictions.conjunction();
+				Junction autherNameAnd = Restrictions.conjunction();
+				for (int i = 0; i < wordArray.length; i++) {
+					bookNameAnd.add(Restrictions.ilike("bookName",
+							wordArray[i], MatchMode.ANYWHERE));
+					publishNameAnd.add(Restrictions.ilike("publishName",
+							wordArray[i], MatchMode.ANYWHERE));
+					autherNameAnd.add(Restrictions.ilike("autherName",
+							wordArray[i], MatchMode.ANYWHERE));
+				}
+
+				or.add(bookNameAnd).add(publishNameAnd).add(autherNameAnd);
+				restrictions.customCriterion(or);
+
+			} else {
+				Pager pager = ds.getPager();
+				pager.setTotalRecord(0L);
+				ds.setPager(pager);
+				return ds;
+			}
 		}
 
 		return dao.findByRestrictions(restrictions, ds);
@@ -100,8 +92,9 @@ public class EbookService extends GenericServiceFull<Ebook> {
 
 		DsRestrictions restrictions = getDsRestrictions();
 		Ebook entity = ds.getEntity();
-		String indexTerm = entity.getIndexTerm();
 		String option = entity.getOption();
+		String indexTerm = StringUtils.replaceChars(entity.getIndexTerm()
+				.trim(), "－０１２３４５６７８９", "-0123456789");
 
 		if (option.equals("書名")) {
 			option = "bookName";
@@ -113,47 +106,35 @@ public class EbookService extends GenericServiceFull<Ebook> {
 			option = "autherName";
 		}
 
-		char[] cArray = indexTerm.toCharArray();
-		StringBuilder indexTermBuilder = new StringBuilder();
-		for (int i = 0; i < cArray.length; i++) {
-			int charCode = (int) cArray[i];
-			if (charCode > 65280 && charCode < 65375) {
-				int halfChar = charCode - 65248;
-				cArray[i] = (char) halfChar;
+		if (option.equals("isbn")) {
+			if (ISBN_Validator.isIsbn(indexTerm)) {
+				restrictions.eq("isbn",
+						Long.parseLong(indexTerm.replace("-", "")));
+			} else {
+				Pager pager = ds.getPager();
+				pager.setTotalRecord(0L);
+				ds.setPager(pager);
+				return ds;
 			}
-			indexTermBuilder.append(cArray[i]);
-		}
-
-		indexTerm = indexTermBuilder.toString();
-		indexTerm = indexTerm.replaceAll(
-				"[^-a-zA-Z0-9\u4e00-\u9fa5\u0391-\u03a9\u03b1-\u03c9]", " ");
-		String[] wordArray = indexTerm.split(" ");
-
-		if (!ArrayUtils.isEmpty(wordArray)) {
-			Junction orGroup = Restrictions.disjunction();
-			for (int i = 0; i < wordArray.length; i++) {
-				if (option.equals("isbn")) {
-					if (NumberUtils.isDigits(wordArray[i].replace("-", ""))) {
-						orGroup.add(Restrictions.eq(option,
-								Long.parseLong(wordArray[i].replace("-", ""))));
-					}
-				} else {
-					String[] splitMinus = wordArray[i].split("-");
-					for (int j = 0; j < splitMinus.length; j++) {
-						orGroup.add(Restrictions.ilike(option, splitMinus[j],
-								MatchMode.ANYWHERE));
-					}
-				}
-			}
-
-			orGroup.add(Restrictions.eq("serNo", -1L));
-			restrictions.customCriterion(orGroup);
-
 		} else {
-			Pager pager = ds.getPager();
-			pager.setTotalRecord(0L);
-			ds.setPager(pager);
-			return ds;
+			indexTerm = indexTerm.replaceAll(
+					"[^0-9\\p{Ll}\\p{Lm}\\p{Lo}\\p{Lt}\\p{Lu}]", " ");
+			Set<String> keywordSet = new HashSet<String>(
+					Arrays.asList(indexTerm.split(" ")));
+			String[] wordArray = keywordSet.toArray(new String[keywordSet
+					.size()]);
+
+			if (!ArrayUtils.isEmpty(wordArray)) {
+				for (int i = 0; i < wordArray.length; i++) {
+					restrictions.likeIgnoreCase(option, wordArray[i],
+							MatchMode.ANYWHERE);
+				}
+			} else {
+				Pager pager = ds.getPager();
+				pager.setTotalRecord(0L);
+				ds.setPager(pager);
+				return ds;
+			}
 		}
 
 		return dao.findByRestrictions(restrictions, ds);
@@ -172,13 +153,13 @@ public class EbookService extends GenericServiceFull<Ebook> {
 				entity.getCusSerNo(), pager);
 
 		if (CollectionUtils.isNotEmpty(resourcesUnionList)) {
-			Junction orGroup = Restrictions.disjunction();
+			Junction or = Restrictions.disjunction();
 			for (int i = 0; i < resourcesUnionList.size(); i++) {
-				orGroup.add(Restrictions.eq("serNo", resourcesUnionList.get(i)
+				or.add(Restrictions.eq("serNo", resourcesUnionList.get(i)
 						.getEbkSerNo()));
 			}
 
-			restrictions.customCriterion(orGroup);
+			restrictions.customCriterion(or);
 		} else {
 			pager.setTotalRecord(0L);
 			ds.setPager(pager);

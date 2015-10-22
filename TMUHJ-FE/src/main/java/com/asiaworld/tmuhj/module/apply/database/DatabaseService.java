@@ -1,9 +1,13 @@
 package com.asiaworld.tmuhj.module.apply.database;
 
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.hibernate.criterion.Junction;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Restrictions;
@@ -36,35 +40,28 @@ public class DatabaseService extends GenericServiceFull<Database> {
 
 		DsRestrictions restrictions = getDsRestrictions();
 		Database entity = ds.getEntity();
-		String indexTerm = entity.getIndexTerm();
 
-		char[] cArray = indexTerm.toCharArray();
-		StringBuilder indexTermBuilder = new StringBuilder();
-		for (int i = 0; i < cArray.length; i++) {
-			int charCode = (int) cArray[i];
-			if (charCode > 65280 && charCode < 65375) {
-				int halfChar = charCode - 65248;
-				cArray[i] = (char) halfChar;
-			}
-			indexTermBuilder.append(cArray[i]);
-		}
-
-		indexTerm = indexTermBuilder.toString();
+		String indexTerm = StringUtils.replaceChars(entity.getIndexTerm()
+				.trim(), "０１２３４５６７８９", "0123456789");
 		indexTerm = indexTerm.replaceAll(
-				"[^a-zA-Z0-9\u4e00-\u9fa5\u0391-\u03a9\u03b1-\u03c9]", " ");
-		String[] wordArray = indexTerm.split(" ");
+				"[^0-9\\p{Ll}\\p{Lm}\\p{Lo}\\p{Lt}\\p{Lu}]", " ");
+		Set<String> keywordSet = new HashSet<String>(Arrays.asList(indexTerm
+				.split(" ")));
+		String[] wordArray = keywordSet.toArray(new String[keywordSet.size()]);
 
 		if (!ArrayUtils.isEmpty(wordArray)) {
-			Junction orGroup = Restrictions.disjunction();
+			Junction or = Restrictions.disjunction();
+			Junction dbChtTitleAnd = Restrictions.conjunction();
+			Junction dbEngTitleAnd = Restrictions.conjunction();
 			for (int i = 0; i < wordArray.length; i++) {
-				orGroup.add(Restrictions.ilike("dbChtTitle", wordArray[i],
-						MatchMode.ANYWHERE));
-				orGroup.add(Restrictions.ilike("dbEngTitle", wordArray[i],
-						MatchMode.ANYWHERE));
+				dbChtTitleAnd.add(Restrictions.ilike("dbChtTitle",
+						wordArray[i], MatchMode.ANYWHERE));
+				dbEngTitleAnd.add(Restrictions.ilike("dbEngTitle",
+						wordArray[i], MatchMode.ANYWHERE));
 			}
 
-			restrictions.customCriterion(orGroup);
-
+			or.add(dbEngTitleAnd).add(dbChtTitleAnd);
+			restrictions.customCriterion(or);
 		} else {
 			Pager pager = ds.getPager();
 			pager.setTotalRecord(0L);
@@ -87,7 +84,6 @@ public class DatabaseService extends GenericServiceFull<Database> {
 
 		DsRestrictions restrictions = getDsRestrictions();
 		Database entity = ds.getEntity();
-		String indexTerm = entity.getIndexTerm();
 		String option = entity.getOption();
 
 		if (option.equals("中文題名")) {
@@ -100,31 +96,19 @@ public class DatabaseService extends GenericServiceFull<Database> {
 			option = "content";
 		}
 
-		char[] cArray = indexTerm.toCharArray();
-		StringBuilder indexTermBuilder = new StringBuilder();
-		for (int i = 0; i < cArray.length; i++) {
-			int charCode = (int) cArray[i];
-			if (charCode > 65280 && charCode < 65375) {
-				int halfChar = charCode - 65248;
-				cArray[i] = (char) halfChar;
-			}
-			indexTermBuilder.append(cArray[i]);
-		}
-
-		indexTerm = indexTermBuilder.toString();
+		String indexTerm = StringUtils.replaceChars(entity.getIndexTerm()
+				.trim(), "０１２３４５６７８９", "0123456789");
 		indexTerm = indexTerm.replaceAll(
-				"[^a-zA-Z0-9\u4e00-\u9fa5\u0391-\u03a9\u03b1-\u03c9]", " ");
-		String[] wordArray = indexTerm.split(" ");
+				"[^0-9\\p{Ll}\\p{Lm}\\p{Lo}\\p{Lt}\\p{Lu}]", " ");
+		Set<String> keywordSet = new HashSet<String>(Arrays.asList(indexTerm
+				.split(" ")));
+		String[] wordArray = keywordSet.toArray(new String[keywordSet.size()]);
 
 		if (!ArrayUtils.isEmpty(wordArray)) {
-			Junction orGroup = Restrictions.disjunction();
 			for (int i = 0; i < wordArray.length; i++) {
-				orGroup.add(Restrictions.ilike(option, wordArray[i],
-						MatchMode.ANYWHERE));
+				restrictions.likeIgnoreCase(option, wordArray[i],
+						MatchMode.ANYWHERE);
 			}
-
-			restrictions.customCriterion(orGroup);
-
 		} else {
 			Pager pager = ds.getPager();
 			pager.setTotalRecord(0L);
@@ -148,13 +132,13 @@ public class DatabaseService extends GenericServiceFull<Database> {
 				.totalDb(entity.getCusSerNo(), pager);
 
 		if (CollectionUtils.isNotEmpty(resourcesUnionList)) {
-			Junction orGroup = Restrictions.disjunction();
+			Junction or = Restrictions.disjunction();
 			for (int i = 0; i < resourcesUnionList.size(); i++) {
-				orGroup.add(Restrictions.eq("serNo", resourcesUnionList.get(i)
+				or.add(Restrictions.eq("serNo", resourcesUnionList.get(i)
 						.getDatSerNo()));
 			}
 
-			restrictions.customCriterion(orGroup);
+			restrictions.customCriterion(or);
 		} else {
 			pager.setTotalRecord(0L);
 			ds.setPager(pager);

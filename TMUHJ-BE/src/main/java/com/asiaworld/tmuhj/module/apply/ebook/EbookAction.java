@@ -15,9 +15,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -94,7 +91,7 @@ public class EbookAction extends GenericWebActionFull<Ebook> {
 		}
 
 		if (getEntity().getIsbn() != null) {
-			if (!isIsbn(getEntity().getIsbn())) {
+			if (!ISBN_Validator.isIsbn(getEntity().getIsbn())) {
 				errorMessages.add("ISBN不正確");
 			} else {
 				if (ebookService.getEbkSerNoByIsbn(getEntity().getIsbn()) != 0) {
@@ -105,7 +102,8 @@ public class EbookAction extends GenericWebActionFull<Ebook> {
 			if (StringUtils.isBlank(getRequest().getParameter("entity.isbn"))) {
 				errorMessages.add("ISBN必須填寫");
 			} else {
-				if (!isIsbn(getRequest().getParameter("entity.isbn"))) {
+				if (!ISBN_Validator.isIsbn(getRequest().getParameter(
+						"entity.isbn"))) {
 					errorMessages.add("ISBN不正確");
 				} else {
 					if (ebookService.getEbkSerNoByIsbn(Long
@@ -176,7 +174,7 @@ public class EbookAction extends GenericWebActionFull<Ebook> {
 			}
 
 			if (getEntity().getIsbn() != null) {
-				if (!isIsbn(getEntity().getIsbn())) {
+				if (!ISBN_Validator.isIsbn(getEntity().getIsbn())) {
 					errorMessages.add("ISBN不正確");
 				} else {
 					long ebkSerNo = ebookService.getEbkSerNoByIsbn(getEntity()
@@ -190,7 +188,8 @@ public class EbookAction extends GenericWebActionFull<Ebook> {
 						.getParameter("entity.isbn"))) {
 					errorMessages.add("ISBN必須填寫");
 				} else {
-					if (!isIsbn(getRequest().getParameter("entity.isbn"))) {
+					if (!ISBN_Validator.isIsbn(getRequest().getParameter(
+							"entity.isbn"))) {
 						errorMessages.add("ISBN不正確");
 					} else {
 						long ebkSerNo = ebookService.getEbkSerNoByIsbn(Long
@@ -341,7 +340,8 @@ public class EbookAction extends GenericWebActionFull<Ebook> {
 			if (getEntity().getIsbn() == null) {
 				if (StringUtils.isNotEmpty(getRequest().getParameter(
 						"entity.isbn"))) {
-					if (isIsbn(getRequest().getParameter("entity.isbn").trim())) {
+					if (ISBN_Validator.isIsbn(getRequest().getParameter(
+							"entity.isbn").trim())) {
 						getEntity().setIsbn(
 								Long.parseLong(getRequest()
 										.getParameter("entity.isbn").trim()
@@ -623,8 +623,10 @@ public class EbookAction extends GenericWebActionFull<Ebook> {
 		if (!hasActionErrors()) {
 			Workbook book = createWorkBook(new FileInputStream(getEntity()
 					.getFile()[0]));
-			// book.getNumberOfSheets(); 判斷Excel文件有多少個sheet
-			Sheet sheet = book.getSheetAt(0);
+			Sheet sheet = book.createSheet();
+			if (book.getNumberOfSheets() != 0) {
+				sheet = book.getSheetAt(0);
+			}
 
 			Row firstRow = sheet.getRow(0);
 			if (firstRow == null) {
@@ -796,7 +798,7 @@ public class EbookAction extends GenericWebActionFull<Ebook> {
 				ebook.setCustomers(customers);
 
 				if (ebook.getIsbn() != null) {
-					if (isIsbn(Long.parseLong(isbn))) {
+					if (ISBN_Validator.isIsbn(Long.parseLong(isbn))) {
 						long ebkSerNo = ebookService.getEbkSerNoByIsbn(Long
 								.parseLong(isbn));
 
@@ -823,7 +825,7 @@ public class EbookAction extends GenericWebActionFull<Ebook> {
 						ebook.setDataStatus("ISBN異常");
 					}
 				} else {
-					if (isIsbn(isbn)) {
+					if (ISBN_Validator.isIsbn(isbn)) {
 						long ebkSerNo = ebookService.getEbkSerNoByIsbn(Long
 								.parseLong(isbn.replace("-", "")));
 
@@ -1142,54 +1144,6 @@ public class EbookAction extends GenericWebActionFull<Ebook> {
 				.setInputStream(new ByteArrayInputStream(boas.toByteArray()));
 
 		return XLSX;
-	}
-
-	protected boolean isIsbn(long isbnNum) {
-		if (isbnNum >= 9780000000000l && isbnNum < 9800000000000l) {
-			String isbn = "" + isbnNum;
-
-			int sum = 0;
-			for (int i = 0; i < 12; i++) {
-				if (i % 2 == 0) {
-					sum = sum + Integer.parseInt(isbn.substring(i, i + 1)) * 1;
-				} else {
-					sum = sum + Integer.parseInt(isbn.substring(i, i + 1)) * 3;
-				}
-			}
-
-			int remainder = sum % 10;
-			int num = 10 - remainder;
-
-			if (num == 10) {
-				if (Integer.parseInt(isbn.substring(12)) != 0) {
-					return false;
-				}
-			} else {
-				if (Integer.parseInt(isbn.substring(12)) != num) {
-					return false;
-				}
-			}
-
-		} else {
-			return false;
-		}
-
-		return true;
-	}
-
-	protected boolean isIsbn(String isbnString) {
-		String regex = "(97)([8-9])(\\-)(\\d)(\\-)(\\d{2})(\\-)(\\d{6})(\\-)(\\d)";
-		Pattern pattern = Pattern.compile(regex);
-		Matcher matcher = pattern.matcher(isbnString);
-
-		long isbnNum = 0;
-		if (matcher.matches()) {
-			isbnNum = Long.parseLong(isbnString.replace("-", "").trim());
-		} else {
-			return false;
-		}
-
-		return isIsbn(isbnNum);
 	}
 
 	protected void setCategoryList() {

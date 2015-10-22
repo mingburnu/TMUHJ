@@ -1,6 +1,11 @@
 package com.asiaworld.tmuhj.core.apply.customer;
 
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
+
 import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.hibernate.criterion.Junction;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Restrictions;
@@ -28,34 +33,27 @@ public class CustomerService extends GenericServiceFull<Customer> {
 
 		DsRestrictions restrictions = getDsRestrictions();
 		Customer entity = ds.getEntity();
-		String itemTerm = entity.getIndexTerm();
-
-		char[] cArray = itemTerm.toCharArray();
-		StringBuilder itemTermBuilder = new StringBuilder();
-		for (int i = 0; i < cArray.length; i++) {
-			int charCode = (int) cArray[i];
-			if (charCode > 65280 && charCode < 65375) {
-				int halfChar = charCode - 65248;
-				cArray[i] = (char) halfChar;
-			}
-			itemTermBuilder.append(cArray[i]);
-		}
-
-		itemTerm = itemTermBuilder.toString();
-		itemTerm = itemTerm.replaceAll("[^a-zA-Z0-9\u4e00-\u9fa5]", " ");
-		String[] wordArray = itemTerm.split(" ");
+		String indexTerm = StringUtils.replaceChars(entity.getIndexTerm()
+				.trim(), "０１２３４５６７８９", "0123456789");
+		indexTerm = indexTerm.replaceAll(
+				"[^0-9\\p{Ll}\\p{Lm}\\p{Lo}\\p{Lt}\\p{Lu}]", " ");
+		Set<String> keywordSet = new HashSet<String>(Arrays.asList(indexTerm
+				.split(" ")));
+		String[] wordArray = keywordSet.toArray(new String[keywordSet.size()]);
 
 		if (!ArrayUtils.isEmpty(wordArray)) {
-			Junction orGroup = Restrictions.disjunction();
+			Junction or = Restrictions.disjunction();
+			Junction nameAnd = Restrictions.conjunction();
+			Junction engNameAnd = Restrictions.conjunction();
 			for (int i = 0; i < wordArray.length; i++) {
-				orGroup.add(Restrictions.ilike("name", wordArray[i],
+				nameAnd.add(Restrictions.ilike("name", wordArray[i],
 						MatchMode.ANYWHERE));
-				orGroup.add(Restrictions.ilike("engName", wordArray[i],
+				engNameAnd.add(Restrictions.ilike("engName", wordArray[i],
 						MatchMode.ANYWHERE));
 			}
 
-			restrictions.customCriterion(orGroup);
-
+			or.add(nameAnd).add(engNameAnd);
+			restrictions.customCriterion(or);
 		} else {
 			Pager pager = ds.getPager();
 			pager.setTotalRecord(0L);

@@ -1,4 +1,4 @@
-<%@ page import="java.util.*"%>
+<%@ page import="org.owasp.esapi.ESAPI"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <%@ taglib prefix="s" uri="/struts-tags"%>
@@ -116,8 +116,7 @@ input#customer_name {
 				<th width="130">ISBN<span class="required">(&#8226;)</span></th>
 				<td><input type="text" name="entity.isbn" class="input_text"
 					id="apply_ebook_save_entity_isbn"
-					value="<esapi:encodeForHTMLAttribute><%=isbn%></esapi:encodeForHTMLAttribute>">
-				</td>
+					value="<%=ESAPI.encoder().encodeForHTMLAttribute(isbn)%>"></td>
 			</tr>
 			<tr>
 				<th width="130">出版社</th>

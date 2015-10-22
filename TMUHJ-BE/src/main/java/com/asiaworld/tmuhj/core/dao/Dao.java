@@ -81,7 +81,15 @@ public interface Dao<T extends Entity> {
 	 * @param dsQL
 	 * @return
 	 */
-	public List<?> findByHQL(DsQueryLanguage dsQL);
+	public List<?> findByHQL(DsQueryLanguage queryLanguage);
+
+	/**
+	 * Use the Query Language
+	 * 
+	 * @param dsQL
+	 * @return
+	 */
+	public DataSet<T> findByHQL(DsQueryLanguage queryLanguage, DataSet<T> ds);
 
 	/**
 	 * Turn on or off Foreign Key

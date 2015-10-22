@@ -45,8 +45,7 @@
 
 	//重設所有欄位(清空)
 	function resetData() {
-		goDetail('<%=request.getContextPath()%>
-	/crud/apply.database.edit.action?'
+		goDetail('<%=request.getContextPath()%>/crud/apply.database.edit.action?'
 						+ 'entity.serNo=${entity.serNo}', '資料庫-修改');
 	}
 

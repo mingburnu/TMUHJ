@@ -1,3 +1,4 @@
+<%@ page import="org.owasp.esapi.ESAPI"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <%@ taglib prefix="s" uri="/struts-tags"%>
@@ -13,7 +14,11 @@
 
 <c:set var="goToPage">
 	<c:url
-		value="<esapi:encodeForXMLAttribute>${param.namespace}</esapi:encodeForXMLAttribute>/<esapi:encodeForXMLAttribute>${param.action}</esapi:encodeForXMLAttribute>.action" />
+		value='<%=ESAPI.encoder().encodeForXMLAttribute(
+						request.getParameter("namespace"))
+						+ "/"
+						+ ESAPI.encoder().encodeForXMLAttribute(
+								request.getParameter("action")) + ".action"%>' />
 </c:set>
 
 <c:set var="lastPage">
