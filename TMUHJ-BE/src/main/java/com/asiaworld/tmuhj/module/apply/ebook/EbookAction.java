@@ -1082,8 +1082,10 @@ public class EbookAction extends GenericWebActionFull<Ebook> {
 							new ResourcesUnion(ebook.getCustomers().get(0),
 									resourcesUnion.getResourcesBuyers(),
 									ebkSerNo, 0L, 0L), getLoginUser());
+					
 				}
 
+				ebook.setDataStatus("已匯入");
 				++successCount;
 
 			}

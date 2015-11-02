@@ -986,6 +986,7 @@ public class JournalAction extends GenericWebActionFull<Journal> {
 									0L, jouSerNo), getLoginUser());
 				}
 
+				journal.setDataStatus("已匯入");
 				++successCount;
 			}
 

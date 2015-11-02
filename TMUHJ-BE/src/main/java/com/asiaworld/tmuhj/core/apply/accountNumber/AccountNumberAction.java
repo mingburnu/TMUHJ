@@ -880,6 +880,7 @@ public class AccountNumberAction extends GenericWebActionFull<AccountNumber> {
 				int index = (Integer) iterator.next();
 				accountNumber = (AccountNumber) importList.get(index);
 				accountNumberService.save(accountNumber, getLoginUser());
+				accountNumber.setDataStatus("已存在");
 				++successCount;
 			}
 

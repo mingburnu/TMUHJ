@@ -1035,6 +1035,7 @@ public class DatabaseAction extends GenericWebActionFull<Database> {
 									datSerNo, 0L), getLoginUser());
 				}
 
+				database.setDataStatus("已匯入");
 				++successCount;
 			}
 

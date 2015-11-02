@@ -637,6 +637,7 @@ public class CustomerAction extends GenericWebActionFull<Customer> {
 				int index = (Integer) iterator.next();
 				customer = (Customer) importList.get(index);
 				customerService.save(customer, getLoginUser());
+				customer.setDataStatus("已存在");
 				++successCount;
 			}
 
