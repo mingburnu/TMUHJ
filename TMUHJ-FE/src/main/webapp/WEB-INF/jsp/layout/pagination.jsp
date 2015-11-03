@@ -65,7 +65,7 @@ function upperChangeSize(recordPerPage) {
 	$("body").scrollTop(0);
 }
 
-function bottomChangeSize() {
+function bottomChangeSize(recordPerPage) {
 	var page = Math.floor(parseInt('${recordPoint}')/parseInt(recordPerPage))+1;
 	var offset=parseInt(recordPerPage)*(parseInt(page)-1);
 	var url= $("form").attr("action")+"?pager.recordPoint="+"${recordPoint}"+"&pager.offset="+offset;
