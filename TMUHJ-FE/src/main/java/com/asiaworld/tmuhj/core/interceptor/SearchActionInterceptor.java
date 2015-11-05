@@ -3,6 +3,7 @@ package com.asiaworld.tmuhj.core.interceptor;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
@@ -46,9 +47,14 @@ public class SearchActionInterceptor extends RootInterceptor {
 		removeErrorParameters(invocation);
 
 		HttpServletRequest request = ServletActionContext.getRequest();
-
+		HttpServletResponse response = ServletActionContext.getResponse();
 		Map<String, Object> session = invocation.getInvocationContext()
 				.getSession();
+		
+		if (!isUsableMethod(invocation)) {
+			response.sendError(HttpServletResponse.SC_NOT_FOUND);
+			return "list";
+		}
 
 		String method = invocation.getProxy().getMethod();
 

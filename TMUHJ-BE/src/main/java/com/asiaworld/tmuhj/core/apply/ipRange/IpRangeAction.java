@@ -11,7 +11,9 @@ import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 
+import com.asiaworld.tmuhj.core.apply.customer.Customer;
 import com.asiaworld.tmuhj.core.apply.customer.CustomerService;
+import com.asiaworld.tmuhj.core.apply.enums.Role;
 import com.asiaworld.tmuhj.core.model.DataSet;
 import com.asiaworld.tmuhj.core.web.GenericWebActionFull;
 
@@ -31,75 +33,20 @@ public class IpRangeAction extends GenericWebActionFull<IpRange> {
 	private IpRangeService ipRangeService;
 
 	@Autowired
+	private Customer customer;
+
+	@Autowired
 	private CustomerService customerService;
 
 	@Override
 	protected void validateSave() throws Exception {
-		if (!getEntity().getCustomer().hasSerNo()
-				|| getEntity().getCustomer().getSerNo() <= 0
-				|| customerService.getBySerNo(getEntity().getCustomer()
-						.getSerNo()) == null) {
-			errorMessages.add("could not execute statement");
-		}
-
-		if (!isIp(getEntity().getIpRangeStart())) {
-			errorMessages.add("IP起值輸入格式錯誤");
-		}
-
-		if (!isIp(getEntity().getIpRangeEnd())) {
-			errorMessages.add("IP起值輸入格式錯誤");
-		}
-
-		if (isIp(getEntity().getIpRangeStart())
-				&& isIp(getEntity().getIpRangeEnd())) {
-			String[] ipStartNum = getEntity().getIpRangeStart().split("\\.");
-			String[] ipEndNum = getEntity().getIpRangeEnd().split("\\.");
-
-			int i = 0;
-			while (i < 2) {
-				if (Integer.parseInt(ipStartNum[i]) != Integer
-						.parseInt(ipEndNum[i])) {
-					errorMessages.add("IP起迄值第" + (i + 1) + "位數字必須相同");
-				}
-				i++;
-			}
-
-			if (Integer.parseInt(ipStartNum[0]) == Integer
-					.parseInt(ipEndNum[0])
-					&& Integer.parseInt(ipStartNum[1]) == Integer
-							.parseInt(ipEndNum[1])) {
-				if (Integer.parseInt(ipStartNum[2]) * 1000
-						+ Integer.parseInt(ipStartNum[3]) > Integer
-						.parseInt(ipEndNum[2])
-						* 1000
-						+ Integer.parseInt(ipEndNum[3])) {
-					errorMessages.add("IP起值不可大於IP迄值");
-				} else {
-					if (isPrivateIp(getEntity().getIpRangeStart(), getEntity()
-							.getIpRangeEnd())) {
-						errorMessages.add("此IP區間為私有Ip");
-					} else {
-						IpRange repeatIpRange = checkRepeatIpRange(getEntity()
-								.getIpRangeStart(),
-								getEntity().getIpRangeEnd(),
-								ipRangeService.getAllIpList(0));
-						if (repeatIpRange != null) {
-							errorMessages.add("此IP區間"
-									+ repeatIpRange.getCustomer().getName()
-									+ "正在使用");
-						}
-					}
+		if (hasCustomer()) {
+			if (getEntity().getCustomer().getSerNo() == 9) {
+				if (!getLoginUser().getRole().equals(Role.系統管理員)) {
+					errorMessages.add("權限不符");
 				}
 			}
-		}
-	}
 
-	@Override
-	protected void validateUpdate() throws Exception {
-		if (ipRangeService.getTargetEntity(initDataSet()) == null) {
-			errorMessages.add("Target must not be null");
-			getResponse().sendError(HttpServletResponse.SC_NOT_FOUND);
-		} else {
 			if (!isIp(getEntity().getIpRangeStart())) {
 				errorMessages.add("IP起值輸入格式錯誤");
 			}
@@ -141,39 +88,129 @@ public class IpRangeAction extends GenericWebActionFull<IpRange> {
 							IpRange repeatIpRange = checkRepeatIpRange(
 									getEntity().getIpRangeStart(), getEntity()
 											.getIpRangeEnd(),
-									ipRangeService.getAllIpList(getEntity()
-											.getSerNo()));
-
+									ipRangeService.getAllIpList(0));
 							if (repeatIpRange != null) {
-								String name = repeatIpRange.getCustomer()
-										.getName();
-								errorMessages.add("此IP區間" + name + "正在使用");
+								errorMessages.add("此IP區間"
+										+ repeatIpRange.getCustomer().getName()
+										+ "正在使用");
 							}
 						}
 					}
 				}
 			}
+		} else {
+			getResponse().sendError(HttpServletResponse.SC_NOT_FOUND);
+		}
+	}
+
+	@Override
+	protected void validateUpdate() throws Exception {
+		if (hasCustomer()) {
+			if (ipRangeService.getTargetEntity(initDataSet()) == null) {
+				errorMessages.add("Target must not be null");
+				getResponse().sendError(HttpServletResponse.SC_NOT_FOUND);
+			} else {
+				if (getEntity().getCustomer().getSerNo() == 9) {
+					if (!getLoginUser().getRole().equals(Role.系統管理員)) {
+						errorMessages.add("權限不符");
+					}
+				}
+
+				if (!isIp(getEntity().getIpRangeStart())) {
+					errorMessages.add("IP起值輸入格式錯誤");
+				}
+
+				if (!isIp(getEntity().getIpRangeEnd())) {
+					errorMessages.add("IP起值輸入格式錯誤");
+				}
+
+				if (isIp(getEntity().getIpRangeStart())
+						&& isIp(getEntity().getIpRangeEnd())) {
+					String[] ipStartNum = getEntity().getIpRangeStart().split(
+							"\\.");
+					String[] ipEndNum = getEntity().getIpRangeEnd()
+							.split("\\.");
+
+					int i = 0;
+					while (i < 2) {
+						if (Integer.parseInt(ipStartNum[i]) != Integer
+								.parseInt(ipEndNum[i])) {
+							errorMessages.add("IP起迄值第" + (i + 1) + "位數字必須相同");
+						}
+						i++;
+					}
+
+					if (Integer.parseInt(ipStartNum[0]) == Integer
+							.parseInt(ipEndNum[0])
+							&& Integer.parseInt(ipStartNum[1]) == Integer
+									.parseInt(ipEndNum[1])) {
+						if (Integer.parseInt(ipStartNum[2]) * 1000
+								+ Integer.parseInt(ipStartNum[3]) > Integer
+								.parseInt(ipEndNum[2])
+								* 1000
+								+ Integer.parseInt(ipEndNum[3])) {
+							errorMessages.add("IP起值不可大於IP迄值");
+						} else {
+							if (isPrivateIp(getEntity().getIpRangeStart(),
+									getEntity().getIpRangeEnd())) {
+								errorMessages.add("此IP區間為私有Ip");
+							} else {
+								IpRange repeatIpRange = checkRepeatIpRange(
+										getEntity().getIpRangeStart(),
+										getEntity().getIpRangeEnd(),
+										ipRangeService.getAllIpList(getEntity()
+												.getSerNo()));
+
+								if (repeatIpRange != null) {
+									String name = repeatIpRange.getCustomer()
+											.getName();
+									errorMessages.add("此IP區間" + name + "正在使用");
+								}
+							}
+						}
+					}
+				}
+			}
+		} else {
+			getResponse().sendError(HttpServletResponse.SC_NOT_FOUND);
 		}
 	}
 
 	@Override
 	protected void validateDelete() throws Exception {
-		if (ipRangeService.getTargetEntity(initDataSet()) == null) {
-			errorMessages.add("沒有這個物件");
+		if (hasCustomer()) {
+			if (ipRangeService.getTargetEntity(initDataSet()) == null) {
+				errorMessages.add("沒有這個物件");
+			} else {
+				if (getEntity().getCustomer().getSerNo() == 9) {
+					if (!getLoginUser().getRole().equals(Role.系統管理員)) {
+						errorMessages.add("權限不符");
+					}
+				}
+			}
+		} else {
+			getResponse().sendError(HttpServletResponse.SC_NOT_FOUND);
 		}
 	}
 
 	@Override
 	public String add() throws Exception {
+		if (!hasCustomer()) {
+			getResponse().sendError(HttpServletResponse.SC_NOT_FOUND);
+		}
 		return ADD;
 	}
 
 	@Override
 	public String edit() throws Exception {
-		ipRange = ipRangeService.getTargetEntity(initDataSet());
-		if (ipRange != null) {
-			ipRange.setListNo(getEntity().getListNo());
-			setEntity(ipRange);
+		if (hasCustomer()) {
+			ipRange = ipRangeService.getTargetEntity(initDataSet());
+			if (ipRange != null) {
+				ipRange.setListNo(getEntity().getListNo());
+				setEntity(ipRange);
+			} else {
+				getResponse().sendError(HttpServletResponse.SC_NOT_FOUND);
+			}
 		} else {
 			getResponse().sendError(HttpServletResponse.SC_NOT_FOUND);
 		}
@@ -182,8 +219,7 @@ public class IpRangeAction extends GenericWebActionFull<IpRange> {
 
 	@Override
 	public String list() throws Exception {
-		if (getEntity().getCustomer().hasSerNo()
-				&& getEntity().getCustomer().getSerNo() > 0) {
+		if (hasCustomer()) {
 			DataSet<IpRange> ds = ipRangeService
 					.getByRestrictions(initDataSet());
 
@@ -197,7 +233,7 @@ public class IpRangeAction extends GenericWebActionFull<IpRange> {
 
 			setDs(ds);
 		} else {
-			setDs(initDataSet());
+			getResponse().sendError(HttpServletResponse.SC_NOT_FOUND);
 		}
 
 		return LIST;
@@ -371,5 +407,21 @@ public class IpRangeAction extends GenericWebActionFull<IpRange> {
 			}
 		}
 		return null;
+	}
+
+	protected boolean hasCustomer() throws Exception {
+		if (getEntity().getCustomer() == null
+				|| !getEntity().getCustomer().hasSerNo()
+				|| getEntity().getCustomer().getSerNo() <= 0) {
+			return false;
+		} else {
+			customer = customerService.getBySerNo(getEntity().getCustomer()
+					.getSerNo());
+			if (customer == null) {
+				return false;
+			} else {
+				return true;
+			}
+		}
 	}
 }

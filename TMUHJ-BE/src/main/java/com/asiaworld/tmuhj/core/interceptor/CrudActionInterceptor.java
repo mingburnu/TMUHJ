@@ -34,11 +34,18 @@ public class CrudActionInterceptor extends RootInterceptor {
 	public String intercept(ActionInvocation invocation) throws Exception {
 		removeErrorParameters(invocation);
 
+		HttpServletRequest request = ServletActionContext.getRequest();
+		HttpServletResponse response = ServletActionContext.getResponse();
+
+		if (!isUsableMethod(invocation)) {
+			response.sendError(HttpServletResponse.SC_NOT_FOUND);
+			return "list";
+		}
+
 		if (!invocation.getAction().toString().contains("beLogs")
 				&& !invocation.getAction().toString().contains("feLogs")) {
 
 			String method = invocation.getProxy().getMethod();
-			HttpServletRequest request = ServletActionContext.getRequest();
 
 			List<String> methodList = Arrays.asList("queue", "paginate",
 					"getCheckedItem", "allCheckedItem", "clearCheckedItem",
@@ -61,9 +68,8 @@ public class CrudActionInterceptor extends RootInterceptor {
 			accountNumber = (AccountNumber) session.get("login");
 
 			if (accountNumber.getRole().equals(Role.管理員)) {
-				HttpServletResponse response = ServletActionContext
-						.getResponse();
 				response.sendError(HttpServletResponse.SC_FORBIDDEN);
+				return "list";
 			}
 		}
 
@@ -76,9 +82,8 @@ public class CrudActionInterceptor extends RootInterceptor {
 				String method = invocation.getProxy().getMethod();
 
 				if (!method.equals("json") && !method.equals("box")) {
-					HttpServletResponse response = ServletActionContext
-							.getResponse();
 					response.sendError(HttpServletResponse.SC_FORBIDDEN);
+					return "list";
 				}
 			}
 
