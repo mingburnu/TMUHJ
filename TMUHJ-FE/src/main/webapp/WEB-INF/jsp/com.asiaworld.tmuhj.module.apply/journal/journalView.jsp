@@ -2,6 +2,7 @@
 	pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="s" uri="/struts-tags"%>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 <%@ taglib prefix="esapi"
 	uri="http://www.owasp.org/index.php/Category:OWASP_Enterprise_Security_API"%>
 <script type="text/javascript">
@@ -44,7 +45,7 @@
 			<c:if test="${not empty entity.issn}">
 				<tr>
 					<td class="t_01">ISSN</td>
-					<td class="t_02">${entity.issn }</td>
+					<td class="t_02">${fn:substring(entity.issn, 0, 4)}-${fn:substring(entity.issn, 4, 8)}</td>
 				</tr>
 			</c:if>
 			<c:if test="${not empty entity.publishName}">
