@@ -74,7 +74,7 @@
 					</tr>
 					<tr>
 						<th width="130">ISBN<span class="required">(&#8226;)</span></th>
-						<td>${fn:substring(entity.isbn, 0, 3)}-${fn:substring(entity.isbn, 3, 4)}-${fn:substring(entity.isbn, 4, 6)}-${fn:substring(entity.isbn, 6, 12)}-${fn:substring(entity.isbn, 12, 13)}</td>
+						<td>${fn:substring(entity.isbn, 0, 13)}</td>
 					</tr>
 					<tr>
 						<th width="130">出版社</th>

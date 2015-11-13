@@ -59,7 +59,7 @@
 			<c:if test="${not empty entity.isbn}">
 				<tr>
 					<td class="t_01">ISBN</td>
-					<td class="t_02">${fn:substring(entity.isbn, 0, 3)}-${fn:substring(entity.isbn, 3, 4)}-${fn:substring(entity.isbn, 4, 6)}-${fn:substring(entity.isbn, 6, 12)}-${fn:substring(entity.isbn, 12, 13)}</td>
+					<td class="t_02">${fn:substring(entity.isbn, 0, 13)}</td>
 				</tr>
 			</c:if>
 			<c:if test="${not empty entity.style}">
