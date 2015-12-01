@@ -51,7 +51,7 @@ public class SearchActionInterceptor extends RootInterceptor {
 		Map<String, Object> session = invocation.getInvocationContext()
 				.getSession();
 
-		if (invocation.getProxy().getNamespace().equals("crud")) {
+		if (invocation.getProxy().getNamespace().equals("/crud")) {
 			if (!isUsableMethod(invocation)) {
 				response.sendError(HttpServletResponse.SC_NOT_FOUND);
 				return "list";

@@ -2,8 +2,6 @@
 	pageEncoding="UTF-8"%>
 <%@ taglib prefix="s" uri="/struts-tags"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-<%@page import="javax.servlet.http.Cookie"%>
-<%@page import="java.util.*"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
@@ -128,14 +126,14 @@
 															<tr>
 																<td align="center" valign="top" width="40">
 																	<div class="cal_cal">
-																		<div class="cal_month">03月</div>
-																		<div class="cal_day">24</div>
+																		<div class="cal_month">04月</div>
+																		<div class="cal_day">01</div>
 																	</div>
 																</td>
 																<td align="left" valign="top">
 																	<div class="cal_title">系統上線</div>
 																	<div class="cal_content">歡迎蒞臨!</div>
-																	<div class="cal_time">發佈時間:2010年03月24日 PM 12:00</div>
+																	<div class="cal_time">發佈時間:2015年04月01日 PM 12:00</div>
 																</td>
 															</tr>
 														</tbody>
