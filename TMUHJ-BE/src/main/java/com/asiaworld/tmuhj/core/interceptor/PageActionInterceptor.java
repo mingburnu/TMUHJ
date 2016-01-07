@@ -23,12 +23,13 @@ public class PageActionInterceptor extends RootInterceptor {
 		removeErrorParameters(invocation);
 
 		Map<String, Object> session = ActionContext.getContext().getSession();
-		if (session.get("importList") != null) {
+		if (session.get("clazz") != null) {
 			session.remove("cellNames");
 			session.remove("importList");
 			session.remove("total");
 			session.remove("normal");
 			session.remove("checkItemSet");
+			session.remove("clazz");
 		}
 
 		return invocation.invoke();

@@ -24,7 +24,7 @@
 				class="menu_02"
 				href="javascript:goURL('<c:url value = '/'/>page/adv_query.action');">&nbsp;</a>
 				<c:choose>
-					<c:when test="${(login.userId =='guest')}">
+					<c:when test="${(empty login.serNo)}">
 						<a class="menu_03" href="<c:url value = '/'/>login.jsp">&nbsp;</a>
 					</c:when>
 					<c:otherwise>

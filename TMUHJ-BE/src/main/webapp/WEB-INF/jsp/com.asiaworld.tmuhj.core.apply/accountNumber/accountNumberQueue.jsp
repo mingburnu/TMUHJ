@@ -3,6 +3,7 @@
 <%@ taglib prefix="s" uri="/struts-tags"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 <%@ taglib prefix="esapi"
 	uri="http://www.owasp.org/index.php/Category:OWASP_Enterprise_Security_API"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
@@ -19,7 +20,6 @@
 <script type="text/javascript">
 	function allRow(action) {
 		if (action == 1) {
-			checkedValues = new Array($(".checkbox.queue:visible").length);
 			var importItem = "";
 			$(".checkbox.queue:visible").each(
 					function() {
@@ -84,6 +84,21 @@
 					}
 				});
 	}
+
+	function closeDetail() {
+		$("#div_Detail").hide();
+		UI_Resize();
+		$.ajax({
+			type : "POST",
+			url : "<c:url value = '/'/>page/copyright.action",
+			dataType : "html",
+			success : function(message) {
+
+			}
+		});
+
+		resetCloseDetail();
+	}
 </script>
 </head>
 <body>
@@ -112,12 +127,12 @@
 									<input type="checkbox" disabled="disabled">
 								</c:otherwise>
 							</c:choose></td>
-						<td><esapi:encodeForHTMLAttribute>${item.userId }</esapi:encodeForHTMLAttribute></td>
-						<td><esapi:encodeForHTMLAttribute>${item.userName }</esapi:encodeForHTMLAttribute></td>
-						<td><esapi:encodeForHTMLAttribute>${item.customer.name }</esapi:encodeForHTMLAttribute></td>
+						<td><esapi:encodeForHTML>${item.userId }</esapi:encodeForHTML></td>
+						<td><esapi:encodeForHTML>${item.userName }</esapi:encodeForHTML></td>
+						<td><esapi:encodeForHTML>${item.customer.name }</esapi:encodeForHTML></td>
 						<td>${item.role.role }</td>
 						<td>${item.status.status }</td>
-						<td align="center">${item.dataStatus }</td>
+						<td align="center">${fn:replace(item.dataStatus, ',', '<br>')}</td>
 					</tr>
 				</c:forEach>
 			</tbody>

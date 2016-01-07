@@ -24,12 +24,12 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.openxml4j.exceptions.InvalidOperationException;
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -42,6 +42,7 @@ import org.springframework.stereotype.Controller;
 import com.asiaworld.tmuhj.core.apply.enums.Role;
 import com.asiaworld.tmuhj.core.model.DataSet;
 import com.asiaworld.tmuhj.core.web.GenericWebActionFull;
+import com.google.common.collect.Lists;
 
 @Controller
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
@@ -419,37 +420,40 @@ public class CustomerAction extends GenericWebActionFull<Customer> {
 				customer = new Customer(rowValues[0], rowValues[1],
 						rowValues[2], rowValues[3], rowValues[4], rowValues[5],
 						"");
+				List<String> errorList = Lists.newArrayList();
 
 				if (StringUtils.isBlank(customer.getName())) {
-					customer.setDataStatus("名稱空白");
+					errorList.add("名稱空白");
 				} else {
 					if (customer.getName()
 							.replaceAll("[a-zA-Z0-9\u4e00-\u9fa5]", "")
 							.length() != 0) {
-						customer.setDataStatus("名稱字元異常");
+						errorList.add("名稱字元異常");
 					} else {
 						long cusSerNo = customerService
 								.getCusSerNoByName(customer.getName());
 						if (cusSerNo != 0) {
-							customer.setDataStatus("已存在");
-						}
-
-						if (StringUtils.isNotEmpty(customer.getTel())) {
-							String tel = customer.getTel()
-									.replaceAll("[/()+-]", "").replace(" ", "");
-							if (!NumberUtils.isDigits(tel)) {
-								customer.setTel(null);
-							}
+							errorList.add("已存在");
 						}
 					}
+				}
 
+				if (StringUtils.isNotEmpty(customer.getTel())) {
+					String tel = customer.getTel().replaceAll("[/()+-]", "")
+							.replace(" ", "");
+					if (!NumberUtils.isDigits(tel)) {
+						errorList.add("電話異常");
+					}
 				}
 
 				if (!isEmail(customer.getEmail())) {
-					customer.setEmail(null);
+					errorList.add("信箱異常");
 				}
 
-				if (customer.getDataStatus() == null) {
+				if (errorList.size() != 0) {
+					customer.setDataStatus(errorList.toString()
+							.replace("[", "").replace("]", ""));
+				} else {
 					customer.setDataStatus("正常");
 				}
 
@@ -492,6 +496,7 @@ public class CustomerAction extends GenericWebActionFull<Customer> {
 			getSession().put("importList", excelData);
 			getSession().put("total", excelData.size());
 			getSession().put("normal", normal);
+			getSession().put("clazz", this.getClass());
 
 			setDs(ds);
 			return QUEUE;
@@ -619,7 +624,7 @@ public class CustomerAction extends GenericWebActionFull<Customer> {
 
 		Set<Integer> checkItemSet = new TreeSet<Integer>();
 		getSession().put("checkItemSet", checkItemSet);
-		return null;
+		return QUEUE;
 	}
 
 	public String importData() throws Exception {
@@ -713,17 +718,11 @@ public class CustomerAction extends GenericWebActionFull<Customer> {
 	// 判斷文件類型
 	protected Workbook createWorkBook(InputStream is) throws IOException {
 		try {
-			if (getEntity().getFileFileName()[0].toLowerCase().endsWith("xls")) {
-				return new HSSFWorkbook(is);
-			}
-
-			if (getEntity().getFileFileName()[0].toLowerCase().endsWith("xlsx")) {
-				return new XSSFWorkbook(is);
-			}
-		} catch (InvalidOperationException e) {
+			return WorkbookFactory.create(is);
+		} catch (InvalidFormatException e) {
+			return null;
+		} catch (IllegalArgumentException e) {
 			return null;
 		}
-
-		return null;
 	}
 }

@@ -22,12 +22,12 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.openxml4j.exceptions.InvalidOperationException;
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -47,6 +47,7 @@ import com.asiaworld.tmuhj.module.apply.resourcesBuyers.ResourcesBuyers;
 import com.asiaworld.tmuhj.module.apply.resourcesBuyers.ResourcesBuyersService;
 import com.asiaworld.tmuhj.module.apply.resourcesUnion.ResourcesUnion;
 import com.asiaworld.tmuhj.module.apply.resourcesUnion.ResourcesUnionService;
+import com.google.common.collect.Lists;
 import com.opensymphony.xwork2.ActionContext;
 
 @Controller
@@ -736,6 +737,11 @@ public class JournalAction extends GenericWebActionFull<Journal> {
 						"", "", rowValues[7], rowValues[8], null);
 				journal.setResourcesBuyers(resourcesBuyers);
 				journal.setCustomers(customers);
+				List<String> errorList = Lists.newArrayList();
+
+				if (ISSN_Validator.isIssn(issn)) {
+					errorList.add("ISSN異常");
+				}
 
 				if (ISSN_Validator.isIssn(issn)) {
 					long jouSerNo = journalService.getJouSerNoByIssn(issn
@@ -743,45 +749,47 @@ public class JournalAction extends GenericWebActionFull<Journal> {
 
 					long cusSerNo = customerService
 							.getCusSerNoByName(rowValues[15].trim());
+
+					if (cusSerNo == 0) {
+						errorList.add("無此客戶");
+					}
+
 					if (cusSerNo != 0) {
 						customers.get(0).setSerNo(cusSerNo);
 						if (jouSerNo != 0) {
 							if (resourcesUnionService.isExist(
 									journalService.getBySerNo(jouSerNo),
 									Journal.class, cusSerNo)) {
-
-								journal.setDataStatus("已存在");
-							}
-						} else {
-							if (journal.getResourcesBuyers().getCategory()
-									.equals(Category.不明)) {
-								journal.setDataStatus("資源類型不明");
+								errorList.add("已存在");
 							}
 						}
-					} else {
-						journal.setDataStatus("無此客戶");
 					}
-				} else {
-					journal.setDataStatus("ISSN異常");
+				}
+
+				if (journal.getResourcesBuyers().getCategory()
+						.equals(Category.不明)) {
+					errorList.add("資源類型不明");
 				}
 
 				if (StringUtils.isNotEmpty(journal.getCongressClassification())) {
 					if (!isLCC(journal.getCongressClassification())) {
 						journal.setCongressClassification(null);
+						errorList.add("LCC錯誤");
 					}
 				}
 
-				if (journal.getDataStatus() == null) {
+				if (errorList.size() != 0) {
+					journal.setDataStatus(errorList.toString().replace("[", "")
+							.replace("]", ""));
+				} else {
 					journal.setDataStatus("正常");
 				}
 
 				if (journal.getDataStatus().equals("正常")
 						&& !originalData.contains(journal)) {
-
 					if (checkRepeatRow.containsKey(journal.getIssn()
 							+ customer.getName())) {
 						journal.setDataStatus("資料重複");
-
 					} else {
 						checkRepeatRow
 								.put(journal.getIssn() + customer.getName(),
@@ -816,6 +824,7 @@ public class JournalAction extends GenericWebActionFull<Journal> {
 			getSession().put("importList", excelData);
 			getSession().put("total", excelData.size());
 			getSession().put("normal", normal);
+			getSession().put("clazz", this.getClass());
 
 			return QUEUE;
 		} else {
@@ -1053,18 +1062,12 @@ public class JournalAction extends GenericWebActionFull<Journal> {
 	// 判斷文件類型
 	protected Workbook createWorkBook(InputStream is) throws IOException {
 		try {
-			if (getEntity().getFileFileName()[0].toLowerCase().endsWith("xls")) {
-				return new HSSFWorkbook(is);
-			}
-
-			if (getEntity().getFileFileName()[0].toLowerCase().endsWith("xlsx")) {
-				return new XSSFWorkbook(is);
-			}
-		} catch (InvalidOperationException e) {
+			return WorkbookFactory.create(is);
+		} catch (InvalidFormatException e) {
+			return null;
+		} catch (IllegalArgumentException e) {
 			return null;
 		}
-
-		return null;
 	}
 
 	protected void setCategoryList() {

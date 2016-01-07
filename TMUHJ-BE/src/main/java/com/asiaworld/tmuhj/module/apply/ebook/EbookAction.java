@@ -15,18 +15,19 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
+
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.openxml4j.exceptions.InvalidOperationException;
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -46,6 +47,7 @@ import com.asiaworld.tmuhj.module.apply.resourcesBuyers.ResourcesBuyers;
 import com.asiaworld.tmuhj.module.apply.resourcesBuyers.ResourcesBuyersService;
 import com.asiaworld.tmuhj.module.apply.resourcesUnion.ResourcesUnion;
 import com.asiaworld.tmuhj.module.apply.resourcesUnion.ResourcesUnionService;
+import com.google.common.collect.Lists;
 import com.opensymphony.xwork2.ActionContext;
 
 @Controller
@@ -796,78 +798,86 @@ public class EbookAction extends GenericWebActionFull<Ebook> {
 
 				ebook.setResourcesBuyers(resourcesBuyers);
 				ebook.setCustomers(customers);
+				List<String> errorList = Lists.newArrayList();
 
 				if (ebook.getIsbn() != null) {
+					long cusSerNo = customerService
+							.getCusSerNoByName(rowValues[17].trim());
+
+					if (cusSerNo == 0) {
+						errorList.add("無此客戶");
+					}
+
+					if (!ISBN_Validator.isIsbn(Long.parseLong(isbn))) {
+						errorList.add("ISBN異常");
+					}
+
 					if (ISBN_Validator.isIsbn(Long.parseLong(isbn))) {
 						long ebkSerNo = ebookService.getEbkSerNoByIsbn(Long
 								.parseLong(isbn));
-
-						long cusSerNo = customerService
-								.getCusSerNoByName(rowValues[17].trim());
 						if (cusSerNo != 0) {
 							customers.get(0).setSerNo(cusSerNo);
 							if (ebkSerNo != 0) {
 								if (resourcesUnionService.isExist(
 										ebookService.getBySerNo(ebkSerNo),
 										Ebook.class, cusSerNo)) {
-									ebook.setDataStatus("已存在");
-								}
-							} else {
-								if (ebook.getResourcesBuyers().getCategory()
-										.equals(Category.不明)) {
-									ebook.setDataStatus("資源類型不明");
+									errorList.add("已存在");
 								}
 							}
-						} else {
-							ebook.setDataStatus("無此客戶");
 						}
-					} else {
-						ebook.setDataStatus("ISBN異常");
 					}
 				} else {
+					long cusSerNo = customerService
+							.getCusSerNoByName(rowValues[17].trim());
+
+					if (cusSerNo == 0) {
+						errorList.add("無此客戶");
+					}
+
+					if (!ISBN_Validator.isIsbn(isbn)) {
+						errorList.add("ISBN異常");
+					}
+
 					if (ISBN_Validator.isIsbn(isbn)) {
 						long ebkSerNo = ebookService.getEbkSerNoByIsbn(Long
 								.parseLong(isbn.replace("-", "")));
 
-						long cusSerNo = customerService
-								.getCusSerNoByName(rowValues[17].trim());
 						if (cusSerNo != 0) {
 							customers.get(0).setSerNo(cusSerNo);
 							if (ebkSerNo != 0) {
 								if (resourcesUnionService.isExist(
 										ebookService.getBySerNo(ebkSerNo),
 										Ebook.class, cusSerNo)) {
-									ebook.setDataStatus("已存在");
-								}
-							} else {
-								if (ebook.getResourcesBuyers().getCategory()
-										.equals(Category.不明)) {
-									ebook.setDataStatus("資源類型不明");
+									errorList.add("已存在");
 								}
 							}
-						} else {
-							ebook.setDataStatus("無此客戶");
 						}
-					} else {
-						ebook.setDataStatus("ISBN異常");
 					}
+				}
+
+				if (ebook.getResourcesBuyers().getCategory()
+						.equals(Category.不明)) {
+					errorList.add("資源類型不明");
 				}
 
 				if (StringUtils.isNotEmpty(ebook.getCnClassBzStr())) {
 					if (!NumberUtils.isDigits(ebook.getCnClassBzStr())
 							|| ebook.getCnClassBzStr().length() != 3) {
-						ebook.setCnClassBzStr(null);
+						errorList.add("CLC錯誤");
 					}
 				}
 
 				if (StringUtils.isNotEmpty(ebook.getBookInfoIntegral())) {
 					if (!NumberUtils.isDigits(ebook.getBookInfoIntegral())
 							|| ebook.getBookInfoIntegral().length() != 3) {
-						ebook.setBookInfoIntegral(null);
+						errorList.add("DDC錯誤");
 					}
 				}
 
-				if (ebook.getDataStatus() == null) {
+				if (errorList.size() != 0) {
+					ebook.setDataStatus(errorList.toString().replace("[", "")
+							.replace("]", ""));
+				} else {
 					ebook.setDataStatus("正常");
 				}
 
@@ -911,6 +921,7 @@ public class EbookAction extends GenericWebActionFull<Ebook> {
 			getSession().put("importList", excelData);
 			getSession().put("total", excelData.size());
 			getSession().put("normal", normal);
+			getSession().put("clazz", this.getClass());
 
 			return QUEUE;
 		} else {
@@ -1082,7 +1093,7 @@ public class EbookAction extends GenericWebActionFull<Ebook> {
 							new ResourcesUnion(ebook.getCustomers().get(0),
 									resourcesUnion.getResourcesBuyers(),
 									ebkSerNo, 0L, 0L), getLoginUser());
-					
+
 				}
 
 				ebook.setDataStatus("已匯入");
@@ -1173,18 +1184,12 @@ public class EbookAction extends GenericWebActionFull<Ebook> {
 	// 判斷文件類型
 	protected Workbook createWorkBook(InputStream is) throws IOException {
 		try {
-			if (getEntity().getFileFileName()[0].toLowerCase().endsWith("xls")) {
-				return new HSSFWorkbook(is);
-			}
-
-			if (getEntity().getFileFileName()[0].toLowerCase().endsWith("xlsx")) {
-				return new XSSFWorkbook(is);
-			}
-		} catch (InvalidOperationException e) {
+			return WorkbookFactory.create(is);
+		} catch (InvalidFormatException e) {
+			return null;
+		} catch (IllegalArgumentException e) {
 			return null;
 		}
-
-		return null;
 	}
 
 	@SuppressWarnings("rawtypes")

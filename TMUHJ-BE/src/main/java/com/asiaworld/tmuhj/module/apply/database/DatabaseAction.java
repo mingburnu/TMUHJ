@@ -21,12 +21,12 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.openxml4j.exceptions.InvalidOperationException;
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -47,6 +47,7 @@ import com.asiaworld.tmuhj.module.apply.resourcesBuyers.ResourcesBuyers;
 import com.asiaworld.tmuhj.module.apply.resourcesBuyers.ResourcesBuyersService;
 import com.asiaworld.tmuhj.module.apply.resourcesUnion.ResourcesUnion;
 import com.asiaworld.tmuhj.module.apply.resourcesUnion.ResourcesUnionService;
+import com.google.common.collect.Lists;
 import com.opensymphony.xwork2.ActionContext;
 
 @Controller
@@ -718,9 +719,14 @@ public class DatabaseAction extends GenericWebActionFull<Database> {
 						rowValues[2], rowValues[5], rowValues[6], "", "", "");
 				database.setResourcesBuyers(resourcesBuyers);
 				database.setCustomers(customers);
+				List<String> errorList = Lists.newArrayList();
 
 				long cusSerNo = customerService.getCusSerNoByName(rowValues[11]
 						.trim());
+
+				if (cusSerNo == 0) {
+					errorList.add("無此客戶");
+				}
 
 				if (cusSerNo != 0) {
 					customers.get(0).setSerNo(cusSerNo);
@@ -736,26 +742,26 @@ public class DatabaseAction extends GenericWebActionFull<Database> {
 							if (resourcesUnionService.isExist(databaseService
 									.getBySerNo(datSerNoByChtName),
 									Database.class, cusSerNo)) {
-								database.setDataStatus("已存在");
+								errorList.add("已存在");
 							}
 
 						} else if (datSerNoByChtName != 0
 								&& datSerNoByEngName != 0
 								&& datSerNoByChtName != datSerNoByEngName) {
-							database.setDataStatus("資料庫名稱混亂");
+							errorList.add("資料庫名稱混亂");
 
 						} else if (datSerNoByChtName == 0
 								&& datSerNoByEngName != 0) {
 							if (databaseService.getDatSerNoByBothName(
 									database.getDbChtTitle(),
 									database.getDbEngTitle()) == 0) {
-								database.setDataStatus("資料庫名稱混亂");
+								errorList.add("資料庫名稱混亂");
 
 							} else if (resourcesUnionService.isExist(
 									databaseService
 											.getBySerNo(datSerNoByEngName),
 									Database.class, cusSerNo)) {
-								database.setDataStatus("已存在");
+								errorList.add("已存在");
 							}
 
 						} else if (datSerNoByChtName != 0
@@ -763,53 +769,47 @@ public class DatabaseAction extends GenericWebActionFull<Database> {
 							if (databaseService.getDatSerNoByBothName(
 									database.getDbChtTitle(),
 									database.getDbEngTitle()) == 0) {
-								database.setDataStatus("資料庫名稱混亂");
+								errorList.add("資料庫名稱混亂");
 
 							} else if (resourcesUnionService.isExist(
 									databaseService
 											.getBySerNo(datSerNoByChtName),
 									Database.class, cusSerNo)) {
-								database.setDataStatus("已存在");
-							}
-
-						} else {
-							if (database.getResourcesBuyers().getCategory()
-									.equals(Category.不明)) {
-								database.setDataStatus("資源類型不明");
+								errorList.add("已存在");
 							}
 						}
-
 					} else {
-						database.setDataStatus("資料庫名稱空白");
-
+						errorList.add("資料庫名稱空白");
 					}
-				} else {
-					database.setDataStatus("無此客戶");
+				}
 
+				if (database.getResourcesBuyers().getCategory()
+						.equals(Category.不明)) {
+					errorList.add("資源類型不明");
 				}
 
 				if (!isURL(database.getUrl())) {
-					database.setUrl(null);
+					errorList.add("URL錯誤");
 				}
 
-				if (database.getDataStatus() == null) {
+				if (errorList.size() != 0) {
+					database.setDataStatus(errorList.toString()
+							.replace("[", "").replace("]", ""));
+				} else {
 					database.setDataStatus("正常");
 				}
 
 				if (database.getDataStatus().equals("正常")
 						&& !originalData.contains(database)) {
-
 					if (checkRepeatRow.containsKey(database.getDbChtTitle()
-							+ database.getDbEngTitle() + customer.getName())) {
+							+ customer.getName() + database.getDbEngTitle())) {
 						database.setDataStatus("資料重複");
-
 					} else if (checkErrorRow.containsKey(database
 							.getDbEngTitle())
 							&& !checkErrorRow.get(database.getDbEngTitle())
 									.equals(database.getDbChtTitle()
 											+ database.getDbEngTitle())) {
 						database.setDataStatus("不能新增");
-
 					} else if (checkErrorRow.containsKey(database
 							.getDbChtTitle())
 							&& !checkErrorRow.get(database.getDbChtTitle())
@@ -818,9 +818,8 @@ public class DatabaseAction extends GenericWebActionFull<Database> {
 						database.setDataStatus("不能新增");
 					} else {
 						checkRepeatRow.put(
-								database.getDbChtTitle()
-										+ database.getDbEngTitle()
-										+ customer.getName(), database);
+								database.getDbChtTitle() + customer.getName()
+										+ database.getDbEngTitle(), database);
 						if (StringUtils.isNotBlank(database.getDbEngTitle())) {
 							checkErrorRow.put(
 									database.getDbEngTitle(),
@@ -865,6 +864,7 @@ public class DatabaseAction extends GenericWebActionFull<Database> {
 			getSession().put("importList", excelData);
 			getSession().put("total", excelData.size());
 			getSession().put("normal", normal);
+			getSession().put("clazz", this.getClass());
 
 			setDs(ds);
 			return QUEUE;
@@ -1120,18 +1120,12 @@ public class DatabaseAction extends GenericWebActionFull<Database> {
 	// 判斷文件類型
 	protected Workbook createWorkBook(InputStream is) throws IOException {
 		try {
-			if (getEntity().getFileFileName()[0].toLowerCase().endsWith("xls")) {
-				return new HSSFWorkbook(is);
-			}
-
-			if (getEntity().getFileFileName()[0].toLowerCase().endsWith("xlsx")) {
-				return new XSSFWorkbook(is);
-			}
-		} catch (InvalidOperationException e) {
+			return WorkbookFactory.create(is);
+		} catch (InvalidFormatException e) {
+			return null;
+		} catch (IllegalArgumentException e) {
 			return null;
 		}
-
-		return null;
 	}
 
 	@SuppressWarnings("rawtypes")

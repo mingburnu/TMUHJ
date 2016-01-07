@@ -19,7 +19,6 @@
 <script type="text/javascript">
 	function allRow(action) {
 		if (action == 1) {
-			checkedValues = new Array($(".checkbox.queue:visible").length);
 			var importItem = "";
 			$(".checkbox.queue:visible").each(
 					function() {
@@ -83,6 +82,21 @@
 						$("div#temp").html(message);
 					}
 				});
+	}
+
+	function closeDetail() {
+		$("#div_Detail").hide();
+		UI_Resize();
+		$.ajax({
+			type : "POST",
+			url : "<c:url value = '/'/>page/copyright.action",
+			dataType : "html",
+			success : function(message) {
+
+			}
+		});
+
+		resetCloseDetail();
 	}
 </script>
 </head>

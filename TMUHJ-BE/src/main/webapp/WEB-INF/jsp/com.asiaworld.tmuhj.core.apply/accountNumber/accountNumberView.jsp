@@ -57,9 +57,7 @@
 <c:if test="${empty entity.serNo}">
 	<script type="text/javascript">
 		function reimport() {
-			goDetail(
-					"<c:url value = '/'/>crud/apply.accountNumber.paginate.action?pager.currentPage=${pager.currentPage}&pager.recordPerPage=${pager.recordPerPage}",
-					"帳戶-匯入");
+			goDetail("<c:url value = '/'/>crud/apply.accountNumber.paginate.action?pager.currentPage=${pager.currentPage}&pager.recordPerPage=${pager.recordPerPage}");
 		}
 	</script>
 </c:if>
@@ -71,16 +69,15 @@
 				<tbody>
 					<tr>
 						<th width="130">用戶代碼</th>
-						<td><esapi:encodeForHTMLAttribute>${entity.userId }</esapi:encodeForHTMLAttribute></td>
-
+						<td><esapi:encodeForHTML>${entity.userId }</esapi:encodeForHTML></td>
 					</tr>
 					<tr>
 						<th width="130">用戶姓名</th>
-						<td><esapi:encodeForHTMLAttribute>${entity.userName }</esapi:encodeForHTMLAttribute></td>
+						<td><esapi:encodeForHTML>${entity.userName }</esapi:encodeForHTML></td>
 					</tr>
 					<tr>
 						<th width="130">客戶名稱</th>
-						<td><esapi:encodeForHTMLAttribute>${entity.customer.name }</esapi:encodeForHTMLAttribute></td>
+						<td><esapi:encodeForHTML>${entity.customer.name }</esapi:encodeForHTML></td>
 					</tr>
 					<tr>
 						<th width="130">權限</th>
