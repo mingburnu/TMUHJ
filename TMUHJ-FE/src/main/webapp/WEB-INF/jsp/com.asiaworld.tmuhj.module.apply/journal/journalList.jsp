@@ -5,17 +5,19 @@
 <%@ taglib prefix="esapi"
 	uri="http://www.owasp.org/index.php/Category:OWASP_Enterprise_Security_API"%>
 <script type="text/javascript">
-function view(serNo){
-	var data=$("form:eq(0)").serialize()+"&entity.backURL="+"${list}${focus}${owner}";
-	var url="<%=request.getContextPath()%>"+"/crud/apply.journal.view.action?entity.serNo="+serNo+"&pager.recordPoint="+"${ds.pager.recordPoint}";
-	$.ajax({
-		url: url,
-		data: data,
-		success: function(result){
-			$("#container").html(result);
-		}
-	});
-}
+	function view(serNo) {
+		var data = $("form:eq(0)").serialize() + "&entity.backURL="
+				+ "${list}${focus}${owner}";
+		var url = "<c:url value = '/'/>crud/apply.journal.view.action?entity.serNo="
+				+ serNo + "&pager.recordPoint=" + "${ds.pager.recordPoint}";
+		$.ajax({
+			url : url,
+			data : data,
+			success : function(result) {
+				$("#container").html(result);
+			}
+		});
+	}
 </script>
 <style>
 .list td a:hover {
@@ -138,10 +140,10 @@ function view(serNo){
 								<td>${orderInt}</td>
 								<c:choose>
 									<c:when test="${not empty item.englishTitle}">
-										<td><a onclick="view(${item.serNo})"><esapi:encodeForHTML>${item.englishTitle}</esapi:encodeForHTML></a></td>
+										<td><a onclick="view('${item.serNo}')"><esapi:encodeForHTML>${item.englishTitle}</esapi:encodeForHTML></a></td>
 									</c:when>
 									<c:otherwise>
-										<td><a onclick="view(${item.serNo})"><esapi:encodeForHTML>${item.chineseTitle}</esapi:encodeForHTML></a></td>
+										<td><a onclick="view('${item.serNo}')"><esapi:encodeForHTML>${item.chineseTitle}</esapi:encodeForHTML></a></td>
 									</c:otherwise>
 								</c:choose>
 								<td><c:choose>
@@ -163,10 +165,10 @@ function view(serNo){
 								<td>${orderInt}</td>
 								<c:choose>
 									<c:when test="${not empty item.englishTitle}">
-										<td><a onclick="view(${item.serNo})"><esapi:encodeForHTML>${item.englishTitle}</esapi:encodeForHTML></a></td>
+										<td><a onclick="view('${item.serNo}')"><esapi:encodeForHTML>${item.englishTitle}</esapi:encodeForHTML></a></td>
 									</c:when>
 									<c:otherwise>
-										<td><a onclick="view(${item.serNo})"><esapi:encodeForHTML>${item.chineseTitle}</esapi:encodeForHTML></a></td>
+										<td><a onclick="view('${item.serNo}')"><esapi:encodeForHTML>${item.chineseTitle}</esapi:encodeForHTML></a></td>
 									</c:otherwise>
 								</c:choose>
 								<td><c:choose>

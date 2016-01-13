@@ -66,9 +66,10 @@ public class CustomerAction extends GenericWebActionFull<Customer> {
 		DataSet<Customer> ds = customerService.getByRestrictions(initDataSet());
 
 		if (ds.getResults().size() == 0 && ds.getPager().getCurrentPage() > 1) {
-			ds.getPager().setCurrentPage(
-					(int) Math.ceil(ds.getPager().getTotalRecord()
-							/ ds.getPager().getRecordPerPage()));
+			Double lastPage = Math.ceil(ds.getPager().getTotalRecord()
+					.doubleValue()
+					/ ds.getPager().getRecordPerPage().doubleValue());
+			ds.getPager().setCurrentPage(lastPage.intValue());
 			ds = customerService.getByRestrictions(ds);
 		}
 

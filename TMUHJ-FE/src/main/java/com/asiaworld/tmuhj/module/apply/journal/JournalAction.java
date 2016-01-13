@@ -93,9 +93,10 @@ public class JournalAction extends GenericWebActionFull<Journal> {
 		DataSet<Journal> ds = journalService.getByRestrictions(initDataSet());
 
 		if (ds.getResults().size() == 0 && ds.getPager().getCurrentPage() > 1) {
-			ds.getPager().setCurrentPage(
-					(int) Math.ceil(ds.getPager().getTotalRecord()
-							/ ds.getPager().getRecordPerPage()));
+			Double lastPage = Math.ceil(ds.getPager().getTotalRecord()
+					.doubleValue()
+					/ ds.getPager().getRecordPerPage().doubleValue());
+			ds.getPager().setCurrentPage(lastPage.intValue());
 			ds = journalService.getByRestrictions(ds);
 		}
 
@@ -138,9 +139,10 @@ public class JournalAction extends GenericWebActionFull<Journal> {
 
 			if (ds.getResults().size() == 0
 					&& ds.getPager().getCurrentPage() > 1) {
-				ds.getPager().setCurrentPage(
-						(int) Math.ceil(ds.getPager().getTotalRecord()
-								/ ds.getPager().getRecordPerPage()));
+				Double lastPage = Math.ceil(ds.getPager().getTotalRecord()
+						.doubleValue()
+						/ ds.getPager().getRecordPerPage().doubleValue());
+				ds.getPager().setCurrentPage(lastPage.intValue());
 				ds = journalService.getByCusSerNo(ds);
 			}
 
@@ -160,9 +162,10 @@ public class JournalAction extends GenericWebActionFull<Journal> {
 		DataSet<Journal> ds = journalService.getByOption(initDataSet());
 
 		if (ds.getResults().size() == 0 && ds.getPager().getCurrentPage() > 1) {
-			ds.getPager().setCurrentPage(
-					(int) Math.ceil(ds.getPager().getTotalRecord()
-							/ ds.getPager().getRecordPerPage()));
+			Double lastPage = Math.ceil(ds.getPager().getTotalRecord()
+					.doubleValue()
+					/ ds.getPager().getRecordPerPage().doubleValue());
+			ds.getPager().setCurrentPage(lastPage.intValue());
 			ds = journalService.getByOption(ds);
 		}
 

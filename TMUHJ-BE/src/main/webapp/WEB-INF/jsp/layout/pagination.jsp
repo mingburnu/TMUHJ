@@ -124,15 +124,13 @@
 					<c:when test="${1 eq currentPage}">
 						<pg:next ifnull="true">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a
 								class="state-default"
-								href="javascript:gotoPage_detail(${currentPage+1});">下一頁</a>&nbsp;&nbsp;&nbsp;&nbsp;
-				</pg:next>
+								href="javascript:gotoPage_detail(${currentPage+1});">下一頁</a>&nbsp;&nbsp;&nbsp;&nbsp;</pg:next>
 					</c:when>
 
 					<c:when test="${lastPage eq currentPage}">
 						<pg:prev ifnull="true">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a
 								class="state-default"
-								href="javascript:gotoPage_detail(${currentPage-1});">上一頁</a>&nbsp;&nbsp;&nbsp;&nbsp;
-				</pg:prev>
+								href="javascript:gotoPage_detail(${currentPage-1});">上一頁</a>&nbsp;&nbsp;&nbsp;&nbsp;</pg:prev>
 					</c:when>
 					<c:otherwise>
 						<pg:prev ifnull="true">
@@ -141,8 +139,7 @@
 						</pg:prev>
 						<pg:next ifnull="true">&nbsp;&nbsp;<a
 								class="state-default"
-								href="javascript:gotoPage_detail(${currentPage+1});">下一頁</a>&nbsp;&nbsp;&nbsp;&nbsp;
-				</pg:next>
+								href="javascript:gotoPage_detail(${currentPage+1});">下一頁</a>&nbsp;&nbsp;&nbsp;&nbsp;</pg:next>
 					</c:otherwise>
 				</c:choose>
 			</c:when>
@@ -151,14 +148,12 @@
 					<c:when test="${1 eq currentPage}">
 						<pg:next ifnull="true">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a
 								class="state-default"
-								href="javascript:gotoPage(${currentPage+1});">下一頁</a>&nbsp;&nbsp;&nbsp;&nbsp;
-				</pg:next>
+								href="javascript:gotoPage(${currentPage+1});">下一頁</a>&nbsp;&nbsp;&nbsp;&nbsp;</pg:next>
 					</c:when>
 					<c:when test="${lastPage eq currentPage}">
 						<pg:prev ifnull="true">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a
 								class="state-default"
-								href="javascript:gotoPage(${currentPage-1});">上一頁</a>&nbsp;&nbsp;&nbsp;&nbsp;
-				</pg:prev>
+								href="javascript:gotoPage(${currentPage-1});">上一頁</a>&nbsp;&nbsp;&nbsp;&nbsp;</pg:prev>
 					</c:when>
 					<c:otherwise>
 						<pg:prev ifnull="true">
@@ -167,8 +162,7 @@
 						</pg:prev>
 						<pg:next ifnull="true">&nbsp;&nbsp;<a
 								class="state-default"
-								href="javascript:gotoPage(${currentPage+1});">下一頁</a>&nbsp;&nbsp;&nbsp;&nbsp;
-				</pg:next>
+								href="javascript:gotoPage(${currentPage+1});">下一頁</a>&nbsp;&nbsp;&nbsp;&nbsp;</pg:next>
 					</c:otherwise>
 				</c:choose>
 			</c:otherwise>

@@ -27,6 +27,10 @@
 	
 </script>
 <script language="javascript" type="text/javascript"
+	src="<c:url value = '/'/>resources/js/jquery.fileDownload.js">
+	
+</script>
+<script language="javascript" type="text/javascript"
 	src="<c:url value = '/'/>resources/js/jquery.autocomplete.js">
 	
 </script>

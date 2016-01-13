@@ -5,17 +5,19 @@
 <%@ taglib prefix="esapi"
 	uri="http://www.owasp.org/index.php/Category:OWASP_Enterprise_Security_API"%>
 <script type="text/javascript">
-function view(serNo){
-	var data=$("form:eq(0)").serialize()+"&entity.backURL="+"${list}${focus}${owner}";
-	var url="<%=request.getContextPath()%>"+"/crud/apply.ebook.view.action?entity.serNo="+serNo+"&pager.recordPoint="+"${ds.pager.recordPoint}";
-	$.ajax({
-		url: url,
-		data: data,
-		success: function(result){
-			$("#container").html(result);
-		}
-	});
-}
+	function view(serNo) {
+		var data = $("form:eq(0)").serialize() + "&entity.backURL="
+				+ "${list}${focus}${owner}";
+		var url = "<c:url value = '/'/>crud/apply.ebook.view.action?entity.serNo="
+				+ serNo + "&pager.recordPoint=" + "${ds.pager.recordPoint}";
+		$.ajax({
+			url : url,
+			data : data,
+			success : function(result) {
+				$("#container").html(result);
+			}
+		});
+	}
 </script>
 <style>
 .list td a:hover {
@@ -136,7 +138,7 @@ function view(serNo){
 						<c:when test="${num > 0}">
 							<tr valign="top">
 								<td>${orderInt}</td>
-								<td><a onclick="view(${item.serNo})"><esapi:encodeForHTML>${item.bookName}</esapi:encodeForHTML></a></td>
+								<td><a onclick="view('${item.serNo}')"><esapi:encodeForHTML>${item.bookName}</esapi:encodeForHTML></a></td>
 								<td><esapi:encodeForHTML>${item.autherName}</esapi:encodeForHTML></td>
 								<td><esapi:encodeForHTML>${item.publishName}</esapi:encodeForHTML></td>
 							</tr>
@@ -144,7 +146,7 @@ function view(serNo){
 						<c:otherwise>
 							<tr valign="top" class="odd">
 								<td>${orderInt}</td>
-								<td><a onclick="view(${item.serNo})"><esapi:encodeForHTML>${item.bookName}</esapi:encodeForHTML></a></td>
+								<td><a onclick="view('${item.serNo}')"><esapi:encodeForHTML>${item.bookName}</esapi:encodeForHTML></a></td>
 								<td><esapi:encodeForHTML>${item.autherName}</esapi:encodeForHTML></td>
 								<td><esapi:encodeForHTML>${item.publishName}</esapi:encodeForHTML></td>
 							</tr>

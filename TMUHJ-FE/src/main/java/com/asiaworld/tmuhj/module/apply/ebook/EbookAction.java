@@ -83,9 +83,10 @@ public class EbookAction extends GenericWebActionFull<Ebook> {
 		DataSet<Ebook> ds = ebookService.getByRestrictions(initDataSet());
 
 		if (ds.getResults().size() == 0 && ds.getPager().getCurrentPage() > 1) {
-			ds.getPager().setCurrentPage(
-					(int) Math.ceil(ds.getPager().getTotalRecord()
-							/ ds.getPager().getRecordPerPage()));
+			Double lastPage = Math.ceil(ds.getPager().getTotalRecord()
+					.doubleValue()
+					/ ds.getPager().getRecordPerPage().doubleValue());
+			ds.getPager().setCurrentPage(lastPage.intValue());
 			ds = ebookService.getByRestrictions(ds);
 		}
 
@@ -128,9 +129,10 @@ public class EbookAction extends GenericWebActionFull<Ebook> {
 
 			if (ds.getResults().size() == 0
 					&& ds.getPager().getCurrentPage() > 1) {
-				ds.getPager().setCurrentPage(
-						(int) Math.ceil(ds.getPager().getTotalRecord()
-								/ ds.getPager().getRecordPerPage()));
+				Double lastPage = Math.ceil(ds.getPager().getTotalRecord()
+						.doubleValue()
+						/ ds.getPager().getRecordPerPage().doubleValue());
+				ds.getPager().setCurrentPage(lastPage.intValue());
 				ds = ebookService.getByCusSerNo(ds);
 			}
 
@@ -149,9 +151,10 @@ public class EbookAction extends GenericWebActionFull<Ebook> {
 		DataSet<Ebook> ds = ebookService.getByOption(initDataSet());
 
 		if (ds.getResults().size() == 0 && ds.getPager().getCurrentPage() > 1) {
-			ds.getPager().setCurrentPage(
-					(int) Math.ceil(ds.getPager().getTotalRecord()
-							/ ds.getPager().getRecordPerPage()));
+			Double lastPage = Math.ceil(ds.getPager().getTotalRecord()
+					.doubleValue()
+					/ ds.getPager().getRecordPerPage().doubleValue());
+			ds.getPager().setCurrentPage(lastPage.intValue());
 			ds = ebookService.getByOption(ds);
 		}
 

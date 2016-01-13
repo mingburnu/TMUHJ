@@ -93,9 +93,10 @@ public class DatabaseAction extends GenericWebActionFull<Database> {
 		DataSet<Database> ds = databaseService.getByRestrictions(initDataSet());
 
 		if (ds.getResults().size() == 0 && ds.getPager().getCurrentPage() > 1) {
-			ds.getPager().setCurrentPage(
-					(int) Math.ceil(ds.getPager().getTotalRecord()
-							/ ds.getPager().getRecordPerPage()));
+			Double lastPage = Math.ceil(ds.getPager().getTotalRecord()
+					.doubleValue()
+					/ ds.getPager().getRecordPerPage().doubleValue());
+			ds.getPager().setCurrentPage(lastPage.intValue());
 			ds = databaseService.getByRestrictions(ds);
 		}
 
@@ -137,9 +138,10 @@ public class DatabaseAction extends GenericWebActionFull<Database> {
 
 			if (ds.getResults().size() == 0
 					&& ds.getPager().getCurrentPage() > 1) {
-				ds.getPager().setCurrentPage(
-						(int) Math.ceil(ds.getPager().getTotalRecord()
-								/ ds.getPager().getRecordPerPage()));
+				Double lastPage = Math.ceil(ds.getPager().getTotalRecord()
+						.doubleValue()
+						/ ds.getPager().getRecordPerPage().doubleValue());
+				ds.getPager().setCurrentPage(lastPage.intValue());
 				ds = databaseService.getByCusSerNo(ds);
 			}
 
@@ -158,9 +160,10 @@ public class DatabaseAction extends GenericWebActionFull<Database> {
 		DataSet<Database> ds = databaseService.getByOption(initDataSet());
 
 		if (ds.getResults().size() == 0 && ds.getPager().getCurrentPage() > 1) {
-			ds.getPager().setCurrentPage(
-					(int) Math.ceil(ds.getPager().getTotalRecord()
-							/ ds.getPager().getRecordPerPage()));
+			Double lastPage = Math.ceil(ds.getPager().getTotalRecord()
+					.doubleValue()
+					/ ds.getPager().getRecordPerPage().doubleValue());
+			ds.getPager().setCurrentPage(lastPage.intValue());
 			ds = databaseService.getByOption(ds);
 		}
 

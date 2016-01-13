@@ -47,7 +47,7 @@
 
 	//重設所有欄位(清空)
 	function resetData() {
-		goDetail('<%=request.getContextPath()%>/crud/apply.ebook.edit.action?'
+		goDetail("<c:url value = '/'/>crud/apply.ebook.edit.action?"
 				+ 'entity.serNo=${entity.serNo}', '電子書-修改');
 	}
 

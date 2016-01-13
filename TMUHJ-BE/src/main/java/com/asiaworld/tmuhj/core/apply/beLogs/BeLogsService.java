@@ -16,8 +16,8 @@ public class BeLogsService extends GenericServiceLog<BeLogs> {
 	@Override
 	public DataSet<BeLogs> getByRestrictions(DataSet<BeLogs> ds)
 			throws Exception {
-		
-		return dao.getRanks(ds);
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	@Override

@@ -13,7 +13,6 @@
 	<c:when test="${empty viewSerNo}">
 		<script type="text/javascript">
 			//關閉並更新上一層資料
-
 			function closeDetail_ToQuery() {
 				$("#div_Detail").hide();
 				UI_Resize();
